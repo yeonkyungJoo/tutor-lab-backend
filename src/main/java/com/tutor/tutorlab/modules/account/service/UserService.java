@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.service;
 
+import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
 import com.tutor.tutorlab.modules.account.controller.request.OAuthLoginRequest;
 import com.tutor.tutorlab.modules.account.controller.request.OAuthSignUpRequest;
@@ -13,6 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Service
 @Transactional(readOnly = false)
@@ -22,8 +26,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtTokenManager jwtTokenManager;
 
     public void signUp(SignUpRequest request) {
+
+        // check duplication
+
+
+    }
+
+    public void signUpOAuth(OAuthSignUpRequest request) {
 
     }
 
@@ -43,14 +55,11 @@ public class UserService {
 
     }
 
-    public void login(LoginRequest request) throws Exception {
+    public Map<String, String> login(LoginRequest request) throws Exception {
         authenticate(request.getUsername(), request.getPassword());
 
-        // jwtToken 생성
-
-    }
-
-    public void signUpOAuth(OAuthSignUpRequest request) {
+        String jwtToken = jwtTokenManager.createToken(request.getUsername(), new HashMap<>());
+        return jwtTokenManager.convertTokenToMap(jwtToken);
     }
 
     public void loginOAuth(OAuthLoginRequest request) {

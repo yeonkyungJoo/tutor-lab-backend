@@ -9,5 +9,7 @@ public class OAuthSignUpRequest {
 
     private String provider;
     private String providerId;
+    private String name;
+    private String email;
 
 }
