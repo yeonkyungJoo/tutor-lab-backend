@@ -42,9 +42,17 @@ public class JwtTokenManager {
 
     public boolean verifyToken(String jwtToken) {
         boolean result = false;
+        if (jwtToken == null || jwtToken.length() == 0) {
+            return result;
+        }
+
+        long now = System.currentTimeMillis();
+        
 
 
 
-        return true;
+
+
+        return result;
     }
 }
