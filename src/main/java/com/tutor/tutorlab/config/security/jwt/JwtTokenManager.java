@@ -15,7 +15,7 @@ public class JwtTokenManager {
     public JwtTokenManager(@Value("${jwt.secret}") String secret,
                            @Value("${jwt.token-validity-in-seconds}") long expiredAfter) {
         this.secret = secret;
-        this.expiredAfter = expiredAfter;
+        this.expiredAfter = expiredAfter * 1000;
     }
 
     public static final String TOKEN_PREFIX = "Bearer ";
@@ -40,6 +40,7 @@ public class JwtTokenManager {
         return map;
     }
 
+    // TODO - verify
     public boolean verifyToken(String jwtToken) {
         boolean result = false;
         if (jwtToken == null || jwtToken.length() == 0) {
@@ -47,11 +48,6 @@ public class JwtTokenManager {
         }
 
         long now = System.currentTimeMillis();
-        
-
-
-
-
 
         return result;
     }

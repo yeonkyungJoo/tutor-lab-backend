@@ -15,8 +15,23 @@ spring:
     password: 1234
 
   jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
-      ddl-auto: create
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    show-sql: true 
+      ddl-auto: create-drop
+    show-sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 902783645965-ald60d1ehnaeaoetihtb1861u98ppf3u.apps.googleusercontent.com
+            client-secret: U7889QYKM2Zgt-Ui2eEKqKzL
+            scope:
+            - email
+            - profile
+
+jwt:
+  secret: secret
+  token-validity-in-seconds: 86400

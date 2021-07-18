@@ -33,13 +33,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .httpBasic().disable()
+            .formLogin().disable()
 
             .authorizeRequests()
             .antMatchers(HttpMethod.POST, "/**").authenticated()
-            .antMatchers(HttpMethod.POST, "/login", "sign-up").permitAll()
+            .antMatchers("/login", "/oauth/**", "/sign-up/**", "/hello2").permitAll()
             .anyRequest().permitAll()
-
-            .and()
-            .oauth2Login();
+            ;
+            // .and()
+            // .oauth2Login();
     }
 }
