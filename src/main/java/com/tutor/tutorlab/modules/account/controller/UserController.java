@@ -61,7 +61,7 @@ public class UserController {
             OAuthInfo oAuthInfo = userService.getOAuthInfo(provider, code);
             if (oAuthInfo != null) {
 
-                User user = userRepository.findByProviderAndProviderId(provider, oAuthInfo.getProviderId());
+                User user = userRepository.findByProviderAndProviderId(oAuthInfo.getProvider(), oAuthInfo.getProviderId());
                 if (user != null) {
                     Map<String, String> result = userService.loginOAuth(user);
                     System.out.println(result);

@@ -1,4 +1,7 @@
-package com.tutor.tutorlab.config.security.oauth.provider;
+package com.tutor.tutorlab.config.security.oauth.provider.google;
+
+import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
+import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 
 import java.util.Map;
 
@@ -28,8 +31,8 @@ public class GoogleInfo implements OAuthInfo {
     }
 
     @Override
-    public String getProvider() {
-        return "google";
+    public OAuthType getProvider() {
+        return OAuthType.GOOGLE;
     }
 
     @Override

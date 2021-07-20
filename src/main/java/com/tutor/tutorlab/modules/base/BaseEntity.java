@@ -11,7 +11,7 @@ public abstract class BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false)
+    // @Column(nullable = false, updatable = false)
     protected Long id;
 
     @Column(updatable = false)

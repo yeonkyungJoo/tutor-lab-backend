@@ -1,14 +1,13 @@
 package com.tutor.tutorlab.modules.account.vo;
 
+import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,9 +20,12 @@ import java.util.List;
 @AttributeOverride(name = "id", column = @Column(name = "user_id"))
 public class User extends BaseEntity {
 
+    @Column(nullable = false, unique = true, updatable = false)
     private String username;    // 이메일
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String name;
     private String gender;
     private String phoneNumber;
@@ -33,14 +35,17 @@ public class User extends BaseEntity {
 
     // private Zone zone;
     private String zone;        // 지역
-    private String role;       // ROLE_USER,ROLE_ADMIN
+//    @Enumerated(EnumType.STRING)
+//    private RoleType role;
+    private String role;
 
-    private String provider;
+    @Enumerated(EnumType.STRING)
+    private OAuthType provider;
     private String providerId;
 
     @Builder
     public User(String username, String password, String name, String gender, String phoneNumber, String email, String nickname, String bio, String zone, String role,
-                LocalDateTime createdAt, String provider, String providerId) {
+                LocalDateTime createdAt, OAuthType provider, String providerId) {
         this.username = username;
         this.password = password;
         this.name = name;

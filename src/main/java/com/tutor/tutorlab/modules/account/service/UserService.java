@@ -2,9 +2,9 @@ package com.tutor.tutorlab.modules.account.service;
 
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
-import com.tutor.tutorlab.config.security.oauth.provider.GoogleInfo;
-import com.tutor.tutorlab.config.security.oauth.provider.GoogleOAuth;
-import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
+import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
+import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
+import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleOAuth;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.modules.account.controller.request.*;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
@@ -16,7 +16,6 @@ import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,18 +101,21 @@ public class UserService {
 
         Map<String, String> userInfo = null;
         OAuthInfo oAuthInfo = null;
-        switch (provider) {
-            case "google":
+
+        // convert
+        OAuthType oAuthType = OAuthInfo.getOAuthType(provider);
+        switch (oAuthType) {
+            case GOOGLE:
                 userInfo = googleOAuth.requestLogin(code);
                 if (userInfo != null) {
                     oAuthInfo = new GoogleInfo(userInfo);
                 }
                 break;
-            case "naver":
+            case NAVER:
                 break;
-            case "kakao":
+            case KAKAO:
                 break;
-            case "github":
+            case GITHUB:
                 break;
             default:
                 break;
