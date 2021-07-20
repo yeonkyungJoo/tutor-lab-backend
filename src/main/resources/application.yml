@@ -19,15 +19,19 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
       ddl-auto: create-drop
-    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+        show-sql: true
+
 
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: 902783645965-ald60d1ehnaeaoetihtb1861u98ppf3u.apps.googleusercontent.com
-            client-secret: U7889QYKM2Zgt-Ui2eEKqKzL
+            client-id:
+            client-secret:
             scope:
             - email
             - profile
