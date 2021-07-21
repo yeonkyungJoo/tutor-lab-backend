@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 
 @RestControllerAdvice
 @Slf4j
@@ -18,7 +19,7 @@ public class RestControllerExceptionAdvice {
     public ErrorResponse handlerRuntimeException(RuntimeException e, HttpServletRequest req) {
         log.error("===================== RuntimeException Handling =====================");
         e.printStackTrace();
-        return new ErrorResponse(HttpStatus.OK.value(), e.getMessage(), null);
+        return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), e.getMessage(), Collections.emptyList());
     }
 
 }
