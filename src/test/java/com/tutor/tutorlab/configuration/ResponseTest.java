@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ResponseTest extends AbstractTest{
+public class ResponseTest extends AbstractTest {
 
     @Test
     public void restResponseTest() throws Exception {
