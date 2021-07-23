@@ -2,9 +2,7 @@ package com.tutor.tutorlab.modules.lecture.vo;
 
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -12,9 +10,10 @@ import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
-@NoArgsConstructor(access = PROTECTED)
+@Builder
 @AllArgsConstructor
-@Getter
+@EqualsAndHashCode(of = "id")
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 @Table(name = "lecture")
 public class Lecture extends BaseEntity {
