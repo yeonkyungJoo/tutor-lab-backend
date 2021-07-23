@@ -4,5 +4,5 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class TuteeSignUpRequest extends SignUpRequest {
+public class TuteeSignUpRequest {
 }
