@@ -2,6 +2,8 @@ package com.tutor.tutorlab.modules.lecture.vo;
 
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.BaseEntity;
+import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
+import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,6 +12,7 @@ import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
+@Getter
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -48,14 +51,15 @@ public class Lecture extends BaseEntity {
     private Long totalCost;
 
     @Column(name = "difficulty", length = 20)
-    private String difficulty;
+    private DifficultyType difficulty;
 
-    @Column(name = "group_yn", length = 5)
-    private String groupYn;
+    @Column(name = "is_group", nullable = false)
+    private Boolean isGroup;
 
     @Column(name = "group_number")
     private Integer groupNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "system", length = 20)
-    private String system;
+    private SystemType system;
 }

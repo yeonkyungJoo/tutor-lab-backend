@@ -13,7 +13,10 @@ public class Tutee extends BaseEntity {
 
     @NotNull
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",
+                referencedColumnName = "id",
+                nullable = false,
+                foreignKey = @ForeignKey(name = "FK_TUTEE_USER_ID"))
     private User user;
 
     // private Set<Subject> subjects;      // 학습하고 싶은 과목

@@ -4,10 +4,7 @@ import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter @Setter
@@ -16,7 +13,10 @@ public class Tutor extends BaseEntity {
 
     @OneToOne(fetch = FetchType.EAGER)
     @NotNull
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",
+                referencedColumnName = "id",
+                nullable = false,
+                foreignKey = @ForeignKey(name = "FK_TUTOR_USER_ID"))
     private User user;
 /*
     private Set<Subject> subjects;
