@@ -19,45 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LectureControllerTest extends AbstractTest {
     private final String BASE_URL = "/lectures";
 
-    @Autowired
-    private LectureRepository lectureRepository;
-    @Autowired
-    private UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        User user = User.builder()
-                .username("doqndnffo@gmail.com")
-                .password("1")
-                .name("우성환")
-                .gender("M")
-                .phoneNumber("1")
-                .email("test")
-                .bio("test")
-                .zone("test")
-                .role("test")
-                .provider("dfs")
-                .providerId("fsd")
-                .build();
-
-        Lecture lecture = Lecture.builder()
-                .user(user)
-                .title("test")
-                .subTitle("test")
-                .content("test")
-                .totalTime(10)
-                .pertimeCost(1000L)
-                .totalCost(10000L)
-                .difficulty(DifficultyType.ADVANCED)
-                .isGroup(true)
-                .groupNumber(2)
-                .system(SystemType.ONLINE)
-                .build();
-
-        userRepository.save(user);
-        lectureRepository.save(lecture);
-    }
-
     @Test
     void 강의_한건조회() throws Exception{
         int id = 1;

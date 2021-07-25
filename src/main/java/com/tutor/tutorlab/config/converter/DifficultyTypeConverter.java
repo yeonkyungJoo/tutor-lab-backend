@@ -1,6 +1,5 @@
 package com.tutor.tutorlab.config.converter;
 
-import com.tutor.tutorlab.modules.base.Enumerable;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import org.apache.commons.lang3.StringUtils;
 

@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum DifficultyType implements Enumerable{
+public enum DifficultyType implements Enumerable {
     BEGINNER("BEGINNER", "초급"),
     INTERMEDIATE("INTERMEDIATE", "중급"),
     ADVANCED("ADVANCED", "고급");

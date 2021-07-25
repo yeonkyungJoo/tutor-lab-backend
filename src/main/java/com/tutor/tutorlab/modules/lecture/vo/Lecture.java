@@ -62,4 +62,6 @@ public class Lecture extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "system", length = 20)
     private SystemType system;
+
+
 }
