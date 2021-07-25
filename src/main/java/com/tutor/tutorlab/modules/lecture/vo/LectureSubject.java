@@ -24,7 +24,7 @@ public class LectureSubject extends BaseEntity {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "lecture_id",
-                referencedColumnName = "id",
+                referencedColumnName = "lecture_id",
                 nullable = false,
                 foreignKey = @ForeignKey(name = "FK_LECTURE_SUBJECT_LECTURE_ID"))
     private Lecture lecture;

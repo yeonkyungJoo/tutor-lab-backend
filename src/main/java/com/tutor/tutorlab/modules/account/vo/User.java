@@ -18,7 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
-//@AttributeOverride(name = "id", column = @Column(name = "user_id"))
+@AttributeOverride(name = "id", column = @Column(name = "user_id"))
 public class User extends BaseEntity {
 
     private String username;    // 이메일

@@ -14,7 +14,7 @@ public class Tutee extends BaseEntity {
     @NotNull
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id",
-                referencedColumnName = "id",
+                referencedColumnName = "user_id",
                 nullable = false,
                 foreignKey = @ForeignKey(name = "FK_TUTEE_USER_ID"))
     private User user;

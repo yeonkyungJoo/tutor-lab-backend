@@ -17,17 +17,14 @@ import static lombok.AccessLevel.PROTECTED;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = PROTECTED)
+@AttributeOverride(name = "id", column = @Column(name = "lecture_id"))
 @Entity
 @Table(name = "lecture")
 public class Lecture extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id",
-                referencedColumnName = "id",
+                referencedColumnName = "user_id",
                 nullable = false,
                 foreignKey = @ForeignKey(name = "FK_LECTURE_USER_ID"))
     private User user;

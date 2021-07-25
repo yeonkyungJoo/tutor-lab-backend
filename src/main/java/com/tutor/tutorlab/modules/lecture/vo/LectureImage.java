@@ -24,7 +24,7 @@ public class LectureImage extends BaseEntity {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "lecture_id",
-                referencedColumnName = "id",
+                referencedColumnName = "lecture_id",
                 nullable = false,
                 foreignKey = @ForeignKey(name = "FK_LECTURE_IMAGE_LECTURE_ID"))
     private Lecture lecture;
