@@ -56,6 +56,11 @@ public class EducationService {
     }
 
     public void deleteEducation(Long educationId) {
-        educationRepository.deleteById(educationId);
+
+        Education education = educationRepository.findById(educationId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 데이터입니다."));
+
+        education.delete();
+        educationRepository.delete(education);
     }
 }

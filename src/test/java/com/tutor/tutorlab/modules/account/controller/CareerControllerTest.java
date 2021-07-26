@@ -73,10 +73,10 @@ class CareerControllerTest {
                 .build();
 
         mockMvc.perform(post("/careers")
-        .content(objectMapper.writeValueAsString(careerCreateRequest))
-        .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
-        .andExpect(status().isCreated());
+                .content(objectMapper.writeValueAsString(careerCreateRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isCreated());
 
         List<Career> careers = tutor.getCareers();
         assertEquals(1, careers.size());
@@ -149,10 +149,10 @@ class CareerControllerTest {
                 .build();
 
         mockMvc.perform(put("/careers/" + careerId)
-        .content(objectMapper.writeValueAsString(careerUpdateRequest))
-        .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
-        .andExpect(status().isOk());
+                .content(objectMapper.writeValueAsString(careerUpdateRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
 
         // Then
         List<Career> careers = tutor.getCareers();
@@ -192,8 +192,8 @@ class CareerControllerTest {
         // When
         Long careerId = career.getId();
         mockMvc.perform(delete("/careers/" + careerId))
-        .andDo(print())
-        .andExpect(status().isOk());
+                .andDo(print())
+                .andExpect(status().isOk());
 
         // Then
         // TODO - CHECK : career가 존재하는 이유

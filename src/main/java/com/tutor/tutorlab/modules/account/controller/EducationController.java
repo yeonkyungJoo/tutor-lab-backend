@@ -71,7 +71,7 @@ public class EducationController {
 
         }
         educationService.createEducation(user, educationCreateRequest);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     /**

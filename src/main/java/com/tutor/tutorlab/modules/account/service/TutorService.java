@@ -46,6 +46,7 @@ public class TutorService {
                     .build();
 
             careerRepository.save(career);
+            tutor.addCareer(career);
         });
 
         tutorSignUpRequest.getEducations().stream().forEach(educationCreateRequest -> {
@@ -59,6 +60,7 @@ public class TutorService {
                     .degree(educationCreateRequest.getDegree())
                     .build();
             educationRepository.save(education);
+            tutor.addEducation(education);
         });
     }
 
