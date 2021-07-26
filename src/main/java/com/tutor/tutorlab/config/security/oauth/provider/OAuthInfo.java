@@ -1,7 +1,5 @@
 package com.tutor.tutorlab.config.security.oauth.provider;
 
-import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
-
 public interface OAuthInfo {
 
     public static OAuthType getOAuthType(String provider) {
@@ -13,8 +11,6 @@ public interface OAuthInfo {
                 return OAuthType.NAVER;
             case "kakao":
                 return OAuthType.KAKAO;
-            case "github":
-                return OAuthType.GITHUB;
             default:
                 return null;
         }
