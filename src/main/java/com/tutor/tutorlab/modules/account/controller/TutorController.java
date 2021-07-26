@@ -1,11 +1,12 @@
 package com.tutor.tutorlab.modules.account.controller;
 
-import com.tutor.tutorlab.modules.account.career.Career;
-import com.tutor.tutorlab.modules.account.education.Education;
+import com.tutor.tutorlab.config.security.CurrentUser;
+import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
+import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
-import com.tutor.tutorlab.utils.LocalDateTimeUtil;
+import com.tutor.tutorlab.modules.account.vo.User;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("/tutor")
+@RequestMapping("/tutors")
 @RestController
 @RequiredArgsConstructor
 public class TutorController {
@@ -29,11 +30,9 @@ public class TutorController {
     private final TutorService tutorService;
     private final TutorRepository tutorRepository;
 
-    /**
-     * 튜터 전체 조회
-     */
+/*
     @ApiOperation("튜터 전체 조회")
-    @RequestMapping("/")
+    @GetMapping
     public ResponseEntity getTutors() {
 
         List<TutorDto> tutors = tutorRepository.findAll().stream()
@@ -42,13 +41,14 @@ public class TutorController {
         // TODO - RestResponse
         return new ResponseEntity(tutors, HttpStatus.OK);
     }
+*/
 
     // TODO - 검색
     /**
      * 튜터 전체 조회 - 페이징
      */
     @ApiOperation("튜터 전체 조회 - 페이징")
-    @RequestMapping("/list")
+    @GetMapping
     public ResponseEntity getTutors(@RequestParam(defaultValue = "1") Integer page) {
 
         Page<TutorDto> tutors = tutorRepository.findAll(
@@ -63,8 +63,8 @@ public class TutorController {
      * 튜터 조회
      */
     @ApiOperation("튜터 조회")
-    @GetMapping("/{id}")
-    public ResponseEntity getTutor(@PathVariable(name = "id") Long tutorId) {
+    @GetMapping("/{tutor_id}")
+    public ResponseEntity getTutor(@PathVariable(name = "tutor_id") Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 튜터입니다."));
@@ -75,86 +75,66 @@ public class TutorController {
      * 튜터 등록
      */
     @ApiOperation("튜터 등록")
-    @PostMapping("/new")
-    public ResponseEntity newTutor() {
-        return null;
+    @PostMapping
+    public ResponseEntity newTutor(@CurrentUser User user,
+                        @RequestBody TutorSignUpRequest tutorSignUpRequest) {
+
+        if (user == null) {
+            // TODO - 예외처리 : UnAuthenticatedException or AccessDeniedException
+        }
+        tutorService.createTutor(user, tutorSignUpRequest);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /**
      * 튜터 정보 수정
      */
     @ApiOperation("튜터 정보 수정")
-    @PutMapping("/edit")
-    public ResponseEntity editTutor() {
-        return null;
+    @PutMapping
+    public ResponseEntity editTutor(@CurrentUser User user,
+                                    @RequestBody TutorUpdateRequest tutorUpdateRequest) {
+        if (user == null) {
+
+        }
+        tutorService.updateTutor(user, tutorUpdateRequest);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /**
      * 튜터 탈퇴
      */
     @ApiOperation("튜터 탈퇴")
-    @DeleteMapping("/quit")
-    public ResponseEntity quitTutor() {
-        return null;
+    @DeleteMapping
+    public ResponseEntity quitTutor(@CurrentUser User user) {
+
+        if (user == null) {
+
+        }
+        tutorService.deleteTutor(user);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @Data
     static class TutorDto {
 
         private UserController.UserDto user;
-        private String subject;
-        private List<CareerDto> careers;
-        private List<EducationDto> educations;
+        private String subjects;
+        private List<CareerController.CareerDto> careers;
+        private List<EducationController.EducationDto> educations;
         private boolean specialist;
 
         public TutorDto(Tutor tutor) {
             this.user = new UserController.UserDto(tutor.getUser());
-            this.subject = tutor.getSubject();
+            this.subjects = tutor.getSubjects();
             this.careers = tutor.getCareers().stream()
                     // TODO - CHECK : static
-                    .map(career -> new TutorController.CareerDto(career)).collect(Collectors.toList());
+                    .map(career -> new CareerController.CareerDto(career)).collect(Collectors.toList());
             this.educations = tutor.getEducations().stream()
-                    .map(education -> new TutorController.EducationDto(education)).collect(Collectors.toList());
+                    .map(education -> new EducationController.EducationDto(education)).collect(Collectors.toList());
             this.specialist = tutor.isSpecialist();
         }
 
     }
 
-    @Data
-    static class CareerDto {
 
-        private String companyName;
-        private String duty;
-        private String startDate;
-        private String endDate;
-        private boolean present;
-
-        public CareerDto(Career career) {
-            this.companyName = career.getCompanyName();
-            this.duty = career.getDuty();
-            this.startDate = LocalDateTimeUtil.getDateToString(career.getStartDate());
-            this.endDate = LocalDateTimeUtil.getDateToString(career.getEndDate());
-            this.present = career.isPresent();
-        }
-    }
-
-    @Data
-    static class EducationDto {
-
-        private String schoolName;
-        private String major;
-        private String entranceDate;
-        private String graduationDate;
-        private double score;
-        private String degree;
-
-        public EducationDto(Education education) {
-            this.schoolName = education.getSchoolName();
-            this.major = education.getMajor();
-            this.entranceDate = LocalDateTimeUtil.getDateToString(education.getEntranceDate());
-            this.graduationDate = LocalDateTimeUtil.getDateToString(education.getGraduationDate());
-            this.score = education.getScore();
-            this.degree = education.getDegree();
-        }
-    }
 }

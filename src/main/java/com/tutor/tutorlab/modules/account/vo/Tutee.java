@@ -23,11 +23,11 @@ public class Tutee extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-    private String subject;      // 학습하고 싶은 과목
+    private String subjects;      // 학습하고 싶은 과목
 
     public List<String> getSubjectList() {
-        if (this.subject.length() > 0) {
-            return Arrays.asList(this.subject.split(","));
+        if (this.subjects.length() > 0) {
+            return Arrays.asList(this.subjects.split(","));
         }
         return Collections.emptyList();
     }

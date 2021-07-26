@@ -3,7 +3,7 @@ package com.tutor.tutorlab.modules.account.controller.request;
 import lombok.Data;
 
 @Data
-public class UpdateUserRequest {
+public class UserUpdateRequest {
 
     private String phoneNumber;
     private String email;

@@ -15,7 +15,7 @@ public abstract class BaseEntity {
     protected Long id;
 
     @Column(updatable = false)
-    protected LocalDateTime createdAt;
+    protected LocalDateTime createdAt = LocalDateTime.now();
     @Column(nullable = true)
     protected LocalDateTime updatedAt;
 

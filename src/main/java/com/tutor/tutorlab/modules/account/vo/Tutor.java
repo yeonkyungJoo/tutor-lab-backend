@@ -1,12 +1,7 @@
 package com.tutor.tutorlab.modules.account.vo;
 
-import com.tutor.tutorlab.modules.account.career.Career;
-import com.tutor.tutorlab.modules.account.education.Education;
 import com.tutor.tutorlab.modules.base.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,7 +12,6 @@ import java.util.List;
 
 @AttributeOverride(name = "id", column = @Column(name = "tutor_id"))
 @Getter @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Tutor extends BaseEntity {
@@ -26,7 +20,7 @@ public class Tutor extends BaseEntity {
     @NotNull
     @JoinColumn(name = "user_id")
     private User user;
-    private String subject;
+    private String subjects;
 
     // TODO - CASCADE
     // TODO - check : FETCH
@@ -38,8 +32,8 @@ public class Tutor extends BaseEntity {
     private boolean specialist;
 
     public List<String> getSubjectList() {
-        if (this.subject.length() > 0) {
-            return Arrays.asList(this.subject.split(","));
+        if (this.subjects.length() > 0) {
+            return Arrays.asList(this.subjects.split(","));
         }
         return Collections.emptyList();
     }
@@ -64,8 +58,16 @@ public class Tutor extends BaseEntity {
                 .forEach(education -> education.setTutor(null));
         this.educations.clear();
 
-        setUser(null);
+        // setUser(null);
+        // TODO - CHECK
+        this.user.setRole(RoleType.ROLE_TUTEE);
     }
 
+    @Builder
+    public Tutor(@NotNull User user, String subjects, boolean specialist) {
 
+        this.user = user;
+        this.subjects = subjects;
+        this.specialist = specialist;
+    }
 }

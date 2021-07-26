@@ -36,8 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin().disable()
 
             .authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/**").authenticated()
-            .antMatchers("/login", "/oauth/**", "/sign-up/**", "/hello2").permitAll()
+            // .antMatchers(HttpMethod.POST, "/**").permitAll()
+            // .antMatchers("/login", "/oauth/**", "/sign-up/**", "/hello2").permitAll()
             .anyRequest().permitAll()
             ;
             // .and()

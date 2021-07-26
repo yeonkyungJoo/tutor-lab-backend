@@ -10,6 +10,7 @@ import com.tutor.tutorlab.modules.account.controller.request.*;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -69,7 +70,7 @@ public class LoginService {
                 .zone(request.getZone())
                 //.role(request.getRole())
                 //.role("ROLE_USER")
-                .role("ROLE_TUTEE")
+                .role(RoleType.ROLE_TUTEE)
                 .createdAt(LocalDateTime.now())
                 .provider(null)
                 .providerId(null)
@@ -125,8 +126,6 @@ public class LoginService {
                 break;
             case NAVER:
                 break;
-            case KAKAO:
-                break;
             default:
                 break;
         }
@@ -154,7 +153,7 @@ public class LoginService {
                 .bio(null)
                 .zone(null)
                 //.role(request.getRole())
-                .role("ROLE_USER")
+                .role(RoleType.ROLE_TUTEE)
                 .createdAt(LocalDateTime.now())
                 .provider(oAuthInfo.getProvider())
                 .providerId(oAuthInfo.getProviderId())

@@ -6,9 +6,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Getter
 @Setter
@@ -39,17 +36,17 @@ public class User extends BaseEntity {
     // private Zone zone;
     private String zone;        // 지역
 
-//    @Enumerated(EnumType.STRING)
-//    private RoleType role;
-    // @ColumnDefault("'ROLE_TUTEE'")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private RoleType role;
+/*    @ColumnDefault("'ROLE_TUTEE'")
+    private String role;*/
 
     @Enumerated(EnumType.STRING)
     private OAuthType provider;
     private String providerId;
 
     @Builder
-    public User(String username, String password, String name, String gender, String phoneNumber, String email, String nickname, String bio, String zone, String role,
+    public User(String username, String password, String name, String gender, String phoneNumber, String email, String nickname, String bio, String zone, RoleType role,
                 LocalDateTime createdAt, OAuthType provider, String providerId) {
         this.username = username;
         this.password = password;
@@ -66,13 +63,6 @@ public class User extends BaseEntity {
 
         this.provider = provider;
         this.providerId = providerId;
-    }
-
-    public List<String> getRoleList() {
-        if (this.role.length() > 0) {
-            return Arrays.asList(this.role.split(","));
-        }
-        return new ArrayList<>();
     }
 
 }
