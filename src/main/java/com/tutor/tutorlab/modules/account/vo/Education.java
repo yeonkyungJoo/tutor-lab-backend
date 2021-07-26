@@ -37,4 +37,9 @@ public class Education extends BaseEntity {
         this.score = score;
         this.degree = degree;
     }
+
+    public void delete() {
+        this.tutor.getEducations().remove(this);
+        this.tutor = null;
+    }
 }

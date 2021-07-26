@@ -57,7 +57,7 @@ public class CareerService {
         Career career = careerRepository.findById(careerId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 데이터입니다."));
 
-        career.deleteCareer();
+        career.delete();
         careerRepository.delete(career);
     }
 }

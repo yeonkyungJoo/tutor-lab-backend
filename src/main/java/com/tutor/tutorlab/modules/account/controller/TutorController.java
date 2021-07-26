@@ -83,7 +83,7 @@ public class TutorController {
             // TODO - 예외처리 : UnAuthenticatedException or AccessDeniedException
         }
         tutorService.createTutor(user, tutorSignUpRequest);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     /**

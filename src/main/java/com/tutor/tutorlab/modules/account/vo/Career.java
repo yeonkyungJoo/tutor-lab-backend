@@ -36,7 +36,7 @@ public class Career extends BaseEntity {
         this.present = present;
     }
 
-    public void deleteCareer() {
+    public void delete() {
         this.tutor.getCareers().remove(this);
         this.tutor = null;
     }
