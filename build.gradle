@@ -25,10 +25,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'com.auth0:java-jwt:3.17.0'
-	compileOnly 'org.projectlombok:lombok'
+
+	// compileOnly 'org.projectlombok:lombok'
+	implementation 'org.projectlombok:lombok'
+	annotationProcessor('org.projectlombok:lombok')
+	testAnnotationProcessor('org.projectlombok:lombok')
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'mysql:mysql-connector-java'
-	annotationProcessor 'org.projectlombok:lombok'
     // https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1
 	implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
@@ -38,9 +42,9 @@ dependencies {
 	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
-	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.5.RELEASE'
+	// implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.5.RELEASE'
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
-	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.853'
+	// implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.853'
 	// https://mvnrepository.com/artifact/commons-io/commons-io
 	implementation group: 'commons-io', name: 'commons-io', version: '2.4'
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
