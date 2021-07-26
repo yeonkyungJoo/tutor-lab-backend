@@ -1,9 +1,9 @@
-package com.tutor.tutorlab.config.security.oauth.provider.github;
+package com.tutor.tutorlab.config.security.oauth.provider.kakao;
 
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 
-public class GithubInfo implements OAuthInfo {
+public class KakaoInfo implements OAuthInfo {
 
     @Override
     public String getProviderId() {
@@ -12,7 +12,7 @@ public class GithubInfo implements OAuthInfo {
 
     @Override
     public OAuthType getProvider() {
-        return OAuthType.GITHUB;
+        return OAuthType.KAKAO;
     }
 
     @Override
