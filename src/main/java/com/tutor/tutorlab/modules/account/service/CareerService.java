@@ -21,7 +21,7 @@ public class CareerService {
     private final CareerRepository careerRepository;
     private final TutorRepository tutorRepository;
 
-    public void createCareer(User user, CareerCreateRequest careerCreateRequest) {
+    public Career createCareer(User user, CareerCreateRequest careerCreateRequest) {
 
         Tutor tutor = tutorRepository.findByUser(user);
         if (tutor == null) {
@@ -38,6 +38,8 @@ public class CareerService {
                 .build();
         careerRepository.save(career);
         tutor.addCareer(career);
+
+        return career;
     }
 
     public void updateCareer(Long careerId, CareerUpdateRequest careerUpdateRequest) {

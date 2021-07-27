@@ -1,6 +1,6 @@
 package com.tutor.tutorlab.modules.account.service;
 
-import com.tutor.tutorlab.modules.account.controller.request.TuteeSignUpRequest;
+import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.RoleType;
@@ -18,14 +18,14 @@ public class TuteeService {
     private final UserRepository userRepository;
     private final TuteeRepository tuteeRepository;
 
-    public void updateTutee(User user, TuteeSignUpRequest tuteeSignUpRequest) {
+    public void updateTutee(User user, TuteeUpdateRequest tuteeUpdateRequest) {
 
         Tutee tutee = tuteeRepository.findByUser(user);
         if (tutee == null) {
 
         }
 
-        tutee.setSubjects(tuteeSignUpRequest.getSubjects());
+        tutee.setSubjects(tuteeUpdateRequest.getSubjects());
     }
 
     public void deleteTutee(User user) {

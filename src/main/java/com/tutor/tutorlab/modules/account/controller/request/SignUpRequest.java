@@ -28,7 +28,5 @@ public class SignUpRequest {
     private String bio;
 
     private String zone;
-    @NotBlank
-    private String role;
 
 }

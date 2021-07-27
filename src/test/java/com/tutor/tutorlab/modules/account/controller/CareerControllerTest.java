@@ -5,10 +5,14 @@ import com.tutor.tutorlab.MockMvcTest;
 import com.tutor.tutorlab.WithAccount;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.CareerRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.service.CareerService;
+import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Career;
+import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +44,11 @@ class CareerControllerTest {
     private CareerRepository careerRepository;
 
     @Autowired
+    private TutorService tutorService;
+    @Autowired
+    private CareerService careerService;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
@@ -55,12 +64,23 @@ class CareerControllerTest {
 
         // Given
         User user = userRepository.findByName("yk");
+
+        // TODO - CHECK : user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
+        /*
         Tutor tutor = Tutor.builder()
                 .user(user)
                 .subjects("java,spring")
                 .specialist(false)
                 .build();
         tutorRepository.save(tutor);
+        */
+
+        // tutorService 테스트
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
         // Then
@@ -77,6 +97,9 @@ class CareerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated());
+
+        // Tutor tutor = tutorRepository.findByUser(user);
+        assertEquals(RoleType.ROLE_TUTOR, user.getRole());
 
         List<Career> careers = tutor.getCareers();
         assertEquals(1, careers.size());
@@ -114,6 +137,18 @@ class CareerControllerTest {
         // Then
     }
 
+    // TODO
+    @Test
+    @DisplayName("Career 등록 - 튜터가 아닌 경우")
+    public void newCareer_notTutor() throws Exception {
+
+        // Given
+
+        // When
+
+        // Then
+    }
+
     @Test
     @DisplayName("Career 수정")
     @WithAccount("yk")
@@ -121,6 +156,9 @@ class CareerControllerTest {
 
         // Given
         User user = userRepository.findByName("yk");
+
+        // TODO - CHECK : user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
+        /*
         Tutor tutor = Tutor.builder()
                 .user(user)
                 .subjects("java,spring")
@@ -137,6 +175,23 @@ class CareerControllerTest {
                 .build();
         careerRepository.save(career);
         tutor.addCareer(career);
+        */
+
+        // tutorService, CareerService 테스트
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+
+        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
+                .companyName("tutorlab")
+                .duty("engineer")
+                .startDate("2007-12-03")
+                .endDate("2007-12-04")
+                .present(false)
+                .build();
+        Career career = careerService.createCareer(user, careerCreateRequest);
 
         // When
         Long careerId = career.getId();
@@ -155,6 +210,8 @@ class CareerControllerTest {
                 .andExpect(status().isOk());
 
         // Then
+        assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+
         List<Career> careers = tutor.getCareers();
         assertEquals(1, careers.size());
 
@@ -172,6 +229,9 @@ class CareerControllerTest {
 
         // Given
         User user = userRepository.findByName("yk");
+
+        // TODO - CHECK : user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
+        /*
         Tutor tutor = Tutor.builder()
                 .user(user)
                 .subjects("java,spring")
@@ -188,6 +248,23 @@ class CareerControllerTest {
                 .build();
         careerRepository.save(career);
         tutor.addCareer(career);
+        */
+
+        // tutorService, CareerService 테스트
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+
+        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
+                .companyName("tutorlab")
+                .duty("engineer")
+                .startDate("2007-12-03")
+                .endDate("2007-12-04")
+                .present(false)
+                .build();
+        Career career = careerService.createCareer(user, careerCreateRequest);
 
         // When
         Long careerId = career.getId();

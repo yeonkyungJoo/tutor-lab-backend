@@ -25,7 +25,7 @@ public class TutorService {
     private final CareerRepository careerRepository;
     private final EducationRepository educationRepository;
 
-    public void createTutor(User user, TutorSignUpRequest tutorSignUpRequest) {
+    public Tutor createTutor(User user, TutorSignUpRequest tutorSignUpRequest) {
 
         Tutor tutor = Tutor.builder()
                 .user(user)
@@ -34,6 +34,7 @@ public class TutorService {
                 .build();
 
         tutorRepository.save(tutor);
+        user.setRole(RoleType.ROLE_TUTOR);
 
         tutorSignUpRequest.getCareers().stream().forEach(careerCreateRequest -> {
             Career career = Career.builder()
@@ -62,6 +63,8 @@ public class TutorService {
             educationRepository.save(education);
             tutor.addEducation(education);
         });
+
+        return tutor;
     }
 
     public void updateTutor(User user, TutorUpdateRequest tutorUpdateRequest) {
@@ -84,6 +87,8 @@ public class TutorService {
             if (tutor == null) {
 
             }
+
+            // TODO - CHECK : career, education이 삭제가 안 된다?
             // Career 삭제
             tutor.getCareers().stream()
                     .forEach(career -> {

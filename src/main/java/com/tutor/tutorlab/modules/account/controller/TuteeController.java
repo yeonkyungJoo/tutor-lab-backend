@@ -1,7 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.tutor.tutorlab.config.security.CurrentUser;
-import com.tutor.tutorlab.modules.account.controller.request.TuteeSignUpRequest;
+import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.service.TuteeService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
@@ -15,9 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequestMapping("/tutees")
 @RestController
@@ -72,12 +69,12 @@ public class TuteeController {
     @ApiOperation("튜티 정보 수정")
     @PutMapping
     public ResponseEntity editTutee(@CurrentUser User user,
-                                    @RequestBody TuteeSignUpRequest tuteeSignUpRequest) {
+                                    @RequestBody TuteeUpdateRequest tuteeUpdateRequest) {
 
         if (user == null) {
 
         }
-        tuteeService.updateTutee(user, tuteeSignUpRequest);
+        tuteeService.updateTutee(user, tuteeUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
 

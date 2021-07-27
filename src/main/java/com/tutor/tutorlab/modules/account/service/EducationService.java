@@ -21,7 +21,7 @@ public class EducationService {
     private final EducationRepository educationRepository;
     private final TutorRepository tutorRepository;
 
-    public void createEducation(User user, EducationCreateRequest educationCreateRequest) {
+    public Education createEducation(User user, EducationCreateRequest educationCreateRequest) {
 
         Tutor tutor = tutorRepository.findByUser(user);
         if (tutor == null) {
@@ -40,6 +40,7 @@ public class EducationService {
         educationRepository.save(education);
         tutor.addEducation(education);
 
+        return education;
     }
 
     public void updateEducation(Long educationId, EducationUpdateRequest educationUpdateRequest) {

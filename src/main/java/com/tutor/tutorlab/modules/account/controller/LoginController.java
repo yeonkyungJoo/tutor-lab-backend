@@ -1,18 +1,17 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
+import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TuteeSignUpRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.LoginService;
-import com.tutor.tutorlab.modules.account.validator.SignUpRequestValidator;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,12 +24,12 @@ public class LoginController {
 
     private final LoginService loginService;
     private final UserRepository userRepository;
-    private final SignUpRequestValidator signUpRequestValidator;
+    // private final SignUpRequestValidator signUpRequestValidator;
 
-    @InitBinder("signUpRequest")
+/*    @InitBinder("signUpRequest")
     public void validateSignUpRequest(WebDataBinder binder) {
         binder.addValidators(signUpRequestValidator);
-    }
+    }*/
 
     @GetMapping("/oauth/{provider}")
     public void oauth(@PathVariable(name = "provider") String provider, HttpServletResponse response) {
@@ -64,13 +63,20 @@ public class LoginController {
 
                 User user = userRepository.findByProviderAndProviderId(oAuthInfo.getProvider(), oAuthInfo.getProviderId());
                 if (user != null) {
+                    // 이미 가입된 회원이므로 바로 로그인 진행
                     Map<String, String> result = loginService.loginOAuth(user);
+
+                    // TODO - TOKEN
                     System.out.println(result);
                     // {header=Authorization, token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXYueWsyMDIxQGdtYWlsLmNvbSIsImV4cCI6MTYyNjYxMzg5NCwiaWF0IjoxNjI2NTI3NDk0fQ.j_d2B_Gsl1XVNDAYuMeYO_3DGznH_UOzGIL2J7Y3Yas}
 
                     return null;
                 } else {
-                    Long userId = loginService.signUpOAuth(oAuthInfo);
+
+                    // 회원가입 - 강제 로그인 
+                    // 추가 정보 입력 필요
+                    Map<String, String> result = loginService.signUpOAuth(oAuthInfo);
+
                     return null;
                 }
 
@@ -88,9 +94,15 @@ public class LoginController {
      * OAuth 회원가입 추가 정보 입력
      */
     @PostMapping("/sign-up/oauth/detail")
-    public ResponseEntity signUpOAuthDetail() {
+    public ResponseEntity signUpOAuthDetail(@CurrentUser User user,
+                                            @RequestBody SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
 
-        return null;
+        if (user == null) {
+
+        }
+
+        loginService.signUpOAuthDetail(user, signUpOAuthDetailRequest);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 
@@ -98,18 +110,9 @@ public class LoginController {
     // 일반 회원가입
     @PostMapping("/sign-up")
     public ResponseEntity signUp(@RequestBody SignUpRequest signUpRequest) {
-        loginService.signUp(signUpRequest);
-        return null;
-    }
 
-    /**
-     * 튜터로 가입
-     */
-    @PostMapping("/sign-up/tutor")
-    public ResponseEntity signUpTutor(@RequestBody TutorSignUpRequest tutorSignUpRequest) {
-        // TODO - @CurrentUser
-        loginService.signUpTutor(tutorSignUpRequest);
-        return null;
+        loginService.signUp(signUpRequest);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     /**
@@ -125,6 +128,5 @@ public class LoginController {
         }
         return null;
     }
-
 
 }

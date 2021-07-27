@@ -2,17 +2,19 @@ package com.tutor.tutorlab.modules.account.service;
 
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
+import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleOAuth;
-import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
-import com.tutor.tutorlab.modules.account.controller.request.*;
+import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
+import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
+import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.vo.GenderType;
 import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
-import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
@@ -21,7 +23,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,53 +49,6 @@ public class LoginService {
             duplicated = true;
         }
         return duplicated;
-    }
-
-    private User createUser(SignUpRequest request) {
-
-        String username = request.getUsername();
-        if (checkUsernameDuplication(username)) {
-            // TODO - 에러
-            return null;
-        }
-
-        User user = User.builder()
-                .username(username)
-                .password(bCryptPasswordEncoder.encode(request.getPassword()))
-                .name(request.getName())
-                .gender(request.getGender())
-                .phoneNumber(request.getPhoneNumber())
-                .email(request.getEmail())
-                .nickname(request.getNickname())
-                .bio(request.getBio())
-                .zone(request.getZone())
-                //.role(request.getRole())
-                //.role("ROLE_USER")
-                .role(RoleType.ROLE_TUTEE)
-                .createdAt(LocalDateTime.now())
-                .provider(null)
-                .providerId(null)
-                .build();
-
-        return userRepository.save(user);
-    }
-
-    public Long signUpTutor(TutorSignUpRequest tutorSignUpRequest) {
-
-        // TODO - Tutor builder
-        Tutor tutor = new Tutor();
-        tutor.setCreatedAt(LocalDateTime.now());
-
-        return tutorRepository.save(tutor).getId();
-    }
-
-    public Long signUp(SignUpRequest signUpRequest) {
-
-        Tutee tutee = new Tutee();
-        tutee.setUser(createUser(signUpRequest));
-        tutee.setCreatedAt(LocalDateTime.now());
-
-        return tuteeRepository.save(tutee).getId();
     }
 
     public OAuthInfo getOAuthInfo(String provider, String code) throws Exception {
@@ -134,7 +88,7 @@ public class LoginService {
         return oAuthInfo;
     }
 
-    public Long signUpOAuth(OAuthInfo oAuthInfo) {
+    public Map<String, String> signUpOAuth(OAuthInfo oAuthInfo) throws Exception {
 
         String username = oAuthInfo.getEmail();
         if (checkUsernameDuplication(username)) {
@@ -152,15 +106,15 @@ public class LoginService {
                 .nickname(null)
                 .bio(null)
                 .zone(null)
-                //.role(request.getRole())
                 .role(RoleType.ROLE_TUTEE)
-                .createdAt(LocalDateTime.now())
+                //.createdAt(LocalDateTime.now())
                 .provider(oAuthInfo.getProvider())
                 .providerId(oAuthInfo.getProviderId())
                 .build();
 
         userRepository.save(user);
-        return user.getId();
+        // 강제 로그인
+        return loginOAuth(user);
     }
 
     public Map<String, String> loginOAuth(User user) throws Exception {
@@ -174,6 +128,47 @@ public class LoginService {
         }
 
         return null;
+    }
+
+    public void signUpOAuthDetail(User user, SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
+
+        user.setGender(signUpOAuthDetailRequest.getGender() == "MALE" ? GenderType.MALE : GenderType.FEMALE);
+        user.setPhoneNumber(signUpOAuthDetailRequest.getPhoneNumber());
+        user.setEmail(signUpOAuthDetailRequest.getEmail());
+        user.setNickname(signUpOAuthDetailRequest.getNickname());
+        user.setBio(signUpOAuthDetailRequest.getBio());
+        user.setZone(signUpOAuthDetailRequest.getZone());
+    }
+
+    public Tutee signUp(SignUpRequest signUpRequest) {
+
+        String username = signUpRequest.getUsername();
+        if (checkUsernameDuplication(username)) {
+            // TODO - 에러
+            return null;
+        }
+
+        User user = User.builder()
+                .username(username)
+                .password(bCryptPasswordEncoder.encode(signUpRequest.getPassword()))
+                .name(signUpRequest.getName())
+                .gender(signUpRequest.getGender())
+                .phoneNumber(signUpRequest.getPhoneNumber())
+                .email(signUpRequest.getEmail())
+                .nickname(signUpRequest.getNickname())
+                .bio(signUpRequest.getBio())
+                .zone(signUpRequest.getZone())
+                .role(RoleType.ROLE_TUTEE)
+                //.createdAt(LocalDateTime.now())
+                .provider(null)
+                .providerId(null)
+                .build();
+
+        userRepository.save(user);
+
+        Tutee tutee = new Tutee();
+        tutee.setUser(user);
+        return tuteeRepository.save(tutee);
     }
 
     private Authentication authenticate(String username, String password) throws Exception {

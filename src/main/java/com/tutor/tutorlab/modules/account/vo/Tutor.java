@@ -52,11 +52,11 @@ public class Tutor extends BaseEntity {
     public void quit() {
         this.careers.stream()
                 .forEach(career -> career.setTutor(null));
-        this.careers.clear();
+        // this.careers.clear();
 
         this.educations.stream()
                 .forEach(education -> education.setTutor(null));
-        this.educations.clear();
+        // this.educations.clear();
 
         // setUser(null);
         // TODO - CHECK
