@@ -100,7 +100,7 @@ public class TutorService {
                         educationRepository.delete(education);
                     });
             tutor.quit();
-            tutorRepository.delete(tutor);
+            // tutorRepository.delete(tutor);
 
 
         } else {

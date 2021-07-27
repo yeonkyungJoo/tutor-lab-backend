@@ -11,12 +11,12 @@ import javax.mail.internet.MimeMessage;
 @RequiredArgsConstructor
 public class HtmlEmailService implements EmailService {
 
-    private final JavaMailSender javaMailSender;
+    // private final JavaMailSender javaMailSender;
 
     @Override
     public void send(EmailMessage message) {
 
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        // MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         // MimeMessageHelper mimeMessageHelper = new MimeMessageHelper();
     }
