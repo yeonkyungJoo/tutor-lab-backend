@@ -1,6 +1,5 @@
 package com.tutor.tutorlab.config.converter;
 
-import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import org.apache.commons.lang3.StringUtils;
 
@@ -8,7 +7,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.Objects;
 
-@Converter
+@Converter(autoApply = true)
 public class SystemTypeConverter implements AttributeConverter<SystemType, String> {
     @Override
     public String convertToDatabaseColumn(SystemType attribute) {

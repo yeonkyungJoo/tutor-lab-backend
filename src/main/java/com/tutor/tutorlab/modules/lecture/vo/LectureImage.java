@@ -14,13 +14,10 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
 @Getter
+@AttributeOverride(name = "id", column = @Column(name = "lecture_image_id"))
 @Entity
 @Table(name = "lecture_image")
 public class LectureImage extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "lecture_id",

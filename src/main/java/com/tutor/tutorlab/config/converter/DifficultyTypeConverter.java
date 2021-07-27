@@ -7,7 +7,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.Objects;
 
-@Converter
+@Converter(autoApply = true)
 public class DifficultyTypeConverter implements AttributeConverter<DifficultyType, String> {
     @Override
     public String convertToDatabaseColumn(DifficultyType attribute) {
