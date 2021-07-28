@@ -9,5 +9,4 @@ class UserControllerTest {
 
     // 권한 에러
 
-    //
 }

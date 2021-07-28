@@ -2,10 +2,13 @@ package com.tutor.tutorlab.config.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.tutor.tutorlab.config.security.PrincipalDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,15 +43,30 @@ public class JwtTokenManager {
         return map;
     }
 
-    // TODO - verify
-    public boolean verifyToken(String jwtToken) {
+    public DecodedJWT getDecodedToken(String jwtToken) {
+        if (jwtToken == null || jwtToken.length() == 0) {
+            return null;
+        }
+        return JWT.require(Algorithm.HMAC256(secret)).build().verify(jwtToken);
+    }
+
+    private boolean isExpiredToken(String jwtToken) {
+        return getDecodedToken(jwtToken).getExpiresAt().before(new Date());
+    }
+
+    private Map<String, Claim> getClaims(String jwtToken) {
+        return getDecodedToken(jwtToken).getClaims();
+    }
+
+    public String getClaim(String jwtToken, String name) {
+        return getClaims(jwtToken).get(name).asString();
+    }
+
+    public boolean verifyToken(String jwtToken, PrincipalDetails principalDetails) {
         boolean result = false;
         if (jwtToken == null || jwtToken.length() == 0) {
             return result;
         }
-
-        long now = System.currentTimeMillis();
-
-        return result;
+        return !isExpiredToken(jwtToken) && (getClaim(jwtToken, "username").equals(principalDetails.getUsername()));
     }
 }

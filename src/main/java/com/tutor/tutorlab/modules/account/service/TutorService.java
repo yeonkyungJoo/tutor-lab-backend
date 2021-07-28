@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional(readOnly = false)
@@ -76,35 +77,37 @@ public class TutorService {
 
         tutor.setSubjects(tutorUpdateRequest.getSubjects());
         tutor.setSpecialist(tutorUpdateRequest.isSpecialist());
+
+        tutor.setUpdatedAt(LocalDateTime.now());
     }
 
     // TODO - check : CASCADE
     public void deleteTutor(User user) {
 
-        if (user.getRole().equals(RoleType.ROLE_TUTOR)) {
-
-            Tutor tutor = tutorRepository.findByUser(user);
-            if (tutor == null) {
-
-            }
-
-            // TODO - CHECK : career, education이 삭제가 안 된다?
-            // Career 삭제
-            tutor.getCareers().stream()
-                    .forEach(career -> {
-                        careerRepository.delete(career);
-                    });
-            // Education 삭제
-            tutor.getEducations().stream()
-                    .forEach(education -> {
-                        educationRepository.delete(education);
-                    });
-            tutor.quit();
-            // tutorRepository.delete(tutor);
-
-
-        } else {
+        if (user.getRole() != RoleType.ROLE_TUTOR) {
             // TODO - 에러
         }
+
+        Tutor tutor = tutorRepository.findByUser(user);
+        if (tutor == null) {
+            // TODO - 에러
+        }
+
+        // Career 삭제
+        tutor.getCareers().stream()
+                .forEach(career -> {
+                    career.setTutor(null);
+                    careerRepository.delete(career);
+                });
+        // Education 삭제
+        tutor.getEducations().stream()
+                .forEach(education -> {
+                    education.setTutor(null);
+                    educationRepository.delete(education);
+                });
+
+        tutor.quit();
+        tutorRepository.delete(tutor);
+
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Transactional(readOnly = false)
 @RequiredArgsConstructor
@@ -54,6 +55,8 @@ public class EducationService {
         education.setGraduationDate(LocalDate.parse(educationUpdateRequest.getGraduationDate()));
         education.setScore(educationUpdateRequest.getScore());
         education.setDegree(educationUpdateRequest.getDegree());
+
+        education.setUpdatedAt(LocalDateTime.now());
     }
 
     public void deleteEducation(Long educationId) {

@@ -7,6 +7,7 @@ import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest
 import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.CareerRepository;
+import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.CareerService;
@@ -25,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,22 +35,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CareerControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    private TutorRepository tutorRepository;
+    TutorRepository tutorRepository;
     @Autowired
-    private CareerRepository careerRepository;
+    TuteeRepository tuteeRepository;
+    @Autowired
+    CareerRepository careerRepository;
 
     @Autowired
-    private TutorService tutorService;
+    TutorService tutorService;
     @Autowired
-    private CareerService careerService;
+    CareerService careerService;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
     @BeforeEach
     // @Transactional
@@ -64,7 +67,7 @@ class CareerControllerTest {
 
         // Given
         User user = userRepository.findByName("yk");
-
+        assertNotNull(tuteeRepository.findByUser(user));
         // TODO - CHECK : user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
         /*
         Tutor tutor = Tutor.builder()
@@ -80,7 +83,7 @@ class CareerControllerTest {
                 .subjects("java,spring")
                 .specialist(false)
                 .build();
-        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+        tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
         // Then
@@ -98,7 +101,8 @@ class CareerControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-        // Tutor tutor = tutorRepository.findByUser(user);
+
+        Tutor tutor = tutorRepository.findByUser(user);
         assertEquals(RoleType.ROLE_TUTOR, user.getRole());
 
         List<Career> careers = tutor.getCareers();
@@ -109,7 +113,7 @@ class CareerControllerTest {
         assertEquals("engineer", career.getDuty());
         assertEquals(LocalDate.parse("2007-12-03"), career.getStartDate());
         assertEquals(LocalDate.parse("2007-12-04"), career.getEndDate());
-        assertEquals(false, career.isPresent());
+        assertFalse(career.isPresent());
 
     }
 
@@ -182,7 +186,7 @@ class CareerControllerTest {
                 .subjects("java,spring")
                 .specialist(false)
                 .build();
-        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+        tutorService.createTutor(user, tutorSignUpRequest);
 
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
                 .companyName("tutorlab")
@@ -210,6 +214,7 @@ class CareerControllerTest {
                 .andExpect(status().isOk());
 
         // Then
+        Tutor tutor = tutorRepository.findByUser(user);
         assertEquals(RoleType.ROLE_TUTOR, user.getRole());
 
         List<Career> careers = tutor.getCareers();
@@ -219,7 +224,7 @@ class CareerControllerTest {
         assertEquals("engineer", career.getDuty());
         assertEquals(LocalDate.parse("2007-12-03"), career.getStartDate());
         assertEquals(LocalDate.parse("2007-12-05"), career.getEndDate());
-        assertEquals(true, career.isPresent());
+        assertTrue(career.isPresent());
     }
 
     @Test
@@ -255,7 +260,7 @@ class CareerControllerTest {
                 .subjects("java,spring")
                 .specialist(false)
                 .build();
-        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+        tutorService.createTutor(user, tutorSignUpRequest);
 
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
                 .companyName("tutorlab")
@@ -273,9 +278,9 @@ class CareerControllerTest {
                 .andExpect(status().isOk());
 
         // Then
-        // TODO - CHECK : career가 존재하는 이유
-        System.out.println(career);
+        Tutor tutor = tutorRepository.findByUser(user);
+
         assertEquals(0, tutor.getCareers().size());
-        assertEquals(null, career.getTutor());
+        assertFalse(careerRepository.findById(careerId).isPresent());
     }
 }

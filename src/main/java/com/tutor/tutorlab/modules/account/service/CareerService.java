@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Transactional(readOnly = false)
 @RequiredArgsConstructor
@@ -52,6 +53,8 @@ public class CareerService {
         career.setStartDate(LocalDate.parse(careerUpdateRequest.getStartDate()));
         career.setEndDate(LocalDate.parse(careerUpdateRequest.getEndDate()));
         career.setPresent(careerUpdateRequest.isPresent());
+
+        career.setUpdatedAt(LocalDateTime.now());
     }
 
     public void deleteCareer(Long careerId) {

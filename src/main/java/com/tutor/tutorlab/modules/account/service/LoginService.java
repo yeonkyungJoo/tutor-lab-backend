@@ -19,6 +19,7 @@ import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,7 +108,6 @@ public class LoginService {
                 .bio(null)
                 .zone(null)
                 .role(RoleType.ROLE_TUTEE)
-                //.createdAt(LocalDateTime.now())
                 .provider(oAuthInfo.getProvider())
                 .providerId(oAuthInfo.getProviderId())
                 .build();
@@ -159,7 +159,6 @@ public class LoginService {
                 .bio(signUpRequest.getBio())
                 .zone(signUpRequest.getZone())
                 .role(RoleType.ROLE_TUTEE)
-                //.createdAt(LocalDateTime.now())
                 .provider(null)
                 .providerId(null)
                 .build();
@@ -174,9 +173,12 @@ public class LoginService {
     private Authentication authenticate(String username, String password) throws Exception {
 
         try {
+
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            // TODO - CHECK
             // SecurityContextHolder.getContext().setAuthentication(authentication);
             return authentication;
+
         } catch(BadCredentialsException e) {
             // TODO - error message
         } catch(DisabledException e) {

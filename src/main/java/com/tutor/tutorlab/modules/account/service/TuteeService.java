@@ -7,8 +7,11 @@ import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @Transactional(readOnly = false)
@@ -26,29 +29,26 @@ public class TuteeService {
         }
 
         tutee.setSubjects(tuteeUpdateRequest.getSubjects());
+
+        tutee.setUpdatedAt(LocalDateTime.now());
     }
 
     public void deleteTutee(User user) {
 
-        System.out.println(user);
-        User findUser = userRepository.findByUsername(user.getUsername());
-        RoleType role = findUser.getRole();
+        if (user.getRole() != RoleType.ROLE_TUTEE) {
+            // TODO - 에러
+        }
 
-        if (role == RoleType.ROLE_TUTEE) {
-
-            Tutee tutee = tuteeRepository.findByUser(user);
-            if (tutee == null) {
-                // TODO - 에러 발생
-            }
-
-            tutee.quit();
-
-            // 튜티 탈퇴 = 회원 탈퇴
-            tuteeRepository.delete(tutee);
-            userRepository.delete(user);
-
-        } else {
+        Tutee tutee = tuteeRepository.findByUser(user);
+        if (tutee == null) {
             // TODO - 에러 발생
         }
+
+        // 튜티 탈퇴 = 회원 탈퇴
+        tutee.quit();
+        tuteeRepository.delete(tutee);
+        userRepository.delete(user);
+
+        SecurityContextHolder.getContext().setAuthentication(null);
     }
 }

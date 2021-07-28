@@ -7,10 +7,7 @@ import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
-import com.tutor.tutorlab.modules.account.repository.CareerRepository;
-import com.tutor.tutorlab.modules.account.repository.EducationRepository;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.repository.*;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,22 +30,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TutorControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    private TutorRepository tutorRepository;
+    TutorRepository tutorRepository;
     @Autowired
-    private CareerRepository careerRepository;
+    TuteeRepository tuteeRepository;
     @Autowired
-    private EducationRepository educationRepository;
+    CareerRepository careerRepository;
+    @Autowired
+    EducationRepository educationRepository;
 
     @Autowired
-    private TutorService tutorService;
+    TutorService tutorService;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
     @BeforeEach
     // @Transactional
@@ -63,6 +62,7 @@ class TutorControllerTest {
 
         // Given
         User user = userRepository.findByName("yk");
+        assertNotNull(tuteeRepository.findByUser(user));
 
         // When
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
@@ -144,7 +144,7 @@ class TutorControllerTest {
         assertEquals("engineer", career.getDuty());
         assertEquals(LocalDate.parse("2007-12-03"), career.getStartDate());
         assertEquals(LocalDate.parse("2007-12-04"), career.getEndDate());
-        assertEquals(false, career.isPresent());
+        assertFalse(career.isPresent());
 
         Education education = educationRepository.findByTutor(tutor).get(0);
         assertEquals(education, tutor.getEducations().get(0));
@@ -214,7 +214,7 @@ class TutorControllerTest {
         tutorSignUpRequest.addCareerCreateRequest(careerCreateRequest);
         tutorSignUpRequest.addEducationCreateRequest(educationCreateRequest);
 
-        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+        tutorService.createTutor(user, tutorSignUpRequest);
         assertEquals(RoleType.ROLE_TUTOR, user.getRole());
 
         // When
@@ -240,9 +240,9 @@ class TutorControllerTest {
                 .andExpect(status().isOk());
 
         // Then
-        // Tutor tutor = tutorRepository.findByUser(user);
+        Tutor tutor = tutorRepository.findByUser(user);
         assertEquals("python", tutor.getSubjects());
-        assertEquals(true, tutor.isSpecialist());
+        assertTrue(tutor.isSpecialist());
 
         assertEquals(1, tutor.getCareers().size());
         assertEquals(1, tutor.getEducations().size());
@@ -286,51 +286,22 @@ class TutorControllerTest {
         tutorSignUpRequest.addEducationCreateRequest(educationCreateRequest);
 
         Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+        Long tutorId = tutor.getId();
         assertEquals(RoleType.ROLE_TUTOR, user.getRole());
-
-        Career career = tutor.getCareers().get(0);
-        Education education = tutor.getEducations().get(0);
 
         // When
         mockMvc.perform(delete("/tutors"))
                 .andDo(print())
                 .andExpect(status().isOk());
+
         // Then
-
-        // TODO - CHECK
-        tutor = tutorRepository.findByUser(user);
-
-        assertEquals(0, tutor.getCareers().size());
-        /*
-            expected: <0> but was: <1>
-            Expected :0
-            Actual   :1
-            <Click to see difference>
-
-            org.opentest4j.AssertionFailedError: expected: <0> but was: <1>
-                at org.junit.jupiter.api.AssertionUtils.fail(AssertionUtils.java:55)
-                at org.junit.jupiter.api.AssertionUtils.failNotEqual(AssertionUtils.java:62)
-                at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
-                at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
-                at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:510)
-        */
-
-        /*
-        assertEquals(0, tutor.getEducations().size());
-
         assertNull(tutorRepository.findByUser(user));
-        // TODO - CHECK : tutor는 영속성 컨텍스트에서 언제 사라지는가?
-        assertNull(tutorRepository.findById(tutor.getId()));
+        assertFalse(tutorRepository.findById(tutorId).isPresent());
 
-        // ROLE_TUTEE로 변경
         assertEquals(RoleType.ROLE_TUTEE, user.getRole());
 
-        assertNull(careerRepository.findByTutor(tutor));
-        assertNull(careerRepository.findById(career.getId()));
-
-        assertNull(educationRepository.findByTutor(tutor));
-        assertNull(educationRepository.findById(education.getId()));
-        */
+        assertEquals(0, careerRepository.findAll().size());
+        assertEquals(0, educationRepository.findAll().size());
     }
 
     // TODO

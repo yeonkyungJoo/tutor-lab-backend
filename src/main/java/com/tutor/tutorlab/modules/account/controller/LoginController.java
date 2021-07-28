@@ -8,14 +8,19 @@ import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.vo.User;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -93,6 +98,7 @@ public class LoginController {
     /**
      * OAuth 회원가입 추가 정보 입력
      */
+    @ApiOperation("OAuth 회원가입 추가 정보 입력")
     @PostMapping("/sign-up/oauth/detail")
     public ResponseEntity signUpOAuthDetail(@CurrentUser User user,
                                             @RequestBody SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
@@ -105,9 +111,10 @@ public class LoginController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-
-    // 기본 튜티로 가입
-    // 일반 회원가입
+    /**
+     * 일반 회원가입 - 기본 튜티로 가입
+     */
+    @ApiOperation("일반 회원가입")
     @PostMapping("/sign-up")
     public ResponseEntity signUp(@RequestBody SignUpRequest signUpRequest) {
 
@@ -118,15 +125,36 @@ public class LoginController {
     /**
      * 일반 로그인
      */
+    @ApiOperation("일반 로그인")
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest request) {
 
         try {
-            loginService.login(request);
+            Map<String, String> result = loginService.login(request);
+
+            // TODO - CHECK
+            /*
+            	public ResponseEntity(MultiValueMap<String, String> headers, HttpStatus status) {
+                    this(null, headers, status);
+                }
+
+                public ResponseEntity(@Nullable T body, @Nullable MultiValueMap<String, String> headers, HttpStatus status) {
+                    this(body, headers, (Object) status);
+                }
+            */
+            return new ResponseEntity(getHeaders(result), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // TODO - 예외 처리 및 ErrorResponse 반환
         return null;
+    }
+
+    private HttpHeaders getHeaders(Map<String, String> result) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(result.get("header"), result.get("token"));
+        return headers;
     }
 
 }

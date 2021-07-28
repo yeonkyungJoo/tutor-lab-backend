@@ -26,14 +26,13 @@ public class Tutee extends BaseEntity {
     private String subjects;      // 학습하고 싶은 과목
 
     public List<String> getSubjectList() {
-        if (this.subjects.length() > 0) {
+        if (this.subjects != null && this.subjects.length() > 0) {
             return Arrays.asList(this.subjects.split(","));
         }
         return Collections.emptyList();
     }
 
     public void quit() {
-
         setUser(null);
     }
 }

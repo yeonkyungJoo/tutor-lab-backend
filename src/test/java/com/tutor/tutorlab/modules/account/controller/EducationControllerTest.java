@@ -7,6 +7,7 @@ import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequ
 import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.EducationRepository;
+import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.EducationService;
@@ -33,22 +34,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class EducationControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    private TutorRepository tutorRepository;
+    TutorRepository tutorRepository;
     @Autowired
-    private EducationRepository educationRepository;
+    TuteeRepository tuteeRepository;
+    @Autowired
+    EducationRepository educationRepository;
+    @Autowired
+    TutorService tutorService;
+    @Autowired
+    EducationService educationService;
 
     @Autowired
-    private TutorService tutorService;
-    @Autowired
-    private EducationService educationService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
     @Test
     @DisplayName("Education 등록")
@@ -57,6 +59,7 @@ class EducationControllerTest {
 
         // Given
         User user = userRepository.findByName("yk");
+        assertNotNull(tuteeRepository.findByUser(user));
         // TODO - CHECK : user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
         /*
         Tutor tutor = Tutor.builder()
@@ -72,7 +75,7 @@ class EducationControllerTest {
                 .subjects("java,spring")
                 .specialist(false)
                 .build();
-        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+        tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
         EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
@@ -91,6 +94,7 @@ class EducationControllerTest {
                 .andExpect(status().isCreated());
 
         // Then
+        Tutor tutor = tutorRepository.findByUser(user);
         assertEquals(RoleType.ROLE_TUTOR, user.getRole());
 
         List<Education> educations = tutor.getEducations();
@@ -139,7 +143,7 @@ class EducationControllerTest {
                 .subjects("java,spring")
                 .specialist(false)
                 .build();
-        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+        tutorService.createTutor(user, tutorSignUpRequest);
 
         EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
                 .schoolName("school")
@@ -169,6 +173,7 @@ class EducationControllerTest {
                 .andExpect(status().isOk());
 
         // Then
+        Tutor tutor = tutorRepository.findByUser(user);
         assertEquals(RoleType.ROLE_TUTOR, user.getRole());
 
         List<Education> educations = tutor.getEducations();
@@ -216,7 +221,7 @@ class EducationControllerTest {
                 .subjects("java,spring")
                 .specialist(false)
                 .build();
-        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+        tutorService.createTutor(user, tutorSignUpRequest);
 
         EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
                 .schoolName("school")
@@ -235,8 +240,9 @@ class EducationControllerTest {
                 .andExpect(status().isOk());
 
         // Then
+        Tutor tutor = tutorRepository.findByUser(user);
         assertEquals(0, tutor.getEducations().size());
-        assertEquals(null, education.getTutor());
+        assertFalse(educationRepository.findById(educationId).isPresent());
     }
 
 
