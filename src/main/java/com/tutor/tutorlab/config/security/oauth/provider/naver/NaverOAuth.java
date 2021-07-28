@@ -7,11 +7,6 @@ import java.util.Map;
 public class NaverOAuth implements OAuth {
 
     @Override
-    public Map<String, String> getOAuthRedirectURL() {
-        return null;
-    }
-
-    @Override
     public String requestAccessToken(String code) {
         return null;
     }

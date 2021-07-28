@@ -46,7 +46,6 @@ public class UserService {
         if (role == RoleType.ROLE_TUTOR) {
             tutorService.deleteTutor(user);
         }
-        tuteeService.deleteTutee(user);
-
+        tuteeService.deleteTutee(user); // setAuthentication(null)
     }
 }

@@ -38,11 +38,15 @@ public class LoginController {
 
     @GetMapping("/oauth/{provider}")
     public void oauth(@PathVariable(name = "provider") String provider, HttpServletResponse response) {
-
+        
         try {
+            // 로그인 요청 주소
+            // 사용자가 동의하면 code를 callback
             String url = null;
             if (provider.equals("google")) {
                 url = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http://localhost:8080/oauth/google/callback&client_id=902783645965-ald60d1ehnaeaoetihtb1861u98ppf3u.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
+            } else if (provider.equals("kakao")) {
+                url = "https://kauth.kakao.com/oauth/authorize?client_id=8dc9eea7e202a581e0449058e753beaf&redirect_uri=http://localhost:8080/oauth/kakao/callback&response_type=code";
             }
 
             if (StringUtils.hasLength(url)) {
@@ -56,13 +60,16 @@ public class LoginController {
 
     /**
      OAuth 로그인/회원가입
-     - google : https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http://localhost:8080/oauth/google/callback&client_id=902783645965-ald60d1ehnaeaoetihtb1861u98ppf3u.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
      */
     @GetMapping("/oauth/{provider}/callback")
     public ResponseEntity oauth(@PathVariable(name = "provider") String provider,
             @RequestParam(name = "code") String code) {
 
         try {
+            if (!StringUtils.hasLength(code)) {
+                // TODO - 예외 처리
+            }
+
             OAuthInfo oAuthInfo = loginService.getOAuthInfo(provider, code);
             if (oAuthInfo != null) {
 
@@ -72,7 +79,7 @@ public class LoginController {
                     Map<String, String> result = loginService.loginOAuth(user);
 
                     // TODO - TOKEN
-                    System.out.println(result);
+                    // System.out.println(result);
                     // {header=Authorization, token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXYueWsyMDIxQGdtYWlsLmNvbSIsImV4cCI6MTYyNjYxMzg5NCwiaWF0IjoxNjI2NTI3NDk0fQ.j_d2B_Gsl1XVNDAYuMeYO_3DGznH_UOzGIL2J7Y3Yas}
 
                     return null;

@@ -6,6 +6,8 @@ import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleOAuth;
+import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoInfo;
+import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoOAuth;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
@@ -37,6 +39,7 @@ public class LoginService {
     private final TutorRepository tutorRepository;
     private final TuteeRepository tuteeRepository;
     private final GoogleOAuth googleOAuth;
+    private final KakaoOAuth kakaoOAuth;
 
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -77,6 +80,34 @@ public class LoginService {
                 */
                 if (userInfo != null) {
                     oAuthInfo = new GoogleInfo(userInfo);
+                }
+                break;
+            case KAKAO:
+                userInfo = kakaoOAuth.requestLogin(code);
+                // System.out.println(userInfo);
+                /*
+                    {
+                        id=1825918761,
+                        connected_at=2021-07-28T21:58:30Z,
+                        properties={
+                            nickname=dev.yk
+                        },
+                        kakao_account={
+                            profile_nickname_needs_agreement=false,
+                            profile={
+                                nickname=dev.yk
+                            },
+                            has_email=true,
+                            email_needs_agreement=false,
+                            is_email_valid=true,
+                            is_email_verified=true,
+                            email=dev.yk2021@gmail.com
+                        }
+                    }
+                */
+                if (userInfo != null) {
+                    oAuthInfo = new KakaoInfo(userInfo);
+                    System.out.println(oAuthInfo);
                 }
                 break;
             case NAVER:

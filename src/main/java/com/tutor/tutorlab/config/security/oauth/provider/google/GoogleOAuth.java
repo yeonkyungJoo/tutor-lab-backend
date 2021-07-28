@@ -6,6 +6,8 @@ import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,6 +30,7 @@ public class GoogleOAuth implements OAuth {
     private final ObjectMapper objectMapper;
 
     // 승인 매개변수 설정
+    /*
     @Override
     public Map<String, String> getOAuthRedirectURL() {
 
@@ -39,6 +42,7 @@ public class GoogleOAuth implements OAuth {
         map.put("base_url", GOOGLE_BASE_URL);
         return map;
     }
+    */
 
     // Exchange authorization code for refresh and access tokens
     @Override
@@ -48,12 +52,12 @@ public class GoogleOAuth implements OAuth {
             return null;
         }
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("client_id", GOOGLE_CLIENT_ID);
-        params.put("client_secret", GOOGLE_CLIENT_SECRET);
-        params.put("code", code);
-        params.put("grant_type", "authorization_code");
-        params.put("redirect_uri", GOOGLE_CALLBACK_URL);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("client_id", GOOGLE_CLIENT_ID);
+        params.add("client_secret", GOOGLE_CLIENT_SECRET);
+        params.add("code", code);
+        params.add("grant_type", "authorization_code");
+        params.add("redirect_uri", GOOGLE_CALLBACK_URL);
 
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(GOOLE_TOKEN_URL, params, String.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
@@ -77,16 +81,17 @@ public class GoogleOAuth implements OAuth {
             return null;
         }
 
-        HttpHeaders header = new HttpHeaders();
-        header.set(HEADER, TOKEN_PREFIX + token);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HEADER, TOKEN_PREFIX + token);
         ResponseEntity<String> responseEntity = restTemplate
-                .exchange(GOOGLE_USERINFO_ACCESS_URL, HttpMethod.GET, new HttpEntity(header), String.class);
+                .exchange(GOOGLE_USERINFO_ACCESS_URL, HttpMethod.GET, new HttpEntity(headers), String.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             return responseEntity.getBody();
         }
         return null;
     }
 
+    // TODO - 리팩토링
     @Override
     public Map<String, String> requestLogin(String code) {
 
@@ -96,7 +101,8 @@ public class GoogleOAuth implements OAuth {
         return convertStringToMap(userInfo);
     }
 
-    private Map<String, String> convertStringToMap(String string) {
+    // TODO - 리팩토링
+    public Map<String, String> convertStringToMap(String string) {
 
         try {
             if (StringUtils.hasLength(string)) {
