@@ -33,4 +33,12 @@ public class TutorSignUpRequest {
         this.subjects = subjects;
         this.specialist = specialist;
     }
+
+    public void addCareerCreateRequest(CareerCreateRequest careerCreateRequest) {
+        this.careers.add(careerCreateRequest);
+    }
+
+    public void addEducationCreateRequest(EducationCreateRequest educationCreateRequest) {
+        this.educations.add(educationCreateRequest);
+    }
 }

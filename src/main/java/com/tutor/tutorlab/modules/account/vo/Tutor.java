@@ -48,19 +48,15 @@ public class Tutor extends BaseEntity {
         this.educations.add(education);
     }
 
-    // TODO - CHECK
     public void quit() {
-        this.careers.stream()
+        this.getCareers().stream()
                 .forEach(career -> career.setTutor(null));
-        this.careers.clear();
+        this.getCareers().clear();
 
-        this.educations.stream()
+        this.getEducations().stream()
                 .forEach(education -> education.setTutor(null));
-        this.educations.clear();
-
-        // setUser(null);
-        // TODO - CHECK
-        this.user.setRole(RoleType.ROLE_TUTEE);
+        this.getEducations().clear();
+        user.setRole(RoleType.ROLE_TUTEE);
     }
 
     @Builder

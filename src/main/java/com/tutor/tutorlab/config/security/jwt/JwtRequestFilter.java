@@ -1,12 +1,8 @@
 package com.tutor.tutorlab.config.security.jwt;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.tutor.tutorlab.config.security.PrincipalDetails;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.config.security.PrincipalDetailsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,10 +19,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    @Value("${jwt.secret}")
-    String secret;
-
-    private final UserRepository userRepository;
+    private final JwtTokenManager jwtTokenManager;
+    private final PrincipalDetailsService principalDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,22 +32,23 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         String jwtToken = jwtHeader.replace("Bearer ", "");
+        String username = null;
+        if (jwtToken != null) {
+            username = jwtTokenManager.getClaim(jwtToken, "username");
+        }
 
-        // TODO - verify token
-        String username = JWT.require(Algorithm.HMAC256(secret)).build().verify(jwtToken).getClaim("username").asString();
-        // System.out.println(username);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            User user = userRepository.findByUsername(username);
-            if (user != null) {
-
-                PrincipalDetails principalDetails = new PrincipalDetails(user);
+            PrincipalDetails principalDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(username);
+            if (principalDetails != null && jwtTokenManager.verifyToken(jwtToken, principalDetails)) {
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 
         }
+
+        filterChain.doFilter(request, response);
 
     }
 }

@@ -47,11 +47,10 @@ public class User extends BaseEntity {
 
     @Builder
     public User(String username, String password, String name, String gender, String phoneNumber, String email, String nickname, String bio, String zone, RoleType role,
-                LocalDateTime createdAt, OAuthType provider, String providerId) {
+                OAuthType provider, String providerId) {
         this.username = username;
         this.password = password;
         this.name = name;
-        // this.gender = gender;
         this.gender = gender == "MALE" ? GenderType.MALE : GenderType.FEMALE;
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -59,8 +58,6 @@ public class User extends BaseEntity {
         this.bio = bio;
         this.zone = zone;
         this.role = role;
-        this.createdAt = createdAt;
-
         this.provider = provider;
         this.providerId = providerId;
     }

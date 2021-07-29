@@ -2,17 +2,24 @@ package com.tutor.tutorlab.modules.account.service;
 
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
+import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleOAuth;
-import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
-import com.tutor.tutorlab.modules.account.controller.request.*;
+import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoInfo;
+import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoOAuth;
+import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoResponse;
+import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverInfo;
+import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverOAuth;
+import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverResponse;
+import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
+import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
+import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.vo.GenderType;
 import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
-import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
@@ -21,7 +28,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,9 +38,10 @@ import java.util.Map;
 public class LoginService {
 
     private final UserRepository userRepository;
-    private final TutorRepository tutorRepository;
     private final TuteeRepository tuteeRepository;
     private final GoogleOAuth googleOAuth;
+    private final KakaoOAuth kakaoOAuth;
+    private final NaverOAuth naverOAuth;
 
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -50,64 +57,17 @@ public class LoginService {
         return duplicated;
     }
 
-    private User createUser(SignUpRequest request) {
-
-        String username = request.getUsername();
-        if (checkUsernameDuplication(username)) {
-            // TODO - 에러
-            return null;
-        }
-
-        User user = User.builder()
-                .username(username)
-                .password(bCryptPasswordEncoder.encode(request.getPassword()))
-                .name(request.getName())
-                .gender(request.getGender())
-                .phoneNumber(request.getPhoneNumber())
-                .email(request.getEmail())
-                .nickname(request.getNickname())
-                .bio(request.getBio())
-                .zone(request.getZone())
-                //.role(request.getRole())
-                //.role("ROLE_USER")
-                .role(RoleType.ROLE_TUTEE)
-                .createdAt(LocalDateTime.now())
-                .provider(null)
-                .providerId(null)
-                .build();
-
-        return userRepository.save(user);
-    }
-
-    public Long signUpTutor(TutorSignUpRequest tutorSignUpRequest) {
-
-        // TODO - Tutor builder
-        Tutor tutor = new Tutor();
-        tutor.setCreatedAt(LocalDateTime.now());
-
-        return tutorRepository.save(tutor).getId();
-    }
-
-    public Long signUp(SignUpRequest signUpRequest) {
-
-        Tutee tutee = new Tutee();
-        tutee.setUser(createUser(signUpRequest));
-        tutee.setCreatedAt(LocalDateTime.now());
-
-        return tuteeRepository.save(tutee).getId();
-    }
-
+    // TODO - 리팩토링
     public OAuthInfo getOAuthInfo(String provider, String code) throws Exception {
 
-        Map<String, String> userInfo = null;
         OAuthInfo oAuthInfo = null;
 
         // convert
         OAuthType oAuthType = OAuthInfo.getOAuthType(provider);
         switch (oAuthType) {
             case GOOGLE:
-                userInfo = googleOAuth.requestLogin(code);
-                // System.out.println(userInfo);
+                Map<String, String> googleOAuthUserInfo = googleOAuth.getUserInfo(code);
+                // System.out.println(googleOAuthUserInfo);
                 /*
                 {
                     id=109497631191479413556,
@@ -120,11 +80,45 @@ public class LoginService {
                     locale=ko
                 }
                 */
-                if (userInfo != null) {
-                    oAuthInfo = new GoogleInfo(userInfo);
+                if (googleOAuthUserInfo != null) {
+                    oAuthInfo = new GoogleInfo(googleOAuthUserInfo);
+                }
+                break;
+            case KAKAO:
+                KakaoResponse kakaoOAuthUserInfo = kakaoOAuth.getUserInfo(code);
+                // System.out.println(kakaoOAuthUserInfo);
+                /*
+                    {
+                        id=1825918761,
+                        connected_at=2021-07-28T21:58:30Z,
+                        properties={
+                            nickname=dev.yk
+                        },
+                        kakao_account={
+                            profile_nickname_needs_agreement=false,
+                            profile={
+                                nickname=dev.yk
+                            },
+                            has_email=true,
+                            email_needs_agreement=false,
+                            is_email_valid=true,
+                            is_email_verified=true,
+                            email=dev.yk2021@gmail.com
+                        }
+                    }
+                */
+                if (kakaoOAuthUserInfo != null) {
+                    oAuthInfo = new KakaoInfo(kakaoOAuthUserInfo);
                 }
                 break;
             case NAVER:
+                NaverResponse naverOAuthUserInfo = naverOAuth.getUserInfo(code);
+                // System.out.println(naverOAuthUserInfo);
+
+                if (naverOAuthUserInfo != null) {
+                    oAuthInfo = new NaverInfo(naverOAuthUserInfo);
+                    // System.out.println(oAuthInfo);
+                }
                 break;
             default:
                 break;
@@ -134,7 +128,7 @@ public class LoginService {
         return oAuthInfo;
     }
 
-    public Long signUpOAuth(OAuthInfo oAuthInfo) {
+    public Map<String, String> signUpOAuth(OAuthInfo oAuthInfo) throws Exception {
 
         String username = oAuthInfo.getEmail();
         if (checkUsernameDuplication(username)) {
@@ -152,15 +146,14 @@ public class LoginService {
                 .nickname(null)
                 .bio(null)
                 .zone(null)
-                //.role(request.getRole())
                 .role(RoleType.ROLE_TUTEE)
-                .createdAt(LocalDateTime.now())
                 .provider(oAuthInfo.getProvider())
                 .providerId(oAuthInfo.getProviderId())
                 .build();
 
         userRepository.save(user);
-        return user.getId();
+        // 강제 로그인
+        return loginOAuth(user);
     }
 
     public Map<String, String> loginOAuth(User user) throws Exception {
@@ -176,12 +169,58 @@ public class LoginService {
         return null;
     }
 
+    public void signUpOAuthDetail(User user, SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
+
+        // TODO - CHECK : 영속성 컨텍스트
+        user = userRepository.findByUsername(user.getUsername());
+
+        user.setGender(signUpOAuthDetailRequest.getGender() == "MALE" ? GenderType.MALE : GenderType.FEMALE);
+        user.setPhoneNumber(signUpOAuthDetailRequest.getPhoneNumber());
+        user.setEmail(signUpOAuthDetailRequest.getEmail());
+        user.setNickname(signUpOAuthDetailRequest.getNickname());
+        user.setBio(signUpOAuthDetailRequest.getBio());
+        user.setZone(signUpOAuthDetailRequest.getZone());
+    }
+
+    public Tutee signUp(SignUpRequest signUpRequest) {
+
+        String username = signUpRequest.getUsername();
+        if (checkUsernameDuplication(username)) {
+            // TODO - 에러
+            return null;
+        }
+
+        User user = User.builder()
+                .username(username)
+                .password(bCryptPasswordEncoder.encode(signUpRequest.getPassword()))
+                .name(signUpRequest.getName())
+                .gender(signUpRequest.getGender())
+                .phoneNumber(signUpRequest.getPhoneNumber())
+                .email(signUpRequest.getEmail())
+                .nickname(signUpRequest.getNickname())
+                .bio(signUpRequest.getBio())
+                .zone(signUpRequest.getZone())
+                .role(RoleType.ROLE_TUTEE)
+                .provider(null)
+                .providerId(null)
+                .build();
+
+        userRepository.save(user);
+
+        Tutee tutee = new Tutee();
+        tutee.setUser(user);
+        return tuteeRepository.save(tutee);
+    }
+
     private Authentication authenticate(String username, String password) throws Exception {
 
         try {
+
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            // TODO - CHECK
             // SecurityContextHolder.getContext().setAuthentication(authentication);
             return authentication;
+
         } catch(BadCredentialsException e) {
             // TODO - error message
         } catch(DisabledException e) {
