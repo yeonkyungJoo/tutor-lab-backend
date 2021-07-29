@@ -12,6 +12,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,19 +48,26 @@ public class NaverOAuth implements OAuth {
         - code
         - state
         */
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("redirect_uri", NAVER_CALLBACK_URL);
-        params.add("client_id", NAVER_CLIENT_ID);
-        params.add("client_secret", NAVER_CLIENT_SECRET);
-        params.add("code", code);
-        params.add("state", (String) session.getAttribute("state"));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        try {
+            params.add("client_id", URLEncoder.encode(NAVER_CLIENT_ID, "UTF-8"));
+            params.add("client_secret", URLEncoder.encode(NAVER_CLIENT_SECRET, "UTF-8"));
+            params.add("grant_type", URLEncoder.encode("authorization_code", "UTF-8"));
+            params.add("state", URLEncoder.encode((String) session.getAttribute("state"), "UTF-8"));
+            params.add("code", URLEncoder.encode(code, "UTF-8"));
+            params.add("redirect_uri", URLEncoder.encode(NAVER_CALLBACK_URL, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
         ResponseEntity<String> responseEntity
                 = restTemplate.exchange(NAVER_TOKEN_URL, HttpMethod.POST, request, String.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            System.out.println(responseEntity.getBody());
+            // System.out.println(responseEntity.getBody());
             return responseEntity.getBody();
         }
 

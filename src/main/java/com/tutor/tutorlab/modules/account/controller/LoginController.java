@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class LoginController {
                 String state = generateState();
                 request.getSession().setAttribute("state", state);
                 url = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id="
-                        + "NNG0ZvRBJlxlE5DbApJR" + "&redirect_uri=" + "http://localhost:8080/oauth/naver/callback" + "&state=" + state;
+                        + "NNG0ZvRBJlxlE5DbApJR" + "&redirect_uri=" + URLEncoder.encode("http://localhost:8080/oauth/naver/callback", "UTF-8") + "&state=" + state;
             }
 
             if (StringUtils.hasLength(url)) {
@@ -93,23 +94,18 @@ public class LoginController {
             if (oAuthInfo != null) {
 
                 User user = userRepository.findByProviderAndProviderId(oAuthInfo.getProvider(), oAuthInfo.getProviderId());
+
+                Map<String, String> result = null;
                 if (user != null) {
                     // 이미 가입된 회원이므로 바로 로그인 진행
-                    Map<String, String> result = loginService.loginOAuth(user);
-
-                    // TODO - TOKEN
-                    // System.out.println(result);
-                    // {header=Authorization, token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXYueWsyMDIxQGdtYWlsLmNvbSIsImV4cCI6MTYyNjYxMzg5NCwiaWF0IjoxNjI2NTI3NDk0fQ.j_d2B_Gsl1XVNDAYuMeYO_3DGznH_UOzGIL2J7Y3Yas}
-
-                    return null;
+                    result = loginService.loginOAuth(user);
                 } else {
-
-                    // 회원가입 - 강제 로그인 
+                    // 회원가입 - 강제 로그인
                     // 추가 정보 입력 필요
-                    Map<String, String> result = loginService.signUpOAuth(oAuthInfo);
-
-                    return null;
+                    result = loginService.signUpOAuth(oAuthInfo);
                 }
+
+                return new ResponseEntity(getHeaders(result), HttpStatus.OK);
 
             } else {
                 // TODO

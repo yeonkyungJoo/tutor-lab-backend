@@ -46,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             // TODO - CHECK : 테스트 코드
             .antMatchers("/login", "/sign-up/**", "/oauth/**").permitAll()
+                .antMatchers("/sign-up/oauth/detail").authenticated()
             .anyRequest().authenticated()
             .and()
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

@@ -113,11 +113,11 @@ public class LoginService {
                 break;
             case NAVER:
                 NaverResponse naverOAuthUserInfo = naverOAuth.getUserInfo(code);
-                System.out.println(naverOAuthUserInfo);
+                // System.out.println(naverOAuthUserInfo);
 
                 if (naverOAuthUserInfo != null) {
                     oAuthInfo = new NaverInfo(naverOAuthUserInfo);
-                    System.out.println(oAuthInfo);
+                    // System.out.println(oAuthInfo);
                 }
                 break;
             default:
@@ -170,6 +170,9 @@ public class LoginService {
     }
 
     public void signUpOAuthDetail(User user, SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
+
+        // TODO - CHECK : 영속성 컨텍스트
+        user = userRepository.findByUsername(user.getUsername());
 
         user.setGender(signUpOAuthDetailRequest.getGender() == "MALE" ? GenderType.MALE : GenderType.FEMALE);
         user.setPhoneNumber(signUpOAuthDetailRequest.getPhoneNumber());
