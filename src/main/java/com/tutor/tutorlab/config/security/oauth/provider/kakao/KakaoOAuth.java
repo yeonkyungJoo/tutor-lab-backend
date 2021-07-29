@@ -1,4 +1,6 @@
-package com.tutor.tutorlab.config.security.oauth.provider;
+package com.tutor.tutorlab.config.security.oauth.provider.kakao;
+
+import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
 
 import java.util.Map;
 

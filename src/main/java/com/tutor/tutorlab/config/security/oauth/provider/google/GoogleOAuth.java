@@ -1,7 +1,8 @@
-package com.tutor.tutorlab.config.security.oauth.provider;
+package com.tutor.tutorlab.config.security.oauth.provider.google;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -20,8 +21,8 @@ public class GoogleOAuth implements OAuth {
     private final String GOOGLE_CALLBACK_URL = "http://localhost:8080/oauth/google/callback";
     private final String GOOGLE_USERINFO_ACCESS_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
     private final String GOOLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
-    private final String GOOGLE_CLIENT_ID = "902783645965-ald60d1ehnaeaoetihtb1861u98ppf3u.apps.googleusercontent.com";
-    private final String GOOGLE_CLIENT_SECRET = "U7889QYKM2Zgt-Ui2eEKqKzL";
+    private final String GOOGLE_CLIENT_ID = "";
+    private final String GOOGLE_CLIENT_SECRET = "";
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
