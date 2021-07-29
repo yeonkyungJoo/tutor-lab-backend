@@ -2,7 +2,9 @@ package com.tutor.tutorlab;
 
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.PrincipalDetailsService;
+import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
@@ -18,17 +20,39 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class WithAccountSecurityContextFactory implements WithSecurityContextFactory<WithAccount> {
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UserRepository userRepository;
+    // private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    // private final UserRepository userRepository;
+    private final LoginService loginService;
     private final PrincipalDetailsService principalDetailsService;
 
     @Override
     public SecurityContext createSecurityContext(WithAccount withAccount) {
 
+        /*
+            String name = withAccount.value();
+            User user = User.builder()
+                    .username(name + "@email.com")
+                    .password(bCryptPasswordEncoder.encode("password"))
+                    .name(name)
+                    .gender("MALE")
+                    .phoneNumber(null)
+                    .email(null)
+                    .nickname(null)
+                    .bio(null)
+                    .zone(null)
+                    .role(RoleType.ROLE_TUTEE)
+                    .provider(null)
+                    .providerId(null)
+                    .build();
+            userRepository.save(user);
+         */
+
         String name = withAccount.value();
-        User user = User.builder()
-                .username(name + "@email.com")
-                .password(bCryptPasswordEncoder.encode("password"))
+        String username = name + "@email.com";
+        SignUpRequest signUpRequest = SignUpRequest.builder()
+                .username(username)
+                .password("password")
+                .passwordConfirm("password")
                 .name(name)
                 .gender("MALE")
                 .phoneNumber(null)
@@ -36,14 +60,10 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
                 .nickname(null)
                 .bio(null)
                 .zone(null)
-                .role(RoleType.ROLE_TUTEE)
-                // .createdAt(LocalDateTime.now())
-                .provider(null)
-                .providerId(null)
                 .build();
-        userRepository.save(user);
+        loginService.signUp(signUpRequest);
 
-        PrincipalDetails principalDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(user.getUsername());
+        PrincipalDetails principalDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(username);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, principalDetails.getPassword());
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);

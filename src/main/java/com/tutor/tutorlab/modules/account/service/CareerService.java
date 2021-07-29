@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Transactional(readOnly = false)
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class CareerService {
     private final CareerRepository careerRepository;
     private final TutorRepository tutorRepository;
 
-    public void createCareer(User user, CareerCreateRequest careerCreateRequest) {
+    public Career createCareer(User user, CareerCreateRequest careerCreateRequest) {
 
         Tutor tutor = tutorRepository.findByUser(user);
         if (tutor == null) {
@@ -38,6 +39,8 @@ public class CareerService {
                 .build();
         careerRepository.save(career);
         tutor.addCareer(career);
+
+        return career;
     }
 
     public void updateCareer(Long careerId, CareerUpdateRequest careerUpdateRequest) {
@@ -50,6 +53,8 @@ public class CareerService {
         career.setStartDate(LocalDate.parse(careerUpdateRequest.getStartDate()));
         career.setEndDate(LocalDate.parse(careerUpdateRequest.getEndDate()));
         career.setPresent(careerUpdateRequest.isPresent());
+
+        career.setUpdatedAt(LocalDateTime.now());
     }
 
     public void deleteCareer(Long careerId) {

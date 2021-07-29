@@ -1,10 +1,17 @@
 package com.tutor.tutorlab.modules.account.controller.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter @Setter
+@Data
+@NoArgsConstructor
 public class TuteeUpdateRequest {
 
     private String subjects;
+
+    @Builder
+    public TuteeUpdateRequest(String subjects) {
+        this.subjects = subjects;
+    }
 }

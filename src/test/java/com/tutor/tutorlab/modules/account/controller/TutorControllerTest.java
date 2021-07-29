@@ -6,14 +6,10 @@ import com.tutor.tutorlab.WithAccount;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
-import com.tutor.tutorlab.modules.account.repository.CareerRepository;
-import com.tutor.tutorlab.modules.account.repository.EducationRepository;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.vo.Career;
-import com.tutor.tutorlab.modules.account.vo.Education;
-import com.tutor.tutorlab.modules.account.vo.Tutor;
-import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
+import com.tutor.tutorlab.modules.account.repository.*;
+import com.tutor.tutorlab.modules.account.service.TutorService;
+import com.tutor.tutorlab.modules.account.vo.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,19 +30,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TutorControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-    private TutorRepository tutorRepository;
+    TutorRepository tutorRepository;
     @Autowired
-    private CareerRepository careerRepository;
+    TuteeRepository tuteeRepository;
     @Autowired
-    private EducationRepository educationRepository;
+    CareerRepository careerRepository;
+    @Autowired
+    EducationRepository educationRepository;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    TutorService tutorService;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @BeforeEach
     // @Transactional
@@ -61,6 +62,7 @@ class TutorControllerTest {
 
         // Given
         User user = userRepository.findByName("yk");
+        assertNotNull(tuteeRepository.findByUser(user));
 
         // When
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
@@ -127,6 +129,10 @@ class TutorControllerTest {
         // Then
         Tutor tutor = tutorRepository.findByUser(user);
         assertNotNull(tutor);
+
+        // Role
+        assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+
         assertEquals(2, tutor.getSubjectList().size());
         assertEquals(1, tutor.getCareers().size());
         assertEquals(1, tutor.getEducations().size());
@@ -138,7 +144,7 @@ class TutorControllerTest {
         assertEquals("engineer", career.getDuty());
         assertEquals(LocalDate.parse("2007-12-03"), career.getStartDate());
         assertEquals(LocalDate.parse("2007-12-04"), career.getEndDate());
-        assertEquals(false, career.isPresent());
+        assertFalse(career.isPresent());
 
         Education education = educationRepository.findByTutor(tutor).get(0);
         assertEquals(education, tutor.getEducations().get(0));
@@ -178,18 +184,130 @@ class TutorControllerTest {
 
     @Test
     @DisplayName("Tutor 수정")
+    @WithAccount("yk")
     public void editTutor() throws Exception {
 
         // Given
+        User user = userRepository.findByName("yk");
+
+        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
+                .companyName("tutorlab")
+                .duty("engineer")
+                .startDate("2007-12-03")
+                .endDate("2007-12-04")
+                .present(false)
+                .build();
+
+        EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
+                .schoolName("school")
+                .major("computer")
+                .entranceDate("2021-01-01")
+                .graduationDate("2021-02-01")
+                .score(4.01)
+                .degree("Bachelor")
+                .build();
+
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        tutorSignUpRequest.addCareerCreateRequest(careerCreateRequest);
+        tutorSignUpRequest.addEducationCreateRequest(educationCreateRequest);
+
+        tutorService.createTutor(user, tutorSignUpRequest);
+        assertEquals(RoleType.ROLE_TUTOR, user.getRole());
 
         // When
+        TutorUpdateRequest tutorUpdateRequest = TutorUpdateRequest.builder()
+                .subjects("python")
+                .specialist(true)
+                .build();
+
+        String content = objectMapper.writeValueAsString(tutorUpdateRequest);
+        System.out.println(content);
+    /*
+        {
+            "subjects":"python",
+            "careers":[],
+            "educations":[],
+            "specialist":true
+        }
+    */
+        mockMvc.perform(put("/tutors")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
 
         // Then
+        Tutor tutor = tutorRepository.findByUser(user);
+        assertEquals("python", tutor.getSubjects());
+        assertTrue(tutor.isSpecialist());
+
+        assertEquals(1, tutor.getCareers().size());
+        assertEquals(1, tutor.getEducations().size());
+        Education education = tutor.getEducations().get(0);
+        Career career = tutor.getCareers().get(0);
+
+        assertEquals("tutorlab", career.getCompanyName());
+        assertEquals("computer", education.getMajor());
     }
 
     @Test
     @DisplayName("Tutor 삭제")
+    @WithAccount("yk")
     public void removeTutor() throws Exception {
+
+        // Given
+        User user = userRepository.findByName("yk");
+
+        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
+                .companyName("tutorlab")
+                .duty("engineer")
+                .startDate("2007-12-03")
+                .endDate("2007-12-04")
+                .present(false)
+                .build();
+
+        EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
+                .schoolName("school")
+                .major("computer")
+                .entranceDate("2021-01-01")
+                .graduationDate("2021-02-01")
+                .score(4.01)
+                .degree("Bachelor")
+                .build();
+
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        tutorSignUpRequest.addCareerCreateRequest(careerCreateRequest);
+        tutorSignUpRequest.addEducationCreateRequest(educationCreateRequest);
+
+        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
+        Long tutorId = tutor.getId();
+        assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+
+        // When
+        mockMvc.perform(delete("/tutors"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        // Then
+        assertNull(tutorRepository.findByUser(user));
+        assertFalse(tutorRepository.findById(tutorId).isPresent());
+
+        assertEquals(RoleType.ROLE_TUTEE, user.getRole());
+
+        assertEquals(0, careerRepository.findAll().size());
+        assertEquals(0, educationRepository.findAll().size());
+    }
+
+    // TODO
+    @Test
+    @DisplayName("Tutor 삭제 - 튜터가 아닌 경우")
+    public void removeTutor_notTutor() throws Exception {
 
         // Given
 

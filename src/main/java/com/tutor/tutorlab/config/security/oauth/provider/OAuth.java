@@ -7,12 +7,12 @@ public interface OAuth {
     public static final String HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
 
-    Map<String, String> getOAuthRedirectURL();
+    // Map<String, String> getOAuthRedirectURL();
 
     String requestAccessToken(String code);
 
     String requestUserInfo(String accessToken);
 
-    Map<String, String> requestLogin(String code);
-
+    // Map<String, String> requestLogin(String code);
+    String requestLogin(String code);
 }

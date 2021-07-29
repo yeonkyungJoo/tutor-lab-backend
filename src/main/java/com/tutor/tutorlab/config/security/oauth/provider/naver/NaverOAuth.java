@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.config.security.oauth.provider.kakao;
+package com.tutor.tutorlab.config.security.oauth.provider.naver;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,21 +11,25 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-// https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api
-public class KakaoOAuth implements OAuth {
+// https://developers.naver.com/docs/login/api/api.md
+public class NaverOAuth implements OAuth {
 
-    private final String KAKAO_BASE_URL = "https://kauth.kakao.com/oauth/authorize";
-    private final String KAKAO_CALLBACK_URL = "http://localhost:8080/oauth/kakao/callback";
-    private final String KAKAO_USERINFO_ACCESS_URL = "https://kapi.kakao.com/v2/user/me";
-    private final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private final String KAKAO_CLIENT_ID = "8dc9eea7e202a581e0449058e753beaf";
-    // private final String KAKAO_CLIENT_SECRET;
+    private final String NAVER_BASE_URL = "https://nid.naver.com/oauth2.0/authorize";
+    private final String NAVER_CALLBACK_URL = "http://localhost:8080/oauth/naver/callback";
+    private final String NAVER_USERINFO_ACCESS_URL = "https://openapi.naver.com/v1/nid/me";
+    private final String NAVER_TOKEN_URL = "https://nid.naver.com/oauth2.0/token";
+    private final String NAVER_CLIENT_ID = "NNG0ZvRBJlxlE5DbApJR";
+    private final String NAVER_CLIENT_SECRET = "V23oWh9UTy";
 
+    private final HttpSession session;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -40,34 +44,30 @@ public class KakaoOAuth implements OAuth {
         * Required Parameter
         - grant_type
         - client_id
-        - redirect_uri
+        - client_secret
         - code
+        - state
         */
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", KAKAO_CLIENT_ID);
-        params.add("redirect_uri", KAKAO_CALLBACK_URL);
-        params.add("code", code);
+        try {
+            params.add("client_id", URLEncoder.encode(NAVER_CLIENT_ID, "UTF-8"));
+            params.add("client_secret", URLEncoder.encode(NAVER_CLIENT_SECRET, "UTF-8"));
+            params.add("grant_type", URLEncoder.encode("authorization_code", "UTF-8"));
+            params.add("state", URLEncoder.encode((String) session.getAttribute("state"), "UTF-8"));
+            params.add("code", URLEncoder.encode(code, "UTF-8"));
+            params.add("redirect_uri", URLEncoder.encode(NAVER_CALLBACK_URL, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
         ResponseEntity<String> responseEntity
-                = restTemplate.exchange(KAKAO_TOKEN_URL, HttpMethod.POST, request, String.class);
+                = restTemplate.exchange(NAVER_TOKEN_URL, HttpMethod.POST, request, String.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             // System.out.println(responseEntity.getBody());
-            /*
-                {
-                    "access_token":"DfhhliiDrnYgUIte1xHREi_jMKE-QJxih32Zswo9dVsAAAF67yBRdQ",
-                    "token_type":"bearer",
-                    "refresh_token":"bxYiyw945QkVMMHMFvYiH1I3BFp3JRMYanO8Mgo9dVsAAAF67yBRdA",
-                    "expires_in":21599,
-                    "scope":"account_email profile_nickname",
-                    "refresh_token_expires_in":5183999
-                }
-            */
-
             return responseEntity.getBody();
         }
 
@@ -76,13 +76,6 @@ public class KakaoOAuth implements OAuth {
 
     @Override
     public String requestUserInfo(String accessToken) {
-
-        /*
-            GET/POST /v2/user/me HTTP/1.1
-            Host: kapi.kakao.com
-            Authorization: Bearer {ACCESS_TOKEN}
-            Content-type: application/x-www-form-urlencoded;charset=utf-8
-        */
 
         if (!StringUtils.hasLength(accessToken)) {
             return null;
@@ -97,34 +90,36 @@ public class KakaoOAuth implements OAuth {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HEADER, TOKEN_PREFIX + token);
         ResponseEntity<String> responseEntity
-                = restTemplate.exchange(KAKAO_USERINFO_ACCESS_URL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+                = restTemplate.exchange(NAVER_USERINFO_ACCESS_URL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             return responseEntity.getBody();
         }
+
         return null;
+
     }
 
     // TODO - 리팩토링
     @Override
     public String requestLogin(String code) {
-        
+
         String accessToken = requestAccessToken(code);
         String userInfo = requestUserInfo(accessToken);
 
         return userInfo;
     }
 
-    public KakaoResponse getUserInfo(String code) {
+    public NaverResponse getUserInfo(String code) {
 
         try {
-            KakaoResponse kakaoResponse = objectMapper.readValue(requestLogin(code), KakaoResponse.class);
-            return kakaoResponse;
+            NaverResponse naverResponse = objectMapper.readValue(requestLogin(code), NaverResponse.class);
+            return naverResponse;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
         return null;
     }
+
 
     // TODO - 리팩토링
     private Map<String, String> convertStringToMap(String string) {

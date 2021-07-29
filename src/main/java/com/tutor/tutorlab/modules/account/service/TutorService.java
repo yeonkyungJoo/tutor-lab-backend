@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional(readOnly = false)
@@ -25,7 +26,7 @@ public class TutorService {
     private final CareerRepository careerRepository;
     private final EducationRepository educationRepository;
 
-    public void createTutor(User user, TutorSignUpRequest tutorSignUpRequest) {
+    public Tutor createTutor(User user, TutorSignUpRequest tutorSignUpRequest) {
 
         Tutor tutor = Tutor.builder()
                 .user(user)
@@ -34,6 +35,7 @@ public class TutorService {
                 .build();
 
         tutorRepository.save(tutor);
+        user.setRole(RoleType.ROLE_TUTOR);
 
         tutorSignUpRequest.getCareers().stream().forEach(careerCreateRequest -> {
             Career career = Career.builder()
@@ -62,6 +64,8 @@ public class TutorService {
             educationRepository.save(education);
             tutor.addEducation(education);
         });
+
+        return tutor;
     }
 
     public void updateTutor(User user, TutorUpdateRequest tutorUpdateRequest) {
@@ -73,33 +77,37 @@ public class TutorService {
 
         tutor.setSubjects(tutorUpdateRequest.getSubjects());
         tutor.setSpecialist(tutorUpdateRequest.isSpecialist());
+
+        tutor.setUpdatedAt(LocalDateTime.now());
     }
 
     // TODO - check : CASCADE
     public void deleteTutor(User user) {
 
-        if (user.getRole().equals(RoleType.ROLE_TUTOR)) {
-
-            Tutor tutor = tutorRepository.findByUser(user);
-            if (tutor == null) {
-
-            }
-            // Career 삭제
-            tutor.getCareers().stream()
-                    .forEach(career -> {
-                        careerRepository.delete(career);
-                    });
-            // Education 삭제
-            tutor.getEducations().stream()
-                    .forEach(education -> {
-                        educationRepository.delete(education);
-                    });
-            tutor.quit();
-            tutorRepository.delete(tutor);
-
-
-        } else {
+        if (user.getRole() != RoleType.ROLE_TUTOR) {
             // TODO - 에러
         }
+
+        Tutor tutor = tutorRepository.findByUser(user);
+        if (tutor == null) {
+            // TODO - 에러
+        }
+
+        // Career 삭제
+        tutor.getCareers().stream()
+                .forEach(career -> {
+                    career.setTutor(null);
+                    careerRepository.delete(career);
+                });
+        // Education 삭제
+        tutor.getEducations().stream()
+                .forEach(education -> {
+                    education.setTutor(null);
+                    educationRepository.delete(education);
+                });
+
+        tutor.quit();
+        tutorRepository.delete(tutor);
+
     }
 }

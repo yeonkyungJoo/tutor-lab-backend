@@ -5,9 +5,15 @@ import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 
 public class NaverInfo implements OAuthInfo {
 
+    private NaverResponse userInfo;
+
+    public NaverInfo(NaverResponse userInfo) {
+        this.userInfo = userInfo;
+    }
+
     @Override
     public String getProviderId() {
-        return null;
+        return userInfo.getResponse().getId();
     }
 
     @Override
@@ -17,11 +23,11 @@ public class NaverInfo implements OAuthInfo {
 
     @Override
     public String getName() {
-        return null;
+        return userInfo.getResponse().getName();
     }
 
     @Override
     public String getEmail() {
-        return null;
+        return userInfo.getResponse().getEmail();
     }
 }
