@@ -18,7 +18,10 @@ public class Tutor extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",
+                referencedColumnName = "user_id",
+                nullable = false,
+                foreignKey = @ForeignKey(name = "FK_TUTOR_USER_ID"))
     private User user;
     private String subjects;
 

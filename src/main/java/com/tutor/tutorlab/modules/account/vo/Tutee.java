@@ -20,8 +20,11 @@ import java.util.List;
 public class Tutee extends BaseEntity {
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id",
+                referencedColumnName = "user_id",
+                nullable = false,
+                foreignKey = @ForeignKey(name = "FK_TUTEE_USER_ID"))
     private User user;
     private String subjects;      // 학습하고 싶은 과목
 
