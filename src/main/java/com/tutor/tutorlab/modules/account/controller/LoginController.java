@@ -18,8 +18,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,8 +39,17 @@ public class LoginController {
         binder.addValidators(signUpRequestValidator);
     }*/
 
+    // 네이버 OAuth 로그인 필수 파라미터
+    // https://developers.naver.com/docs/login/web/web.md
+    // CSRF 방지를 위한 상태 토큰 생성
+    // 추후 검증을 위해 세션에 저장된다.
+    private String generateState() {
+        SecureRandom random = new SecureRandom();
+        return new BigInteger(130, random).toString(32);
+    }
+
     @GetMapping("/oauth/{provider}")
-    public void oauth(@PathVariable(name = "provider") String provider, HttpServletResponse response) {
+    public void oauth(@PathVariable(name = "provider") String provider, HttpServletRequest request, HttpServletResponse response) {
         
         try {
             // 로그인 요청 주소
@@ -47,6 +59,12 @@ public class LoginController {
                 url = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http://localhost:8080/oauth/google/callback&client_id=902783645965-ald60d1ehnaeaoetihtb1861u98ppf3u.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
             } else if (provider.equals("kakao")) {
                 url = "https://kauth.kakao.com/oauth/authorize?client_id=8dc9eea7e202a581e0449058e753beaf&redirect_uri=http://localhost:8080/oauth/kakao/callback&response_type=code";
+            } else if (provider.equals("naver")) {
+
+                String state = generateState();
+                request.getSession().setAttribute("state", state);
+                url = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id="
+                        + "NNG0ZvRBJlxlE5DbApJR" + "&redirect_uri=" + "http://localhost:8080/oauth/naver/callback" + "&state=" + state;
             }
 
             if (StringUtils.hasLength(url)) {
@@ -64,6 +82,7 @@ public class LoginController {
     @GetMapping("/oauth/{provider}/callback")
     public ResponseEntity oauth(@PathVariable(name = "provider") String provider,
             @RequestParam(name = "code") String code) {
+        // 네이버 - state, error, error_description
 
         try {
             if (!StringUtils.hasLength(code)) {

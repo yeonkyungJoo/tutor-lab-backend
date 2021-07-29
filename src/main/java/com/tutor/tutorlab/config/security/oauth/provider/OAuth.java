@@ -13,6 +13,6 @@ public interface OAuth {
 
     String requestUserInfo(String accessToken);
 
-    Map<String, String> requestLogin(String code);
-
+    // Map<String, String> requestLogin(String code);
+    String requestLogin(String code);
 }

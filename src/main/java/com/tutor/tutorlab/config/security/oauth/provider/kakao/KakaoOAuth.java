@@ -106,16 +106,28 @@ public class KakaoOAuth implements OAuth {
 
     // TODO - 리팩토링
     @Override
-    public Map<String, String> requestLogin(String code) {
+    public String requestLogin(String code) {
         
         String accessToken = requestAccessToken(code);
         String userInfo = requestUserInfo(accessToken);
 
-        return convertStringToMap(userInfo);
+        return userInfo;
+    }
+
+    public KakaoResponse getUserInfo(String code) {
+
+        try {
+            KakaoResponse kakaoResponse = objectMapper.readValue(requestLogin(code), KakaoResponse.class);
+            return kakaoResponse;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     // TODO - 리팩토링
-    public Map<String, String> convertStringToMap(String string) {
+    private Map<String, String> convertStringToMap(String string) {
 
         try {
             if (StringUtils.hasLength(string)) {

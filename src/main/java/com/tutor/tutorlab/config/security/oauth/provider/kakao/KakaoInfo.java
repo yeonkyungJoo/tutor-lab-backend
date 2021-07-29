@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class KakaoInfo implements OAuthInfo {
 
-    private Map<String, String> userInfo;
+    private KakaoResponse userInfo;
 
     /*
         {
@@ -31,13 +31,13 @@ public class KakaoInfo implements OAuthInfo {
         }
     */
 
-    public KakaoInfo(Map<String, String> userInfo) {
+    public KakaoInfo(KakaoResponse userInfo) {
         this.userInfo = userInfo;
     }
 
     @Override
     public String getProviderId() {
-        return userInfo.get("id");
+        return Long.toString(userInfo.getId());
     }
 
     @Override
@@ -47,12 +47,11 @@ public class KakaoInfo implements OAuthInfo {
 
     @Override
     public String getName() {
-        userInfo.get("properties");
-        return null;
+        return userInfo.getKakao_account().getProfile().getNickname();
     }
 
     @Override
     public String getEmail() {
-        return userInfo.get("kakao_account");
+        return userInfo.getKakao_account().getEmail();
     }
 }

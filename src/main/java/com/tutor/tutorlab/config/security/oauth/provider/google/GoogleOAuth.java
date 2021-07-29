@@ -93,16 +93,20 @@ public class GoogleOAuth implements OAuth {
 
     // TODO - 리팩토링
     @Override
-    public Map<String, String> requestLogin(String code) {
+    public String requestLogin(String code) {
 
         String accessToken = requestAccessToken(code);
         String userInfo = requestUserInfo(accessToken);
 
-        return convertStringToMap(userInfo);
+        return userInfo;
+    }
+
+    public Map<String, String> getUserInfo(String code) {
+        return convertStringToMap(requestLogin(code));
     }
 
     // TODO - 리팩토링
-    public Map<String, String> convertStringToMap(String string) {
+    private Map<String, String> convertStringToMap(String string) {
 
         try {
             if (StringUtils.hasLength(string)) {

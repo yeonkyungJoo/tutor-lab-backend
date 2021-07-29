@@ -8,11 +8,14 @@ import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleOAuth;
 import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoOAuth;
+import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoResponse;
+import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverInfo;
+import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverOAuth;
+import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverResponse;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.GenderType;
 import com.tutor.tutorlab.modules.account.vo.RoleType;
@@ -21,7 +24,6 @@ import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,10 +38,10 @@ import java.util.Map;
 public class LoginService {
 
     private final UserRepository userRepository;
-    private final TutorRepository tutorRepository;
     private final TuteeRepository tuteeRepository;
     private final GoogleOAuth googleOAuth;
     private final KakaoOAuth kakaoOAuth;
+    private final NaverOAuth naverOAuth;
 
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -55,17 +57,17 @@ public class LoginService {
         return duplicated;
     }
 
+    // TODO - 리팩토링
     public OAuthInfo getOAuthInfo(String provider, String code) throws Exception {
 
-        Map<String, String> userInfo = null;
         OAuthInfo oAuthInfo = null;
 
         // convert
         OAuthType oAuthType = OAuthInfo.getOAuthType(provider);
         switch (oAuthType) {
             case GOOGLE:
-                userInfo = googleOAuth.requestLogin(code);
-                // System.out.println(userInfo);
+                Map<String, String> googleOAuthUserInfo = googleOAuth.getUserInfo(code);
+                // System.out.println(googleOAuthUserInfo);
                 /*
                 {
                     id=109497631191479413556,
@@ -78,13 +80,13 @@ public class LoginService {
                     locale=ko
                 }
                 */
-                if (userInfo != null) {
-                    oAuthInfo = new GoogleInfo(userInfo);
+                if (googleOAuthUserInfo != null) {
+                    oAuthInfo = new GoogleInfo(googleOAuthUserInfo);
                 }
                 break;
             case KAKAO:
-                userInfo = kakaoOAuth.requestLogin(code);
-                // System.out.println(userInfo);
+                KakaoResponse kakaoOAuthUserInfo = kakaoOAuth.getUserInfo(code);
+                // System.out.println(kakaoOAuthUserInfo);
                 /*
                     {
                         id=1825918761,
@@ -105,12 +107,18 @@ public class LoginService {
                         }
                     }
                 */
-                if (userInfo != null) {
-                    oAuthInfo = new KakaoInfo(userInfo);
-                    System.out.println(oAuthInfo);
+                if (kakaoOAuthUserInfo != null) {
+                    oAuthInfo = new KakaoInfo(kakaoOAuthUserInfo);
                 }
                 break;
             case NAVER:
+                NaverResponse naverOAuthUserInfo = naverOAuth.getUserInfo(code);
+                System.out.println(naverOAuthUserInfo);
+
+                if (naverOAuthUserInfo != null) {
+                    oAuthInfo = new NaverInfo(naverOAuthUserInfo);
+                    System.out.println(oAuthInfo);
+                }
                 break;
             default:
                 break;
