@@ -1,127 +1,116 @@
 package com.tutor.tutorlab.modules.account.controller;
 
-import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
-import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TuteeSignUpRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
+import com.tutor.tutorlab.config.security.CurrentUser;
+import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.UserService;
-import com.tutor.tutorlab.modules.account.validator.SignUpRequestValidator;
 import com.tutor.tutorlab.modules.account.vo.User;
+import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
-
+@RequestMapping("/users")
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
+    private final Integer PAGE_SIZE = 20;
+
     private final UserService userService;
     private final UserRepository userRepository;
-    private final SignUpRequestValidator signUpRequestValidator;
 
-    @InitBinder("signUpRequest")
-    public void validateSignUpRequest(WebDataBinder binder) {
-        binder.addValidators(signUpRequestValidator);
+/*
+    @ApiOperation("회원 전체 조회")
+    @GetMapping
+    public ResponseEntity getUsers() {
+
+        List<UserDto> users = userRepository.findAll().stream()
+                .map(user -> new UserDto(user))
+                .collect(Collectors.toList());
+
+        // TODO - RestResponse
+        return new ResponseEntity(users, HttpStatus.OK);
+    }
+*/
+    // TODO - 검색
+    // 페이징
+    @ApiOperation("회원 전체 조회 - 페이징")
+    @GetMapping
+    public ResponseEntity getUsers(@RequestParam(defaultValue = "1") Integer page) {
+
+        Page<UserDto> users = userRepository.findAll(
+                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
+                .map(user -> new UserDto(user));
+        // TODO - RestResponse
+        return new ResponseEntity(users, HttpStatus.OK);
     }
 
-    @GetMapping("/oauth/{provider}")
-    public void oauth(@PathVariable(name = "provider") String provider, HttpServletResponse response) {
+    @ApiOperation("회원 조회")
+    @GetMapping("/{user_id}")
+    public ResponseEntity getUser(@PathVariable(name = "user_id") Long userId) {
 
-        try {
-            String url = null;
-            if (provider.equals("google")) {
-                url = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http://localhost:8080/oauth/google/callback&client_id=902783645965-ald60d1ehnaeaoetihtb1861u98ppf3u.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
-            }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-            if (StringUtils.hasLength(url)) {
-                response.sendRedirect(url);
-            }
+        // TODO - RestResponse
+        return new ResponseEntity(new UserDto(user), HttpStatus.OK);
+    }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+    @ApiOperation("회원 정보 수정")
+    @PutMapping
+    public ResponseEntity editUser(@CurrentUser User user,
+                            @RequestBody UserUpdateRequest userUpdateRequest) {
+
+        if (user == null) {
+            // TODO - 예외처리 : UnAuthenticatedException or AccessDeniedException
+        }
+
+        userService.updateUser(user, userUpdateRequest);
+        // TODO - RestResponse
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @ApiOperation("회원 탈퇴")
+    @DeleteMapping
+    public ResponseEntity quitUser(@CurrentUser User user) {
+
+        if (user == null) {
+            // TODO - 예외처리 : UnAuthenticatedException or AccessDeniedException
+        }
+        userService.deleteUser(user);
+        // TODO - RestResponse
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @Data
+    static class UserDto {
+
+        private String username;
+        // private String password;
+        private String name;
+        private String gender;
+        private String phoneNumber;
+        private String email;
+        private String nickname;
+        private String bio;
+
+        private String zone;
+
+        public UserDto(User user) {
+            this.username = user.getUsername();
+            this.name = user.getUsername();
+            this.gender = user.getGender().toString();
+            this.phoneNumber = user.getPhoneNumber();
+            this.email = user.getEmail();
+            this.nickname = user.getNickname();
+            this.bio = user.getBio();
+            this.zone = user.getZone();
         }
     }
-
-    /**
-     OAuth 로그인/회원가입
-     - google : https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http://localhost:8080/oauth/google/callback&client_id=902783645965-ald60d1ehnaeaoetihtb1861u98ppf3u.apps.googleusercontent.com&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
-     */
-    @GetMapping("/oauth/{provider}/callback")
-    public ResponseEntity oauth(@PathVariable(name = "provider") String provider,
-            @RequestParam(name = "code") String code) {
-
-        try {
-            OAuthInfo oAuthInfo = userService.getOAuthInfo(provider, code);
-            if (oAuthInfo != null) {
-
-                User user = userRepository.findByProviderAndProviderId(provider, oAuthInfo.getProviderId());
-                if (user != null) {
-                    Map<String, String> result = userService.loginOAuth(user);
-                    System.out.println(result);
-                    // {header=Authorization, token=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZXYueWsyMDIxQGdtYWlsLmNvbSIsImV4cCI6MTYyNjYxMzg5NCwiaWF0IjoxNjI2NTI3NDk0fQ.j_d2B_Gsl1XVNDAYuMeYO_3DGznH_UOzGIL2J7Y3Yas}
-
-                    return null;
-                } else {
-                    Long userId = userService.signUpOAuth(oAuthInfo);
-                    return null;
-                }
-
-            } else {
-                // TODO
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * OAuth 회원가입 추가 정보 입력
-     */
-    @PostMapping("/sign-up/oauth/detail")
-    public ResponseEntity signUpOAuthDetail() {
-
-        return null;
-    }
-
-    /**
-     * 일반 회원가입 - 튜터
-     */
-    @PostMapping("/sign-up/tutor")
-    public ResponseEntity signUpTutor(@RequestBody TutorSignUpRequest tutorSignUpRequest) {
-        userService.signUpTutor(tutorSignUpRequest);
-        return null;
-    }
-
-    /**
-     * 일반 회원가입 - 튜티
-     */
-    @PostMapping("/sign-up/tutee")
-    public ResponseEntity signUpTutee(@RequestBody TuteeSignUpRequest tuteeSignUpRequest) {
-        userService.signUpTutee(tuteeSignUpRequest);
-        return null;
-    }
-
-    /**
-     * 일반 로그인
-     */
-    @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginRequest request) {
-
-        try {
-            userService.login(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 }

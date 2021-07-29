@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class TuteeSignUpRequest {
+public class TuteeUpdateRequest {
 
     private String subjects;
 }

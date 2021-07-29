@@ -1,25 +1,36 @@
 package com.tutor.tutorlab.modules.account.controller.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-public class TutorSignUpRequest extends SignUpRequest {
+import java.util.ArrayList;
+import java.util.List;
 
-    // career
-    private String companyName;
-    private String duty;    // 직급
-    private String startDate;
-    private String endDate;
-    private boolean present;
+@NoArgsConstructor
+@Data
+public class TutorSignUpRequest {
 
-    // education
-    private String schoolName;
-    private String major;
-    private String entranceDate;
-    private String graduationDate;
-    private double score;
-    private String degree;
+    private String subjects;
+    private List<CareerCreateRequest> careers = new ArrayList<>();
+    private List<EducationCreateRequest> educations = new ArrayList<>();
+    private boolean specialist;
 
+    @Builder
+    public TutorSignUpRequest(String subjects, List<CareerCreateRequest> careers, List<EducationCreateRequest> educations, boolean specialist) {
+        this.subjects = subjects;
+        if (careers != null) {
+            this.careers.addAll(careers);
+        }
+        if (educations != null) {
+            this.educations.addAll(educations);
+        }
+        this.specialist = specialist;
+    }
+
+    @Builder
+    public TutorSignUpRequest(String subjects, boolean specialist) {
+        this.subjects = subjects;
+        this.specialist = specialist;
+    }
 }

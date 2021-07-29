@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class RestResponseAspect {
 
-    @Around("execution(* com.tutor.tutorlab.modules.*.controller.*.*(..))")
+    // @Around("execution(* com.tutor.tutorlab.modules.*.controller.*.*(..))")
     public RestResponse restResponseHandler(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         return RestResponse.of(HttpStatus.OK.value(), "API 호출에 성공하였습니다.", proceedingJoinPoint.proceed());
     }
