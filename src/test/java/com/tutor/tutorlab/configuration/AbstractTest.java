@@ -65,10 +65,10 @@ public abstract class AbstractTest {
                 .totalTime(10)
                 .pertimeCost(1000L)
                 .totalCost(10000L)
-                .difficulty(DifficultyType.ADVANCED)
+                .difficultyType(DifficultyType.ADVANCED)
                 .isGroup(true)
                 .groupNumber(2)
-                .system(SystemType.ONLINE)
+                .systemType(SystemType.ONLINE)
                 .build();
 
         userRepository.save(user);

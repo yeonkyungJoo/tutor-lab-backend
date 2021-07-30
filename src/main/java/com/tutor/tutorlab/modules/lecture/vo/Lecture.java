@@ -1,5 +1,7 @@
 package com.tutor.tutorlab.modules.lecture.vo;
 
+import com.tutor.tutorlab.config.converter.enumconverter.DifficultyTypeConverter;
+import com.tutor.tutorlab.config.converter.enumconverter.SystemTypeConverter;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
@@ -8,12 +10,11 @@ import lombok.*;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.*;
-import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-@Getter
 @Builder
+@Getter
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = PROTECTED)
@@ -47,8 +48,9 @@ public class Lecture extends BaseEntity {
     @Column(name = "total_cost", nullable = false)
     private Long totalCost;
 
-    @Column(name = "difficulty", length = 20)
-    private DifficultyType difficulty;
+    @Convert(converter = DifficultyTypeConverter.class)
+    @Column(name = "difficulty_type", length = 20)
+    private DifficultyType difficultyType;
 
     @Column(name = "is_group", nullable = false)
     private Boolean isGroup;
@@ -56,9 +58,8 @@ public class Lecture extends BaseEntity {
     @Column(name = "group_number")
     private Integer groupNumber;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "system", length = 20)
-    private SystemType system;
-
+    @Convert(converter = SystemTypeConverter.class)
+    @Column(name = "system_type", length = 20)
+    private SystemType systemType;
 
 }

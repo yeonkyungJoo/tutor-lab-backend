@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.config.converter;
+package com.tutor.tutorlab.config.converter.enumconverter;
 
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import org.apache.commons.lang3.StringUtils;
@@ -7,7 +7,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.Objects;
 
-@Converter
+@Converter(autoApply = true)
 public class DifficultyTypeConverter implements AttributeConverter<DifficultyType, String> {
     @Override
     public String convertToDatabaseColumn(DifficultyType attribute) {
@@ -22,6 +22,6 @@ public class DifficultyTypeConverter implements AttributeConverter<DifficultyTyp
         if (StringUtils.isEmpty(dbData)) {
             return null;
         }
-        return DifficultyType.findToNull(dbData);
+        return DifficultyType.find(dbData);
     }
 }

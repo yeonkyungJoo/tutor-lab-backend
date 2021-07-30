@@ -14,6 +14,7 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
 @Getter
+@AttributeOverride(name = "id", column = @Column(name = "lecture_subject_id"))
 @Entity
 @Table(name = "lecture_subject")
 public class LectureSubject extends BaseEntity {
