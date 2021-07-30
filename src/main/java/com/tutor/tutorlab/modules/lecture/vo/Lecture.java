@@ -1,7 +1,7 @@
 package com.tutor.tutorlab.modules.lecture.vo;
 
-import com.tutor.tutorlab.config.converter.DifficultyTypeConverter;
-import com.tutor.tutorlab.config.converter.SystemTypeConverter;
+import com.tutor.tutorlab.config.converter.enumconverter.DifficultyTypeConverter;
+import com.tutor.tutorlab.config.converter.enumconverter.SystemTypeConverter;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;

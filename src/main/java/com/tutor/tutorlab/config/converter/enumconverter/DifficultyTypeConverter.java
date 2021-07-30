@@ -1,6 +1,6 @@
-package com.tutor.tutorlab.config.converter;
+package com.tutor.tutorlab.config.converter.enumconverter;
 
-import com.tutor.tutorlab.modules.lecture.enums.SystemType;
+import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.AttributeConverter;
@@ -8,9 +8,9 @@ import javax.persistence.Converter;
 import java.util.Objects;
 
 @Converter(autoApply = true)
-public class SystemTypeConverter implements AttributeConverter<SystemType, String> {
+public class DifficultyTypeConverter implements AttributeConverter<DifficultyType, String> {
     @Override
-    public String convertToDatabaseColumn(SystemType attribute) {
+    public String convertToDatabaseColumn(DifficultyType attribute) {
         if (Objects.isNull(attribute)) {
             return null;
         }
@@ -18,10 +18,10 @@ public class SystemTypeConverter implements AttributeConverter<SystemType, Strin
     }
 
     @Override
-    public SystemType convertToEntityAttribute(String dbData) {
+    public DifficultyType convertToEntityAttribute(String dbData) {
         if (StringUtils.isEmpty(dbData)) {
             return null;
         }
-        return SystemType.findToNull(dbData);
+        return DifficultyType.find(dbData);
     }
 }
