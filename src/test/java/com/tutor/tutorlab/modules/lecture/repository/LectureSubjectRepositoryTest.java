@@ -2,8 +2,9 @@ package com.tutor.tutorlab.modules.lecture.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@DataJpaTest
+@SpringBootTest
 public class LectureSubjectRepositoryTest {
 
     @Autowired

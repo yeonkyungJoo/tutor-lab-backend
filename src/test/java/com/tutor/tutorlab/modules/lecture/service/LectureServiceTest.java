@@ -24,4 +24,9 @@ class LectureServiceTest extends AbstractTest {
         //then
         assertThat(lecture).extracting("id").isEqualTo(id);
     }
+
+    @Test
+    void 강의등록_테스트() throws Exception {
+
+    }
 }

@@ -13,10 +13,10 @@ import org.mapstruct.Mappings;
 public interface LectureMapstruct {
 
     @Mappings({
-            @Mapping(target = "difficultyType", source = "difficulty.type"),
-            @Mapping(target = "difficultyName", source = "difficulty.name"),
-            @Mapping(target = "systemType", source = "system.type"),
-            @Mapping(target = "systemName", source = "system.name"),
+            @Mapping(target = "difficultyType", source = "difficultyType.type"),
+            @Mapping(target = "difficultyName", source = "difficultyType.name"),
+            @Mapping(target = "systemType", source = "systemType.type"),
+            @Mapping(target = "systemName", source = "systemType.name"),
     })
     LectureResponse lectureToLectureResponse(Lecture lecture);
 }

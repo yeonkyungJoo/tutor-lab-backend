@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.lecture.enums;
+package com.tutor.tutorlab.modules.file.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.tutor.tutorlab.config.converter.enumconverter.EnumerableConverter;
@@ -10,27 +10,25 @@ import javax.persistence.Converter;
 
 @Getter
 @AllArgsConstructor
-public enum SystemType implements Enumerable {
-
-    ONLINE("ONLINE", "온라인"),
-    OFFLINE("OFFLINE", "오프라인");
+public enum FileType implements Enumerable {
+    LECTURE_IMAGE("LECTURE_IMAGE", "강의 이미지");
 
     private String type;
     private String name;
 
-    public static SystemType find(String type) {
+    public static FileType find(String type) {
         return Enumerable.find(type, values());
     }
 
     @JsonCreator
-    public static SystemType findToNull(String type) {
+    public static FileType findToNull(String type) {
         return Enumerable.findToNull(type, values());
     }
 
-    @javax.persistence.Converter(autoApply = true)
-    public static class Converter extends EnumerableConverter<SystemType> {
+    @javax.persistence.Converter
+    public static class Converter extends EnumerableConverter<FileType> {
         public Converter() {
-            super(SystemType.class);
+            super(FileType.class);
         }
     }
 }
