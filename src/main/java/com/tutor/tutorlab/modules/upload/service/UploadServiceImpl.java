@@ -5,6 +5,7 @@ import com.tutor.tutorlab.config.externalproperties.amazon.AmazonS3Properties;
 import com.tutor.tutorlab.modules.external.amazon.service.AWSS3Client;
 import com.tutor.tutorlab.modules.file.enums.FileType;
 import com.tutor.tutorlab.modules.file.mapstruct.FileMapstruct;
+import com.tutor.tutorlab.modules.file.response.FileResponse;
 import com.tutor.tutorlab.modules.file.service.FileService;
 import com.tutor.tutorlab.modules.file.vo.File;
 import com.tutor.tutorlab.modules.upload.controller.response.UploadResponse;
@@ -34,7 +35,7 @@ public class UploadServiceImpl implements UploadService {
     public UploadResponse uploadImage(MultipartFile file) throws Exception {
         String uuid = UUID.randomUUID().toString();
         awss3Client.putObject(amazonS3Properties.getBucket(), uuid, file.getBytes(), file.getContentType());
-        File fileEntity = fileService.add(fileMapstruct.toAddFile(uuid, file.getOriginalFilename(), file.getContentType(), file.getSize(), FileType.LECTURE_IMAGE));
-        return uploadMapstruct.fileToUploadResponse(fileMapstruct.fileToFileResponse(fileEntity), amazonS3Properties.getS3UploadUrl(fileEntity.getUuid()));
+        FileResponse fileResponse = fileService.add(fileMapstruct.toAddFile(uuid, file.getOriginalFilename(), file.getContentType(), file.getSize(), FileType.LECTURE_IMAGE));
+        return uploadMapstruct.fileToUploadResponse(fileResponse, amazonS3Properties.getS3UploadUrl(fileResponse.getUuid()));
     }
 }

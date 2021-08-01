@@ -1,7 +1,5 @@
 package com.tutor.tutorlab.modules.lecture.vo;
 
-import com.tutor.tutorlab.config.converter.enumconverter.DifficultyTypeConverter;
-import com.tutor.tutorlab.config.converter.enumconverter.SystemTypeConverter;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
@@ -48,7 +46,6 @@ public class Lecture extends BaseEntity {
     @Column(name = "total_cost", nullable = false)
     private Long totalCost;
 
-    @Convert(converter = DifficultyTypeConverter.class)
     @Column(name = "difficulty_type", length = 20)
     private DifficultyType difficultyType;
 
@@ -58,7 +55,6 @@ public class Lecture extends BaseEntity {
     @Column(name = "group_number")
     private Integer groupNumber;
 
-    @Convert(converter = SystemTypeConverter.class)
     @Column(name = "system_type", length = 20)
     private SystemType systemType;
 

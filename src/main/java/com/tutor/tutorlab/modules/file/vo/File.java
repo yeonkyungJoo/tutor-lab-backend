@@ -1,6 +1,5 @@
 package com.tutor.tutorlab.modules.file.vo;
 
-import com.tutor.tutorlab.config.converter.enumconverter.FileTypeConverter;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.file.enums.FileType;
 import lombok.*;
@@ -22,7 +21,6 @@ public class File extends BaseEntity {
     @Column(name = "uuid")
     private String uuid;
 
-    @Convert(converter = FileTypeConverter.class)
     @Column(name = "type", length = 50)
     private FileType type;
 
