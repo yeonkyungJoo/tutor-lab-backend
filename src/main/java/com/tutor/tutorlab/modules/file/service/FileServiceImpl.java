@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.file.service;
 
 import com.tutor.tutorlab.modules.file.mapstruct.FileMapstruct;
 import com.tutor.tutorlab.modules.file.repository.FileRepository;
+import com.tutor.tutorlab.modules.file.response.FileResponse;
 import com.tutor.tutorlab.modules.file.vo.File;
 import com.tutor.tutorlab.modules.upload.service.dto.AddFile;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,14 @@ public class FileServiceImpl implements FileService {
 
     @Transactional
     @Override
-    public File add(AddFile addFile) {
+    public FileResponse add(AddFile addFile) {
         File file = fileMapstruct.addFileToFile(addFile);
-        return fileRepository.save(file);
+        return fileMapstruct.fileToFileResponse(fileRepository.save(file));
+    }
+
+    @Override
+    public FileResponse get(String uuid) {
+        File file = fileRepository.findByUuid(uuid);
+        return fileMapstruct.fileToFileResponse(file);
     }
 }

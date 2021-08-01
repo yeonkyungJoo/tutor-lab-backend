@@ -2,6 +2,7 @@ package com.tutor.tutorlab.configuration;
 
 import com.tutor.tutorlab.TutorlabApplication;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
@@ -52,9 +53,9 @@ public abstract class AbstractTest {
                 .email("test")
                 .bio("test")
                 .zone("test")
-                .role("test")
-                .provider("dfs")
-                .providerId("fsd")
+                .role(RoleType.ROLE_TUTEE)
+                .provider(null)
+                .providerId(null)
                 .build();
 
         Lecture lecture = Lecture.builder()

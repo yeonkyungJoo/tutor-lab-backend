@@ -5,9 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.Optional;
 
-/*
-    TODO 1. Enumerable 타입 converter 필요.
-*/
 public interface Enumerable {
 
     String getType();
