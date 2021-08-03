@@ -23,10 +23,11 @@ public class Tutor extends BaseEntity {
     private String subjects;
 
     // TODO - CASCADE
-    // TODO - check : FETCH
-    @OneToMany(mappedBy = "tutor")
+    // @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY)  // default - LAZY
     private List<Career> careers = new ArrayList<>();
-    @OneToMany(mappedBy = "tutor")
+
+    @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY)
     private List<Education> educations = new ArrayList<>();
 
     private boolean specialist;
