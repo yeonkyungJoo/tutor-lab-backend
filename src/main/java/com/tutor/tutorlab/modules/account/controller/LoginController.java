@@ -8,6 +8,7 @@ import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.vo.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -27,6 +28,7 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
+@Api(tags = {"LoginController"})
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
