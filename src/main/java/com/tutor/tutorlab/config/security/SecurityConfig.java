@@ -44,9 +44,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin().disable()
 
             .authorizeRequests()
+            .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/v3/api-docs").permitAll()
             // TODO - CHECK : 테스트 코드
             .antMatchers("/login", "/sign-up/**", "/oauth/**").permitAll()
-                .antMatchers("/sign-up/oauth/detail").authenticated()
+            .antMatchers("/sign-up/oauth/detail").authenticated()
             .anyRequest().authenticated()
             .and()
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
