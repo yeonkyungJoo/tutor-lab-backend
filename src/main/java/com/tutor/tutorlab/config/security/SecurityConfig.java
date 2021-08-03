@@ -47,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/v3/api-docs").permitAll()
             // TODO - CHECK : 테스트 코드
             .antMatchers("/login", "/sign-up/**", "/oauth/**").permitAll()
+            .antMatchers("/addresses/**").permitAll()
             .antMatchers("/sign-up/oauth/detail").authenticated()
             .anyRequest().authenticated()
             .and()

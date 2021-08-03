@@ -46,9 +46,9 @@ dependencies {
 	// implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 
 	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
-	// implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.5.RELEASE'
+//	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.5.RELEASE'
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
-	// implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.853'
+//	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.853'
 	// https://mvnrepository.com/artifact/commons-io/commons-io
 	implementation group: 'commons-io', name: 'commons-io', version: '2.4'
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
@@ -63,6 +63,9 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	// https://mvnrepository.com/artifact/com.h2database/h2
 	testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
 }
 
 test {
