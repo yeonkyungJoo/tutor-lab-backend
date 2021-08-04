@@ -36,7 +36,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1
 	implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.5.2'
+//	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.5.2'
 	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
@@ -44,13 +44,13 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
 //	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.5.RELEASE'
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
-//	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.853'
+	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.853'
 	// https://mvnrepository.com/artifact/commons-io/commons-io
 	implementation group: 'commons-io', name: 'commons-io', version: '2.4'
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '7.1.0'
+//	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '7.1.0'
 		//aop 사용자 logging을 위한 설정
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	// https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload
