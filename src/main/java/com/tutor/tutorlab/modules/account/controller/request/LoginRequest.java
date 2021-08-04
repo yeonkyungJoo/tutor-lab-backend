@@ -20,7 +20,7 @@ public class LoginRequest {
     private String password;
 
     @Builder
-    public LoginRequest(@NotBlank(message = "이메일 형식의 아이디를 입력해주세요.") String username, @NotBlank(message = "비밀번호를 입력해주세요.") String password) {
+    public LoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }
