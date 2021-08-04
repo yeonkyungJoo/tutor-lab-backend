@@ -15,10 +15,16 @@ public class RestControllerExceptionAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RuntimeException.class)
-    public ErrorResponse handlerRuntimeException(RuntimeException e, HttpServletRequest req) {
+    public ErrorResponse handleRuntimeException(RuntimeException e, HttpServletRequest req) {
         log.error("===================== RuntimeException Handling =====================");
         e.printStackTrace();
-        return new ErrorResponse(HttpStatus.OK.value(), e.getMessage(), null);
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+        // return new ErrorResponse(HttpStatus.OK.value(), e.getMessage(), null);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResponse handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
     }
 
 }

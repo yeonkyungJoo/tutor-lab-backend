@@ -6,6 +6,7 @@ import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.service.TuteeService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = {"TuteeController"})
 @RequestMapping("/tutees")
 @RestController
 @RequiredArgsConstructor
@@ -71,6 +73,9 @@ public class TuteeController {
     public ResponseEntity editTutee(@CurrentUser User user,
                                     @RequestBody TuteeUpdateRequest tuteeUpdateRequest) {
 
+        // TODO - CHECK : Bearer Token 없이 요청하는 경우
+        // user = null
+        // .antMatchers(HttpMethod.PUT, "/**").authenticated()
         if (user == null) {
 
         }

@@ -10,16 +10,19 @@ import com.tutor.tutorlab.modules.account.vo.Career;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api(tags = {"CareerController"})
 @RequestMapping("/careers")
 @RequiredArgsConstructor
 @RestController
