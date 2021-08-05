@@ -1,11 +1,14 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.service.TuteeService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +19,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = {"TuteeController"})
 @RequestMapping("/tutees")
 @RestController
 @RequiredArgsConstructor
 public class TuteeController {
 
+    // TODO - properties
     private final Integer PAGE_SIZE = 20;
 
     private final TuteeService tuteeService;
@@ -38,9 +43,6 @@ public class TuteeController {
 */
 
     // TODO - 검색
-    /**
-     * 튜티 전체 조회 - 페이징
-     */
     @ApiOperation("튜티 전체 조회 - 페이징")
     @GetMapping
     public ResponseEntity getTutees(@RequestParam(defaultValue = "1") Integer page) {
@@ -51,42 +53,39 @@ public class TuteeController {
         return new ResponseEntity(tutees, HttpStatus.OK);
     }
 
-    /**
-     * 튜티 조회
-     */
     @ApiOperation("튜티 조회")
     @GetMapping("/{tutee_id}")
     public ResponseEntity getTutee(@PathVariable(name = "tutee_id") Long tuteeId) {
 
         Tutee tutee = tuteeRepository.findById(tuteeId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 튜티입니다."));
+                // TODO - CHECK : EntityNotFoundException or IllegalArgumentException
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜티입니다."));
+                // .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 튜티입니다."));
         return new ResponseEntity(new TuteeDto(tutee), HttpStatus.OK);
     }
 
-    /**
-     * 튜티 정보 수정
-     */
     @ApiOperation("튜티 정보 수정")
     @PutMapping
     public ResponseEntity editTutee(@CurrentUser User user,
                                     @RequestBody TuteeUpdateRequest tuteeUpdateRequest) {
 
+        // TODO - CHECK : Bearer Token 없이 요청하는 경우
+        // user = null
+        // .antMatchers(HttpMethod.PUT, "/**").authenticated()
+        // TODO - CHECK : AOP로 처리할 수 없는가?
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
         tuteeService.updateTutee(user, tuteeUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    /**
-     * 튜티 탈퇴
-     */
     @ApiOperation("튜티 탈퇴")
     @DeleteMapping
     public ResponseEntity quitTutee(@CurrentUser User user) {
 
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
         tuteeService.deleteTutee(user);
         return new ResponseEntity(HttpStatus.OK);
