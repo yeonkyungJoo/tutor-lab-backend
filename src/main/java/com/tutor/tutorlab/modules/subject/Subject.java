@@ -1,9 +1,17 @@
 package com.tutor.tutorlab.modules.subject;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
+@Getter
+@Builder
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+@NoArgsConstructor(access = PROTECTED)
 @Table(name = "subject")
 @Entity
 public class Subject {

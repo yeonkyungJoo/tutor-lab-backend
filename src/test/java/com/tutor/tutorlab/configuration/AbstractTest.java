@@ -8,12 +8,14 @@ import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
-import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
-import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
+import com.tutor.tutorlab.modules.subject.Subject;
+import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +24,13 @@ import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -106,7 +108,7 @@ public abstract class AbstractTest {
                 .totalCost(300000L)
                 .build();
 
-        LectureSubject subject = LectureSubject.builder()
+        LectureSubject lectureSubject = LectureSubject.builder()
                 .parent("개발")
                 .enSubject("java")
                 .krSubject("자바")
@@ -114,7 +116,7 @@ public abstract class AbstractTest {
 
         lecture.addPrice(lecturePrice);
 
-        lecture.addSubject(subject);
+        lecture.addSubject(lectureSubject);
 
         lectureRepository.save(lecture);
     }
