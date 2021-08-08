@@ -1,40 +1,64 @@
 package com.tutor.tutorlab.modules.lecture.controller.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
-import com.tutor.tutorlab.modules.lecture.enums.SystemType;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
+
+import java.util.List;
+import java.util.Set;
 
 @Value
 public class LectureResponse {
-
     private final Long id;
 
     // TODO UserResponse 정의해야함.
+    private String thumbnail;
 
     private final String title;
 
     private final String subTitle;
 
+    private final String introduce;
+
     private final String content;
-
-    private final Integer totalTime;
-
-    private final Long pertimeCost;
-
-    private final Long totalCost;
 
     private final String difficultyType;
 
     private final String difficultyName;
 
-    @JsonProperty("is_group")
-    private final Boolean isGroup;
+    private final List<SystemTypeResponse> systemTypes;
 
-    private final String systemType;
+    private final Set<LecturePriceResponse> lecturePrices;
 
-    private final String systemName;
+    private final Set<LectureSubjectResponse> subjects;
 
+    @Value
+    public static class LectureSubjectResponse {
+        private final String parent;
+
+        private final String enSubject;
+
+        private final String krSubject;
+    }
+
+    @Value
+    public static class LecturePriceResponse {
+        private final Boolean isGroup;
+
+        private final Integer groupNumber;
+
+        private final Integer totalTime;
+
+        private final Integer pertimeLecture;
+
+        private final Long pertimeCost;
+
+        private final Long totalCost;
+    }
+
+    @Value
+    public static class SystemTypeResponse {
+        private final String type;
+
+        private final String name;
+    }
 }

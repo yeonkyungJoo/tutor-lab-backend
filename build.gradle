@@ -33,7 +33,7 @@ dependencies {
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'mysql:mysql-connector-java'
-    // https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1
+  // https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1
 	implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.5.2'
@@ -54,7 +54,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '7.1.0'
+//	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '7.1.0'
 		//aop 사용자 logging을 위한 설정
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	// https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload
