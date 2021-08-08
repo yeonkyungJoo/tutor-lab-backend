@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.subject;
+package com.tutor.tutorlab.modules.subject.vo;
 
 import lombok.*;
 
@@ -24,10 +24,7 @@ public class Subject {
     private String parent;
 
     @Column(length = 50, nullable = false)
-    private String enSubject;
-
-    @Column(length = 50, nullable = false)
-    private String krSubject;
+    private String subject;
 
     @Column(length = 50, nullable = false)
     private String learningKind;

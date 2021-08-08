@@ -12,10 +12,6 @@ import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
-import com.tutor.tutorlab.modules.subject.Subject;
-import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +26,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

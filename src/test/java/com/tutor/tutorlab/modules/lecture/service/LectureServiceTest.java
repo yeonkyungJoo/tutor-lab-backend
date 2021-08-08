@@ -1,6 +1,8 @@
 package com.tutor.tutorlab.modules.lecture.service;
 
 import com.tutor.tutorlab.configuration.AbstractTest;
+import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.common.LectureBuilder;
 import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
@@ -25,6 +27,9 @@ class LectureServiceTest extends AbstractTest {
     @Autowired
     private LectureBuilder lectureBuilder;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     void 강의조회_테스트() throws Exception {
         // given
@@ -39,6 +44,8 @@ class LectureServiceTest extends AbstractTest {
 
     @Test
     void 강의등록_테스트() throws Exception {
+        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("테스트 실패, 유저 없음."));
+
         AddLectureRequest.AddLecturePriceRequest price1 = lectureBuilder.getAddLecturePriceRequest(true, 3, 1000L, 3, 3000L, 10);
         AddLectureRequest.AddLecturePriceRequest price2 = lectureBuilder.getAddLecturePriceRequest(false, 3, 1000L, 3, 30000L, 10);
 
@@ -57,7 +64,7 @@ class LectureServiceTest extends AbstractTest {
                 .subjects(Arrays.asList(subject1, subject2))
                 .build();
 
-        LectureResponse lectureResponse = lectureService.addLecture(param);
+        LectureResponse lectureResponse = lectureService.addLecture(param, user);
         assertThat(lectureResponse.getId()).isNotNull();
 
         assertThat(lectureResponse).extracting("thumbnail").isEqualTo(param.getThumbnailUrl());
