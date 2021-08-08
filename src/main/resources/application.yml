@@ -33,8 +33,8 @@ spring:
       client:
         registration:
           google:
-            client-id: 902783645965-ald60d1ehnaeaoetihtb1861u98ppf3u.apps.googleusercontent.com
-            client-secret: U7889QYKM2Zgt-Ui2eEKqKzL
+            client-id:
+            client-secret:
             scope:
             - email
             - profile
@@ -46,11 +46,11 @@ jwt:
 cloud:
   aws:
     credentials:
-      accessKey: AKIA3MGT2LL6L7NI6XXX
-      secretKey: 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
+      accessKey:
+      secretKey:
     s3:
-      bucket: tutorlab
+      bucket:
     region:
-      static: ap-northeast-2
+      static:
     stack:
-      auto: false
+      auto:

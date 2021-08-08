@@ -20,9 +20,9 @@ public abstract class OAuth {
     protected final RestTemplate restTemplate;
     protected final ObjectMapper objectMapper;
 
-    public abstract String requestAccessToken(String code);
+    protected abstract String requestAccessToken(String code);
 
-    public abstract String requestUserInfo(String accessToken);
+    protected abstract String requestUserInfo(String accessToken);
 
     protected String requestLogin(String code) {
 

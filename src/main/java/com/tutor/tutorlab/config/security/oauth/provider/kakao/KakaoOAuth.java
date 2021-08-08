@@ -22,7 +22,7 @@ public class KakaoOAuth extends OAuth {
     private final String KAKAO_CALLBACK_URL = "http://localhost:8080/oauth/kakao/callback";
     private final String KAKAO_USERINFO_ACCESS_URL = "https://kapi.kakao.com/v2/user/me";
     private final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private final String KAKAO_CLIENT_ID = "8dc9eea7e202a581e0449058e753beaf";
+    private final String KAKAO_CLIENT_ID = "";
     // private final String KAKAO_CLIENT_SECRET;
 
     @Autowired

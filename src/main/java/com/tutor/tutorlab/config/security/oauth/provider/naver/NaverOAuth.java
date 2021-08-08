@@ -24,8 +24,8 @@ public class NaverOAuth extends OAuth {
     private final String NAVER_CALLBACK_URL = "http://localhost:8080/oauth/naver/callback";
     private final String NAVER_USERINFO_ACCESS_URL = "https://openapi.naver.com/v1/nid/me";
     private final String NAVER_TOKEN_URL = "https://nid.naver.com/oauth2.0/token";
-    private final String NAVER_CLIENT_ID = "NNG0ZvRBJlxlE5DbApJR";
-    private final String NAVER_CLIENT_SECRET = "V23oWh9UTy";
+    private final String NAVER_CLIENT_ID = "";
+    private final String NAVER_CLIENT_SECRET = "";
 
     @Autowired
     public NaverOAuth(HttpSession session, RestTemplate restTemplate, ObjectMapper objectMapper) {
