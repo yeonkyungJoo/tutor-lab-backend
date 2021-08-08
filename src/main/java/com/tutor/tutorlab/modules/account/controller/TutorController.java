@@ -1,5 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
@@ -7,6 +9,7 @@ import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +23,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api(tags = {"TutorController"})
 @RequestMapping("/tutors")
 @RestController
 @RequiredArgsConstructor
-public class TutorController {
-
-    private final Integer PAGE_SIZE = 20;
+public class TutorController extends AbstractController {
 
     private final TutorService tutorService;
     private final TutorRepository tutorRepository;
@@ -67,7 +69,7 @@ public class TutorController {
     public ResponseEntity getTutor(@PathVariable(name = "tutor_id") Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 튜터입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
         return new ResponseEntity(new TutorDto(tutor), HttpStatus.OK);
     }
 
@@ -80,7 +82,7 @@ public class TutorController {
                         @RequestBody TutorSignUpRequest tutorSignUpRequest) {
 
         if (user == null) {
-            // TODO - 예외처리 : UnAuthenticatedException or AccessDeniedException
+            throw new UnauthorizedException();
         }
         tutorService.createTutor(user, tutorSignUpRequest);
         return new ResponseEntity(HttpStatus.CREATED);
@@ -94,7 +96,7 @@ public class TutorController {
     public ResponseEntity editTutor(@CurrentUser User user,
                                     @RequestBody TutorUpdateRequest tutorUpdateRequest) {
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
         tutorService.updateTutor(user, tutorUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);
@@ -108,7 +110,7 @@ public class TutorController {
     public ResponseEntity quitTutor(@CurrentUser User user) {
 
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
         tutorService.deleteTutor(user);
         return new ResponseEntity(HttpStatus.OK);

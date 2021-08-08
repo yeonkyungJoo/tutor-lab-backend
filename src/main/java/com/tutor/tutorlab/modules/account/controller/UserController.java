@@ -22,9 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 @RestController
 @RequiredArgsConstructor
-public class UserController {
-
-    private final Integer PAGE_SIZE = 20;
+public class UserController extends AbstractController {
 
     private final UserService userService;
     private final UserRepository userRepository;

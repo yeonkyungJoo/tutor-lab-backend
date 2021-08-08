@@ -30,7 +30,7 @@ import java.util.Map;
 @Api(tags = {"LoginController"})
 @RestController
 @RequiredArgsConstructor
-public class LoginController {
+public class LoginController extends AbstractController {
 
     private final LoginService loginService;
     private final UserRepository userRepository;

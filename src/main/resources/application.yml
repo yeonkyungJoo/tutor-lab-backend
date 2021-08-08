@@ -42,3 +42,15 @@ spring:
 jwt:
   secret: secret
   token-validity-in-seconds: 86400
+
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIA3MGT2LL6L7NI6XXX
+      secretKey: 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
+    s3:
+      bucket: tutorlab
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

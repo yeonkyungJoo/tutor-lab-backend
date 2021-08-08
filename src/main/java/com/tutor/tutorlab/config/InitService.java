@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.config;
 
+import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
@@ -47,7 +48,7 @@ public class InitService {
         // OAuth 회원가입
         String username = "sj@email.com";
         if (userRepository.findByUsername(username) == null) {
-
+            /*
             User user = User.builder()
                     .username(username)
                     .password(bCryptPasswordEncoder.encode(username))
@@ -64,6 +65,35 @@ public class InitService {
                     .build();
 
             userRepository.save(user);
+            */
+
+            OAuthInfo oAuthInfo = new OAuthInfo() {
+                @Override
+                public String getProviderId() {
+                    return "google1";
+                }
+
+                @Override
+                public OAuthType getProvider() {
+                    return OAuthType.GOOGLE;
+                }
+
+                @Override
+                public String getName() {
+                    return "sj";
+                }
+
+                @Override
+                public String getEmail() {
+                    return "sj@email.com";
+                }
+            };
+
+            try {
+                loginService.signUpOAuth(oAuthInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
