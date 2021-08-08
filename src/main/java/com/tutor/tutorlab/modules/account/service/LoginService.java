@@ -154,6 +154,10 @@ public class LoginService {
                 .build();
 
         userRepository.save(user);
+
+        Tutee tutee = new Tutee(user);
+        tuteeRepository.save(tutee);
+
         // 강제 로그인
         return loginOAuth(user);
     }
@@ -212,9 +216,7 @@ public class LoginService {
                 .build();
 
         userRepository.save(user);
-
-        Tutee tutee = new Tutee();
-        tutee.setUser(user);
+        Tutee tutee = new Tutee(user);
         return tuteeRepository.save(tutee);
     }
 
@@ -223,7 +225,6 @@ public class LoginService {
         try {
 
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            // TODO - CHECK
             // SecurityContextHolder.getContext().setAuthentication(authentication);
             return authentication;
 

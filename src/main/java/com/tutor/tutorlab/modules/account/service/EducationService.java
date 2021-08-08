@@ -1,5 +1,7 @@
 package com.tutor.tutorlab.modules.account.service;
 
+import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.EducationRepository;
@@ -7,6 +9,7 @@ import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Education;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,15 +29,15 @@ public class EducationService {
 
         Tutor tutor = tutorRepository.findByUser(user);
         if (tutor == null) {
-
+            throw new UnauthorizedException();
         }
 
         Education education = Education.builder()
                 .tutor(tutor)
                 .schoolName(educationCreateRequest.getSchoolName())
                 .major(educationCreateRequest.getMajor())
-                .entranceDate(LocalDate.parse(educationCreateRequest.getEntranceDate()))
-                .graduationDate(LocalDate.parse(educationCreateRequest.getGraduationDate()))
+                .entranceDate(LocalDateTimeUtil.getStringToDate(educationCreateRequest.getEntranceDate()))
+                .graduationDate(LocalDateTimeUtil.getStringToDate(educationCreateRequest.getGraduationDate()))
                 .score(educationCreateRequest.getScore())
                 .degree(educationCreateRequest.getDegree())
                 .build();
@@ -47,12 +50,12 @@ public class EducationService {
     public void updateEducation(Long educationId, EducationUpdateRequest educationUpdateRequest) {
 
         Education education = educationRepository.findById(educationId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 데이터입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
 
         education.setSchoolName(educationUpdateRequest.getSchoolName());
         education.setMajor(educationUpdateRequest.getMajor());
-        education.setEntranceDate(LocalDate.parse(educationUpdateRequest.getEntranceDate()));
-        education.setGraduationDate(LocalDate.parse(educationUpdateRequest.getGraduationDate()));
+        education.setEntranceDate(LocalDateTimeUtil.getStringToDate(educationUpdateRequest.getEntranceDate()));
+        education.setGraduationDate(LocalDateTimeUtil.getStringToDate(educationUpdateRequest.getGraduationDate()));
         education.setScore(educationUpdateRequest.getScore());
         education.setDegree(educationUpdateRequest.getDegree());
 
@@ -62,7 +65,7 @@ public class EducationService {
     public void deleteEducation(Long educationId) {
 
         Education education = educationRepository.findById(educationId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 데이터입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
 
         education.delete();
         educationRepository.delete(education);

@@ -48,7 +48,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
 //	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.5.RELEASE'
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
-//	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.853'
+	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.853'
 	// https://mvnrepository.com/artifact/commons-io/commons-io
 	implementation group: 'commons-io', name: 'commons-io', version: '2.4'
 	// https://mvnrepository.com/artifact/org.apache.commons/commons-lang3

@@ -3,7 +3,7 @@ package com.tutor.tutorlab.config.security.oauth.provider.kakao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -11,13 +11,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 // https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api
-public class KakaoOAuth implements OAuth {
+public class KakaoOAuth extends OAuth {
 
     private final String KAKAO_BASE_URL = "https://kauth.kakao.com/oauth/authorize";
     private final String KAKAO_CALLBACK_URL = "http://localhost:8080/oauth/kakao/callback";
@@ -26,8 +25,10 @@ public class KakaoOAuth implements OAuth {
     private final String KAKAO_CLIENT_ID = "8dc9eea7e202a581e0449058e753beaf";
     // private final String KAKAO_CLIENT_SECRET;
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
+    @Autowired
+    public KakaoOAuth(HttpSession session, RestTemplate restTemplate, ObjectMapper objectMapper) {
+        super(session, restTemplate, objectMapper);
+    }
 
     @Override
     public String requestAccessToken(String code) {
@@ -104,16 +105,6 @@ public class KakaoOAuth implements OAuth {
         return null;
     }
 
-    // TODO - 리팩토링
-    @Override
-    public String requestLogin(String code) {
-        
-        String accessToken = requestAccessToken(code);
-        String userInfo = requestUserInfo(accessToken);
-
-        return userInfo;
-    }
-
     public KakaoResponse getUserInfo(String code) {
 
         try {
@@ -126,17 +117,4 @@ public class KakaoOAuth implements OAuth {
         return null;
     }
 
-    // TODO - 리팩토링
-    private Map<String, String> convertStringToMap(String string) {
-
-        try {
-            if (StringUtils.hasLength(string)) {
-                return objectMapper.readValue(string, Map.class);
-            }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return new HashMap<>();
-    }
 }

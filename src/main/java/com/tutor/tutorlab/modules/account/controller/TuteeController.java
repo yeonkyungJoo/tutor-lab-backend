@@ -23,10 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/tutees")
 @RestController
 @RequiredArgsConstructor
-public class TuteeController {
-
-    // TODO - properties
-    private final Integer PAGE_SIZE = 20;
+public class TuteeController extends AbstractController {
 
     private final TuteeService tuteeService;
     private final TuteeRepository tuteeRepository;
@@ -58,7 +55,6 @@ public class TuteeController {
     public ResponseEntity getTutee(@PathVariable(name = "tutee_id") Long tuteeId) {
 
         Tutee tutee = tuteeRepository.findById(tuteeId)
-                // TODO - CHECK : EntityNotFoundException or IllegalArgumentException
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜티입니다."));
                 // .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 튜티입니다."));
         return new ResponseEntity(new TuteeDto(tutee), HttpStatus.OK);

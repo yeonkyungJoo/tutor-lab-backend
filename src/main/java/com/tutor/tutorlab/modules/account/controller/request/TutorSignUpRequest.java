@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller.request;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,16 @@ import java.util.List;
 @Data
 public class TutorSignUpRequest {
 
+    @ApiModelProperty(value = "강의주제", example = "spring", required = false)
     private String subjects;
+
+    @ApiModelProperty(value = "경력", required = false)
     private List<CareerCreateRequest> careers = new ArrayList<>();
+
+    @ApiModelProperty(value = "교육", required = false)
     private List<EducationCreateRequest> educations = new ArrayList<>();
+
+    @ApiModelProperty(value = "전문성", example="false", required = false)
     private boolean specialist;
 
     @Builder
