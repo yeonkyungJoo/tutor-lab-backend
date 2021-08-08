@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.lecture.vo;
 
+import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
@@ -7,7 +8,9 @@ import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -22,11 +25,11 @@ import static lombok.AccessLevel.PROTECTED;
 public class Lecture extends BaseEntity {
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id",
-                referencedColumnName = "user_id",
+    @JoinColumn(name = "tutor_id",
+                referencedColumnName = "tutor_id",
                 nullable = false,
-                foreignKey = @ForeignKey(name = "FK_LECTURE_USER_ID"))
-    private User user;
+                foreignKey = @ForeignKey(name = "FK_LECTURE_TUTOR_ID"))
+    private Tutor tutor;
 
     @Column(name = "title", nullable = false, length = 40)
     private String title;
@@ -34,28 +37,45 @@ public class Lecture extends BaseEntity {
     @Column(name = "sub_title", nullable = false, length = 25)
     private String subTitle;
 
+    @Column(name = "introduce", nullable = false, length = 25)
+    private String introduce;
+
     @Column(name = "content", nullable = false, length = 25)
     private String content;
 
-    @Column(name = "total_time", nullable = false)
-    private Integer totalTime;
-
-    @Column(name = "pertime_cost", nullable = false)
-    private Long pertimeCost;
-
-    @Column(name = "total_cost", nullable = false)
-    private Long totalCost;
-
-    @Column(name = "difficulty_type", length = 20)
+    @Column(name = "difficulty_type", nullable = false, length = 20)
     private DifficultyType difficultyType;
 
-    @Column(name = "is_group", nullable = false)
-    private Boolean isGroup;
+    @ElementCollection
+    @Column(name = "system_types", nullable = false, length = 20)
+    private List<SystemType> systemTypes;
 
-    @Column(name = "group_number")
-    private Integer groupNumber;
+    @OneToMany(mappedBy = "lecture", cascade = ALL, orphanRemoval = true)
+    private List<LecturePrice> lecturePrices;
 
-    @Column(name = "system_type", length = 20)
-    private SystemType systemType;
+    @OneToMany(mappedBy = "lecture", cascade = ALL, orphanRemoval = true)
+    private List<LectureSubject> lectureSubjects;
+
+    private String thumbnail;
+
+    public void addSubject(LectureSubject lectureSubject) {
+        lectureSubjects.add(lectureSubject);
+        lectureSubject.mappingLecture(this);
+    }
+
+    public void removeSubject(LectureSubject lectureSubject) {
+        lectureSubjects.remove(lectureSubject);
+        lectureSubject.mappingLecture(null);
+    }
+
+    public void addPrice(LecturePrice lecturePrice) {
+        lecturePrices.add(lecturePrice);
+        lecturePrice.mappingLecture(this);
+    };
+
+    public void removePrice(LecturePrice lecturePrice) {
+        lecturePrices.remove(lecturePrice);
+        lecturePrice.mappingLecture(null);
+    }
 
 }
