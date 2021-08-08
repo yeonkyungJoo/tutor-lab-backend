@@ -33,14 +33,18 @@ dependencies {
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'mysql:mysql-connector-java'
-    // https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1
+  // https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1
 	implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
-//	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.5.2'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.5.2'
+
+	// https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter
+	// implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
 	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
 //	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.5.RELEASE'
 	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3

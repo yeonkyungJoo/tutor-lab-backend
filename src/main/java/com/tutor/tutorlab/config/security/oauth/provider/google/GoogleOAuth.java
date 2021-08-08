@@ -1,9 +1,8 @@
 package com.tutor.tutorlab.config.security.oauth.provider.google;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -11,38 +10,24 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 // https://developers.google.com/identity/protocols/oauth2/web-server#httprest_1
-public class GoogleOAuth implements OAuth {
+public class GoogleOAuth extends OAuth {
 
     private final String GOOGLE_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth";
     private final String GOOGLE_CALLBACK_URL = "http://localhost:8080/oauth/google/callback";
     private final String GOOGLE_USERINFO_ACCESS_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
     private final String GOOLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
-    private final String GOOGLE_CLIENT_ID = "902783645965-ald60d1ehnaeaoetihtb1861u98ppf3u.apps.googleusercontent.com";
-    private final String GOOGLE_CLIENT_SECRET = "U7889QYKM2Zgt-Ui2eEKqKzL";
+    private final String GOOGLE_CLIENT_ID = "";
+    private final String GOOGLE_CLIENT_SECRET = "";
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
-
-    // 승인 매개변수 설정
-    /*
-    @Override
-    public Map<String, String> getOAuthRedirectURL() {
-
-        Map<String, String> map = new HashMap<>();
-        map.put("client_id", GOOGLE_CLIENT_ID);
-        map.put("redirect_uri", GOOGLE_CALLBACK_URL);
-        map.put("response_type", "code");
-        map.put("scope", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile");
-        map.put("base_url", GOOGLE_BASE_URL);
-        return map;
+    @Autowired
+    public GoogleOAuth(HttpSession session, RestTemplate restTemplate, ObjectMapper objectMapper) {
+        super(session, restTemplate, objectMapper);
     }
-    */
 
     // Exchange authorization code for refresh and access tokens
     @Override
@@ -91,31 +76,8 @@ public class GoogleOAuth implements OAuth {
         return null;
     }
 
-    // TODO - 리팩토링
-    @Override
-    public String requestLogin(String code) {
-
-        String accessToken = requestAccessToken(code);
-        String userInfo = requestUserInfo(accessToken);
-
-        return userInfo;
-    }
-
     public Map<String, String> getUserInfo(String code) {
         return convertStringToMap(requestLogin(code));
     }
 
-    // TODO - 리팩토링
-    private Map<String, String> convertStringToMap(String string) {
-
-        try {
-            if (StringUtils.hasLength(string)) {
-                return objectMapper.readValue(string, Map.class);
-            }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return new HashMap<>();
-    }
 }
