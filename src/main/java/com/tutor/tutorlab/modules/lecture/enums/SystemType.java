@@ -13,7 +13,8 @@ import javax.persistence.Converter;
 public enum SystemType implements Enumerable {
 
     ONLINE("ONLINE", "온라인"),
-    OFFLINE("OFFLINE", "오프라인");
+    OFFLINE("OFFLINE", "오프라인"),
+    NEGOTIABLE("NEGOTIABLE", "장소 협의 가능");
 
     private String type;
     private String name;

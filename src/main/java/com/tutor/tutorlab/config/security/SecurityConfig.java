@@ -48,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // TODO - CHECK : 테스트 코드
             //.antMatchers("/login", "/sign-up/**", "/oauth/**").permitAll()
             .antMatchers("/**").permitAll()
+            .antMatchers("/addresses/**", "/subjects/**").permitAll()
             .antMatchers("/sign-up/oauth/detail").authenticated()
             .antMatchers(HttpMethod.POST, "/**").authenticated()
             .antMatchers(HttpMethod.PUT, "/**").authenticated()

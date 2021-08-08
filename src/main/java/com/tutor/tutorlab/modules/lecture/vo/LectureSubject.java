@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.lecture.vo;
 
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
+@Builder
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
 @Getter
@@ -30,10 +32,16 @@ public class LectureSubject extends BaseEntity {
                 foreignKey = @ForeignKey(name = "FK_LECTURE_SUBJECT_LECTURE_ID"))
     private Lecture lecture;
 
-    @Column(name = "subject_kind")
-    private String subjectKind;
+    @Column(length = 50, nullable = false)
+    private String parent;
 
-    @Column(name = "subject_content")
-    private String subjectContent;
+    @Column(length = 50, nullable = false)
+    private String enSubject;
 
+    @Column(length = 50, nullable = false)
+    private String krSubject;
+
+    public void mappingLecture(Lecture lecture) {
+        this.lecture = lecture;
+    }
 }
