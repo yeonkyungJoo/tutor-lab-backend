@@ -125,9 +125,6 @@ public class LoginController extends AbstractController {
     public ResponseEntity signUpOAuthDetail(@CurrentUser User user,
                                             @RequestBody SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         loginService.signUpOAuthDetail(user, signUpOAuthDetailRequest);
         return new ResponseEntity(HttpStatus.OK);
     }

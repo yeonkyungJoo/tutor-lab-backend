@@ -69,9 +69,6 @@ public class CareerController extends AbstractController {
     @PostMapping
     public ResponseEntity newCareer(@CurrentUser User user,
                                     @RequestBody CareerCreateRequest careerCreateRequest) {
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         careerService.createCareer(user, careerCreateRequest);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -85,9 +82,6 @@ public class CareerController extends AbstractController {
                                      @PathVariable(name = "career_id") Long careerId,
                                      @RequestBody CareerUpdateRequest careerUpdateRequest) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         careerService.updateCareer(careerId, careerUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -100,9 +94,6 @@ public class CareerController extends AbstractController {
     public ResponseEntity removeCareer(@CurrentUser User user,
                                        @PathVariable(name = "career_id") Long careerId) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         careerService.deleteCareer(careerId);
         return new ResponseEntity(HttpStatus.OK);
     }
