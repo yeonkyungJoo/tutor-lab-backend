@@ -7,7 +7,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -42,6 +42,6 @@ public abstract class OAuth {
             e.printStackTrace();
         }
 
-        return new HashMap<>();
+        return Collections.EMPTY_MAP;
     }
 }

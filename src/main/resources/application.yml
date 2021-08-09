@@ -28,16 +28,17 @@ spring:
       hibernate:
         format-sql: true
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id:
-            client-secret:
-            scope:
-            - email
-            - profile
+security:
+  oauth2:
+    google:
+      client-id: googleId
+      client-secret: googleSecret
+    kakao:
+      client-id: kakaoId
+    naver:
+      client-id: naverId
+      client-secret: naverSecret
+
 
 jwt:
   secret: secret
