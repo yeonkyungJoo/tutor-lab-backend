@@ -22,32 +22,6 @@ class SubjectControllerTest extends AbstractTest {
 
     private final String BASE_URL = "/subjects";
 
-    @Autowired
-    private SubjectRepository subjectRepository;
-
-    @BeforeEach
-    void subjectSetUp() {
-        List<String> parents = Arrays.asList("개발", "프로그래밍언어", "프레임워크", "etc");
-        List<MockSubject> subjects = Arrays.asList(
-                MockSubject.of("웹개발"),
-                MockSubject.of("백엔드"),
-                MockSubject.of("프론트엔드"),
-                MockSubject.of("게임개발"),
-                MockSubject.of("모바일개발"),
-                MockSubject.of("정보/보안"));
-
-        parents.forEach(parent -> {
-            subjects.forEach(subject -> {
-                Subject entity = Subject.builder()
-                        .parent(parent)
-                        .subject(subject.getSubject())
-                        .learningKind("coding")
-                        .build();
-                subjectRepository.save(entity);
-            });
-        });
-    }
-
     @Test
     void parent_목록조회() throws Exception {
         mockMvc.perform(get(BASE_URL + "/parents")
@@ -80,12 +54,6 @@ class SubjectControllerTest extends AbstractTest {
                 .andExpect(jsonPath("$.message").isString())
                 .andExpect(jsonPath("$.responseTime").isString())
         ;
-    }
-
-    @RequiredArgsConstructor(staticName = "of")
-    @Value
-    static class MockSubject {
-        private final String subject;
     }
 
 }

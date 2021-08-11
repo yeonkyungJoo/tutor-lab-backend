@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
+import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.QLecture;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,31 @@ public class LectureRepositorySupport {
 
     public List<Lecture> findLecturesBySearch(LectureListRequest request) {
         return jpaQueryFactory.selectFrom(lecture)
-                .where(eqDifficulty(request.getDifficulty()))
+                .where(eqDifficulty(request.getDifficulty()),
+                       eqSystemTypes(request.getSystems()),
+                       eqIsGroup(request.getIsGroup()),
+                       eqParents(request.getParent()),
+                       eqSubjects(request.getSubject()))
                 .fetch();
     }
 
-    private BooleanExpression eqDifficulty(DifficultyType difficulty) {
-        return lecture.difficultyType.eq(difficulty);
+    private BooleanExpression eqDifficulty(List<DifficultyType> difficulty) {
+        return lecture.difficultyType.in(difficulty);
     }
 
+    private BooleanExpression eqSystemTypes(List<SystemType> systemTypes) {
+        return lecture.systemTypes.any().in(systemTypes);
+    }
+
+    private BooleanExpression eqIsGroup(boolean isGroup) {
+        return lecture.lecturePrices.any().isGroup.eq(isGroup);
+    }
+
+    private BooleanExpression eqParents(List<String> parents) {
+        return lecture.lectureSubjects.any().parent.in(parents);
+    }
+
+    private BooleanExpression eqSubjects(List<String> subjects) {
+        return lecture.lectureSubjects.any().krSubject.in(subjects);
+    }
 }

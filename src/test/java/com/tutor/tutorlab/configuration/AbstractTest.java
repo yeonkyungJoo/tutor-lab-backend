@@ -12,6 +12,10 @@ import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
+import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
+import com.tutor.tutorlab.modules.subject.vo.Subject;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,6 +50,9 @@ public abstract class AbstractTest {
     @Autowired
     private TutorRepository tutorRepository;
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
     protected MockMvc mockMvc;
 
     @BeforeEach
@@ -53,7 +61,31 @@ public abstract class AbstractTest {
                 .addFilters(new CharacterEncodingFilter("UTF-8", true), springSecurityFilterChain)
                 .build();
 
+        addSubject();
         addDummy();
+    }
+
+    @Transactional
+    public void addSubject() {
+        List<String> parents = Arrays.asList("개발", "프로그래밍언어", "프레임워크", "etc");
+        List<MockSubject> subjects = Arrays.asList(
+                MockSubject.of("웹개발"),
+                MockSubject.of("백엔드"),
+                MockSubject.of("프론트엔드"),
+                MockSubject.of("게임개발"),
+                MockSubject.of("모바일개발"),
+                MockSubject.of("정보/보안"));
+
+        parents.forEach(parent -> {
+            subjects.forEach(subject -> {
+                Subject entity = Subject.builder()
+                        .parent(parent)
+                        .subject(subject.getSubject())
+                        .learningKind("coding")
+                        .build();
+                subjectRepository.save(entity);
+            });
+        });
     }
 
     @Transactional
@@ -114,5 +146,11 @@ public abstract class AbstractTest {
         lecture.addSubject(lectureSubject);
 
         lectureRepository.save(lecture);
+    }
+
+    @RequiredArgsConstructor(staticName = "of")
+    @Value
+    static class MockSubject {
+        private final String subject;
     }
 }
