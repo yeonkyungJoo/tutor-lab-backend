@@ -2,7 +2,7 @@ package com.tutor.tutorlab.config.security.oauth.provider;
 
 public interface OAuthInfo {
 
-    public static OAuthType getOAuthType(String provider) {
+    static OAuthType getOAuthType(String provider) {
 
         switch (provider) {
             case "google":
@@ -16,9 +16,9 @@ public interface OAuthInfo {
         }
     }
 
-    public String getProviderId();
-    public OAuthType getProvider();
-    public String getName();
-    public String getEmail();
+    String getProviderId();
+    OAuthType getProvider();
+    String getName();
+    String getEmail();
 
 }

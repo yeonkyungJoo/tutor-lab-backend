@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.service;
 
+import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
@@ -22,6 +23,7 @@ import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -152,6 +154,10 @@ public class LoginService {
                 .build();
 
         userRepository.save(user);
+
+        Tutee tutee = new Tutee(user);
+        tuteeRepository.save(tutee);
+
         // 강제 로그인
         return loginOAuth(user);
     }
@@ -171,8 +177,12 @@ public class LoginService {
 
     public void signUpOAuthDetail(User user, SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
 
-        // TODO - CHECK : 영속성 컨텍스트
         user = userRepository.findByUsername(user.getUsername());
+
+        // CHECK : OAuth로 가입한 회원이 아니라면?
+        if (user.getProvider() == null || StringUtils.isBlank(user.getProviderId())) {
+            throw new EntityNotFoundException("OAuth로 가입한 회원이 아닙니다.");
+        }
 
         user.setGender(signUpOAuthDetailRequest.getGender() == "MALE" ? GenderType.MALE : GenderType.FEMALE);
         user.setPhoneNumber(signUpOAuthDetailRequest.getPhoneNumber());
@@ -206,9 +216,7 @@ public class LoginService {
                 .build();
 
         userRepository.save(user);
-
-        Tutee tutee = new Tutee();
-        tutee.setUser(user);
+        Tutee tutee = new Tutee(user);
         return tuteeRepository.save(tutee);
     }
 
@@ -217,7 +225,6 @@ public class LoginService {
         try {
 
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            // TODO - CHECK
             // SecurityContextHolder.getContext().setAuthentication(authentication);
             return authentication;
 

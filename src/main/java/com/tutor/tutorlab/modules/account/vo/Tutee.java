@@ -19,6 +19,10 @@ import java.util.List;
 @Entity
 public class Tutee extends BaseEntity {
 
+    public Tutee(@NotNull User user) {
+        this.user = user;
+    }
+
     @NotNull
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id",

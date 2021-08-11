@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
@@ -8,15 +9,15 @@ import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.vo.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,12 +25,12 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
-import java.util.HashMap;
 import java.util.Map;
 
+@Api(tags = {"LoginController"})
 @RestController
 @RequiredArgsConstructor
-public class LoginController {
+public class LoginController extends AbstractController {
 
     private final LoginService loginService;
     private final UserRepository userRepository;
@@ -49,6 +50,7 @@ public class LoginController {
         return new BigInteger(130, random).toString(32);
     }
 
+    @ApiIgnore
     @GetMapping("/oauth/{provider}")
     public void oauth(@PathVariable(name = "provider") String provider, HttpServletRequest request, HttpServletResponse response) {
         
@@ -80,6 +82,7 @@ public class LoginController {
     /**
      OAuth 로그인/회원가입
      */
+    @ApiIgnore
     @GetMapping("/oauth/{provider}/callback")
     public ResponseEntity oauth(@PathVariable(name = "provider") String provider,
             @RequestParam(name = "code") String code) {
@@ -117,26 +120,19 @@ public class LoginController {
         return null;
     }
 
-    /**
-     * OAuth 회원가입 추가 정보 입력
-     */
     @ApiOperation("OAuth 회원가입 추가 정보 입력")
     @PostMapping("/sign-up/oauth/detail")
     public ResponseEntity signUpOAuthDetail(@CurrentUser User user,
                                             @RequestBody SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
 
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
-
         loginService.signUpOAuthDetail(user, signUpOAuthDetailRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    /**
-     * 일반 회원가입 - 기본 튜티로 가입
-     */
-    @ApiOperation("일반 회원가입")
+    @ApiOperation("일반 회원가입 - 기본 튜티로 가입")
     @PostMapping("/sign-up")
     public ResponseEntity signUp(@RequestBody SignUpRequest signUpRequest) {
 
@@ -144,27 +140,15 @@ public class LoginController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    /**
-     * 일반 로그인
-     */
     @ApiOperation("일반 로그인")
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest request) {
 
         try {
+
             Map<String, String> result = loginService.login(request);
-
-            // TODO - CHECK
-            /*
-            	public ResponseEntity(MultiValueMap<String, String> headers, HttpStatus status) {
-                    this(null, headers, status);
-                }
-
-                public ResponseEntity(@Nullable T body, @Nullable MultiValueMap<String, String> headers, HttpStatus status) {
-                    this(body, headers, (Object) status);
-                }
-            */
             return new ResponseEntity(getHeaders(result), HttpStatus.OK);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.service;
 
+import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
@@ -25,7 +26,7 @@ public class TuteeService {
 
         Tutee tutee = tuteeRepository.findByUser(user);
         if (tutee == null) {
-
+            throw new UnauthorizedException();
         }
 
         tutee.setSubjects(tuteeUpdateRequest.getSubjects());
@@ -33,15 +34,16 @@ public class TuteeService {
         tutee.setUpdatedAt(LocalDateTime.now());
     }
 
+    // TODO - check : CASCADE
     public void deleteTutee(User user) {
 
         if (user.getRole() != RoleType.ROLE_TUTEE) {
-            // TODO - 에러
+            throw new UnauthorizedException();
         }
 
         Tutee tutee = tuteeRepository.findByUser(user);
         if (tutee == null) {
-            // TODO - 에러 발생
+            throw new UnauthorizedException();
         }
 
         // 튜티 탈퇴 = 회원 탈퇴

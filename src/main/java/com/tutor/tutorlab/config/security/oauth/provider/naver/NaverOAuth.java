@@ -3,7 +3,7 @@ package com.tutor.tutorlab.config.security.oauth.provider.naver;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -14,24 +14,23 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 // https://developers.naver.com/docs/login/api/api.md
-public class NaverOAuth implements OAuth {
+public class NaverOAuth extends OAuth {
 
     private final String NAVER_BASE_URL = "https://nid.naver.com/oauth2.0/authorize";
     private final String NAVER_CALLBACK_URL = "http://localhost:8080/oauth/naver/callback";
     private final String NAVER_USERINFO_ACCESS_URL = "https://openapi.naver.com/v1/nid/me";
     private final String NAVER_TOKEN_URL = "https://nid.naver.com/oauth2.0/token";
-    private final String NAVER_CLIENT_ID = "NNG0ZvRBJlxlE5DbApJR";
-    private final String NAVER_CLIENT_SECRET = "V23oWh9UTy";
+    private final String NAVER_CLIENT_ID = "";
+    private final String NAVER_CLIENT_SECRET = "";
 
-    private final HttpSession session;
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
+    @Autowired
+    public NaverOAuth(HttpSession session, RestTemplate restTemplate, ObjectMapper objectMapper) {
+        super(session, restTemplate, objectMapper);
+    }
 
     @Override
     public String requestAccessToken(String code) {
@@ -99,16 +98,6 @@ public class NaverOAuth implements OAuth {
 
     }
 
-    // TODO - 리팩토링
-    @Override
-    public String requestLogin(String code) {
-
-        String accessToken = requestAccessToken(code);
-        String userInfo = requestUserInfo(accessToken);
-
-        return userInfo;
-    }
-
     public NaverResponse getUserInfo(String code) {
 
         try {
@@ -120,18 +109,4 @@ public class NaverOAuth implements OAuth {
         return null;
     }
 
-
-    // TODO - 리팩토링
-    private Map<String, String> convertStringToMap(String string) {
-
-        try {
-            if (StringUtils.hasLength(string)) {
-                return objectMapper.readValue(string, Map.class);
-            }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return new HashMap<>();
-    }
 }

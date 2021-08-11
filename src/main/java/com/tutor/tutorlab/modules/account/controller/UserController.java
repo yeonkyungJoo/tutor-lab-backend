@@ -1,10 +1,13 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.UserService;
 import com.tutor.tutorlab.modules.account.vo.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = {"UserController"})
 @RequestMapping("/users")
 @RestController
 @RequiredArgsConstructor
-public class UserController {
-
-    private final Integer PAGE_SIZE = 20;
+public class UserController extends AbstractController {
 
     private final UserService userService;
     private final UserRepository userRepository;
@@ -38,6 +40,7 @@ public class UserController {
         return new ResponseEntity(users, HttpStatus.OK);
     }
 */
+
     // TODO - 검색
     // 페이징
     @ApiOperation("회원 전체 조회 - 페이징")
@@ -56,8 +59,7 @@ public class UserController {
     public ResponseEntity getUser(@PathVariable(name = "user_id") Long userId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
         // TODO - RestResponse
         return new ResponseEntity(new UserDto(user), HttpStatus.OK);
     }
@@ -68,9 +70,8 @@ public class UserController {
                             @RequestBody UserUpdateRequest userUpdateRequest) {
 
         if (user == null) {
-            // TODO - 예외처리 : UnAuthenticatedException or AccessDeniedException
+            throw new UnauthorizedException();
         }
-
         userService.updateUser(user, userUpdateRequest);
         // TODO - RestResponse
         return new ResponseEntity(HttpStatus.OK);
@@ -81,7 +82,7 @@ public class UserController {
     public ResponseEntity quitUser(@CurrentUser User user) {
 
         if (user == null) {
-            // TODO - 예외처리 : UnAuthenticatedException or AccessDeniedException
+            throw new UnauthorizedException();
         }
         userService.deleteUser(user);
         // TODO - RestResponse

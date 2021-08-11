@@ -44,14 +44,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin().disable()
 
             .authorizeRequests()
+            //.antMatchers("/swagger-ui/**", "/swagger-ui.html/**", "/swagger-resources/**", "/v2/**", "/webjars/**").permitAll()
             // TODO - CHECK : 테스트 코드
-            .antMatchers("/login", "/sign-up/**", "/oauth/**").permitAll()
+            //.antMatchers("/login", "/sign-up/**", "/oauth/**").permitAll()
+            .antMatchers("/**").permitAll()
             .antMatchers("/addresses/**", "/subjects/**").permitAll()
             .antMatchers("/sign-up/oauth/detail").authenticated()
-            .anyRequest().authenticated()
+            .antMatchers(HttpMethod.POST, "/**").authenticated()
+            .antMatchers(HttpMethod.PUT, "/**").authenticated()
+            .antMatchers(HttpMethod.DELETE, "/**").authenticated()
             .and()
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
             ;
             // .and()
             // .oauth2Login();
