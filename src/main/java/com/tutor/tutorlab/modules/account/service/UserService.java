@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.service;
 
+import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.RoleType;
@@ -24,7 +25,7 @@ public class UserService {
 
         user = userRepository.findByUsername(user.getUsername());
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
 
         user.setPhoneNumber(userUpdateRequest.getPhoneNumber());

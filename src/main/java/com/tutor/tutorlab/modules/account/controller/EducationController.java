@@ -1,5 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
@@ -10,6 +12,7 @@ import com.tutor.tutorlab.modules.account.vo.Education;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +23,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api(tags = {"EducationController"})
 @RequestMapping("/educations")
 @RequiredArgsConstructor
 @RestController
-public class EducationController {
+public class EducationController extends AbstractController {
 
     private final EducationRepository educationRepository;
     private final EducationService educationService;
@@ -33,11 +37,11 @@ public class EducationController {
      * Education 리스트
      */
     @ApiOperation("튜터의 Education 리스트")
-    @GetMapping("/{tutor_id}")
+    @GetMapping("/tutor/{tutor_id}")
     public ResponseEntity getEducations(@PathVariable(name = "tutor_id") Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
         List<EducationDto> educations = educationRepository.findByTutor(tutor).stream()
                 .map(education -> new EducationDto(education))
                 .collect(Collectors.toList());
@@ -48,13 +52,13 @@ public class EducationController {
     /**
      * Education 조회
      */
-    @ApiOperation("튜터의 Education 조회")
+    @ApiOperation("Education 조회")
     @GetMapping("/{education_id}")
     public ResponseEntity getEducation( // @PathVariable(name = "tutor_id") Long tutorId,
                                             @PathVariable(name = "education_id") Long educationId) {
 
         Education education = educationRepository.findById(educationId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 데이터입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
 
         return new ResponseEntity(new EducationDto(education), HttpStatus.OK);
     }
@@ -68,7 +72,7 @@ public class EducationController {
                                        @RequestBody EducationCreateRequest educationCreateRequest) {
 
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
         educationService.createEducation(user, educationCreateRequest);
         return new ResponseEntity(HttpStatus.CREATED);
@@ -84,7 +88,7 @@ public class EducationController {
                                         @RequestBody EducationUpdateRequest educationUpdateRequest) {
 
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
         educationService.updateEducation(educationId, educationUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);
@@ -99,7 +103,7 @@ public class EducationController {
                                           @PathVariable(name = "education_id") Long educationId) {
 
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
         educationService.deleteEducation(educationId);
         return new ResponseEntity(HttpStatus.OK);

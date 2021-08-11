@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.service;
 
+import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.vo.Career;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
@@ -10,6 +11,7 @@ import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +44,8 @@ public class TutorService {
                     .tutor(tutor)
                     .companyName(careerCreateRequest.getCompanyName())
                     .duty(careerCreateRequest.getDuty())
-                    .startDate(LocalDate.parse(careerCreateRequest.getStartDate()))
-                    .endDate(LocalDate.parse(careerCreateRequest.getEndDate()))
+                    .startDate(LocalDateTimeUtil.getStringToDate(careerCreateRequest.getStartDate()))
+                    .endDate(LocalDateTimeUtil.getStringToDate(careerCreateRequest.getEndDate()))
                     .present(careerCreateRequest.isPresent())
                     .build();
 
@@ -56,8 +58,8 @@ public class TutorService {
                     .tutor(tutor)
                     .schoolName(educationCreateRequest.getSchoolName())
                     .major(educationCreateRequest.getMajor())
-                    .entranceDate(LocalDate.parse(educationCreateRequest.getEntranceDate()))
-                    .graduationDate(LocalDate.parse(educationCreateRequest.getGraduationDate()))
+                    .entranceDate(LocalDateTimeUtil.getStringToDate(educationCreateRequest.getEntranceDate()))
+                    .graduationDate(LocalDateTimeUtil.getStringToDate(educationCreateRequest.getGraduationDate()))
                     .score(educationCreateRequest.getScore())
                     .degree(educationCreateRequest.getDegree())
                     .build();
@@ -72,7 +74,7 @@ public class TutorService {
 
         Tutor tutor = tutorRepository.findByUser(user);
         if (tutor == null) {
-
+            throw new UnauthorizedException();
         }
 
         tutor.setSubjects(tutorUpdateRequest.getSubjects());
@@ -85,12 +87,12 @@ public class TutorService {
     public void deleteTutor(User user) {
 
         if (user.getRole() != RoleType.ROLE_TUTOR) {
-            // TODO - 에러
+            throw new UnauthorizedException();
         }
 
         Tutor tutor = tutorRepository.findByUser(user);
         if (tutor == null) {
-            // TODO - 에러
+            throw new UnauthorizedException();
         }
 
         // Career 삭제

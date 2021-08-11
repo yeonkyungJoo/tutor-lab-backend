@@ -1,5 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
@@ -10,20 +12,23 @@ import com.tutor.tutorlab.modules.account.vo.Career;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api(tags = {"CareerController"})
 @RequestMapping("/careers")
 @RequiredArgsConstructor
 @RestController
-public class CareerController {
+public class CareerController extends AbstractController {
 
     private final CareerRepository careerRepository;
     private final CareerService careerService;
@@ -33,11 +38,11 @@ public class CareerController {
      * Career 리스트
      */
     @ApiOperation("튜터의 Career 리스트")
-    @GetMapping("/{tutor_id}")
+    @GetMapping("/tutor/{tutor_id}")
     public ResponseEntity getCareers(@PathVariable(name = "tutor_id") Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
         List<CareerDto> careers = careerRepository.findByTutor(tutor).stream()
                 .map(career -> new CareerDto(career))
                 .collect(Collectors.toList());
@@ -48,12 +53,12 @@ public class CareerController {
     /**
      * Career 조회
      */
-    @ApiOperation("튜터의 Career 조회")
+    @ApiOperation("Career 조회")
     @GetMapping("/{career_id}")
     public ResponseEntity getCareer(@PathVariable(name = "career_id") Long careerId) {
 
         Career career = careerRepository.findById(careerId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 데이터입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
         return new ResponseEntity(new CareerDto(career), HttpStatus.OK);
     }
 
@@ -65,7 +70,7 @@ public class CareerController {
     public ResponseEntity newCareer(@CurrentUser User user,
                                     @RequestBody CareerCreateRequest careerCreateRequest) {
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
         careerService.createCareer(user, careerCreateRequest);
         return new ResponseEntity(HttpStatus.CREATED);
@@ -81,7 +86,7 @@ public class CareerController {
                                      @RequestBody CareerUpdateRequest careerUpdateRequest) {
 
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
         careerService.updateCareer(careerId, careerUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);
@@ -96,7 +101,7 @@ public class CareerController {
                                        @PathVariable(name = "career_id") Long careerId) {
 
         if (user == null) {
-
+            throw new UnauthorizedException();
         }
         careerService.deleteCareer(careerId);
         return new ResponseEntity(HttpStatus.OK);

@@ -68,7 +68,7 @@ class CareerControllerTest {
         // Given
         User user = userRepository.findByName("yk");
         assertNotNull(tuteeRepository.findByUser(user));
-        // TODO - CHECK : user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
+        // user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
         /*
         Tutor tutor = Tutor.builder()
                 .user(user)
@@ -161,7 +161,7 @@ class CareerControllerTest {
         // Given
         User user = userRepository.findByName("yk");
 
-        // TODO - CHECK : user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
+        // user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
         /*
         Tutor tutor = Tutor.builder()
                 .user(user)
@@ -235,7 +235,7 @@ class CareerControllerTest {
         // Given
         User user = userRepository.findByName("yk");
 
-        // TODO - CHECK : user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
+        // user의 RoleType이 ROLE_TUTOR가 아니므로 실패했어야 하는 테스트
         /*
         Tutor tutor = Tutor.builder()
                 .user(user)
