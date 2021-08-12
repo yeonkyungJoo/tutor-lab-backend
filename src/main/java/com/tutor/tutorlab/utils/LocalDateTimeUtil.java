@@ -1,8 +1,6 @@
 package com.tutor.tutorlab.utils;
 
-import io.netty.util.internal.StringUtil;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,14 +14,14 @@ public class LocalDateTimeUtil {
 
     public static String getDateToString(LocalDate date) {
         if (date == null) {
-            return StringUtil.EMPTY_STRING;
+            return StringUtils.EMPTY;
         }
         return date.format(DateTimeFormatter.ISO_DATE);
     }
 
     // parse
     public static LocalDate getStringToDate(String localDate) {
-        if (!StringUtils.hasLength(localDate)) {
+        if (StringUtils.isBlank(localDate)) {
             return null;
         }
         return LocalDate.parse(localDate);

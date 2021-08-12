@@ -7,7 +7,6 @@ import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -23,7 +22,6 @@ class LectureRepositorySupportTest extends AbstractTest {
     @Autowired
     private LectureRepositorySupport lectureRepositorySupport;
 
-    @Rollback(false)
     @Transactional
     @Test
     void findLecturesBySearchTest() {
