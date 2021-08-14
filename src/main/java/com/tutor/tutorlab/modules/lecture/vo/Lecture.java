@@ -7,9 +7,11 @@ import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -45,8 +47,7 @@ public class Lecture extends BaseEntity {
     @Column(name = "difficulty_type", nullable = false, length = 20)
     private DifficultyType difficultyType;
 
-    @ElementCollection
-    @Column(name = "system_type", nullable = false, length = 20)
+    @ElementCollection(targetClass = SystemType.class, fetch = LAZY)
     @CollectionTable(
             name = "lecture_system_type",
             joinColumns = @JoinColumn(name = "lecture_id",
@@ -54,13 +55,13 @@ public class Lecture extends BaseEntity {
                     referencedColumnName = "lecture_id",
                     foreignKey = @ForeignKey(name = "FK_LECTURE_SYSTEM_TYPE_LECTURE_ID"))
     )
-    private List<SystemType> systemTypes;
+    private List<SystemType> systemTypes = new ArrayList<>();
 
     @OneToMany(mappedBy = "lecture", cascade = ALL, orphanRemoval = true)
-    private List<LecturePrice> lecturePrices;
+    private List<LecturePrice> lecturePrices = new ArrayList<>();
 
     @OneToMany(mappedBy = "lecture", cascade = ALL, orphanRemoval = true)
-    private List<LectureSubject> lectureSubjects;
+    private List<LectureSubject> lectureSubjects = new ArrayList<>();
 
     private String thumbnail;
 

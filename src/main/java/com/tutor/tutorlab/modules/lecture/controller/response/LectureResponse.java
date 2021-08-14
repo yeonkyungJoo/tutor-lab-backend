@@ -1,6 +1,5 @@
 package com.tutor.tutorlab.modules.lecture.controller.response;
 
-import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 import java.util.List;
@@ -27,9 +26,9 @@ public class LectureResponse {
 
     private final List<SystemTypeResponse> systemTypes;
 
-    private final Set<LecturePriceResponse> lecturePrices;
+    private final List<LecturePriceResponse> lecturePrices;
 
-    private final Set<LectureSubjectResponse> subjects;
+    private final List<LectureSubjectResponse> lectureSubjects;
 
     @Value
     public static class LectureSubjectResponse {

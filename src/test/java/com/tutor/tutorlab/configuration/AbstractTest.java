@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = TutorlabApplication.class)
 public abstract class AbstractTest {
@@ -90,7 +88,7 @@ public abstract class AbstractTest {
 
     @Transactional
     public void addDummy() {
-        User user = User.builder()
+        /*User user = User.builder()
                 .username("doqndnffo@gmail.com")
                 .password("1")
                 .name("우성환")
@@ -112,7 +110,10 @@ public abstract class AbstractTest {
                 .specialist(true)
                 .build();
 
+
         tutorRepository.save(tutor);
+*/
+        Tutor tutor = tutorRepository.findByUser(userRepository.findById(3L).get());
 
         Lecture lecture = Lecture.builder()
                 .tutor(tutor)

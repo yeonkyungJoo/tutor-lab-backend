@@ -9,6 +9,7 @@ import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.QLecture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -30,10 +31,16 @@ public class LectureRepositorySupport {
     }
 
     private BooleanExpression eqDifficulty(List<DifficultyType> difficulty) {
+        if (CollectionUtils.isEmpty(difficulty)) {
+            return null;
+        }
         return lecture.difficultyType.in(difficulty);
     }
 
     private BooleanExpression eqSystemTypes(List<SystemType> systemTypes) {
+        if (CollectionUtils.isEmpty(systemTypes)) {
+            return null;
+        }
         return lecture.systemTypes.any().in(systemTypes);
     }
 
@@ -42,10 +49,16 @@ public class LectureRepositorySupport {
     }
 
     private BooleanExpression eqParents(List<String> parents) {
+        if (CollectionUtils.isEmpty(parents)) {
+            return null;
+        }
         return lecture.lectureSubjects.any().parent.in(parents);
     }
 
     private BooleanExpression eqSubjects(List<String> subjects) {
+        if (CollectionUtils.isEmpty(subjects)) {
+            return null;
+        }
         return lecture.lectureSubjects.any().krSubject.in(subjects);
     }
 }

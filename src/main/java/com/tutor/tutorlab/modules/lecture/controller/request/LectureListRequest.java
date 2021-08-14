@@ -6,14 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import javax.validation.GroupSequence;
-import javax.validation.constraints.AssertTrue;
 import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @Getter
 public class LectureListRequest {
+
+    private String lectureName;
 
     // 강의종류
     private List<String> parent; // 종류
