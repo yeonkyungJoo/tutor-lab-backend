@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.subject;
+package com.tutor.tutorlab.modules.subject.vo;
 
 import lombok.*;
 

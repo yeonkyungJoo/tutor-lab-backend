@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.subject;
+package com.tutor.tutorlab.modules.subject.controller.response;
 
 import lombok.Value;
 
@@ -6,9 +6,7 @@ import lombok.Value;
 public class SubjectResponse {
     private final String parent;
 
-    private final String enSubject;
-
-    private final String krSubject;
+    private final String subject;
 
     private final String learningKind;
 }

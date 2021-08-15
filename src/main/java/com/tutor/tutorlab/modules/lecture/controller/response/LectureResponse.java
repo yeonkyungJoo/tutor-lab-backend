@@ -1,6 +1,6 @@
 package com.tutor.tutorlab.modules.lecture.controller.response;
 
-import lombok.RequiredArgsConstructor;
+import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import lombok.Value;
 
 import java.util.List;
@@ -27,9 +27,9 @@ public class LectureResponse {
 
     private final List<SystemTypeResponse> systemTypes;
 
-    private final Set<LecturePriceResponse> lecturePrices;
+    private final List<LecturePriceResponse> lecturePrices;
 
-    private final Set<LectureSubjectResponse> subjects;
+    private final List<LectureSubjectResponse> lectureSubjects;
 
     @Value
     public static class LectureSubjectResponse {
@@ -60,5 +60,10 @@ public class LectureResponse {
         private final String type;
 
         private final String name;
+
+        public SystemTypeResponse(SystemType systemType) {
+            this.type = systemType.getType();
+            this.name = systemType.getName();
+        }
     }
 }

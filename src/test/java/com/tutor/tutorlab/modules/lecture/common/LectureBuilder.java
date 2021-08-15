@@ -1,11 +1,14 @@
 package com.tutor.tutorlab.modules.lecture.common;
 
 import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
-import org.springframework.boot.test.context.TestComponent;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
+import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
+import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 
-@TestComponent
+import java.util.List;
+
 public class LectureBuilder {
-    public AddLectureRequest.AddLecturePriceRequest getAddLecturePriceRequest(
+    public static AddLectureRequest.AddLecturePriceRequest getAddLecturePriceRequest(
             Boolean isGroup,
             Integer groupNumber,
             Long pertimeCost,
@@ -24,11 +27,31 @@ public class LectureBuilder {
         return price;
     }
 
-    public AddLectureRequest.AddLectureSubjectRequest getAddLectureSubjectRequest(String parent, String enSubject, String krSubject) {
+    public static AddLectureRequest.AddLectureSubjectRequest getAddLectureSubjectRequest(
+            String parent,
+            String enSubject,
+            String krSubject
+    ) {
         return AddLectureRequest.AddLectureSubjectRequest.builder()
                 .parent(parent)
                 .enSubject(enSubject)
                 .krSubject(krSubject)
+                .build();
+    }
+
+    public static LectureListRequest getLectureListRequest(
+            List<String> parents,
+            List<String> subjects,
+            List<DifficultyType> difficultyTypes,
+            List<SystemType> systemTypes,
+            boolean isGroup
+    ) {
+        return LectureListRequest.builder()
+                .parents(parents)
+                .subjects(subjects)
+                .difficulties(difficultyTypes)
+                .systems(systemTypes)
+                .isGroup(isGroup)
                 .build();
     }
 

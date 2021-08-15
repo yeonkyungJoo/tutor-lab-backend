@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.GroupSequence;
+import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class AddLectureRequest {
@@ -47,10 +49,12 @@ public class AddLectureRequest {
     @NotNull(message = "강의방식1을 입력해주세요.", groups = OrderFirst.class)
     private List<SystemType> systems;
 
+    @Valid
     @Length(min = 1, max = 2, message = "강의방식2는 최소 {min}개 ~ 최대 {max}개만 선택할 수 있습니다.")
     @NotNull(message = "강의방식2를 입력해주세요.")
     private List<AddLecturePriceRequest> lecturePrices;
 
+    @Valid
     @Length(min = 1, message = "강의종류를 최소 1개 입력해주세요.")
     @NotNull(message = "강의종류를 입력해주세요.")
     private List<AddLectureSubjectRequest> subjects;
@@ -75,7 +79,7 @@ public class AddLectureRequest {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @NoArgsConstructor
     public static class AddLecturePriceRequest {
-        @NotNull(message = "그룹 선택해주세요.", groups = OrderFirst.class)
+        @NotNull(message = "그룹여부를 선택해주세요.", groups = OrderFirst.class)
         private Boolean isGroup;
 
         private Integer groupNumber;

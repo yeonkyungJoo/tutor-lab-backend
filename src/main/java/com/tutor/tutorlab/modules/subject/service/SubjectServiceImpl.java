@@ -1,16 +1,15 @@
 package com.tutor.tutorlab.modules.subject.service;
 
-import com.tutor.tutorlab.modules.subject.ParentResponse;
-import com.tutor.tutorlab.modules.subject.Subject;
-import com.tutor.tutorlab.modules.subject.SubjectMapstruct;
-import com.tutor.tutorlab.modules.subject.SubjectResponse;
+import com.tutor.tutorlab.modules.subject.controller.response.ParentResponse;
+import com.tutor.tutorlab.modules.subject.vo.Subject;
+import com.tutor.tutorlab.modules.subject.mapstruct.SubjectMapstruct;
+import com.tutor.tutorlab.modules.subject.controller.response.SubjectResponse;
 import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

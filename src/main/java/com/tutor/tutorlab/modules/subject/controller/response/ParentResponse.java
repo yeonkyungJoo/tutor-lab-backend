@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.subject;
+package com.tutor.tutorlab.modules.subject.controller.response;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Value;

@@ -25,22 +25,21 @@ public class LecturePrice extends BaseEntity {
                 foreignKey = @ForeignKey(name = "FK_LECTURE_PRICE_LECTURE_ID"))
     private Lecture lecture;
 
-    @Column(name = "is_group", nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean isGroup;
 
-    @Column(name = "group_number")
     private Integer groupNumber;
 
-    @Column(name = "total_time", nullable = false)
+    @Column(nullable = false)
     private Integer totalTime;
 
-    @Column(name = "pertime_lecture", nullable = false)
+    @Column(nullable = false)
     private Integer pertimeLecture;
 
-    @Column(name = "pertime_cost", nullable = false)
+    @Column(nullable = false)
     private Long pertimeCost;
 
-    @Column(name = "total_cost", nullable = false)
+    @Column(nullable = false)
     private Long totalCost;
 
     public void mappingLecture(Lecture lecture) {
