@@ -47,11 +47,11 @@ jwt:
 cloud:
   aws:
     credentials:
-      accessKey:
-      secretKey:
+      accessKey: accessKey
+      secretKey: secretKey
     s3:
-      bucket:
+      bucket: bucket
     region:
-      static:
+      static: static
     stack:
-      auto:
+      auto: false

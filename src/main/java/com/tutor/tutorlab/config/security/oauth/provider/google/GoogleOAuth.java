@@ -18,7 +18,7 @@ import java.util.Map;
 public class GoogleOAuth extends OAuth {
 
     private final String GOOGLE_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth";
-    private final String GOOGLE_CALLBACK_URL = "http://localhost:8080/oauth/google/callback";
+    private final String GOOGLE_CALLBACK_URL = "https://a68323ea2219.ngrok.io/oauth/google/callback";
     private final String GOOGLE_USERINFO_ACCESS_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
     private final String GOOLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 
