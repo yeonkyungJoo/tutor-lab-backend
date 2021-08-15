@@ -26,9 +26,9 @@ class LectureRepositorySupportTest extends AbstractTest {
     @Test
     void findLecturesBySearchTest() {
         LectureListRequest request = LectureListRequest.builder()
-                .parent(Arrays.asList("개발", "프로그래밍언어"))
-                .subject(Arrays.asList("자바", "백엔드", "프론트엔드"))
-                .difficulty(Arrays.asList(DifficultyType.BEGINNER))
+                .parents(Arrays.asList("개발", "프로그래밍언어"))
+                .subjects(Arrays.asList("자바", "백엔드", "프론트엔드"))
+                .difficulties(Arrays.asList(DifficultyType.BEGINNER))
                 .systems(Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE))
                 .isGroup(true)
                 .build();
@@ -42,10 +42,10 @@ class LectureRepositorySupportTest extends AbstractTest {
         assertEquals(idSet.size(), lectures.size());
         lectures.forEach(lecture -> {
             lecture.getLectureSubjects().forEach(subject -> {
-                assertThat(subject.getParent()).isIn(request.getParent());
-                assertThat(subject.getKrSubject()).isIn(request.getSubject());
+                assertThat(subject.getParent()).isIn(request.getParents());
+                assertThat(subject.getKrSubject()).isIn(request.getSubjects());
             });
-            assertThat(lecture).extracting("difficultyType").isIn(request.getDifficulty());
+            assertThat(lecture).extracting("difficultyType").isIn(request.getDifficulties());
             lecture.getSystemTypes().forEach(systemType -> assertThat(systemType).isIn(request.getSystems()));
             lecture.getLecturePrices().forEach(lecturePrice -> assertThat(lecturePrice.getIsGroup()).isEqualTo(request.getIsGroup()));
         });

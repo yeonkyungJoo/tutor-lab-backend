@@ -24,7 +24,10 @@ public class Subject {
     private String parent;
 
     @Column(length = 50, nullable = false)
-    private String subject;
+    private String enSubject;
+
+    @Column(length = 50, nullable = false)
+    private String krSubject;
 
     @Column(length = 50, nullable = false)
     private String learningKind;

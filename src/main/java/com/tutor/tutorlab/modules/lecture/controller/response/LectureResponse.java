@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.lecture.controller.response;
 
+import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import lombok.Value;
 
 import java.util.List;
@@ -59,5 +60,10 @@ public class LectureResponse {
         private final String type;
 
         private final String name;
+
+        public SystemTypeResponse(SystemType systemType) {
+            this.type = systemType.getType();
+            this.name = systemType.getName();
+        }
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Repository
@@ -22,11 +23,11 @@ public class LectureRepositorySupport {
 
     public List<Lecture> findLecturesBySearch(LectureListRequest request) {
         return jpaQueryFactory.selectFrom(lecture)
-                .where(eqDifficulty(request.getDifficulty()),
+                .where(eqDifficulty(request.getDifficulties()),
                        eqSystemTypes(request.getSystems()),
                        eqIsGroup(request.getIsGroup()),
-                       eqParents(request.getParent()),
-                       eqSubjects(request.getSubject()))
+                       eqParents(request.getParents()),
+                       eqSubjects(request.getSubjects()))
                 .fetch();
     }
 
@@ -44,7 +45,10 @@ public class LectureRepositorySupport {
         return lecture.systemTypes.any().in(systemTypes);
     }
 
-    private BooleanExpression eqIsGroup(boolean isGroup) {
+    private BooleanExpression eqIsGroup(Boolean isGroup) {
+        if (Objects.isNull(isGroup)) {
+            return null;
+        }
         return lecture.lecturePrices.any().isGroup.eq(isGroup);
     }
 

@@ -29,9 +29,6 @@ class LectureServiceTest extends AbstractTest {
     private LectureService lectureService;
 
     @Autowired
-    private LectureBuilder lectureBuilder;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Test
@@ -50,11 +47,11 @@ class LectureServiceTest extends AbstractTest {
     void 강의등록_테스트() throws Exception {
         User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("테스트 실패, 유저 없음."));
 
-        AddLectureRequest.AddLecturePriceRequest price1 = lectureBuilder.getAddLecturePriceRequest(true, 3, 1000L, 3, 3000L, 10);
-        AddLectureRequest.AddLecturePriceRequest price2 = lectureBuilder.getAddLecturePriceRequest(false, 3, 1000L, 3, 30000L, 10);
+        AddLectureRequest.AddLecturePriceRequest price1 = LectureBuilder.getAddLecturePriceRequest(true, 3, 1000L, 3, 3000L, 10);
+        AddLectureRequest.AddLecturePriceRequest price2 = LectureBuilder.getAddLecturePriceRequest(false, 3, 1000L, 3, 30000L, 10);
 
-        AddLectureRequest.AddLectureSubjectRequest subject1 = lectureBuilder.getAddLectureSubjectRequest("개발", "java", "자바");
-        AddLectureRequest.AddLectureSubjectRequest subject2 = lectureBuilder.getAddLectureSubjectRequest("개발", "javascript", "자바스크립트");
+        AddLectureRequest.AddLectureSubjectRequest subject1 = LectureBuilder.getAddLectureSubjectRequest("개발", "java", "자바");
+        AddLectureRequest.AddLectureSubjectRequest subject2 = LectureBuilder.getAddLectureSubjectRequest("개발", "javascript", "자바스크립트");
 
         AddLectureRequest param = AddLectureRequest.builder()
                 .thumbnailUrl("https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c")
@@ -84,7 +81,7 @@ class LectureServiceTest extends AbstractTest {
 
     @Test
     void 강의목록검색_테스트() throws Exception {
-        LectureListRequest request = lectureBuilder.getLectureListRequest(
+        LectureListRequest request = LectureBuilder.getLectureListRequest(
                 Arrays.asList("개발", "프로그래밍언어"),
 //                Arrays.asList("자바", "백엔드", "프론트엔드"),
 //                Arrays.asList(DifficultyType.BEGINNER),
@@ -102,10 +99,10 @@ class LectureServiceTest extends AbstractTest {
         assertEquals(idSet.size(), lectures.size());
         lectures.forEach(lecture -> {
             lecture.getLectureSubjects().forEach(subject -> {
-                assertThat(subject.getParent()).isIn(request.getParent());
-                assertThat(subject.getKrSubject()).isIn(request.getSubject());
+                assertThat(subject.getParent()).isIn(request.getParents());
+                assertThat(subject.getKrSubject()).isIn(request.getSubjects());
             });
-            assertThat(DifficultyType.find(lecture.getDifficultyType())).isIn(request.getDifficulty());
+            assertThat(DifficultyType.find(lecture.getDifficultyType())).isIn(request.getDifficulties());
             lecture.getSystemTypes().forEach(systemType -> {
                 assertThat(SystemType.find(systemType.getType())).isIn(request.getSystems());
             });
