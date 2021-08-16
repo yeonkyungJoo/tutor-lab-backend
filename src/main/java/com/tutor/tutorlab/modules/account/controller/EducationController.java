@@ -71,9 +71,6 @@ public class EducationController extends AbstractController {
     public ResponseEntity newEducation(@CurrentUser User user,
                                        @RequestBody EducationCreateRequest educationCreateRequest) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         educationService.createEducation(user, educationCreateRequest);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -87,9 +84,6 @@ public class EducationController extends AbstractController {
                                         @PathVariable(name = "education_id") Long educationId,
                                         @RequestBody EducationUpdateRequest educationUpdateRequest) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         educationService.updateEducation(educationId, educationUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -102,9 +96,6 @@ public class EducationController extends AbstractController {
     public ResponseEntity removeEducation(@CurrentUser User user,
                                           @PathVariable(name = "education_id") Long educationId) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         educationService.deleteEducation(educationId);
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -81,9 +81,6 @@ public class TutorController extends AbstractController {
     public ResponseEntity newTutor(@CurrentUser User user,
                         @RequestBody TutorSignUpRequest tutorSignUpRequest) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         tutorService.createTutor(user, tutorSignUpRequest);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -95,9 +92,7 @@ public class TutorController extends AbstractController {
     @PutMapping
     public ResponseEntity editTutor(@CurrentUser User user,
                                     @RequestBody TutorUpdateRequest tutorUpdateRequest) {
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
+
         tutorService.updateTutor(user, tutorUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -109,9 +104,6 @@ public class TutorController extends AbstractController {
     @DeleteMapping
     public ResponseEntity quitTutor(@CurrentUser User user) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         tutorService.deleteTutor(user);
         return new ResponseEntity(HttpStatus.OK);
     }

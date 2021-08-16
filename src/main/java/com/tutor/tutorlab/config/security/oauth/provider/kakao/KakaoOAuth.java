@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -22,12 +23,15 @@ public class KakaoOAuth extends OAuth {
     private final String KAKAO_CALLBACK_URL = "http://localhost:8080/oauth/kakao/callback";
     private final String KAKAO_USERINFO_ACCESS_URL = "https://kapi.kakao.com/v2/user/me";
     private final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private final String KAKAO_CLIENT_ID = "";
+
+    private final String KAKAO_CLIENT_ID;
     // private final String KAKAO_CLIENT_SECRET;
 
     @Autowired
-    public KakaoOAuth(HttpSession session, RestTemplate restTemplate, ObjectMapper objectMapper) {
-        super(session, restTemplate, objectMapper);
+    public KakaoOAuth(RestTemplate restTemplate, ObjectMapper objectMapper,
+                      @Value("${security.oauth2.kakao.client-id}") String clientId) {
+        super(null, restTemplate, objectMapper);
+        this.KAKAO_CLIENT_ID = clientId;
     }
 
     @Override
