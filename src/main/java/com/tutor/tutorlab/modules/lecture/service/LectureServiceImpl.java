@@ -1,14 +1,15 @@
 package com.tutor.tutorlab.modules.lecture.service;
 
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
+import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstruct;
-import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
+import com.tutor.tutorlab.modules.lecture.repository.LectureRepositorySupport;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
@@ -19,16 +20,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class LectureServiceImpl implements LectureService {
     private final LectureRepository lectureRepository;
-    private final LecturePriceRepository lecturePriceRepository;
     private final TutorRepository tutorRepository;
-    private final UserRepository userRepository;
     private final LectureMapstruct lectureMapstruct;
+    private final LectureRepositorySupport lectureRepositorySupport;
 
     @Override
     public LectureResponse getLecture(long id) throws Exception {
@@ -38,13 +39,12 @@ public class LectureServiceImpl implements LectureService {
 
     @Transactional
     @Override
-    public LectureResponse addLecture(AddLectureRequest addLectureRequest) throws Exception {
-        // temp
-        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("존재하지 않는 유저"));
-
+    public LectureResponse addLecture(AddLectureRequest addLectureRequest, User user) throws Exception {
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user)).orElseThrow(() -> new RuntimeException("해당 유저는 튜터가 아닙니다."));
 
         // TODO 유효성 -> 해당 유저의 강의 갯수 제한?
+
+        // TODO 강의 -> 유저 address 정보 넣어줘야함.
 
         Lecture lecture = buildLecture(addLectureRequest, tutor);
         for (AddLectureRequest.AddLecturePriceRequest lecturePriceRequest : addLectureRequest.getLecturePrices()) {
@@ -59,10 +59,16 @@ public class LectureServiceImpl implements LectureService {
         return getLectureResponse(savedLecture);
     }
 
+    @Override
+    public List<LectureResponse> getLectures(LectureListRequest lectureListRequest) {
+        List<Lecture> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest);
+        return lectureMapstruct.lectureListToLectureResponseList(lectures);
+    }
+
     private LectureResponse getLectureResponse(Lecture lecture) {
         List<LectureResponse.LecturePriceResponse> prices = lectureMapstruct.lecturePriceListToLecturePriceResponseList(lecture.getLecturePrices());
         List<LectureResponse.LectureSubjectResponse> subjects = lectureMapstruct.lectureSubjectListToLectureSubjectResponseList(lecture.getLectureSubjects());
-        List<LectureResponse.SystemTypeResponse> systemTypes = lectureMapstruct.systemTypeListToSystemTypeResponseList(lecture.getSystemTypes());
+        List<LectureResponse.SystemTypeResponse> systemTypes = lectureMapstruct.systemTypeListToSystemTypeResponseList(lecture.getSystemTypes().stream().map(systemType -> SystemType.find(systemType.getType())).collect(Collectors.toList()));
 
         return lectureMapstruct.lectureToLectureResponse(lecture, prices, systemTypes, subjects);
     }

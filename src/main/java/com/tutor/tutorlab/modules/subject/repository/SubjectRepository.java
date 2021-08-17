@@ -1,6 +1,6 @@
 package com.tutor.tutorlab.modules.subject.repository;
 
-import com.tutor.tutorlab.modules.subject.Subject;
+import com.tutor.tutorlab.modules.subject.vo.Subject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

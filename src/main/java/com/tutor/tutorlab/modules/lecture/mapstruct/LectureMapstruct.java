@@ -23,12 +23,15 @@ public interface LectureMapstruct {
             @Mapping(target = "difficultyName", expression = "java(lecture.getDifficultyType().getName())"),
             @Mapping(target = "systemTypes", source = "systemTypes"),
             @Mapping(target = "lecturePrices", source = "lecturePrices"),
-            @Mapping(target = "subjects", source = "subjects")
+            @Mapping(target = "lectureSubjects", source = "subjects")
     })
     LectureResponse lectureToLectureResponse(Lecture lecture,
                                              List<LectureResponse.LecturePriceResponse> lecturePrices,
                                              List<LectureResponse.SystemTypeResponse> systemTypes,
                                              List<LectureResponse.LectureSubjectResponse> subjects);
+
+    @IterableMapping(elementTargetType = LectureResponse.class)
+    List<LectureResponse> lectureListToLectureResponseList(List<Lecture> lectures);
 
     @Mappings({})
     LectureResponse.SystemTypeResponse systemTypeToSystemTypeResponse(SystemType systemType);

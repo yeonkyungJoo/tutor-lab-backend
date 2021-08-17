@@ -25,7 +25,7 @@ public enum FileType implements Enumerable {
         return Enumerable.findToNull(type, values());
     }
 
-    @javax.persistence.Converter
+    @javax.persistence.Converter(autoApply = true)
     public static class Converter extends EnumerableConverter<FileType> {
         public Converter() {
             super(FileType.class);
