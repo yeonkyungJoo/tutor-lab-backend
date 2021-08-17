@@ -3,6 +3,7 @@ package com.tutor.tutorlab.config.security.oauth.provider.google;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -10,7 +11,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Component
@@ -18,15 +18,20 @@ import java.util.Map;
 public class GoogleOAuth extends OAuth {
 
     private final String GOOGLE_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth";
-    private final String GOOGLE_CALLBACK_URL = "http://localhost:8080/oauth/google/callback";
+    private final String GOOGLE_CALLBACK_URL = "https://a68323ea2219.ngrok.io/oauth/google/callback";
     private final String GOOGLE_USERINFO_ACCESS_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
     private final String GOOLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
-    private final String GOOGLE_CLIENT_ID = "";
-    private final String GOOGLE_CLIENT_SECRET = "";
+
+    private final String GOOGLE_CLIENT_ID;
+    private final String GOOGLE_CLIENT_SECRET;
 
     @Autowired
-    public GoogleOAuth(HttpSession session, RestTemplate restTemplate, ObjectMapper objectMapper) {
-        super(session, restTemplate, objectMapper);
+    public GoogleOAuth(RestTemplate restTemplate, ObjectMapper objectMapper,
+                       @Value("${security.oauth2.google.client-id}") String clientId,
+                       @Value("${security.oauth2.google.client-secret}") String clientSecret) {
+        super(null, restTemplate, objectMapper);
+        this.GOOGLE_CLIENT_ID = clientId;
+        this.GOOGLE_CLIENT_SECRET = clientSecret;
     }
 
     // Exchange authorization code for refresh and access tokens

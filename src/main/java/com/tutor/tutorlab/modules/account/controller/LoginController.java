@@ -1,6 +1,5 @@
 package com.tutor.tutorlab.modules.account.controller;
 
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
@@ -11,7 +10,9 @@ import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.vo.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.util.Map;
 
+@Slf4j
 @Api(tags = {"LoginController"})
 @RestController
 @RequiredArgsConstructor
@@ -84,7 +86,7 @@ public class LoginController extends AbstractController {
      */
     @ApiIgnore
     @GetMapping("/oauth/{provider}/callback")
-    public ResponseEntity oauth(@PathVariable(name = "provider") String provider,
+    public AuthorizeResult oauth(@PathVariable(name = "provider") String provider,
             @RequestParam(name = "code") String code) {
         // 네이버 - state, error, error_description
 
@@ -101,15 +103,19 @@ public class LoginController extends AbstractController {
                 Map<String, String> result = null;
                 if (user != null) {
                     // 이미 가입된 회원이므로 바로 로그인 진행
+                    log.info("#oauth-login : " + user);
                     result = loginService.loginOAuth(user);
                 } else {
                     // 회원가입 - 강제 로그인
                     // 추가 정보 입력 필요
+                    log.info("#oauth-signup : " + oAuthInfo);
                     result = loginService.signUpOAuth(oAuthInfo);
                 }
 
-                return new ResponseEntity(getHeaders(result), HttpStatus.OK);
-
+                log.info("#oauth-result : " + result);
+                log.info("#oauth-result : " + getHeaders(result));
+                // return new ResponseEntity(getHeaders(result), HttpStatus.OK);
+                return new AuthorizeResult();
             } else {
                 // TODO
             }
@@ -125,9 +131,6 @@ public class LoginController extends AbstractController {
     public ResponseEntity signUpOAuthDetail(@CurrentUser User user,
                                             @RequestBody SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         loginService.signUpOAuthDetail(user, signUpOAuthDetailRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -163,4 +166,19 @@ public class LoginController extends AbstractController {
         return headers;
     }
 
+    @Data
+    static class AuthorizeResult {
+
+        String accessToken = "1111";
+        String accessTokenExpirationDate = "1111";
+        // Map<String, String> authorizeAdditionalParameters;
+        // Map<String, String> tokenAdditionalParameters;
+        String idToken = "1111";
+        String refreshToken = "1111";
+        String tokenType = "1111";
+        String[] scopes = new String[]{"1111"};
+        String authorizationCode = "1111";
+        // String codeVerifier;
+
+    }
 }

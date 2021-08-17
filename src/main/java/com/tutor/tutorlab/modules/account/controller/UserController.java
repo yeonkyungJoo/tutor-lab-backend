@@ -69,9 +69,6 @@ public class UserController extends AbstractController {
     public ResponseEntity editUser(@CurrentUser User user,
                             @RequestBody UserUpdateRequest userUpdateRequest) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         userService.updateUser(user, userUpdateRequest);
         // TODO - RestResponse
         return new ResponseEntity(HttpStatus.OK);
@@ -81,9 +78,6 @@ public class UserController extends AbstractController {
     @DeleteMapping
     public ResponseEntity quitUser(@CurrentUser User user) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         userService.deleteUser(user);
         // TODO - RestResponse
         return new ResponseEntity(HttpStatus.OK);

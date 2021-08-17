@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -24,12 +25,17 @@ public class NaverOAuth extends OAuth {
     private final String NAVER_CALLBACK_URL = "http://localhost:8080/oauth/naver/callback";
     private final String NAVER_USERINFO_ACCESS_URL = "https://openapi.naver.com/v1/nid/me";
     private final String NAVER_TOKEN_URL = "https://nid.naver.com/oauth2.0/token";
-    private final String NAVER_CLIENT_ID = "";
-    private final String NAVER_CLIENT_SECRET = "";
+
+    private final String NAVER_CLIENT_ID;
+    private final String NAVER_CLIENT_SECRET;
 
     @Autowired
-    public NaverOAuth(HttpSession session, RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public NaverOAuth(HttpSession session, RestTemplate restTemplate, ObjectMapper objectMapper,
+                      @Value("${security.oauth2.naver.client-id}") String clientId,
+                      @Value("${security.oauth2.naver.client-secret}") String clientSecret) {
         super(session, restTemplate, objectMapper);
+        this.NAVER_CLIENT_ID = clientId;
+        this.NAVER_CLIENT_SECRET = clientSecret;
     }
 
     @Override

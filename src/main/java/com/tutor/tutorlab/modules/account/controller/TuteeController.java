@@ -56,7 +56,6 @@ public class TuteeController extends AbstractController {
 
         Tutee tutee = tuteeRepository.findById(tuteeId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜티입니다."));
-                // .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 튜티입니다."));
         return new ResponseEntity(new TuteeDto(tutee), HttpStatus.OK);
     }
 
@@ -68,10 +67,7 @@ public class TuteeController extends AbstractController {
         // TODO - CHECK : Bearer Token 없이 요청하는 경우
         // user = null
         // .antMatchers(HttpMethod.PUT, "/**").authenticated()
-        // TODO - CHECK : AOP로 처리할 수 없는가?
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
+
         tuteeService.updateTutee(user, tuteeUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -80,9 +76,6 @@ public class TuteeController extends AbstractController {
     @DeleteMapping
     public ResponseEntity quitTutee(@CurrentUser User user) {
 
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
         tuteeService.deleteTutee(user);
         return new ResponseEntity(HttpStatus.OK);
     }

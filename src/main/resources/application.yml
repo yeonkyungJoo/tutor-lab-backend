@@ -29,16 +29,17 @@ spring:
         format-sql: true
         default_batch_fetch_size: 1000
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id:
-            client-secret:
-            scope:
-            - email
-            - profile
+security:
+  oauth2:
+    google:
+      client-id: googleId
+      client-secret: googleSecret
+    kakao:
+      client-id: kakaoId
+    naver:
+      client-id: naverId
+      client-secret: naverSecret
+
 
 jwt:
   secret: secret
@@ -47,11 +48,11 @@ jwt:
 cloud:
   aws:
     credentials:
-      accessKey:
-      secretKey:
+      accessKey: accessKey
+      secretKey: secretKey
     s3:
-      bucket:
+      bucket: bucket
     region:
-      static:
+      static: static
     stack:
-      auto:
+      auto: false
