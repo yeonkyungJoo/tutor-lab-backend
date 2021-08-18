@@ -81,12 +81,32 @@ public class LoginController extends AbstractController {
         }
     }
 
+    @Data
+    static class AuthorizeResult {
+
+        String accessToken = "1111";
+        String accessTokenExpirationDate = "1111";
+        String idToken = "1111";
+        String refreshToken = "1111";
+        String tokenType = "1111";
+        String[] scopes = new String[]{"1111"};
+        String authorizationCode = "1111";
+        // String codeVerifier;
+
+    }
+
+    @ApiIgnore
+    @GetMapping("/oauth/callback/{provider}")
+    public void oauthCallback() {
+
+    }
+
     /**
      OAuth 로그인/회원가입
      */
     @ApiIgnore
     @GetMapping("/oauth/{provider}/callback")
-    public AuthorizeResult oauth(@PathVariable(name = "provider") String provider,
+    public ResponseEntity oauth(@PathVariable(name = "provider") String provider,
             @RequestParam(name = "code") String code) {
         // 네이버 - state, error, error_description
 
@@ -103,19 +123,15 @@ public class LoginController extends AbstractController {
                 Map<String, String> result = null;
                 if (user != null) {
                     // 이미 가입된 회원이므로 바로 로그인 진행
-                    log.info("#oauth-login : " + user);
                     result = loginService.loginOAuth(user);
                 } else {
                     // 회원가입 - 강제 로그인
                     // 추가 정보 입력 필요
-                    log.info("#oauth-signup : " + oAuthInfo);
                     result = loginService.signUpOAuth(oAuthInfo);
                 }
 
                 log.info("#oauth-result : " + result);
-                log.info("#oauth-result : " + getHeaders(result));
-                // return new ResponseEntity(getHeaders(result), HttpStatus.OK);
-                return new AuthorizeResult();
+                return new ResponseEntity(getHeaders(result), HttpStatus.OK);
             } else {
                 // TODO
             }
@@ -166,19 +182,4 @@ public class LoginController extends AbstractController {
         return headers;
     }
 
-    @Data
-    static class AuthorizeResult {
-
-        String accessToken = "1111";
-        String accessTokenExpirationDate = "1111";
-        // Map<String, String> authorizeAdditionalParameters;
-        // Map<String, String> tokenAdditionalParameters;
-        String idToken = "1111";
-        String refreshToken = "1111";
-        String tokenType = "1111";
-        String[] scopes = new String[]{"1111"};
-        String authorizationCode = "1111";
-        // String codeVerifier;
-
-    }
 }

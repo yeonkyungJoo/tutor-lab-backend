@@ -17,7 +17,10 @@ import java.time.LocalDate;
 public class Career extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tutor_id")
+    @JoinColumn(name = "tutor_id",
+            referencedColumnName = "tutor_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "FK_CAREER_TUTOR_ID"))
     private Tutor tutor;
 
     private String companyName;
