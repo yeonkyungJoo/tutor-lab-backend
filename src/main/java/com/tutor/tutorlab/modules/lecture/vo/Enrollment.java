@@ -21,7 +21,6 @@ public class Enrollment extends BaseEntity {
                 referencedColumnName = "tutee_id",
                 nullable = false,
                 foreignKey = @ForeignKey(name = "FK_ENROLLMENT_TUTEE_ID"))
-    @Column(nullable = false)
     private Tutee tutee;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,7 +28,6 @@ public class Enrollment extends BaseEntity {
                 referencedColumnName = "lecture_id",
                 nullable = false,
                 foreignKey = @ForeignKey(name = "FK_ENROLLMENT_LECTURE_ID"))
-    @Column(nullable = false)
     private Lecture lecture;
 
 }

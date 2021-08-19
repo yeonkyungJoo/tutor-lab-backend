@@ -6,13 +6,13 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class RestResponse {
+public class RestResponse<T> {
     private int code;
     private String message;
-    private Object result;
+    private T result;
     private String responseTime;
 
-    public static RestResponse of(int code, String message, Object result) {
+    public static <T> RestResponse of(int code, String message, T result) {
         return new RestResponse(code, message, result, LocalDateTimeUtil.getNowToString("yyyy-MM-dd hh:mm:ss"));
     }
 
