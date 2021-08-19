@@ -5,6 +5,7 @@ import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
+import com.tutor.tutorlab.modules.account.repository.CareerRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
@@ -129,6 +130,5 @@ public class TutorController extends AbstractController {
         }
 
     }
-
 
 }

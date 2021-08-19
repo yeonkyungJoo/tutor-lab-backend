@@ -81,23 +81,46 @@ public class LoginController extends AbstractController {
         }
     }
 
+    // TODO - CHECK : public
     @Data
-    static class AuthorizeResult {
+    public static class AuthorizeResult {
 
-        String accessToken = "1111";
-        String accessTokenExpirationDate = "1111";
-        String idToken = "1111";
-        String refreshToken = "1111";
-        String tokenType = "1111";
-        String[] scopes = new String[]{"1111"};
-        String authorizationCode = "1111";
-        // String codeVerifier;
+        String idToken;
+        String[] scopes;
+        String serverAuthCode;
+        UserInfo user;
+
+        @Data
+        public class UserInfo {
+
+            String email;
+            String familyName;
+            String givenName;
+            String id;
+            String name;
+            String photo;
+        }
 
     }
 
+    // 로그인
     @ApiIgnore
     @GetMapping("/oauth/callback/{provider}")
-    public void oauthCallback() {
+    public ResponseEntity oauthCallback(@PathVariable(name = "provider") String provider,
+            @RequestBody AuthorizeResult.UserInfo userInfo) {
+
+        Map<String, String> result = null;
+        try {
+
+            result = loginService.processLogin(provider, userInfo);
+            return new ResponseEntity(getHeaders(result), HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // TODO - return Value
+        return null;
 
     }
 

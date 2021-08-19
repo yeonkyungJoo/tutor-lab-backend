@@ -13,6 +13,7 @@ import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoResponse;
 import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverOAuth;
 import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverResponse;
+import com.tutor.tutorlab.modules.account.controller.LoginController;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
@@ -57,6 +58,24 @@ public class LoginService {
             duplicated = true;
         }
         return duplicated;
+    }
+
+    // TODO - 리팩토링
+    public Map<String, String> processLogin(String provider, LoginController.AuthorizeResult.UserInfo userInfo) {
+
+        OAuthType oAuthType = OAuthInfo.getOAuthType(provider);
+        switch (oAuthType) {
+            case GOOGLE:
+                break;
+            case KAKAO:
+                break;
+            case NAVER:
+                break;
+            default:
+                break;
+        }
+
+        return null;
     }
 
     // TODO - 리팩토링
