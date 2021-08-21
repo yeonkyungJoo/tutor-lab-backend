@@ -40,8 +40,6 @@ public class TutorController extends AbstractController {
 
         List<TutorDto> tutors = tutorRepository.findAll().stream()
                 .map(tutor -> new TutorDto(tutor)).collect(Collectors.toList());
-
-        // TODO - RestResponse
         return new ResponseEntity(tutors, HttpStatus.OK);
     }
 */
@@ -58,7 +56,6 @@ public class TutorController extends AbstractController {
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(tutor -> new TutorDto(tutor));
 
-        // TODO - RestResponse
         return new ResponseEntity(tutors, HttpStatus.OK);
     }
 

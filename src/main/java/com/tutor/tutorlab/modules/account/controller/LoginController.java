@@ -1,6 +1,8 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.exception.OAuthAuthenticationException;
 import com.tutor.tutorlab.config.security.CurrentUser;
+import com.tutor.tutorlab.config.security.oauth.provider.AuthorizeResult;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
@@ -10,9 +12,9 @@ import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.vo.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +57,7 @@ public class LoginController extends AbstractController {
     @ApiIgnore
     @GetMapping("/oauth/{provider}")
     public void oauth(@PathVariable(name = "provider") String provider, HttpServletRequest request, HttpServletResponse response) {
-        
+
         try {
             // 로그인 요청 주소
             // 사용자가 동의하면 code를 callback
@@ -77,51 +79,18 @@ public class LoginController extends AbstractController {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(ExceptionUtils.getStackTrace(e));
         }
-    }
-
-    // TODO - CHECK : public
-    @Data
-    public static class AuthorizeResult {
-
-        String idToken;
-        String[] scopes;
-        String serverAuthCode;
-        UserInfo user;
-
-        @Data
-        public class UserInfo {
-
-            String email;
-            String familyName;
-            String givenName;
-            String id;
-            String name;
-            String photo;
-        }
-
     }
 
     // 로그인
     @ApiIgnore
     @GetMapping("/oauth/callback/{provider}")
     public ResponseEntity oauthCallback(@PathVariable(name = "provider") String provider,
-            @RequestBody AuthorizeResult.UserInfo userInfo) {
+            @RequestBody AuthorizeResult authorizeResult) {
 
-        Map<String, String> result = null;
-        try {
-
-            result = loginService.processLogin(provider, userInfo);
-            return new ResponseEntity(getHeaders(result), HttpStatus.OK);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // TODO - return Value
-        return null;
-
+        Map<String, String> result = loginService.processLoginOAuth(provider, authorizeResult);
+        return new ResponseEntity(getHeaders(result), HttpStatus.OK);
     }
 
     /**
@@ -129,40 +98,29 @@ public class LoginController extends AbstractController {
      */
     @ApiIgnore
     @GetMapping("/oauth/{provider}/callback")
-    public ResponseEntity oauth(@PathVariable(name = "provider") String provider,
-            @RequestParam(name = "code") String code) {
+    public ResponseEntity oauth(@PathVariable(name = "provider") String provider, @RequestParam(name = "code") String code) {
         // 네이버 - state, error, error_description
 
-        try {
-            if (!StringUtils.hasLength(code)) {
-                // TODO - 예외 처리
-            }
-
-            OAuthInfo oAuthInfo = loginService.getOAuthInfo(provider, code);
-            if (oAuthInfo != null) {
-
-                User user = userRepository.findByProviderAndProviderId(oAuthInfo.getProvider(), oAuthInfo.getProviderId());
-
-                Map<String, String> result = null;
-                if (user != null) {
-                    // 이미 가입된 회원이므로 바로 로그인 진행
-                    result = loginService.loginOAuth(user);
-                } else {
-                    // 회원가입 - 강제 로그인
-                    // 추가 정보 입력 필요
-                    result = loginService.signUpOAuth(oAuthInfo);
-                }
-
-                log.info("#oauth-result : " + result);
-                return new ResponseEntity(getHeaders(result), HttpStatus.OK);
-            } else {
-                // TODO
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!StringUtils.hasLength(code)) {
+            throw new OAuthAuthenticationException("Code is empty");
         }
-        return null;
+
+        OAuthInfo oAuthInfo = loginService.getOAuthInfo(provider, code);
+
+        User user = userRepository.findByProviderAndProviderId(oAuthInfo.getProvider(), oAuthInfo.getProviderId());
+        Map<String, String> result = null;
+        if (user != null) {
+            // 이미 가입된 회원이므로 바로 로그인 진행
+            result = loginService.loginOAuth(user);
+        } else {
+            // 회원가입 - 강제 로그인
+            // 추가 정보 입력 필요
+            result = loginService.signUpOAuth(oAuthInfo);
+        }
+
+        log.info("#oauth-result : " + result);
+        return new ResponseEntity(getHeaders(result), HttpStatus.OK);
+
     }
 
     @ApiOperation("OAuth 회원가입 추가 정보 입력")
@@ -186,17 +144,8 @@ public class LoginController extends AbstractController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest request) {
 
-        try {
-
-            Map<String, String> result = loginService.login(request);
-            return new ResponseEntity(getHeaders(result), HttpStatus.OK);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // TODO - 예외 처리 및 ErrorResponse 반환
-        return null;
+        Map<String, String> result = loginService.login(request);
+        return new ResponseEntity(getHeaders(result), HttpStatus.OK);
     }
 
     private HttpHeaders getHeaders(Map<String, String> result) {

@@ -1,8 +1,11 @@
 package com.tutor.tutorlab.modules.account.service;
 
+import com.tutor.tutorlab.config.response.exception.AlreadyExistException;
 import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.response.exception.OAuthAuthenticationException;
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
+import com.tutor.tutorlab.config.security.oauth.provider.AuthorizeResult;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
@@ -13,7 +16,6 @@ import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoResponse;
 import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverOAuth;
 import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverResponse;
-import com.tutor.tutorlab.modules.account.controller.LoginController;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
@@ -24,9 +26,13 @@ import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Slf4j
 @Service
 @Transactional(readOnly = false)
 @RequiredArgsConstructor
@@ -60,26 +66,52 @@ public class LoginService {
         return duplicated;
     }
 
-    // TODO - 리팩토링
-    public Map<String, String> processLogin(String provider, LoginController.AuthorizeResult.UserInfo userInfo) {
+    public Map<String, String> processLoginOAuth(String provider, AuthorizeResult authorizeResult) {
 
-        OAuthType oAuthType = OAuthInfo.getOAuthType(provider);
-        switch (oAuthType) {
-            case GOOGLE:
-                break;
-            case KAKAO:
-                break;
-            case NAVER:
-                break;
-            default:
-                break;
+        OAuthInfo oAuthInfo = getOAuthInfo(provider, authorizeResult);
+        if (oAuthInfo != null) {
+
+            User user = userRepository.findByProviderAndProviderId(oAuthInfo.getProvider(), oAuthInfo.getProviderId());
+            if (user != null) {
+                // 로그인
+                return loginOAuth(user);
+            }
         }
 
         return null;
     }
 
     // TODO - 리팩토링
-    public OAuthInfo getOAuthInfo(String provider, String code) throws Exception {
+    public OAuthInfo getOAuthInfo(String provider, AuthorizeResult authorizeResult) {
+
+        OAuthInfo oAuthInfo = null;
+
+        OAuthType oAuthType = OAuthInfo.getOAuthType(provider);
+        switch (oAuthType) {
+            case GOOGLE:
+                // authorizeResult.getUser() -> Map<String, String>
+                Map<String, String> googleOAuthUserInfo = googleOAuth.getUserInfo(authorizeResult.getUser());
+                if (googleOAuthUserInfo != null) {
+                    oAuthInfo = new GoogleInfo(googleOAuthUserInfo);
+                }
+                break;
+            case KAKAO:
+                break;
+            case NAVER:
+                break;
+            default:
+                throw new OAuthAuthenticationException("지원하지 않는 OAuth입니다.");
+        }
+
+        if (oAuthInfo == null) {
+            throw new OAuthAuthenticationException("User 정보를 가져올 수 없습니다.");
+        }
+
+        return oAuthInfo;
+    }
+
+    // TODO - 리팩토링
+    public OAuthInfo getOAuthInfo(String provider, String code) {
 
         OAuthInfo oAuthInfo = null;
 
@@ -88,73 +120,38 @@ public class LoginService {
         switch (oAuthType) {
             case GOOGLE:
                 Map<String, String> googleOAuthUserInfo = googleOAuth.getUserInfo(code);
-                // System.out.println(googleOAuthUserInfo);
-                /*
-                {
-                    id=109497631191479413556,
-                    email=dev.yk2021@gmail.com,
-                    verified_email=true,
-                    name=yk dev,
-                    given_name=yk,
-                    family_name=dev,
-                    picture=https://lh3.googleusercontent.com/a/AATXAJwH1OzOPyWFMo8BgTGs_JYle0po58A7PxaRj-0X=s96-c,
-                    locale=ko
-                }
-                */
                 if (googleOAuthUserInfo != null) {
                     oAuthInfo = new GoogleInfo(googleOAuthUserInfo);
                 }
                 break;
             case KAKAO:
                 KakaoResponse kakaoOAuthUserInfo = kakaoOAuth.getUserInfo(code);
-                // System.out.println(kakaoOAuthUserInfo);
-                /*
-                    {
-                        id=1825918761,
-                        connected_at=2021-07-28T21:58:30Z,
-                        properties={
-                            nickname=dev.yk
-                        },
-                        kakao_account={
-                            profile_nickname_needs_agreement=false,
-                            profile={
-                                nickname=dev.yk
-                            },
-                            has_email=true,
-                            email_needs_agreement=false,
-                            is_email_valid=true,
-                            is_email_verified=true,
-                            email=dev.yk2021@gmail.com
-                        }
-                    }
-                */
                 if (kakaoOAuthUserInfo != null) {
                     oAuthInfo = new KakaoInfo(kakaoOAuthUserInfo);
                 }
                 break;
             case NAVER:
                 NaverResponse naverOAuthUserInfo = naverOAuth.getUserInfo(code);
-                // System.out.println(naverOAuthUserInfo);
-
                 if (naverOAuthUserInfo != null) {
                     oAuthInfo = new NaverInfo(naverOAuthUserInfo);
-                    // System.out.println(oAuthInfo);
                 }
                 break;
             default:
-                break;
+                throw new OAuthAuthenticationException("지원하지 않는 OAuth입니다.");
         }
 
+        if (oAuthInfo == null) {
+            throw new OAuthAuthenticationException("User 정보를 가져올 수 없습니다.");
+        }
 
         return oAuthInfo;
     }
 
-    public Map<String, String> signUpOAuth(OAuthInfo oAuthInfo) throws Exception {
+    public Map<String, String> signUpOAuth(OAuthInfo oAuthInfo) {
 
         String username = oAuthInfo.getEmail();
         if (checkUsernameDuplication(username)) {
-            // TODO - 에러
-            return null;
+            throw new AlreadyExistException("동일한 ID가 존재합니다.");
         }
 
         User user = User.builder()
@@ -181,17 +178,10 @@ public class LoginService {
         return loginOAuth(user);
     }
 
-    public Map<String, String> loginOAuth(User user) throws Exception {
+    public Map<String, String> loginOAuth(User user) {
 
-        try {
-            String username = user.getUsername();
-            return login(username, username);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // TODO - 에러
-        }
-
-        return null;
+        String username = user.getUsername();
+        return login(username, username);
     }
 
     public void signUpOAuthDetail(User user, SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
@@ -215,8 +205,7 @@ public class LoginService {
 
         String username = signUpRequest.getUsername();
         if (checkUsernameDuplication(username)) {
-            // TODO - 에러
-            return null;
+            throw new AlreadyExistException("동일한 ID가 존재합니다.");
         }
 
         User user = User.builder()
@@ -239,7 +228,7 @@ public class LoginService {
         return tuteeRepository.save(tutee);
     }
 
-    private Authentication authenticate(String username, String password) throws Exception {
+    private Authentication authenticate(String username, String password) {
 
         try {
 
@@ -248,16 +237,21 @@ public class LoginService {
             return authentication;
 
         } catch(BadCredentialsException e) {
-            // TODO - error message
+            throw new BadCredentialsException("BadCredentialsException");
         } catch(DisabledException e) {
-            // TODO - error message
+            throw new DisabledException("DisabledException");
         } catch(LockedException e) {
-            // TODO - error message
+            throw new LockedException("LockedException");
+        } catch(UsernameNotFoundException e) {
+            throw new UsernameNotFoundException("UsernameNotFoundException");
+        } catch(AuthenticationException e) {
+            log.error(ExceptionUtils.getStackTrace(e));
         }
+
         return null;
     }
 
-    public Map<String, String> login(String username, String password) throws Exception {
+    public Map<String, String> login(String username, String password) {
 
         Authentication authentication = authenticate(username, password);
         if (authentication != null) {
@@ -270,10 +264,11 @@ public class LoginService {
             return jwtTokenManager.convertTokenToMap(jwtToken);
         }
 
+        // TODO - CHECK : 예외 처리
         return null;
     }
 
-    public Map<String, String> login(LoginRequest request) throws Exception {
+    public Map<String, String> login(LoginRequest request) {
         return this.login(request.getUsername(), request.getPassword());
     }
 

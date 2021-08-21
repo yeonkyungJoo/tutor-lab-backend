@@ -1,6 +1,8 @@
 package com.tutor.tutorlab.config.security.oauth.provider.google;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tutor.tutorlab.config.security.oauth.provider.AuthorizeResult;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,4 +87,14 @@ public class GoogleOAuth extends OAuth {
         return convertStringToMap(requestLogin(code));
     }
 
+    public Map<String, String> getUserInfo(AuthorizeResult.UserInfo user) {
+
+        String userInfo = null;
+        try {
+            userInfo = objectMapper.writeValueAsString(user);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return convertStringToMap(userInfo);
+    }
 }

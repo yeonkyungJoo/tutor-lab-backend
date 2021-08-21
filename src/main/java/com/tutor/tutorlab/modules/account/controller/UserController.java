@@ -35,8 +35,6 @@ public class UserController extends AbstractController {
         List<UserDto> users = userRepository.findAll().stream()
                 .map(user -> new UserDto(user))
                 .collect(Collectors.toList());
-
-        // TODO - RestResponse
         return new ResponseEntity(users, HttpStatus.OK);
     }
 */
@@ -50,7 +48,6 @@ public class UserController extends AbstractController {
         Page<UserDto> users = userRepository.findAll(
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(user -> new UserDto(user));
-        // TODO - RestResponse
         return new ResponseEntity(users, HttpStatus.OK);
     }
 
@@ -60,7 +57,6 @@ public class UserController extends AbstractController {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
-        // TODO - RestResponse
         return new ResponseEntity(new UserDto(user), HttpStatus.OK);
     }
 
@@ -70,7 +66,6 @@ public class UserController extends AbstractController {
                             @RequestBody UserUpdateRequest userUpdateRequest) {
 
         userService.updateUser(user, userUpdateRequest);
-        // TODO - RestResponse
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -79,7 +74,6 @@ public class UserController extends AbstractController {
     public ResponseEntity quitUser(@CurrentUser User user) {
 
         userService.deleteUser(user);
-        // TODO - RestResponse
         return new ResponseEntity(HttpStatus.OK);
     }
 

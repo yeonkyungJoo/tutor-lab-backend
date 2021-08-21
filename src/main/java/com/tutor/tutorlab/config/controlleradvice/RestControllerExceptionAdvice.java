@@ -2,10 +2,12 @@ package com.tutor.tutorlab.config.controlleradvice;
 
 import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.config.response.ErrorResponse;
+import com.tutor.tutorlab.config.response.exception.AlreadyExistException;
 import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -37,21 +39,34 @@ public class RestControllerExceptionAdvice {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "서버 오류가 발생하였습니다.", Collections.singletonList(e.getMessage()));
     }
 
+//    @ExceptionHandler(Exception.class)
+//    public ErrorResponse handleException(Exception e) {
+//        return ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류가 발생하였습니다.", Collections.singletonList(e.getMessage()));
+//    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ErrorResponse handleAuthenticationException(AuthenticationException e) {
+        return ErrorResponse.of(ErrorCode.UNAUTHENTICATED, e.getMessage());
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ErrorResponse handleIllegalArgumentException(IllegalArgumentException e) {
-        return new ErrorResponse(ErrorCode.ENTITY_NOT_FOUND, e.getMessage());
-        // return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+        return ErrorResponse.of(ErrorCode.ENTITY_NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ErrorResponse handleUnauthorizedException(UnauthorizedException e) {
-        return new ErrorResponse(e.getErrorCode(), e.getMessage());
-        // return new ErrorResponse(ErrorCode.UNAUTHORIZED, e.getMessage());
+        return ErrorResponse.of(e.getErrorCode(), e.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException e) {
-        return new ErrorResponse(e.getErrorCode(), e.getMessage());
+        return ErrorResponse.of(e.getErrorCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(AlreadyExistException.class)
+    public ErrorResponse handleAlreadyExistException(AlreadyExistException e) {
+        return ErrorResponse.of(e.getErrorCode(), e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

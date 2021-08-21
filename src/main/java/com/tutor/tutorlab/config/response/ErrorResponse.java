@@ -25,11 +25,7 @@ public class ErrorResponse {
         this.message = message;
         this.errorDetails.addAll(errorDetails);
     }
-  
-    public static ErrorResponse of(int code, String message, List<String> errorDetails) {
-        return new ErrorResponse(code, message, errorDetails);
-    }
-  
+
     public ErrorResponse(ErrorCode errorCode, List<String> errorDetails) {
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();
@@ -47,4 +43,17 @@ public class ErrorResponse {
             }
         }
     }
+
+    public static ErrorResponse of(int code, String message, List<String> errorDetails) {
+        return new ErrorResponse(code, message, errorDetails);
+    }
+
+    public static ErrorResponse of(ErrorCode errorCode, List<String> errorDetails) {
+        return new ErrorResponse(errorCode, errorDetails);
+    }
+
+    public static ErrorResponse of(ErrorCode errorCode, String... errorDetails) {
+        return new ErrorResponse(errorCode, errorDetails);
+    }
+
 }

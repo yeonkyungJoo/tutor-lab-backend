@@ -5,10 +5,11 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
-    ENTITY_ALREADY_EXIST(400, "Entity Already Exist"),
+    ALREADY_EXIST(400, "Already Exist"),
     ENTITY_NOT_FOUND(400, "Entity Not Found"),
     INVALID_INPUT(400, "Invalid Input"),
-    UNAUTHORIZED(401, "Unauthorized");
+    UNAUTHORIZED(401, "Unauthorized"),
+    UNAUTHENTICATED(401, "Unauthenticated");
 
     private final int code;
     private final String message;
