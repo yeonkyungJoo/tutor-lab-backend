@@ -5,5 +5,7 @@ import com.tutor.tutorlab.modules.lecture.controller.request.EnrollmentRequest;
 
 public interface EnrollmentService {
 
-    public void enroll(User user, EnrollmentRequest enrollmentRequest);
+    void enroll(User user, EnrollmentRequest enrollmentRequest);
+
+    void cancel(User user, Long lectureId);
 }

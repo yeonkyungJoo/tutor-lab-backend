@@ -1,13 +1,15 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.service.TuteeService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
+import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
+import com.tutor.tutorlab.modules.lecture.repository.EnrollmentRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
@@ -29,6 +31,9 @@ public class TuteeController extends AbstractController {
 
     private final TuteeService tuteeService;
     private final TuteeRepository tuteeRepository;
+
+    private final EnrollmentRepository enrollmentRepository;
+    private final LectureMapstructUtil lectureMapstructUtil;
 
 /*
     @ApiOperation("튜티 전체 조회")
@@ -80,6 +85,18 @@ public class TuteeController extends AbstractController {
 
         tuteeService.deleteTutee(user);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @ApiOperation("수강 강의 조회 - 페이징")
+    @GetMapping("/my-lectures")
+    public ResponseEntity getLectures(@CurrentUser User user,
+                                      @RequestParam(defaultValue = "1") Integer page) {
+
+        Tutee tutee = tuteeRepository.findByUser(user);
+        Page<LectureResponse> lectures = enrollmentRepository.findByTutee(tutee,
+                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
+                .map(enrollment -> lectureMapstructUtil.getLectureResponse(enrollment.getLecture()));
+        return new ResponseEntity(lectures, HttpStatus.OK);
     }
 
     @Data

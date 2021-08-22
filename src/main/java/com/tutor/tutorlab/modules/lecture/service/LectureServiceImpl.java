@@ -8,6 +8,7 @@ import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstruct;
+import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepositorySupport;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
@@ -28,13 +29,14 @@ import java.util.stream.Collectors;
 public class LectureServiceImpl implements LectureService {
     private final LectureRepository lectureRepository;
     private final TutorRepository tutorRepository;
-    private final LectureMapstruct lectureMapstruct;
     private final LectureRepositorySupport lectureRepositorySupport;
+
+    private final LectureMapstructUtil lectureMapstructUtil;
 
     @Override
     public LectureResponse getLecture(long id) throws Exception {
         Lecture lecture = lectureRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 id에 맞는 강의가 없습니다."));
-        return getLectureResponse(lecture);
+        return lectureMapstructUtil.getLectureResponse(lecture);
     }
 
     @Transactional
@@ -56,21 +58,13 @@ public class LectureServiceImpl implements LectureService {
         }
 
         Lecture savedLecture = lectureRepository.save(lecture);
-        return getLectureResponse(savedLecture);
+        return lectureMapstructUtil.getLectureResponse(savedLecture);
     }
 
     @Override
     public List<LectureResponse> getLectures(LectureListRequest lectureListRequest) {
         List<Lecture> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest);
-        return lectureMapstruct.lectureListToLectureResponseList(lectures);
-    }
-
-    private LectureResponse getLectureResponse(Lecture lecture) {
-        List<LectureResponse.LecturePriceResponse> prices = lectureMapstruct.lecturePriceListToLecturePriceResponseList(lecture.getLecturePrices());
-        List<LectureResponse.LectureSubjectResponse> subjects = lectureMapstruct.lectureSubjectListToLectureSubjectResponseList(lecture.getLectureSubjects());
-        List<LectureResponse.SystemTypeResponse> systemTypes = lectureMapstruct.systemTypeListToSystemTypeResponseList(lecture.getSystemTypes().stream().map(systemType -> SystemType.find(systemType.getType())).collect(Collectors.toList()));
-
-        return lectureMapstruct.lectureToLectureResponse(lecture, prices, systemTypes, subjects);
+        return lectureMapstructUtil.getLectureResponses(lectures);
     }
 
     private LectureSubject buildLectureSubject(AddLectureRequest.AddLectureSubjectRequest subjectRequest) {
