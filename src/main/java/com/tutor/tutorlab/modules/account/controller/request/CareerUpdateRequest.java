@@ -26,7 +26,6 @@ public class CareerUpdateRequest {
     private String duty;
 
     @ApiModelProperty(value = "입사일자", example = "2007-12-01", required = true)
-    @Past
     @NotBlank
     private String startDate;
 
@@ -47,7 +46,7 @@ public class CareerUpdateRequest {
     }
 
     @AssertTrue
-    public boolean isValidDate() {
+    private boolean isEndDateValid() {
         boolean valid = true;
 
         // - if present is true, endDate must be blank

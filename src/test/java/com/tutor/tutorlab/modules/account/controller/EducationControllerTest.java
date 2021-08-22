@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @MockMvcTest
@@ -245,17 +247,47 @@ class EducationControllerTest {
         assertFalse(educationRepository.findById(educationId).isPresent());
     }
 
-
-    // TODO
     @Test
     @DisplayName("Education 등록 - Invalid Input")
+    @WithAccount("yk")
     public void newEducation_withInvalidInput() throws Exception {
 
         // Given
+        User user = userRepository.findByName("yk");
+        assertNotNull(tuteeRepository.findByUser(user));
+
+        // tutorService 테스트
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
+//        EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
+//                .schoolName("school")
+//                .major("computer")
+//                .entranceDate("")
+//                .graduationDate("2021-02-01")
+//                .score(4.01)
+//                .degree("Bachelor")
+//                .build();
 
-        // Then
+        EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
+                .schoolName("school")
+                .major("computer")
+                .entranceDate("2021-02-01")
+                .graduationDate("2021-01-01")
+                .score(4.01)
+                .degree("Bachelor")
+                .build();
+
+        mockMvc.perform(post("/educations")
+                .content(objectMapper.writeValueAsString(educationCreateRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.message").value("Invalid Input"))
+                .andExpect(jsonPath("$.code").value(400));
     }
 
     // TODO

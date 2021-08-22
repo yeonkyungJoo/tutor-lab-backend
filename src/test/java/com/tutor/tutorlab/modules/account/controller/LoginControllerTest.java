@@ -19,12 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @MockMvcTest
 class LoginControllerTest {
@@ -80,11 +81,32 @@ class LoginControllerTest {
         assertNotNull(tutee);
 
     }
-    // TODO
+
     @Test
     @DisplayName("일반 회원가입 - Invalid Input")
     public void signUp_withInvalidInput() throws Exception {
 
+        // Given
+        // When
+        SignUpRequest signUpRequest = SignUpRequest.builder()
+                .username("yk@email.com")
+                .password("password")
+                .passwordConfirm("passwordconfirm")
+                .name("yk")
+                .gender("FEMALE")
+                .phoneNumber(null)
+                .email(null)
+                .nickname(null)
+                .bio(null)
+                .zone(null)
+                .build();
+
+        mockMvc.perform(post("/sign-up")
+                .content(objectMapper.writeValueAsString(signUpRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.message").value("Invalid Input"))
+                .andExpect(jsonPath("$.code").value(400));
     }
 
     @Test

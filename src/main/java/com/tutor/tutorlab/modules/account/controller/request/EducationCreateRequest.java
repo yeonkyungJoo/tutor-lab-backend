@@ -25,7 +25,7 @@ public class EducationCreateRequest {
     private String major;
 
     @ApiModelProperty(value = "입학일자", example = "2021-01-01", required = true)
-    @Past @NotBlank
+    @NotBlank
     private String entranceDate;
 
     @ApiModelProperty(value = "졸업일자", allowEmptyValue = true, required = false)
@@ -48,7 +48,7 @@ public class EducationCreateRequest {
     }
 
     @AssertTrue
-    public boolean isValidDate() {
+    private boolean isGraduationDateValid() {
         boolean valid = true;
 
         try {
