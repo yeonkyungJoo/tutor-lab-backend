@@ -117,7 +117,9 @@ class CareerControllerTest {
 
     }
 
-    // TODO
+    // TODO - CareerCreateRequest 유효성 검사
+    // handleMethodArgumentNotValidException
+    // ErrorCode - Invalid_Input
     @Test
     @DisplayName("Career 등록 - Invalid Input")
     public void newCareer_withInvalidInput() throws Exception {
@@ -283,4 +285,5 @@ class CareerControllerTest {
         assertEquals(0, tutor.getCareers().size());
         assertFalse(careerRepository.findById(careerId).isPresent());
     }
+
 }

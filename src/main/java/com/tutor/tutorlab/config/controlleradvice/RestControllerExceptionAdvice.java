@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -71,7 +73,7 @@ public class RestControllerExceptionAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
-    public ErrorResponse handlerBindException(BindException e, HttpServletRequest req) {
+    public ErrorResponse handleBindException(BindException e, HttpServletRequest req) {
         log.error("===================== BindException Handling =====================");
         e.printStackTrace();
         return getErrorResponse(e.getBindingResult(), HttpStatus.BAD_REQUEST, "유효하지 않는 값이 있습니다.");
@@ -81,5 +83,15 @@ public class RestControllerExceptionAdvice {
         List<String> errorMessages = Optional.ofNullable(bindingResult.getAllErrors()).orElse(Collections.emptyList())
                 .stream().map(error -> error.getDefaultMessage()).collect(Collectors.toList());
         return ErrorResponse.of(httpStatus.value(), defaultMessage, errorMessages);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        return ErrorResponse.of(ErrorCode.INVALID_INPUT, e.getMessage());
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ErrorResponse handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 }

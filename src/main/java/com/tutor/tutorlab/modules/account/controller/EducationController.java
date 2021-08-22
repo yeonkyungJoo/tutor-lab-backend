@@ -1,7 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,7 +69,7 @@ public class EducationController extends AbstractController {
     @ApiOperation("Education 등록")
     @PostMapping
     public ResponseEntity newEducation(@CurrentUser User user,
-                                       @RequestBody EducationCreateRequest educationCreateRequest) {
+                                       @Valid @RequestBody EducationCreateRequest educationCreateRequest) {
 
         educationService.createEducation(user, educationCreateRequest);
         return new ResponseEntity(HttpStatus.CREATED);
@@ -82,7 +82,7 @@ public class EducationController extends AbstractController {
     @PutMapping("/{education_id}")
     public ResponseEntity editEducation(@CurrentUser User user,
                                         @PathVariable(name = "education_id") Long educationId,
-                                        @RequestBody EducationUpdateRequest educationUpdateRequest) {
+                                        @Valid @RequestBody EducationUpdateRequest educationUpdateRequest) {
 
         educationService.updateEducation(educationId, educationUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);

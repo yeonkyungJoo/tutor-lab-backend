@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Api(tags = {"UserController"})
 @RequestMapping("/users")
 @RestController
@@ -63,7 +65,7 @@ public class UserController extends AbstractController {
     @ApiOperation("회원 정보 수정")
     @PutMapping
     public ResponseEntity editUser(@CurrentUser User user,
-                            @RequestBody UserUpdateRequest userUpdateRequest) {
+                                   @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
 
         userService.updateUser(user, userUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);

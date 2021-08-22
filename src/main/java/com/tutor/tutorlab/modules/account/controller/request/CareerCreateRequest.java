@@ -4,19 +4,18 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 @Data
 @NoArgsConstructor
 public class CareerCreateRequest {
-
-    // TODO - validation
-    // - startDate < endDate
-    // - if present is true, endDate must not be blank
 
     @ApiModelProperty(value = "회사명", example = "tutorlab", required = true)
     @NotBlank
@@ -30,7 +29,7 @@ public class CareerCreateRequest {
     @Past @NotBlank
     private String startDate;
 
-    @ApiModelProperty(value = "퇴사일자", example = "2007-12-10", required = false)
+    @ApiModelProperty(value = "퇴사일자", example = "2007-12-10", allowEmptyValue = true, required = false)
     private String endDate;
 
     @ApiModelProperty(value = "재직 여부", example = "false", required = true)
@@ -44,5 +43,34 @@ public class CareerCreateRequest {
         this.startDate = startDate;
         this.endDate = endDate;
         this.present = present;
+    }
+
+    @AssertTrue
+    public boolean isValidDate() {
+        boolean valid = true;
+
+        // - if present is true, endDate must be blank
+        // - if present is false, endDate must not be blank
+        if (!(!isPresent() && StringUtils.isNotEmpty(getEndDate()))) {
+            valid = false;
+            return valid;
+        }
+
+        try {
+
+            LocalDate startDate = LocalDate.parse(getStartDate());
+            LocalDate endDate = null;
+
+            if (StringUtils.isNotEmpty(getEndDate())) {
+                endDate = LocalDate.parse(getEndDate());
+                // - startDate < endDate
+                valid = startDate.isBefore(endDate);
+            }
+
+        } catch (DateTimeParseException e) {
+            valid = false;
+        }
+
+        return valid;
     }
 }

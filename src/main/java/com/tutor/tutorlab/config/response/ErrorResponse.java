@@ -48,6 +48,10 @@ public class ErrorResponse {
         return new ErrorResponse(code, message, errorDetails);
     }
 
+    public static ErrorResponse of(int code, String message) {
+        return new ErrorResponse(code, message, null);
+    }
+
     public static ErrorResponse of(ErrorCode errorCode, List<String> errorDetails) {
         return new ErrorResponse(errorCode, errorDetails);
     }

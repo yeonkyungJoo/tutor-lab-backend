@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,7 +78,7 @@ public class TutorController extends AbstractController {
     @ApiOperation("튜터 등록")
     @PostMapping
     public ResponseEntity newTutor(@CurrentUser User user,
-                        @RequestBody TutorSignUpRequest tutorSignUpRequest) {
+                                @Valid @RequestBody TutorSignUpRequest tutorSignUpRequest) {
 
         tutorService.createTutor(user, tutorSignUpRequest);
         return new ResponseEntity(HttpStatus.CREATED);
@@ -89,7 +90,7 @@ public class TutorController extends AbstractController {
     @ApiOperation("튜터 정보 수정")
     @PutMapping
     public ResponseEntity editTutor(@CurrentUser User user,
-                                    @RequestBody TutorUpdateRequest tutorUpdateRequest) {
+                                    @Valid @RequestBody TutorUpdateRequest tutorUpdateRequest) {
 
         tutorService.updateTutor(user, tutorUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);

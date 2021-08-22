@@ -19,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Api(tags = {"TuteeController"})
 @RequestMapping("/tutees")
 @RestController
@@ -42,13 +44,12 @@ public class TuteeController extends AbstractController {
     // TODO - 검색
     @ApiOperation("튜티 전체 조회 - 페이징")
     @GetMapping
-    public Page<TuteeDto> getTutees(@RequestParam(defaultValue = "1") Integer page) {
+    public ResponseEntity getTutees(@RequestParam(defaultValue = "1") Integer page) {
 
         Page<TuteeDto> tutees = tuteeRepository.findAll(
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(tutee -> new TuteeDto(tutee));
-        // return new ResponseEntity(tutees, HttpStatus.OK);
-        return tutees;
+        return new ResponseEntity(tutees, HttpStatus.OK);
     }
 
     @ApiOperation("튜티 조회")
@@ -63,7 +64,7 @@ public class TuteeController extends AbstractController {
     @ApiOperation("튜티 정보 수정")
     @PutMapping
     public ResponseEntity editTutee(@CurrentUser User user,
-                                    @RequestBody TuteeUpdateRequest tuteeUpdateRequest) {
+                                    @Valid @RequestBody TuteeUpdateRequest tuteeUpdateRequest) {
 
         // TODO - CHECK : Bearer Token 없이 요청하는 경우
         // user = null

@@ -1,6 +1,5 @@
 package com.tutor.tutorlab.modules.account.controller;
 
-import com.tutor.tutorlab.config.response.exception.OAuthAuthenticationException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.config.security.oauth.provider.AuthorizeResult;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
@@ -19,17 +18,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.util.Map;
 
+@Validated
 @Slf4j
 @Api(tags = {"LoginController"})
 @RestController
@@ -86,8 +89,7 @@ public class LoginController extends AbstractController {
     // 로그인
     @ApiIgnore
     @GetMapping("/oauth/callback/{provider}")
-    public ResponseEntity oauthCallback(@PathVariable(name = "provider") String provider,
-            @RequestBody AuthorizeResult authorizeResult) {
+    public ResponseEntity oauthCallback(@PathVariable(name = "provider") String provider, @RequestBody AuthorizeResult authorizeResult) {
 
         Map<String, String> result = loginService.processLoginOAuth(provider, authorizeResult);
         return new ResponseEntity(getHeaders(result), HttpStatus.OK);
@@ -98,12 +100,13 @@ public class LoginController extends AbstractController {
      */
     @ApiIgnore
     @GetMapping("/oauth/{provider}/callback")
-    public ResponseEntity oauth(@PathVariable(name = "provider") String provider, @RequestParam(name = "code") String code) {
+    public ResponseEntity oauth(@PathVariable(name = "provider") String provider,
+                                @NotNull @RequestParam(name = "code") String code) {
         // 네이버 - state, error, error_description
 
-        if (!StringUtils.hasLength(code)) {
-            throw new OAuthAuthenticationException("Code is empty");
-        }
+//        if (!StringUtils.hasLength(code)) {
+//            throw new OAuthAuthenticationException("Code is empty");
+//        }
 
         OAuthInfo oAuthInfo = loginService.getOAuthInfo(provider, code);
 
@@ -126,7 +129,7 @@ public class LoginController extends AbstractController {
     @ApiOperation("OAuth 회원가입 추가 정보 입력")
     @PostMapping("/sign-up/oauth/detail")
     public ResponseEntity signUpOAuthDetail(@CurrentUser User user,
-                                            @RequestBody SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
+                                            @Valid @RequestBody SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
 
         loginService.signUpOAuthDetail(user, signUpOAuthDetailRequest);
         return new ResponseEntity(HttpStatus.OK);
@@ -134,7 +137,7 @@ public class LoginController extends AbstractController {
 
     @ApiOperation("일반 회원가입 - 기본 튜티로 가입")
     @PostMapping("/sign-up")
-    public ResponseEntity signUp(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
 
         loginService.signUp(signUpRequest);
         return new ResponseEntity(HttpStatus.CREATED);
@@ -142,7 +145,7 @@ public class LoginController extends AbstractController {
 
     @ApiOperation("일반 로그인")
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginRequest request) {
+    public ResponseEntity login(@Valid @RequestBody LoginRequest request) {
 
         Map<String, String> result = loginService.login(request);
         return new ResponseEntity(getHeaders(result), HttpStatus.OK);

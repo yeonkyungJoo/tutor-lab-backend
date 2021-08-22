@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +16,11 @@ public class TutorSignUpRequest {
     @ApiModelProperty(value = "강의주제", example = "spring", required = false)
     private String subjects;
 
+    @Valid
     @ApiModelProperty(value = "경력", required = false)
     private List<CareerCreateRequest> careers = new ArrayList<>();
 
+    @Valid
     @ApiModelProperty(value = "교육", required = false)
     private List<EducationCreateRequest> educations = new ArrayList<>();
 

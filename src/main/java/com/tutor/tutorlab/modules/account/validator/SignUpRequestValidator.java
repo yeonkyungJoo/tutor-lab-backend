@@ -17,13 +17,5 @@ public class SignUpRequestValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
 
-        SignUpRequest request = (SignUpRequest) target;
-
-        if (!request.getPassword().equals(request.getPasswordConfirm())) {
-            errors.rejectValue("password", "invalid.password", "비밀번호가 일치하지 않습니다.");
-        }
-
-        if (errors.hasErrors()) {
-        }
     }
 }
