@@ -1,7 +1,7 @@
 package com.tutor.tutorlab.modules.account.service;
 
-import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
+import com.tutor.tutorlab.config.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.CareerRepository;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Transactional(readOnly = false)
@@ -56,8 +55,6 @@ public class CareerService {
         career.setStartDate(LocalDateTimeUtil.getStringToDate(careerUpdateRequest.getStartDate()));
         career.setEndDate(LocalDateTimeUtil.getStringToDate(careerUpdateRequest.getEndDate()));
         career.setPresent(careerUpdateRequest.isPresent());
-
-        career.setUpdatedAt(LocalDateTime.now());
     }
 
     public void deleteCareer(Long careerId) {

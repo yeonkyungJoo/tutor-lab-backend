@@ -1,7 +1,7 @@
 package com.tutor.tutorlab.modules.account.service;
 
-import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
+import com.tutor.tutorlab.config.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.EducationRepository;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Transactional(readOnly = false)
@@ -58,8 +57,6 @@ public class EducationService {
         education.setGraduationDate(LocalDateTimeUtil.getStringToDate(educationUpdateRequest.getGraduationDate()));
         education.setScore(educationUpdateRequest.getScore());
         education.setDegree(educationUpdateRequest.getDegree());
-
-        education.setUpdatedAt(LocalDateTime.now());
     }
 
     public void deleteEducation(Long educationId) {

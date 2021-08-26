@@ -2,9 +2,9 @@ package com.tutor.tutorlab.config.controlleradvice;
 
 import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.config.response.ErrorResponse;
-import com.tutor.tutorlab.config.response.exception.AlreadyExistException;
-import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
+import com.tutor.tutorlab.config.exception.AlreadyExistException;
+import com.tutor.tutorlab.config.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;

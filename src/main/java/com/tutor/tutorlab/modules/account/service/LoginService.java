@@ -1,8 +1,8 @@
 package com.tutor.tutorlab.modules.account.service;
 
-import com.tutor.tutorlab.config.response.exception.AlreadyExistException;
-import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
-import com.tutor.tutorlab.config.response.exception.OAuthAuthenticationException;
+import com.tutor.tutorlab.config.exception.AlreadyExistException;
+import com.tutor.tutorlab.config.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.exception.OAuthAuthenticationException;
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
 import com.tutor.tutorlab.config.security.oauth.provider.AuthorizeResult;

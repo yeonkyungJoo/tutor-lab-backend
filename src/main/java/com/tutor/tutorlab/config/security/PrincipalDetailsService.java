@@ -22,7 +22,10 @@ public class PrincipalDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username);
         if (user != null) {
             return new PrincipalDetails(user);
+        } else {
+            // TODO - CHECK : 왜 BadCredentialsException이 발생하는가?
+            throw new UsernameNotFoundException("username : " + username);
         }
-        return null;
+
     }
 }
