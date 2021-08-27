@@ -76,7 +76,7 @@ public class LectureServiceImpl implements LectureService {
     private LectureSubject buildLectureSubject(AddLectureRequest.AddLectureSubjectRequest subjectRequest) {
         return LectureSubject.builder()
                 .parent(subjectRequest.getParent())
-                .enSubject(subjectRequest.getEnSubject())
+//                .enSubject(subjectRequest.getEnSubject())
                 .krSubject(subjectRequest.getKrSubject())
                 .build();
     }

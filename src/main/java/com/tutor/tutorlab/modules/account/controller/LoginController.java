@@ -147,10 +147,12 @@ public class LoginController extends AbstractController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest request) {
 
+        System.out.println(request.getUsername());
+        System.out.println(request.getPassword());
         try {
 
             Map<String, String> result = loginService.login(request);
-            return new ResponseEntity(getHeaders(result), HttpStatus.OK);
+            return new ResponseEntity(result.get("token"), HttpStatus.OK);
 
         } catch (Exception e) {
             e.printStackTrace();

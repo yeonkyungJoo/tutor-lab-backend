@@ -35,8 +35,6 @@ public class LectureResponse {
     public static class LectureSubjectResponse {
         private final String parent;
 
-        private final String enSubject;
-
         private final String krSubject;
     }
 
