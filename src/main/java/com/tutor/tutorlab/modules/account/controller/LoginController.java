@@ -147,8 +147,6 @@ public class LoginController extends AbstractController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest request) {
 
-        System.out.println(request.getUsername());
-        System.out.println(request.getPassword());
         try {
 
             Map<String, String> result = loginService.login(request);

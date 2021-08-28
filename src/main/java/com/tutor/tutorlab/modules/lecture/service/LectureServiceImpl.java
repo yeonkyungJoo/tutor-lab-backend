@@ -34,7 +34,7 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public LectureResponse getLecture(long id) throws Exception {
         Lecture lecture = lectureRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 id에 맞는 강의가 없습니다."));
-        return getLectureResponse(lecture);
+        return new LectureResponse(lecture);
     }
 
     @Transactional
@@ -61,8 +61,10 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public List<LectureResponse> getLectures(LectureListRequest lectureListRequest) {
-        List<Lecture> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest);
-        return lectureMapstruct.lectureListToLectureResponseList(lectures);
+        List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest).stream()
+                .map(lecture -> new LectureResponse(lecture))
+                .collect(Collectors.toList());
+        return lectures;
     }
 
     private LectureResponse getLectureResponse(Lecture lecture) {
