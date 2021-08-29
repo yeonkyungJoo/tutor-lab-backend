@@ -1,6 +1,6 @@
 package com.tutor.tutorlab.modules.account.service;
 
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
+import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
@@ -30,8 +30,6 @@ public class TuteeService {
         }
 
         tutee.setSubjects(tuteeUpdateRequest.getSubjects());
-
-        tutee.setUpdatedAt(LocalDateTime.now());
     }
 
     // TODO - check : CASCADE

@@ -4,7 +4,6 @@ import com.tutor.tutorlab.config.converter.enumconverter.EnumerableConverterFact
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -20,7 +19,6 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverterFactory(getEnumerableConverterFactory());
     }
-}
 
     /**
      * CORS 이슈 해결.

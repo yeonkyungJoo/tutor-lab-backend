@@ -1,7 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
-import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
+import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
@@ -19,8 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,7 +67,7 @@ public class CareerController extends AbstractController {
     @ApiOperation("Career 등록")
     @PostMapping
     public ResponseEntity newCareer(@CurrentUser User user,
-                                    @RequestBody CareerCreateRequest careerCreateRequest) {
+                                    @Valid @RequestBody CareerCreateRequest careerCreateRequest) {
         careerService.createCareer(user, careerCreateRequest);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -80,7 +79,7 @@ public class CareerController extends AbstractController {
     @PutMapping("/{career_id}")
     public ResponseEntity editCareer(@CurrentUser User user,
                                      @PathVariable(name = "career_id") Long careerId,
-                                     @RequestBody CareerUpdateRequest careerUpdateRequest) {
+                                     @Valid @RequestBody CareerUpdateRequest careerUpdateRequest) {
 
         careerService.updateCareer(careerId, careerUpdateRequest);
         return new ResponseEntity(HttpStatus.OK);

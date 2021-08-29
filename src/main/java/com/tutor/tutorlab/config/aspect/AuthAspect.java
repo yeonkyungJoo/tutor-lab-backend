@@ -1,6 +1,6 @@
 package com.tutor.tutorlab.config.aspect;
 
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
+import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;

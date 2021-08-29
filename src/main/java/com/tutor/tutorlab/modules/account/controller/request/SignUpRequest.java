@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
@@ -12,8 +13,13 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class SignUpRequest {
 
-    // TODO - validation
-    // - password == passwordConfirm
+    // TODO - 입력값 체크
+    /*
+        - 비밀번호 제한
+        - 연락처 정규식 체크
+        - 이름 확인
+        - 닉네임 확인 / 중복 체크
+    */
 
     @ApiModelProperty(value = "아이디", example = "sh@email.com", required = true)
     @NotBlank(message = "이메일 형식의 아이디를 입력해주세요.")
@@ -25,7 +31,7 @@ public class SignUpRequest {
     private String password;
 
     @ApiModelProperty(value = "비밀번호 확인", example = "password", required = true)
-    @NotBlank(message = "비밀번호를 입력해주세요.")
+    @NotBlank(message = "비밀번호 확인을 입력해주세요.")
     private String passwordConfirm;
 
     @ApiModelProperty(value = "이름", example = "sh", required = true)
@@ -63,5 +69,10 @@ public class SignUpRequest {
         this.nickname = nickname;
         this.bio = bio;
         this.zone = zone;
+    }
+
+    @AssertTrue
+    private boolean isPasswordValid() {
+        return getPassword().equals(getPasswordConfirm());
     }
 }

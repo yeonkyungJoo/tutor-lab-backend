@@ -25,12 +25,6 @@ public class TutorUpdateRequest {
     private boolean specialist;
 
     @Builder
-    public TutorUpdateRequest(String subjects, List<CareerUpdateRequest> careers, List<EducationUpdateRequest> educations, boolean specialist) {
-        this.subjects = subjects;
-        this.specialist = specialist;
-    }
-
-    @Builder
     public TutorUpdateRequest(String subjects, boolean specialist) {
         this.subjects = subjects;
         this.specialist = specialist;

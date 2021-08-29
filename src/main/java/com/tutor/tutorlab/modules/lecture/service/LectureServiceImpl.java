@@ -8,6 +8,7 @@ import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstruct;
+import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepositorySupport;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
@@ -28,8 +29,9 @@ import java.util.stream.Collectors;
 public class LectureServiceImpl implements LectureService {
     private final LectureRepository lectureRepository;
     private final TutorRepository tutorRepository;
-    private final LectureMapstruct lectureMapstruct;
     private final LectureRepositorySupport lectureRepositorySupport;
+
+    private final LectureMapstructUtil lectureMapstructUtil;
 
     @Override
     public LectureResponse getLecture(long id) throws Exception {
@@ -56,7 +58,7 @@ public class LectureServiceImpl implements LectureService {
         }
 
         Lecture savedLecture = lectureRepository.save(lecture);
-        return getLectureResponse(savedLecture);
+        return lectureMapstructUtil.getLectureResponse(savedLecture);
     }
 
     @Override

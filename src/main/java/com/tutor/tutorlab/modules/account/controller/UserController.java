@@ -1,7 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
-import com.tutor.tutorlab.config.response.exception.EntityNotFoundException;
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
+import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
@@ -17,6 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Api(tags = {"UserController"})
 @RequestMapping("/users")
@@ -35,8 +36,6 @@ public class UserController extends AbstractController {
         List<UserDto> users = userRepository.findAll().stream()
                 .map(user -> new UserDto(user))
                 .collect(Collectors.toList());
-
-        // TODO - RestResponse
         return new ResponseEntity(users, HttpStatus.OK);
     }
 */
@@ -50,7 +49,6 @@ public class UserController extends AbstractController {
         Page<UserDto> users = userRepository.findAll(
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(user -> new UserDto(user));
-        // TODO - RestResponse
         return new ResponseEntity(users, HttpStatus.OK);
     }
 
@@ -60,17 +58,15 @@ public class UserController extends AbstractController {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
-        // TODO - RestResponse
         return new ResponseEntity(new UserDto(user), HttpStatus.OK);
     }
 
     @ApiOperation("회원 정보 수정")
     @PutMapping
     public ResponseEntity editUser(@CurrentUser User user,
-                            @RequestBody UserUpdateRequest userUpdateRequest) {
+                                   @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
 
         userService.updateUser(user, userUpdateRequest);
-        // TODO - RestResponse
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -79,7 +75,6 @@ public class UserController extends AbstractController {
     public ResponseEntity quitUser(@CurrentUser User user) {
 
         userService.deleteUser(user);
-        // TODO - RestResponse
         return new ResponseEntity(HttpStatus.OK);
     }
 

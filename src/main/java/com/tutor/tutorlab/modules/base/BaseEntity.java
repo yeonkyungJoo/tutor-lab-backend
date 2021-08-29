@@ -13,12 +13,16 @@ public abstract class BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // @Column(nullable = false, updatable = false)
     protected Long id;
 
     @Column(updatable = false)
     protected LocalDateTime createdAt = LocalDateTime.now();
-    @Column(nullable = true)
+    @Column(insertable = false)
     protected LocalDateTime updatedAt;
+
+    @PreUpdate
+    public void preUpdate() {
+        setUpdatedAt(LocalDateTime.now());
+    }
 
 }

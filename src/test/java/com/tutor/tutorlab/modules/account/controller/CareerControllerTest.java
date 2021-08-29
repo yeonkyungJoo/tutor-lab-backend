@@ -21,7 +21,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +31,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @MockMvcTest
@@ -117,16 +120,58 @@ class CareerControllerTest {
 
     }
 
-    // TODO
+    // handleMethodArgumentNotValidException
+    // ErrorCode - Invalid_Input
     @Test
     @DisplayName("Career 등록 - Invalid Input")
+    @WithAccount("yk")
     public void newCareer_withInvalidInput() throws Exception {
 
         // Given
+        User user = userRepository.findByName("yk");
+        assertNotNull(tuteeRepository.findByUser(user));
+
+        // tutorService 테스트
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
-
         // Then
+//        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
+//                .companyName("tutorlab")
+//                .duty("engineer")
+//                .startDate("2007-12-03")
+//                .endDate("2007-12-04")
+//                .present(true)
+//                .build();
+
+//        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
+//                .companyName("tutorlab")
+//                .duty("engineer")
+//                .startDate("2007-12-03")
+//                .endDate("2007-12-01")
+//                .present(false)
+//                .build();
+
+        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
+                .companyName("tutorlab")
+                .duty("engineer")
+                .startDate("2007-12-03")
+                .endDate("")
+                .present(false)
+                .build();
+
+        mockMvc.perform(post("/careers")
+                .content(objectMapper.writeValueAsString(careerCreateRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.message").value("Invalid Input"))
+                .andExpect(jsonPath("$.code").value(400));
+
+
     }
 
     // TODO
@@ -283,4 +328,5 @@ class CareerControllerTest {
         assertEquals(0, tutor.getCareers().size());
         assertFalse(careerRepository.findById(careerId).isPresent());
     }
+
 }
