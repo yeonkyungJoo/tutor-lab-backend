@@ -1,6 +1,6 @@
 package com.tutor.tutorlab.modules.account.service;
 
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
+import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.RoleType;
@@ -33,8 +33,6 @@ public class UserService {
         user.setNickname(userUpdateRequest.getNickname());
         user.setBio(userUpdateRequest.getBio());
         user.setZone(userUpdateRequest.getZone());
-
-        user.setUpdatedAt(LocalDateTime.now());
     }
 
     // TODO - Admin인 경우

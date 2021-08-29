@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
+
 @Data
 @NoArgsConstructor
 public class UserUpdateRequest {
@@ -13,6 +15,7 @@ public class UserUpdateRequest {
     private String phoneNumber;
 
     @ApiModelProperty(value = "이메일", example = "email@email.com", required = false)
+    @Email
     private String email;
 
     @ApiModelProperty(value = "닉네임", example = "nickname", required = false)

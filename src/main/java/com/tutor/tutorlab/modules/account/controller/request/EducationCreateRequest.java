@@ -4,14 +4,17 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 @Data
 @NoArgsConstructor
 public class EducationCreateRequest {
-
-    // TODO - CHECK : Validation
 
     @ApiModelProperty(value = "학교명", example = "school", required = true)
     @NotBlank
@@ -26,7 +29,6 @@ public class EducationCreateRequest {
     private String entranceDate;
 
     @ApiModelProperty(value = "졸업일자", allowEmptyValue = true, required = false)
-    @NotBlank
     private String graduationDate;
 
     @ApiModelProperty(value = "학점", example = "4.01", required = false)
@@ -43,5 +45,26 @@ public class EducationCreateRequest {
         this.graduationDate = graduationDate;
         this.score = score;
         this.degree = degree;
+    }
+
+    @AssertTrue
+    private boolean isGraduationDateValid() {
+        boolean valid = true;
+
+        try {
+
+            LocalDate entranceDate = LocalDate.parse(getEntranceDate());
+            LocalDate graduationDate = null;
+
+            if (StringUtils.isNotEmpty(getGraduationDate())) {
+                graduationDate = LocalDate.parse(getGraduationDate());
+                valid = entranceDate.isBefore(graduationDate);
+            }
+
+        } catch (DateTimeParseException e) {
+            valid = false;
+        }
+
+        return valid;
     }
 }

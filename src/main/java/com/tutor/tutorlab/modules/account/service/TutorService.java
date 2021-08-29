@@ -1,6 +1,6 @@
 package com.tutor.tutorlab.modules.account.service;
 
-import com.tutor.tutorlab.config.response.exception.UnauthorizedException;
+import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.vo.Career;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -79,8 +78,6 @@ public class TutorService {
 
         tutor.setSubjects(tutorUpdateRequest.getSubjects());
         tutor.setSpecialist(tutorUpdateRequest.isSpecialist());
-
-        tutor.setUpdatedAt(LocalDateTime.now());
     }
 
     // TODO - check : CASCADE

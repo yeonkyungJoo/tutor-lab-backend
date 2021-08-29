@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.config.response.exception;
+package com.tutor.tutorlab.config.exception;
 
 import com.tutor.tutorlab.config.response.ErrorCode;
 import lombok.Getter;
