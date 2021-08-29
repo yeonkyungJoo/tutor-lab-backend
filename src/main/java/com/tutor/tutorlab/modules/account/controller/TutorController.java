@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,6 +79,21 @@ public class TutorController extends AbstractController {
         Tutor tutor = tutorRepository.findById(tutorId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
         return new ResponseEntity(new TutorDto(tutor), HttpStatus.OK);
+    }
+    /**
+     * 튜터가 등록한 강의조회
+     */
+    @ApiOperation("튜터 강의조회")
+    @GetMapping("/mylectures")
+    public ResponseEntity getTutorLecture(@CurrentUser User user) {
+
+//        Tutor tutor = tutorRepository.findById(tutorId)
+//                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
+        List<LectureResponse> lectures = tutorService.getTutorLecture(user).stream()
+                .map(lecture -> new LectureResponse(lecture))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity(lectures, HttpStatus.OK);
     }
 
     /**

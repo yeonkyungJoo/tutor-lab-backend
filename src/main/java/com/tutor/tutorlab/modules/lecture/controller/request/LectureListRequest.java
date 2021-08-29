@@ -5,6 +5,7 @@ import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.AssertTrue;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @Getter
+@NoArgsConstructor
 public class LectureListRequest {
 
     private String lectureName;

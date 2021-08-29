@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/lectures")
@@ -54,7 +53,7 @@ public class LectureController {
      * @throws Exception
      */
     @ApiOperation("강의 목록 조회")
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public Object getLectures(@ModelAttribute @Validated LectureListRequest lectureListRequest) throws Exception {
         return lectureService.getLectures(lectureListRequest);
     }

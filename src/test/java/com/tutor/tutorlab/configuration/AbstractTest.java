@@ -78,7 +78,7 @@ public abstract class AbstractTest {
             subjects.forEach(subject -> {
                 Subject entity = Subject.builder()
                         .parent(parent)
-                        .subject(subject.getSubject())
+//                        .subject(subject.getSubject())
                         .learningKind("coding")
                         .build();
                 subjectRepository.save(entity);
@@ -138,7 +138,6 @@ public abstract class AbstractTest {
 
         LectureSubject lectureSubject = LectureSubject.builder()
                 .parent("개발")
-                .enSubject("java")
                 .krSubject("자바")
                 .build();
 

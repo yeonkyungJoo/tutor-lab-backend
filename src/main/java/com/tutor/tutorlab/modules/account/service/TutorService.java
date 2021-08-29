@@ -11,12 +11,15 @@ import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
+import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = false)
@@ -26,6 +29,7 @@ public class TutorService {
     private final TutorRepository tutorRepository;
     private final CareerRepository careerRepository;
     private final EducationRepository educationRepository;
+    private final LectureRepository lectureRepository;
 
     public Tutor createTutor(User user, TutorSignUpRequest tutorSignUpRequest) {
 
@@ -108,5 +112,9 @@ public class TutorService {
         tutor.quit();
         tutorRepository.delete(tutor);
 
+    }
+
+    public List<Lecture> getTutorLecture(User user) {
+        return lectureRepository.findByTutorUser(user);
     }
 }
