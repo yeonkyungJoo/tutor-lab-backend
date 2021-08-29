@@ -8,6 +8,7 @@ import java.util.Set;
 
 @Value
 public class LectureResponse {
+
     private final Long id;
 
     // TODO UserResponse 정의해야함.

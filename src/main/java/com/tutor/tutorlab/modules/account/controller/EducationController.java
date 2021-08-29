@@ -5,10 +5,8 @@ import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.EducationRepository;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.service.EducationService;
 import com.tutor.tutorlab.modules.account.vo.Education;
-import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import io.swagger.annotations.Api;
@@ -20,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Api(tags = {"EducationController"})
 @RequestMapping("/educations")
@@ -31,23 +27,6 @@ public class EducationController extends AbstractController {
 
     private final EducationRepository educationRepository;
     private final EducationService educationService;
-    private final TutorRepository tutorRepository;
-
-    /**
-     * Education 리스트
-     */
-    @ApiOperation("튜터의 Education 리스트")
-    @GetMapping("/tutor/{tutor_id}")
-    public ResponseEntity getEducations(@PathVariable(name = "tutor_id") Long tutorId) {
-
-        Tutor tutor = tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
-        List<EducationDto> educations = educationRepository.findByTutor(tutor).stream()
-                .map(education -> new EducationDto(education))
-                .collect(Collectors.toList());
-
-        return new ResponseEntity(educations, HttpStatus.OK);
-    }
 
     /**
      * Education 조회

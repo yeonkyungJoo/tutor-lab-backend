@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 public class SiGunGuRequest {
+
     @NotBlank(message = "시/도를 입력해주세요.")
     private String state;
 }

@@ -8,6 +8,7 @@ import org.mapstruct.Mappings;
 
 @Mapper(config = MapstructConfig.class)
 public interface SubjectMapstruct {
+
     @Mappings({})
     SubjectResponse subjectToSubjectResponse(Subject subject);
 }

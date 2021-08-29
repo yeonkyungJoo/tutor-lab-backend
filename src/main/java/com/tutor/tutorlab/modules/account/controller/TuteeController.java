@@ -9,7 +9,7 @@ import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
-import com.tutor.tutorlab.modules.lecture.repository.EnrollmentRepository;
+import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;

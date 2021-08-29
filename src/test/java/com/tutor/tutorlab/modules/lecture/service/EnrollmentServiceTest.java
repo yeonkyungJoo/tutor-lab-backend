@@ -5,20 +5,25 @@ import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
-import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
+import com.tutor.tutorlab.modules.account.repository.*;
 import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.service.TutorService;
+import com.tutor.tutorlab.modules.account.service.UserService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.lecture.controller.request.EnrollmentRequest;
+import com.tutor.tutorlab.modules.purchase.controller.request.EnrollmentRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
-import com.tutor.tutorlab.modules.lecture.repository.CancellationRepository;
-import com.tutor.tutorlab.modules.lecture.repository.EnrollmentRepository;
+import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
+import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.*;
+import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
+import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
+import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,9 +47,17 @@ class EnrollmentServiceTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
+    UserService userService;
+    @Autowired
     TuteeRepository tuteeRepository;
     @Autowired
     TutorService tutorService;
+    @Autowired
+    TutorRepository tutorRepository;
+    @Autowired
+    CareerRepository careerRepository;
+    @Autowired
+    EducationRepository educationRepository;
     @Autowired
     LectureRepository lectureRepository;
     @Autowired
@@ -155,6 +168,43 @@ class EnrollmentServiceTest {
         assertFalse(enrollment.getLecture().getTutor().isSpecialist());
 
         assertEquals("yk", enrollment.getTutee().getUser().getName());
+    }
+
+    @Test
+    @DisplayName("회원/Tutee 탈퇴 시 구매내역 일괄 삭제")
+    @WithAccount("yk")
+    void quitTutee() {
+
+        // Given
+        EnrollmentRequest enrollmentRequest = new EnrollmentRequest();
+        enrollmentRequest.setLectureId(lectureId);
+
+        User user = userRepository.findByName("yk");
+        Tutee tutee = tuteeRepository.findByUser(user);
+        enrollmentService.enroll(user, enrollmentRequest);
+
+        Assertions.assertEquals(2, userRepository.count());
+        Assertions.assertEquals(2, tuteeRepository.count());
+        Assertions.assertEquals(1, tutorRepository.count());
+        Assertions.assertEquals(1, careerRepository.count());
+        Assertions.assertEquals(1, educationRepository.count());
+        Assertions.assertEquals(1, enrollmentRepository.count());
+        Assertions.assertEquals(0, cancellationRepository.count());
+
+        // When
+        userService.deleteUser(user);
+
+        // Then
+        Assertions.assertEquals(2, userRepository.count());
+        Assertions.assertEquals(1, tuteeRepository.count());
+        Assertions.assertEquals(1, tutorRepository.count());
+        Assertions.assertEquals(1, careerRepository.count());
+        Assertions.assertEquals(1, educationRepository.count());
+        Assertions.assertEquals(0, enrollmentRepository.count());
+
+        Assertions.assertEquals(1, userRepository.findByDeleted(true).size());
+        User deletedUser = userRepository.findByDeleted(true).get(0);
+        Assertions.assertNotNull(deletedUser.getDeletedAt());
     }
 
     @Test

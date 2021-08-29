@@ -7,6 +7,7 @@ import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.*;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.*;

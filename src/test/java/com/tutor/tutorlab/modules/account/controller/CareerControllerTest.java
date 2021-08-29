@@ -13,7 +13,7 @@ import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.CareerService;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Career;
-import com.tutor.tutorlab.modules.account.vo.RoleType;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,9 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDate;
 import java.util.List;

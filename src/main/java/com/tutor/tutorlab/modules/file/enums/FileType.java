@@ -11,6 +11,7 @@ import javax.persistence.Converter;
 @Getter
 @AllArgsConstructor
 public enum FileType implements Enumerable {
+
     LECTURE_IMAGE("LECTURE_IMAGE", "강의 이미지");
 
     private String type;

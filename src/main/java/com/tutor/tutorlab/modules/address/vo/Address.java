@@ -15,6 +15,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Table(name = "address")
 public class Address {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;

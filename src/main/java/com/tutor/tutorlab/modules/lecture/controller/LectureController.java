@@ -9,7 +9,9 @@ import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,42 +23,23 @@ public class LectureController {
 
     private final LectureService lectureService;
 
-    /**
-     * 강의 한건 조회
-     * @param id
-     * @return
-     * @throws Exception
-     */
     @ApiOperation("강의 한건 조회")
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Object getLecture(@PathVariable long id) throws Exception {
-        LectureResponse lectureResponse = lectureService.getLecture(id);
-        return lectureResponse;
+    @GetMapping(value = "/{lecture_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getLecture(@PathVariable(name = "lecture_id") Long lectureId) {
+        return new ResponseEntity(lectureService.getLecture(lectureId), HttpStatus.OK);
     }
 
-    /**
-     * 강의 등록
-     * @param addLectureRequest
-     * @return
-     * @throws Exception
-     */
     @ApiOperation("강의 등록")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Object addLecture(@RequestBody @Validated(AddLectureRequest.Order.class) AddLectureRequest addLectureRequest
-                            , @CurrentUser User user) throws Exception {
-        return lectureService.addLecture(addLectureRequest, user);
+    public ResponseEntity addLecture(@RequestBody @Validated(AddLectureRequest.Order.class) AddLectureRequest addLectureRequest,
+                             @CurrentUser User user) {
+        return new ResponseEntity(lectureService.addLecture(addLectureRequest, user), HttpStatus.CREATED);
     }
 
-    /**
-     * 강의 목록 조회(검색)
-     * @param lectureListRequest
-     * @return
-     * @throws Exception
-     */
     @ApiOperation("강의 목록 조회")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Object getLectures(@ModelAttribute @Validated LectureListRequest lectureListRequest) throws Exception {
-        return lectureService.getLectures(lectureListRequest);
+    public ResponseEntity getLectures(@ModelAttribute @Validated LectureListRequest lectureListRequest) {
+        return new ResponseEntity(lectureService.getLectures(lectureListRequest), HttpStatus.OK);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.account.vo;
+package com.tutor.tutorlab.modules.account.enums;
 
 public enum RoleType {
 

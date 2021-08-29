@@ -5,10 +5,8 @@ import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.CareerRepository;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.service.CareerService;
 import com.tutor.tutorlab.modules.account.vo.Career;
-import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import io.swagger.annotations.Api;
@@ -20,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Api(tags = {"CareerController"})
 @RequestMapping("/careers")
@@ -31,23 +27,6 @@ public class CareerController extends AbstractController {
 
     private final CareerRepository careerRepository;
     private final CareerService careerService;
-    private final TutorRepository tutorRepository;
-
-    /**
-     * Career 리스트
-     */
-    @ApiOperation("튜터의 Career 리스트")
-    @GetMapping("/tutor/{tutor_id}")
-    public ResponseEntity getCareers(@PathVariable(name = "tutor_id") Long tutorId) {
-
-        Tutor tutor = tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
-        List<CareerDto> careers = careerRepository.findByTutor(tutor).stream()
-                .map(career -> new CareerDto(career))
-                .collect(Collectors.toList());
-
-        return new ResponseEntity(careers, HttpStatus.OK);
-    }
 
     /**
      * Career 조회

@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.vo;
 
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
 
@@ -10,13 +11,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@ToString
 @AttributeOverride(name = "id", column = @Column(name = "tutor_id"))
 @Getter @Setter
 @NoArgsConstructor
 @Entity
 public class Tutor extends BaseEntity {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @NotNull
     @JoinColumn(name = "user_id",
                 referencedColumnName = "user_id",
@@ -25,12 +27,12 @@ public class Tutor extends BaseEntity {
     private User user;
     private String subjects;
 
-    // TODO - CASCADE
-    // @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY)  // default - LAZY
+    @ToString.Exclude
+    @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Career> careers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Education> educations = new ArrayList<>();
 
     private boolean specialist;
@@ -53,21 +55,17 @@ public class Tutor extends BaseEntity {
     }
 
     public void quit() {
-        this.getCareers().stream()
-                .forEach(career -> career.setTutor(null));
         this.getCareers().clear();
-
-        this.getEducations().stream()
-                .forEach(education -> education.setTutor(null));
         this.getEducations().clear();
+
         user.setRole(RoleType.ROLE_TUTEE);
     }
 
     @Builder
     public Tutor(@NotNull User user, String subjects, boolean specialist) {
-
         this.user = user;
         this.subjects = subjects;
         this.specialist = specialist;
     }
+
 }

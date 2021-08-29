@@ -40,9 +40,7 @@ public class EducationService {
                 .score(educationCreateRequest.getScore())
                 .degree(educationCreateRequest.getDegree())
                 .build();
-        educationRepository.save(education);
         tutor.addEducation(education);
-
         return education;
     }
 
@@ -65,6 +63,5 @@ public class EducationService {
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
 
         education.delete();
-        educationRepository.delete(education);
     }
 }

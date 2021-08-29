@@ -3,19 +3,13 @@ package com.tutor.tutorlab;
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.PrincipalDetailsService;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.LoginService;
-import com.tutor.tutorlab.modules.account.vo.RoleType;
-import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
-
-import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 public class WithAccountSecurityContextFactory implements WithSecurityContextFactory<WithAccount> {

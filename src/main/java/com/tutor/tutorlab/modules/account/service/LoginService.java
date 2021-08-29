@@ -21,8 +21,8 @@ import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRe
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.vo.GenderType;
-import com.tutor.tutorlab.modules.account.vo.RoleType;
+import com.tutor.tutorlab.modules.account.enums.GenderType;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
@@ -169,11 +169,8 @@ public class LoginService {
                 .providerId(oAuthInfo.getProviderId())
                 .build();
 
-        userRepository.save(user);
-
         Tutee tutee = new Tutee(user);
         tuteeRepository.save(tutee);
-
         // 강제 로그인
         return loginOAuth(user);
     }
@@ -223,7 +220,6 @@ public class LoginService {
                 .providerId(null)
                 .build();
 
-        userRepository.save(user);
         Tutee tutee = new Tutee(user);
         return tuteeRepository.save(tutee);
     }

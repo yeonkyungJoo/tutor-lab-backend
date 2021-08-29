@@ -4,6 +4,7 @@ import lombok.Value;
 
 @Value
 public class DongResponse {
+
     private final String state;
 
     private final String siGun;

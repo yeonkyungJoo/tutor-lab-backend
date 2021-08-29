@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class LectureServiceImpl implements LectureService {
+
     private final LectureRepository lectureRepository;
     private final TutorRepository tutorRepository;
     private final LectureRepositorySupport lectureRepositorySupport;
@@ -34,14 +35,14 @@ public class LectureServiceImpl implements LectureService {
     private final LectureMapstructUtil lectureMapstructUtil;
 
     @Override
-    public LectureResponse getLecture(long id) throws Exception {
-        Lecture lecture = lectureRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 id에 맞는 강의가 없습니다."));
+    public LectureResponse getLecture(Long lectureId) {
+        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new RuntimeException("해당 id에 맞는 강의가 없습니다."));
         return lectureMapstructUtil.getLectureResponse(lecture);
     }
 
     @Transactional
     @Override
-    public LectureResponse addLecture(AddLectureRequest addLectureRequest, User user) throws Exception {
+    public LectureResponse addLecture(AddLectureRequest addLectureRequest, User user) {
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user)).orElseThrow(() -> new RuntimeException("해당 유저는 튜터가 아닙니다."));
 
         // TODO 유효성 -> 해당 유저의 강의 갯수 제한?

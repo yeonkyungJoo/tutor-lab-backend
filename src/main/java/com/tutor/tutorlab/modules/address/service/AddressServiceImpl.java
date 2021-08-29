@@ -1,6 +1,5 @@
 package com.tutor.tutorlab.modules.address.service;
 
-import com.tutor.tutorlab.modules.address.controller.result.DongResponse;
 import com.tutor.tutorlab.modules.address.controller.result.SiGunGuResponse;
 import com.tutor.tutorlab.modules.address.mapstruct.AddressMapstruct;
 import com.tutor.tutorlab.modules.address.repository.AddressRepository;
@@ -20,7 +19,7 @@ public class AddressServiceImpl implements AddressService {
     private final AddressMapstruct addressMapstruct;
 
     @Override
-    public List<String> getStates() throws Exception {
+    public List<String> getStates() {
         return addressRepository.findStates();
     }
 
@@ -31,7 +30,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<String> getDongs(String state, String siGun, String gu) throws Exception {
+    public List<String> getDongs(String state, String siGun, String gu) {
         return addressRepository.findDongByStateAndSiGunGu(state, siGun, gu);
     }
 }

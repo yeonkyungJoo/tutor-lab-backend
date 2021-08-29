@@ -1,7 +1,8 @@
-package com.tutor.tutorlab.modules.lecture.vo;
+package com.tutor.tutorlab.modules.purchase.vo;
 
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.base.BaseEntity;
+import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,6 @@ import javax.persistence.*;
 @Entity
 public class Enrollment extends BaseEntity {
 
-    // TODO - CHECK : 양방향으로 하는 게 좋은가?
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutee_id",
                 referencedColumnName = "tutee_id",

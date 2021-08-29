@@ -10,22 +10,18 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.EAGER;
-import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Builder
 @Getter
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "lecture_id"))
 @Entity
 @Table(name = "lecture")
 public class Lecture extends BaseEntity {
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutor_id",
                 referencedColumnName = "tutor_id",
                 nullable = false,
@@ -47,7 +43,7 @@ public class Lecture extends BaseEntity {
     @Column(name = "difficulty_type", nullable = false, length = 20)
     private DifficultyType difficultyType;
 
-    @ElementCollection(targetClass = SystemType.class, fetch = LAZY)
+    @ElementCollection(targetClass = SystemType.class, fetch = FetchType.LAZY)
     @CollectionTable(
             name = "lecture_system_type",
             joinColumns = @JoinColumn(name = "lecture_id",
@@ -57,10 +53,10 @@ public class Lecture extends BaseEntity {
     )
     private List<SystemType> systemTypes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "lecture", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LecturePrice> lecturePrices = new ArrayList<>();
 
-    @OneToMany(mappedBy = "lecture", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LectureSubject> lectureSubjects = new ArrayList<>();
 
     private String thumbnail;

@@ -5,20 +5,18 @@ import lombok.*;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Builder
 @Getter
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "lecture_price_id"))
 @Entity
 @Table(name = "lecture_price")
 public class LecturePrice extends BaseEntity {
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id",
                 referencedColumnName = "lecture_id",
                 nullable = false,

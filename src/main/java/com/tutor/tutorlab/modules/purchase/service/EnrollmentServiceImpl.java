@@ -1,15 +1,15 @@
-package com.tutor.tutorlab.modules.lecture.service;
+package com.tutor.tutorlab.modules.purchase.service;
 
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.lecture.controller.request.EnrollmentRequest;
-import com.tutor.tutorlab.modules.lecture.repository.CancellationRepository;
-import com.tutor.tutorlab.modules.lecture.repository.EnrollmentRepository;
+import com.tutor.tutorlab.modules.purchase.controller.request.EnrollmentRequest;
+import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
+import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
-import com.tutor.tutorlab.modules.lecture.vo.Cancellation;
-import com.tutor.tutorlab.modules.lecture.vo.Enrollment;
+import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
+import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,8 +42,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .lecture(lecture)
                 .tutee(tutee)
                 .build();
-
-        enrollmentRepository.save(enrollment);
+        tutee.addEnrollment(enrollment);
     }
 
     @Override
@@ -56,12 +55,15 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Tutee tutee = tuteeRepository.findByUser(user);
 
         Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture);
+
+        // TODO - Entity Listener 활용해 변경
         Cancellation cancellation = Cancellation.builder()
                 .tutee(tutee)
                 .lecture(lecture)
                 .enrolledAt(enrollment.getCreatedAt())
                 .build();
         cancellationRepository.save(cancellation);
+
         enrollmentRepository.delete(enrollment);
     }
 }

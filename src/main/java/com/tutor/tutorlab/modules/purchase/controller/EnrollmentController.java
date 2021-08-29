@@ -1,9 +1,9 @@
-package com.tutor.tutorlab.modules.lecture.controller;
+package com.tutor.tutorlab.modules.purchase.controller;
 
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.lecture.controller.request.EnrollmentRequest;
-import com.tutor.tutorlab.modules.lecture.service.EnrollmentService;
+import com.tutor.tutorlab.modules.purchase.controller.request.EnrollmentRequest;
+import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

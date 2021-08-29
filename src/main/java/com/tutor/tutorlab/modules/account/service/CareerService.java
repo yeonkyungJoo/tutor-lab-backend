@@ -39,9 +39,7 @@ public class CareerService {
                 .endDate(LocalDateTimeUtil.getStringToDate(careerCreateRequest.getEndDate()))
                 .present(careerCreateRequest.isPresent())
                 .build();
-        careerRepository.save(career);
         tutor.addCareer(career);
-
         return career;
     }
 
@@ -63,6 +61,5 @@ public class CareerService {
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
 
         career.delete();
-        careerRepository.delete(career);
     }
 }

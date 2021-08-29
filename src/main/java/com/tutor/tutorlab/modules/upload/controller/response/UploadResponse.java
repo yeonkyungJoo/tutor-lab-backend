@@ -5,6 +5,7 @@ import lombok.Value;
 
 @Value
 public class UploadResponse {
+
     private final FileResponse result;
 
     private final String url;

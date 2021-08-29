@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.lecture.controller.request;
+package com.tutor.tutorlab.modules.purchase.controller.request;
 
 import lombok.Data;
 
