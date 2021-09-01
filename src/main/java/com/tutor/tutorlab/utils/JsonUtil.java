@@ -1,14 +1,9 @@
 package com.tutor.tutorlab.utils;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import net.minidev.json.JSONUtil;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.util.Map;
 
@@ -53,18 +48,6 @@ public class JsonUtil {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return objectMapper;
-    }
-
-    public static JSONObject parse(String json) {
-        JSONParser parser = new JSONParser();
-        JSONObject object = null;
-
-        try {
-            object = (JSONObject) parser.parse(json);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return object;
     }
 
 }

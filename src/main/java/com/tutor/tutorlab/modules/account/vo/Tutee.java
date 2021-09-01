@@ -1,7 +1,6 @@
 package com.tutor.tutorlab.modules.account.vo;
 
 import com.tutor.tutorlab.modules.base.BaseEntity;
-import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import lombok.*;
 
@@ -35,10 +34,6 @@ public class Tutee extends BaseEntity {
 
     @OneToMany(mappedBy = "tutee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Enrollment> enrollments = new ArrayList<>();
-
-    @ToString.Exclude
-    @OneToMany(mappedBy = "tutee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Chatroom> chatrooms = new ArrayList<>();
 
     public List<String> getSubjectList() {
         if (this.subjects != null && this.subjects.length() > 0) {

@@ -5,13 +5,10 @@ import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-// TODO - @Where 사용
-// @Where(clause = "deleted = false")
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Getter @Setter
