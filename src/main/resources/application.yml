@@ -18,7 +18,7 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
       naming:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
       # physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
@@ -48,11 +48,11 @@ jwt:
 cloud:
   aws:
     credentials:
-      accessKey: AKIA3MGT2LL6EAK7XGE6
-      secretKey: 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
+      accessKey: accessKey
+      secretKey: secretKey
     s3:
-      bucket: tutorlab
+      bucket: bucket
     region:
-      static: ap-northeast-2
+      static: static
     stack:
       auto: false
