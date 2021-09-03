@@ -35,9 +35,10 @@ public class LectureServiceImpl implements LectureService {
     private final LectureMapstructUtil lectureMapstructUtil;
 
     @Override
-    public LectureResponse getLecture(Long lectureId) {
-        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new RuntimeException("해당 id에 맞는 강의가 없습니다."));
-        return lectureMapstructUtil.getLectureResponse(lecture);
+
+    public LectureResponse getLecture(long id) throws Exception {
+        Lecture lecture = lectureRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 id에 맞는 강의가 없습니다."));
+        return new LectureResponse(lecture);
     }
 
     @Transactional
@@ -64,14 +65,24 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public List<LectureResponse> getLectures(LectureListRequest lectureListRequest) {
-        List<Lecture> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest);
-        return lectureMapstructUtil.getLectureResponses(lectures);
+        List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest).stream()
+                .map(lecture -> new LectureResponse(lecture))
+                .collect(Collectors.toList());
+        return lectures;
+    }
+
+    private LectureResponse getLectureResponse(Lecture lecture) {
+        List<LectureResponse.LecturePriceResponse> prices = lectureMapstruct.lecturePriceListToLecturePriceResponseList(lecture.getLecturePrices());
+        List<LectureResponse.LectureSubjectResponse> subjects = lectureMapstruct.lectureSubjectListToLectureSubjectResponseList(lecture.getLectureSubjects());
+        List<LectureResponse.SystemTypeResponse> systemTypes = lectureMapstruct.systemTypeListToSystemTypeResponseList(lecture.getSystemTypes().stream().map(systemType -> SystemType.find(systemType.getType())).collect(Collectors.toList()));
+
+        return lectureMapstruct.lectureToLectureResponse(lecture, prices, systemTypes, subjects);
     }
 
     private LectureSubject buildLectureSubject(AddLectureRequest.AddLectureSubjectRequest subjectRequest) {
         return LectureSubject.builder()
                 .parent(subjectRequest.getParent())
-                .enSubject(subjectRequest.getEnSubject())
+//                .enSubject(subjectRequest.getEnSubject())
                 .krSubject(subjectRequest.getKrSubject())
                 .build();
     }

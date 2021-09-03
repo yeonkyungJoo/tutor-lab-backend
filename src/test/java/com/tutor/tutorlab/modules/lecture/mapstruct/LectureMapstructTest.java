@@ -93,12 +93,10 @@ public class LectureMapstructTest {
         LectureSubject lectureSubject = LectureSubject.builder()
                 .parent("개발")
                 .krSubject("자바")
-                .enSubject("java")
                 .build();
 
         LectureResponse.LectureSubjectResponse result = lectureMapstruct.lectureSubjectToLectureSubjectResponse(lectureSubject);
         assertEquals(result.getParent(), lectureSubject.getParent());
-        assertEquals(result.getEnSubject(), lectureSubject.getEnSubject());
         assertEquals(result.getKrSubject(), lectureSubject.getKrSubject());
     }
 
@@ -107,14 +105,12 @@ public class LectureMapstructTest {
         LectureSubject lectureSubject = LectureSubject.builder()
                 .parent("개발")
                 .krSubject("자바")
-                .enSubject("java")
                 .build();
 
         List<LectureSubject> lectureSubjects = Arrays.asList(lectureSubject, lectureSubject, lectureSubject);
         List<LectureResponse.LectureSubjectResponse> results = lectureMapstruct.lectureSubjectListToLectureSubjectResponseList(lectureSubjects);
         results.forEach(result -> {
             assertEquals(result.getParent(), lectureSubject.getParent());
-            assertEquals(result.getEnSubject(), lectureSubject.getEnSubject());
             assertEquals(result.getKrSubject(), lectureSubject.getKrSubject());
         });
     }
