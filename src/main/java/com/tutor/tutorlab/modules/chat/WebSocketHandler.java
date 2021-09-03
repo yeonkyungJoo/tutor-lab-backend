@@ -1,12 +1,13 @@
 package com.tutor.tutorlab.modules.chat;
 
+import com.tutor.tutorlab.modules.chat.enums.MessageType;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
-import com.tutor.tutorlab.modules.chat.vo.Chatroom;
+import com.tutor.tutorlab.modules.chat.service.MessageService;
+import com.tutor.tutorlab.modules.chat.vo.Message;
 import com.tutor.tutorlab.utils.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -14,8 +15,9 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.annotation.PostConstruct;
-import java.net.URI;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,6 +26,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private final Map<Long, Map<String, WebSocketSession>> chatroomMap = new HashMap<>();
     private final ChatroomRepository chatroomRepository;
+
+    private final MessageService messageService;
 
     @PostConstruct
     private void init() {
@@ -62,6 +66,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         session.sendMessage(new TextMessage(object.toJSONString()));
         log.info("object : {}", object.toJSONString());
+        
+        // TODO - builder로 변경
+        Message msg = new Message();
+        msg.setType(MessageType.SESSIONID);
+        msg.setChatroomId(chatroomId);
+        msg.setSessionId(session.getId());
+        msg.setMessage("Connection Establised");
+
+        messageService.saveMessage(msg);
+        
     }
 
     // 메세지 발송
@@ -71,7 +85,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         /*
             {
                 "type" : "message",
-                "chatroomId" : "1",
+                "chatroomId" : 1,
                 "sessionId" : "e628d45c-21a7-4d1f-7349-9b3c623f8b38",
                 "username" : "user1",
                 "message" : "hi~"
@@ -79,7 +93,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
         */
         JSONObject object = JsonUtil.parse(text);
         log.info("text : {}", object.toJSONString());
-        Long chatroomId = Long.valueOf((String)object.get("chatroomId"));
+
+        Long chatroomId = 0L;
+        if (object.get("chatroomId") != null) {
+            chatroomId = (Long) object.get("chatroomId");
+        }
 
         // 해당 방의 세션에만 메세지 발송
         Map<String, WebSocketSession> sessionMap = chatroomMap.get(chatroomId);
@@ -88,6 +106,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
             log.info("chatroomId : {}, sessionId : {}, object : {}", chatroomId, key, object.toJSONString());
             wss.sendMessage(new TextMessage(object.toJSONString()));
         }
+
+        Message msg = new Message();
+        msg.setType(MessageType.MESSAGE);
+        msg.setChatroomId(chatroomId);
+        msg.setSessionId(session.getId());
+        msg.setMessage((String) object.get("message"));
+
+        messageService.saveMessage(msg);
     }
 
     // 소켓 종료

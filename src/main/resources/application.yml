@@ -28,6 +28,12 @@ spring:
       hibernate:
         format-sql: true
         default_batch_fetch_size: 1000
+  data:
+    mongodb:
+      url: mongodb://localhost:27017/tutorlab
+#      host: localhost
+#      port: 27017
+#      database: tutorlab
 
 security:
   oauth2:
@@ -51,7 +57,7 @@ cloud:
       accessKey: accessKey
       secretKey: secretKey
     s3:
-      bucket: bucket
+      bucket: tutorlab
     region:
       static: static
     stack:
