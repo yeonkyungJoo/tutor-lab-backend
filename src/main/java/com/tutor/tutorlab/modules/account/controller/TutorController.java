@@ -5,15 +5,20 @@ import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
+import com.tutor.tutorlab.modules.account.repository.CareerRepository;
+import com.tutor.tutorlab.modules.account.repository.EducationRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.chat.controller.ChatroomController;
+import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
+import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
-import com.tutor.tutorlab.modules.lecture.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
@@ -38,10 +43,14 @@ public class TutorController extends AbstractController {
 
     private final TutorService tutorService;
     private final TutorRepository tutorRepository;
+    private final CareerRepository careerRepository;
+    private final EducationRepository educationRepository;
 
     private final LectureRepository lectureRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final LectureMapstructUtil lectureMapstructUtil;
+
+    private final ChatroomRepository chatroomRepository;
 
 /*
     @ApiOperation("튜터 전체 조회")
@@ -131,6 +140,38 @@ public class TutorController extends AbstractController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    /**
+     * Career 리스트
+     */
+    @ApiOperation("튜터의 Career 리스트")
+    @GetMapping("/{tutor_id}/careers")
+    public ResponseEntity getCareers(@PathVariable(name = "tutor_id") Long tutorId) {
+
+        Tutor tutor = tutorRepository.findById(tutorId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
+        List<CareerController.CareerDto> careers = careerRepository.findByTutor(tutor).stream()
+                .map(career -> new CareerController.CareerDto(career))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity(careers, HttpStatus.OK);
+    }
+
+    /**
+     * Education 리스트
+     */
+    @ApiOperation("튜터의 Education 리스트")
+    @GetMapping("/{tutor_id}/educations")
+    public ResponseEntity getEducations(@PathVariable(name = "tutor_id") Long tutorId) {
+
+        Tutor tutor = tutorRepository.findById(tutorId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
+        List<EducationController.EducationDto> educations = educationRepository.findByTutor(tutor).stream()
+                .map(education -> new EducationController.EducationDto(education))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity(educations, HttpStatus.OK);
+    }
+
     @ApiOperation("등록 강의 전체 조회 - 페이징")
     @GetMapping("/my-lectures")
     public ResponseEntity getLectures(@CurrentUser User user,
@@ -184,6 +225,38 @@ public class TutorController extends AbstractController {
         return new ResponseEntity(tutees, HttpStatus.OK);
     }
 
+    @ApiOperation("채팅방 전체 조회 - 페이징")
+    @GetMapping("/my-chatrooms")
+    public ResponseEntity getChatrooms(@CurrentUser User user,
+                                       @RequestParam(defaultValue = "1") Integer page) {
+
+        Tutor tutor = tutorRepository.findByUser(user);
+        if (tutor == null) {
+            throw new UnauthorizedException();
+        }
+
+        // TODO - CHECK : Fetch join
+        Page<ChatroomController.ChatroomDto> chatrooms = chatroomRepository.findByTutor(tutor,
+                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
+                .map(chatroom -> new ChatroomController.ChatroomDto(chatroom));
+        return new ResponseEntity(chatrooms, HttpStatus.OK);
+    }
+
+    @ApiOperation("채팅방 개별 조회")
+    @GetMapping("/my-chatrooms/{chatroom_id}")
+    public ResponseEntity getChatroom(@CurrentUser User user,
+                                      @PathVariable(name = "chatroom_id") Long chatroomId) {
+
+        Tutor tutor = tutorRepository.findByUser(user);
+        if (tutor == null) {
+            throw new UnauthorizedException();
+        }
+
+        Chatroom chatroom = chatroomRepository.findById(chatroomId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 채팅방입니다."));
+        return new ResponseEntity(new ChatroomController.ChatroomDto(chatroom), HttpStatus.OK);
+    }
+
     @Data
     static class TutorDto {
 
@@ -197,7 +270,6 @@ public class TutorController extends AbstractController {
             this.user = new UserController.UserDto(tutor.getUser());
             this.subjects = tutor.getSubjects();
             this.careers = tutor.getCareers().stream()
-                    // TODO - CHECK : static
                     .map(career -> new CareerController.CareerDto(career)).collect(Collectors.toList());
             this.educations = tutor.getEducations().stream()
                     .map(education -> new EducationController.EducationDto(education)).collect(Collectors.toList());

@@ -4,6 +4,7 @@ import lombok.Value;
 
 @Value
 public class SubjectResponse {
+
     private final String parent;
 
     private final String subject;

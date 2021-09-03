@@ -1,17 +1,18 @@
 package com.tutor.tutorlab.modules.account.vo;
 
 import com.tutor.tutorlab.modules.base.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.tutor.tutorlab.modules.chat.vo.Chatroom;
+import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@ToString
 @AttributeOverride(name = "id", column = @Column(name = "tutee_id"))
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,13 +25,20 @@ public class Tutee extends BaseEntity {
     }
 
     @NotNull
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id",
                 referencedColumnName = "user_id",
                 nullable = false,
                 foreignKey = @ForeignKey(name = "FK_TUTEE_USER_ID"))
     private User user;
     private String subjects;      // 학습하고 싶은 과목
+
+    @OneToMany(mappedBy = "tutee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Enrollment> enrollments = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "tutee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chatroom> chatrooms = new ArrayList<>();
 
     public List<String> getSubjectList() {
         if (this.subjects != null && this.subjects.length() > 0) {
@@ -39,7 +47,13 @@ public class Tutee extends BaseEntity {
         return Collections.emptyList();
     }
 
-    public void quit() {
-        setUser(null);
+    public void addEnrollment(Enrollment enrollment) {
+        this.enrollments.add(enrollment);
+        enrollment.setTutee(this);
     }
+
+//    public void quit() {
+//        this.user.quit();
+//        setUser(null);
+//    }
 }

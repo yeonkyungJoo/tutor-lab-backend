@@ -10,7 +10,7 @@ import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.LoginService;
-import com.tutor.tutorlab.modules.account.vo.GenderType;
+import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -115,7 +114,6 @@ class LoginControllerTest {
 
         // Given
         // When
-
         // Then
 
     }
@@ -195,7 +193,6 @@ class LoginControllerTest {
 
         // Given
         // When
-
         // Then
     }
 
@@ -205,7 +202,6 @@ class LoginControllerTest {
 
         // Given
         // When
-
         // Then
     }
 

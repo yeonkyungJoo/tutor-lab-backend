@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface AddressRepository extends JpaRepository<Address, Long> {
+
     List<Address> findAllByState(String state);
 
     List<Address> findAllByStateAndGu(String state, String gu);

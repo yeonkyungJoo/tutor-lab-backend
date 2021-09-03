@@ -15,6 +15,7 @@ import java.util.List;
 
 @Mapper(config = MapstructConfig.class)
 public interface AddressMapstruct {
+
     @Mappings({
 //            @Mapping(target = "siGunGu", expression = "java()")
     })

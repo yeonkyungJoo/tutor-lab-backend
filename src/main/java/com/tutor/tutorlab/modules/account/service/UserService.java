@@ -3,13 +3,11 @@ package com.tutor.tutorlab.modules.account.service;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.vo.RoleType;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @Transactional(readOnly = false)
@@ -41,7 +39,6 @@ public class UserService {
         // TODO - check : GrantedAuthority
         RoleType role = user.getRole();
 
-        // TODO - check : CASCADE
         if (role == RoleType.ROLE_TUTOR) {
             tutorService.deleteTutor(user);
         }

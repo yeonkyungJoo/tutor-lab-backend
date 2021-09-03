@@ -26,6 +26,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'com.auth0:java-jwt:3.17.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
 	// compileOnly 'org.projectlombok:lombok'
 	implementation 'org.projectlombok:lombok'
@@ -38,6 +39,9 @@ dependencies {
 	implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.5.2'
+
+	// https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
+	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
 
 	// https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter
 	// implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'

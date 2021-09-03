@@ -6,7 +6,7 @@ import com.tutor.tutorlab.WithAccount;
 import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.vo.RoleType;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.BeforeEach;

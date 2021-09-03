@@ -1,14 +1,12 @@
 package com.tutor.tutorlab.modules.account.vo;
 
 import com.tutor.tutorlab.modules.base.BaseEntity;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
+@ToString
 @AttributeOverride(name = "id", column = @Column(name = "career_id"))
 @Getter
 @Setter
@@ -41,6 +39,7 @@ public class Career extends BaseEntity {
 
     public void delete() {
         this.tutor.getCareers().remove(this);
-        this.tutor = null;
+        // this.tutor = null;
     }
+
 }

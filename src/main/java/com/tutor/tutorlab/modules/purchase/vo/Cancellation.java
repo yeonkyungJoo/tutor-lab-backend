@@ -1,7 +1,8 @@
-package com.tutor.tutorlab.modules.lecture.vo;
+package com.tutor.tutorlab.modules.purchase.vo;
 
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.base.BaseEntity;
+import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

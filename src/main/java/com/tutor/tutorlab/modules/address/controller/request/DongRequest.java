@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 public class DongRequest {
+
     @NotBlank(message = "검색할 시/도를 입력해주세요.")
     private String state;
 

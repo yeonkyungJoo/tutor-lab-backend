@@ -4,6 +4,7 @@ import lombok.Value;
 
 @Value
 public class SiGunGuResponse {
+
     private final String state;
 
     private final String siGun;

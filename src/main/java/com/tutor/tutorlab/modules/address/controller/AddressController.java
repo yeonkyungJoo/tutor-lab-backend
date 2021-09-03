@@ -2,52 +2,46 @@ package com.tutor.tutorlab.modules.address.controller;
 
 import com.tutor.tutorlab.modules.address.controller.request.DongRequest;
 import com.tutor.tutorlab.modules.address.controller.request.SiGunGuRequest;
+import com.tutor.tutorlab.modules.address.controller.result.SiGunGuResponse;
 import com.tutor.tutorlab.modules.address.service.AddressService;
 import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/addresses")
 public class AddressController {
+
     private final AddressService addressService;
 
-    /**
-     * 시/도 조회하기
-     * @return
-     * @throws Exception
-     */
     @GetMapping(value = "/states", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Object getStates() throws Exception {
-        return addressService.getStates();
+    public ResponseEntity getStates() {
+        List<String> states = addressService.getStates();
+        return new ResponseEntity(states, HttpStatus.OK);
     }
 
-    /**
-     * 시/군/구 조회하기
-     * @param addressRequest
-     * @return
-     * @throws Exception
-     */
     @GetMapping(value = "/siGunGus", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Object getSiGunGus(@ModelAttribute @Validated SiGunGuRequest addressRequest) throws Exception {
-        return addressService.getSiGunGus(addressRequest.getState());
+    public ResponseEntity getSiGunGus(@ModelAttribute @Validated SiGunGuRequest addressRequest) {
+        List<SiGunGuResponse> siGunGus = addressService.getSiGunGus(addressRequest.getState());
+        return new ResponseEntity(siGunGus, HttpStatus.OK);
     }
 
-    /**
-     * 동 조회하기
-     * @param dongRequest
-     * @return
-     * @throws Exception
-     */
     @GetMapping(value = "/dongs", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Object getDongs(@ModelAttribute @Validated DongRequest dongRequest) throws Exception {
-        return addressService.getDongs(dongRequest.getState(),
-                                       AddressUtils.convertAddress(dongRequest.getSiGun()),
-                                       AddressUtils.convertAddress(dongRequest.getGu()));
+    public ResponseEntity getDongs(@ModelAttribute @Validated DongRequest dongRequest) {
+        List<String> dongs = addressService.getDongs(dongRequest.getState(),
+                                            AddressUtils.convertAddress(dongRequest.getSiGun()),
+                                            AddressUtils.convertAddress(dongRequest.getGu()));
+        return new ResponseEntity(dongs, HttpStatus.OK);
     }
 
 }

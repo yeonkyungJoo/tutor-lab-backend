@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Value
 public class LectureResponse {
+
     private final Long id;
     // TODO UserResponse 정의해야함.
     private final String thumbnail;

@@ -1,14 +1,20 @@
 package com.tutor.tutorlab.modules.account.vo;
 
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
+import com.tutor.tutorlab.modules.account.enums.GenderType;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+// TODO - @Where 사용
+// @Where(clause = "deleted = false")
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @AttributeOverride(name = "id", column = @Column(name = "user_id"))
@@ -45,6 +51,9 @@ public class User extends BaseEntity {
     private OAuthType provider;
     private String providerId;
 
+    private boolean deleted = false;
+    private LocalDateTime deletedAt;
+
     @Builder
     public User(String username, String password, String name, String gender, String phoneNumber, String email, String nickname, String bio, String zone, RoleType role,
                 OAuthType provider, String providerId) {
@@ -60,6 +69,11 @@ public class User extends BaseEntity {
         this.role = role;
         this.provider = provider;
         this.providerId = providerId;
+    }
+
+    public void quit() {
+        setDeleted(true);
+        setDeletedAt(LocalDateTime.now());
     }
 
 }

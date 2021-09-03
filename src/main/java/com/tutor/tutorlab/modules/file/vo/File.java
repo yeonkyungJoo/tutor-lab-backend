@@ -11,7 +11,6 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @Builder
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "file_id"))
 @Table(name = "tutorlab_file")

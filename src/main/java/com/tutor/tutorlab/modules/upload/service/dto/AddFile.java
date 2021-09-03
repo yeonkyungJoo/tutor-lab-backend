@@ -5,6 +5,7 @@ import lombok.Value;
 
 @Value
 public class AddFile {
+
     private final String uuid;
 
     private final String name;

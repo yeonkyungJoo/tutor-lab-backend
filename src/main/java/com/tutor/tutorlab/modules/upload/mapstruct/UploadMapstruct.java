@@ -9,6 +9,7 @@ import org.mapstruct.Mappings;
 
 @Mapper(config = MapstructConfig.class)
 public interface UploadMapstruct {
+
     @Mappings({
             @Mapping(target = "result", source = "fileResponse"),
             @Mapping(target = "url", source = "url")

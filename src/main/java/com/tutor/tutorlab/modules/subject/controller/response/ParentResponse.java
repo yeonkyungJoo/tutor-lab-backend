@@ -8,5 +8,6 @@ import java.util.List;
 @RequiredArgsConstructor(staticName = "of")
 @Value
 public class ParentResponse {
+
     private final List<String> parents;
 }

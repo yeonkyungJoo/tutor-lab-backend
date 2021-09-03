@@ -8,9 +8,10 @@ import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import java.util.List;
 
 public interface LectureService {
-    LectureResponse getLecture(long id) throws Exception;
 
-    LectureResponse addLecture(AddLectureRequest addLectureRequest, User user) throws Exception;
+    LectureResponse getLecture(Long lectureId);
+
+    LectureResponse addLecture(AddLectureRequest addLectureRequest, User user);
 
     List<LectureResponse> getLectures(LectureListRequest lectureListRequest);
 }

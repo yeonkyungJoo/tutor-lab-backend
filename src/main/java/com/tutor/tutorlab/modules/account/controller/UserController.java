@@ -46,7 +46,7 @@ public class UserController extends AbstractController {
     @GetMapping
     public ResponseEntity getUsers(@RequestParam(defaultValue = "1") Integer page) {
 
-        Page<UserDto> users = userRepository.findAll(
+        Page<UserDto> users = userRepository.findByDeleted(false,
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(user -> new UserDto(user));
         return new ResponseEntity(users, HttpStatus.OK);
@@ -56,7 +56,7 @@ public class UserController extends AbstractController {
     @GetMapping("/{user_id}")
     public ResponseEntity getUser(@PathVariable(name = "user_id") Long userId) {
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByDeletedAndId(false, userId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
         return new ResponseEntity(new UserDto(user), HttpStatus.OK);
     }
