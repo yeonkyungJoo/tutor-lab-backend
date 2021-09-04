@@ -40,3 +40,4 @@ public class LectureController {
     public Object getLectures(@ModelAttribute @Validated LectureListRequest lectureListRequest) throws Exception {
         return lectureService.getLectures(lectureListRequest);
     }
+}

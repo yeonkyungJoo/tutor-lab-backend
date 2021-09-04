@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -16,5 +18,10 @@ public class MessageService {
     // 메세지 저장
     public void saveMessage(Message message) {
         messageRepository.save(message);
+    }
+
+    public List<Message> findChatRoom() {
+        return messageRepository.findAll();
+        //return messageRepository.findAllByChatroomId(chatroomId);
     }
 }
