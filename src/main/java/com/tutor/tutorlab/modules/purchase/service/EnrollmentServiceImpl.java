@@ -52,6 +52,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .tutor(lecture.getTutor())
                 .build();
         enrollment.setChatroom(chatroom);
+        // TODO - CHECK
         tutee.addEnrollment(enrollment);
     }
 

@@ -3,9 +3,7 @@ package com.tutor.tutorlab.configuration;
 import com.tutor.tutorlab.TutorlabApplication;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
-import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
@@ -13,14 +11,12 @@ import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
 import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
-import com.tutor.tutorlab.modules.subject.vo.Subject;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -36,8 +32,8 @@ import java.util.List;
 @SpringBootTest(classes = TutorlabApplication.class)
 public abstract class AbstractTest {
 
-    @Autowired
-    private FilterChainProxy springSecurityFilterChain;
+//    @Autowired
+//    private FilterChainProxy springSecurityFilterChain;
 
     @Autowired
     private LectureRepository lectureRepository;
@@ -55,12 +51,12 @@ public abstract class AbstractTest {
 
     @BeforeEach
     private void setUp(WebApplicationContext webAppContext) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webAppContext)
-                .addFilters(new CharacterEncodingFilter("UTF-8", true), springSecurityFilterChain)
-                .build();
-
-        addSubject();
-        addDummy();
+//        this.mockMvc = MockMvcBuilders.webAppContextSetup(webAppContext)
+//                .addFilters(new CharacterEncodingFilter("UTF-8", true), springSecurityFilterChain)
+//                .build();
+//
+//        addSubject();
+//        addDummy();
     }
 
     @Transactional
@@ -74,16 +70,16 @@ public abstract class AbstractTest {
                 MockSubject.of("모바일개발"),
                 MockSubject.of("정보/보안"));
 
-        parents.forEach(parent -> {
-            subjects.forEach(subject -> {
-                Subject entity = Subject.builder()
-                        .parent(parent)
-                        .subject(subject.getSubject())
-                        .learningKind("coding")
-                        .build();
-                subjectRepository.save(entity);
-            });
-        });
+//        parents.forEach(parent -> {
+//            subjects.forEach(subject -> {
+//                Subject entity = Subject.builder()
+//                        .parent(parent)
+//                        .subject(subject.getSubject())
+//                        .learningKind("coding")
+//                        .build();
+//                subjectRepository.save(entity);
+//            });
+//        });
     }
 
     @Transactional

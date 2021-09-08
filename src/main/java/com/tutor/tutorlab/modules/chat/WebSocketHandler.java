@@ -34,14 +34,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @PostConstruct
     private void init() {
 
-        List<Chatroom> chatrooms = chatroomRepository.findAll();
-        chatrooms.stream().forEach(chatroom -> {
-            chatroomMap.put(chatroom.getId(), new HashMap<>());
-        });
+//        List<Chatroom> chatrooms = chatroomRepository.findAll();
+//        chatrooms.stream().forEach(chatroom -> {
+//            chatroomMap.put(chatroom.getId(), new HashMap<>());
+//        });
 
-//        chatroomMap.put(1L, new HashMap<>());
-//        chatroomMap.put(2L, new HashMap<>());
-//        chatroomMap.put(3L, new HashMap<>());
+        chatroomMap.put(1L, new HashMap<>());
+        chatroomMap.put(2L, new HashMap<>());
+        chatroomMap.put(3L, new HashMap<>());
     }
 
     // 소켓 연결
@@ -70,14 +70,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(new TextMessage(object.toJSONString()));
         log.info("object : {}", object.toJSONString());
         
-        // TODO - builder로 변경
-        Message msg = new Message();
-        msg.setType(MessageType.SESSIONID);
-        msg.setChatroomId(chatroomId);
-        msg.setSessionId(session.getId());
-        msg.setMessage("Connection Establised");
-
-        messageService.saveMessage(msg);
+//        // TODO - builder로 변경
+//        Message msg = new Message();
+//        msg.setType(MessageType.SESSIONID);
+//        msg.setChatroomId(chatroomId);
+//        msg.setSessionId(session.getId());
+//        msg.setMessage("Connection Establised");
+//
+//        messageService.saveMessage(msg);
         
     }
 

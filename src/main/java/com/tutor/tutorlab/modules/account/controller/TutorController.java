@@ -19,6 +19,11 @@ import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
+import com.tutor.tutorlab.modules.review.controller.request.ReviewCreateRequest;
+import com.tutor.tutorlab.modules.review.dto.ReviewDto;
+import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
+import com.tutor.tutorlab.modules.review.service.ReviewService;
+import com.tutor.tutorlab.modules.review.vo.Review;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
@@ -33,6 +38,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.*;
 
 @Api(tags = {"TutorController"})
 @RequestMapping("/tutors")
@@ -50,6 +57,9 @@ public class TutorController extends AbstractController {
     private final LectureMapstructUtil lectureMapstructUtil;
 
     private final ChatroomRepository chatroomRepository;
+
+    private final ReviewRepository reviewRepository;
+    private final ReviewService reviewService;
 
 /*
     @ApiOperation("튜터 전체 조회")
@@ -85,7 +95,7 @@ public class TutorController extends AbstractController {
     public ResponseEntity getTutor(@PathVariable(name = "tutor_id") Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(TUTOR));
         return new ResponseEntity(new TutorDto(tutor), HttpStatus.OK);
     }
 
@@ -132,7 +142,7 @@ public class TutorController extends AbstractController {
     public ResponseEntity getCareers(@PathVariable(name = "tutor_id") Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(TUTOR));
         List<CareerController.CareerDto> careers = careerRepository.findByTutor(tutor).stream()
                 .map(career -> new CareerController.CareerDto(career))
                 .collect(Collectors.toList());
@@ -148,7 +158,7 @@ public class TutorController extends AbstractController {
     public ResponseEntity getEducations(@PathVariable(name = "tutor_id") Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 튜터입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(TUTOR));
         List<EducationController.EducationDto> educations = educationRepository.findByTutor(tutor).stream()
                 .map(education -> new EducationController.EducationDto(education))
                 .collect(Collectors.toList());
@@ -182,9 +192,8 @@ public class TutorController extends AbstractController {
             throw new UnauthorizedException();
         }
         // TODO - CHECK : lectureService의 getLecture와 동일
-        // TODO - 해당 Tutor의 강의인지 체크
-        Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 강의입니다."));
+        Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
         LectureResponse lectureResponse = lectureMapstructUtil.getLectureResponse(lecture);
         return new ResponseEntity(lectureResponse, HttpStatus.OK);
     }
@@ -200,13 +209,56 @@ public class TutorController extends AbstractController {
             throw new UnauthorizedException();
         }
 
-        Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 강의입니다."));
+        Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
         Page<TuteeController.TuteeDto> tutees = enrollmentRepository.findByLecture(lecture,
+                // TODO - CHECK
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(enrollment -> new TuteeController.TuteeDto(enrollment.getTutee()));
         return new ResponseEntity(tutees, HttpStatus.OK);
+    }
+
+    @ApiOperation("등록 강의별 리뷰 조회 - 페이징")
+    @GetMapping("/my-lectures/{lecture_id}/reviews")
+    public ResponseEntity getReviewsOfLecture(@CurrentUser User user,
+                                              @PathVariable(name = "lecture_id") Long lectureId,
+                                              @RequestParam(defaultValue = "1") Integer page) {
+
+        // TODO - CHECK : 조회도 Service Layer에서?
+        Tutor tutor = tutorRepository.findByUser(user);
+        if (tutor == null) {
+            throw new UnauthorizedException();
+        }
+        Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
+
+        Page<ReviewDto> reviews = reviewRepository.findByLecture(lecture,
+                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
+                .map(review -> new ReviewDto(review));
+        return new ResponseEntity(reviews, HttpStatus.OK);
+    }
+
+    @ApiOperation("튜터 리뷰 작성")
+    @PostMapping("/my-lectures/{lecture_id}/reviews/{parent_id}")
+    public ResponseEntity newReview(@CurrentUser User user,
+                                    @PathVariable(name = "lecture_id") Long lectureId,
+                                    @PathVariable(name = "parent_id") Long parentId,
+                                    @RequestBody @Valid ReviewCreateRequest reviewCreateRequest) {
+
+
+    }
+
+    @ApiOperation("튜터 리뷰 수정")
+    @PutMapping("/my-lectures/{lecture_id}/reviews/{parent_id}/{review_id}")
+    public ResponseEntity newReview() {
+
+    }
+
+    @ApiOperation("튜터 리뷰 삭제")
+    @DeleteMapping("/my-lectures/{lecture_id}/reviews/{parent_id}/{review_id}")
+    public ResponseEntity newReview() {
+
     }
 
     @ApiOperation("채팅방 전체 조회 - 페이징")
@@ -237,7 +289,7 @@ public class TutorController extends AbstractController {
         }
 
         Chatroom chatroom = chatroomRepository.findById(chatroomId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 채팅방입니다."));
+                .orElseThrow(() -> new EntityNotFoundException(CHATROOM));
         return new ResponseEntity(new ChatroomController.ChatroomDto(chatroom), HttpStatus.OK);
     }
 

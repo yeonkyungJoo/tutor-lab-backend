@@ -19,6 +19,13 @@ public class LocalDateTimeUtil {
         return date.format(DateTimeFormatter.ISO_DATE);
     }
 
+    public static String getDateTimeToString(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return StringUtils.EMPTY;
+        }
+        return dateTime.format(DateTimeFormatter.ISO_DATE);
+    }
+
     // parse
     public static LocalDate getStringToDate(String localDate) {
         if (StringUtils.isBlank(localDate)) {
