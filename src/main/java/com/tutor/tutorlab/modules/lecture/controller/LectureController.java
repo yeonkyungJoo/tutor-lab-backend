@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/lectures")
@@ -37,9 +36,7 @@ public class LectureController {
     }
 
     @ApiOperation("강의 목록 조회")
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getLectures(@ModelAttribute @Validated LectureListRequest lectureListRequest) {
-        return new ResponseEntity(lectureService.getLectures(lectureListRequest), HttpStatus.OK);
+    @GetMapping
+    public Object getLectures(@ModelAttribute @Validated LectureListRequest lectureListRequest) throws Exception {
+        return lectureService.getLectures(lectureListRequest);
     }
-
-}

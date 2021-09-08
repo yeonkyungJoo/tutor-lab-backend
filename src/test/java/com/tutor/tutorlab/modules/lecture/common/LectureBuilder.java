@@ -29,12 +29,10 @@ public class LectureBuilder {
 
     public static AddLectureRequest.AddLectureSubjectRequest getAddLectureSubjectRequest(
             String parent,
-            String enSubject,
             String krSubject
     ) {
         return AddLectureRequest.AddLectureSubjectRequest.builder()
                 .parent(parent)
-                .enSubject(enSubject)
                 .krSubject(krSubject)
                 .build();
     }

@@ -19,8 +19,8 @@ import java.util.Set;
 public interface LectureMapstruct {
 
     @Mappings({
-            @Mapping(target = "difficultyType", expression = "java(lecture.getDifficultyType().getType())"),
-            @Mapping(target = "difficultyName", expression = "java(lecture.getDifficultyType().getName())"),
+//            @Mapping(target = "difficultyType", expression = "java(lecture.getDifficultyType().getType())"),
+//            @Mapping(target = "difficultyName", expression = "java(lecture.getDifficultyType().getName())"),
             @Mapping(target = "systemTypes", source = "systemTypes"),
             @Mapping(target = "lecturePrices", source = "lecturePrices"),
             @Mapping(target = "lectureSubjects", source = "subjects")

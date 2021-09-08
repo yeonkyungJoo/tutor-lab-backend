@@ -148,7 +148,8 @@ public class LoginController extends AbstractController {
     public ResponseEntity login(@Valid @RequestBody LoginRequest request) {
 
         Map<String, String> result = loginService.login(request);
-        return new ResponseEntity(getHeaders(result), HttpStatus.OK);
+        // return new ResponseEntity(getHeaders(result), HttpStatus.OK);
+        return new ResponseEntity(result.get("token"), HttpStatus.OK);
     }
 
     private HttpHeaders getHeaders(Map<String, String> result) {

@@ -33,8 +33,8 @@ public class LectureSubject extends BaseEntity {
     @Column(length = 50, nullable = false)
     private String parent;
 
-    @Column(length = 50, nullable = false)
-    private String enSubject;
+//    @Column(length = 50, nullable = false)
+//    private String enSubject;
 
     @Column(length = 50, nullable = false)
     private String krSubject;
