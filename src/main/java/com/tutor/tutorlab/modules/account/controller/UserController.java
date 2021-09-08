@@ -68,6 +68,14 @@ public class UserController extends AbstractController {
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
         return new ResponseEntity(new UserDto(user), HttpStatus.OK);
     }
+    @ApiOperation("내정보 조회")
+    @GetMapping("/me")
+    public ResponseEntity getMyInfo(@CurrentUser User user) {
+
+        User returnUser = userRepository.findByDeletedAndId(false, user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+        return new ResponseEntity(new UserDto(returnUser), HttpStatus.OK);
+    }
 
     @ApiOperation("회원 정보 수정")
     @PutMapping
@@ -156,7 +164,7 @@ public class UserController extends AbstractController {
 
         public UserDto(User user) {
             this.username = user.getUsername();
-            this.name = user.getUsername();
+            this.name = user.getName();
             this.gender = user.getGender().toString();
             this.phoneNumber = user.getPhoneNumber();
             this.email = user.getEmail();

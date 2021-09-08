@@ -8,7 +8,5 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends MongoRepository<Message, Long> {
-
-    Integer countAllByChatroomId(Long chatroomId);
     List<Message> findAllByChatroomId(Long chatroomId);
 }
