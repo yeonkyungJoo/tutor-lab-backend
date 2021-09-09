@@ -68,8 +68,9 @@ public class UserController extends AbstractController {
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
         return new ResponseEntity(new UserDto(user), HttpStatus.OK);
     }
+
     @ApiOperation("내정보 조회")
-    @GetMapping("/me")
+    @GetMapping("/my-info")
     public ResponseEntity getMyInfo(@CurrentUser User user) {
 
         User returnUser = userRepository.findByDeletedAndId(false, user.getId())

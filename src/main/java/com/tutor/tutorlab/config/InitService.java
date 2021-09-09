@@ -12,6 +12,7 @@ import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
@@ -88,6 +89,42 @@ public class InitService {
         tutorSignUpRequest.addCareerCreateRequest(getCareerCreateRequest(companyName, duty));
         tutorSignUpRequest.addEducationCreateRequest(getEducationCreateRequest(schoolName, major));
         return tutorSignUpRequest;
+    }
+
+    private AddLectureRequest.AddLecturePriceRequest getAddLecturePriceRequest(Long pertimeCost, Integer pertimeLecture, Integer totalTime) {
+        return AddLectureRequest.AddLecturePriceRequest.builder()
+                .isGroup(true)
+                .groupNumber(3)
+                .pertimeCost(pertimeCost)
+                .pertimeLecture(pertimeLecture)
+                .totalCost(pertimeCost * pertimeLecture)
+                .totalTime(totalTime)
+                .build();
+    }
+
+    private AddLectureRequest.AddLectureSubjectRequest getAddLectureSubjectRequest(String krSubject) {
+        return AddLectureRequest.AddLectureSubjectRequest.builder()
+                .parent("개발")
+                .krSubject(krSubject)
+                .build();
+    }
+
+    private AddLectureRequest getAddLectureRequest() {
+
+        AddLectureRequest.AddLecturePriceRequest price1 = getAddLecturePriceRequest(1000L, 3, 10);
+        AddLectureRequest.AddLectureSubjectRequest subject1 = getAddLectureSubjectRequest("파이썬");
+
+        return AddLectureRequest.builder()
+                .thumbnailUrl("https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c")
+                .title("제목")
+                .subTitle("소제목")
+                .introduce("소개")
+                .difficulty(DifficultyType.BEGINNER)
+                .content("<p>본문</p>")
+                .systems(Arrays.asList(SystemType.ONLINE))
+                .lecturePrices(Arrays.asList(price1))
+                .subjects(Arrays.asList(subject1))
+                .build();
     }
 
     @PostConstruct

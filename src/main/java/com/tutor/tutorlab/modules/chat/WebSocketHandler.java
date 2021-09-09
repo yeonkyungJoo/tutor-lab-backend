@@ -35,13 +35,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private void init() {
 
         List<Chatroom> chatrooms = chatroomRepository.findAll();
-//        chatrooms.stream().forEach(chatroom -> {
-//            chatroomMap.put(1L, new HashMap<>());
-//        });
+        chatrooms.stream().forEach(chatroom -> {
+            chatroomMap.put(chatroom.getId(), new HashMap<>());
+        });
 
-        chatroomMap.put(1L, new HashMap<>());
-        chatroomMap.put(2L, new HashMap<>());
-        chatroomMap.put(3L, new HashMap<>());
+//        chatroomMap.put(1L, new HashMap<>());
+//        chatroomMap.put(2L, new HashMap<>());
+//        chatroomMap.put(3L, new HashMap<>());
     }
 
     // 소켓 연결
@@ -53,8 +53,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         String uri = session.getUri().toString();
         // TODO - or getQuery : ?chatroomId=1
-        //Long chatroomId = Long.valueOf(uri.split("/chat/")[1]);
-        Long chatroomId = 1L;
+        Long chatroomId = Long.valueOf(uri.split("/chat/")[1]);
         if (chatroomMap.containsKey(chatroomId)) {  // 방이 존재
             // TODO - CHECK
             Map<String, WebSocketSession> sessionMap = chatroomMap.get(chatroomId);
@@ -70,33 +69,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(new TextMessage(object.toJSONString()));
         log.info("object : {}", object.toJSONString());
         
-        // TODO - builder로 변경
-//        Message msg = new Message();
-//        msg.setType(MessageType.SESSIONID);
-//        msg.setChatroomId(chatroomId);
-//        msg.setSessionId(session.getId());
-//        //msg.setMessage("Connection Establised");
-//
-//        messageService.saveMessage(msg);
-        
     }
 
     // 메세지 발송
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String text = message.getPayload();
-        /*
-            {
-                "type" : "message",
-                "chatroomId" : 1,
-                "sessionId" : "e628d45c-21a7-4d1f-7349-9b3c623f8b38",
-                "username" : "user1",
-                "message" : "hi~"
-            }
-        */
+
         JSONObject object = JsonUtil.parse(text);
         log.info("text : {}", object.toJSONString());
-
 
         Long chatroomId = 0L;
         if (object.get("chatroomId") != null) {
@@ -105,10 +86,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         // 해당 방의 세션에만 메세지 발송
         Map<String, WebSocketSession> sessionMap = chatroomMap.get(chatroomId);
-
-//        WebSocketSession wss = sessionMap.get(1L);
-//        log.info(String.valueOf(wss));
-
         for (String key : sessionMap.keySet()) {
             WebSocketSession wss = sessionMap.get(key);
 //            log.info("chatroomId : {}, sessionId : {}, object : {}", chatroomId, key, object.toJSONString());
@@ -121,7 +98,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         msg.setSessionId(session.getId());
         msg.setMessage((String) object.get("message"));
         msg.setUsername((String) object.get("username"));
-//        log.info("msg="+msg);
         messageService.saveMessage(msg);
     }
 
