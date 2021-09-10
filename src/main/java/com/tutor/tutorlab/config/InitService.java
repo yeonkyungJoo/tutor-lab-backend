@@ -12,14 +12,18 @@ import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
+import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
+import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
 import com.tutor.tutorlab.modules.purchase.controller.request.EnrollmentRequest;
+import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -35,15 +39,17 @@ public class InitService {
 
     private final LoginService loginService;
     private final TutorService tutorService;
-
-    private final EducationRepository educationRepository;
-    private final CareerRepository careerRepository;
-    private final TutorRepository tutorRepository;
-    private final TuteeRepository tuteeRepository;
-    private final UserRepository userRepository;
-    private final LectureRepository lectureRepository;
-
+    private final LectureService lectureService;
     private final EnrollmentService enrollmentService;
+
+    private final UserRepository userRepository;
+    private final TuteeRepository tuteeRepository;
+    private final CareerRepository careerRepository;
+    private final EducationRepository educationRepository;
+    private final TutorRepository tutorRepository;
+    private final LectureRepository lectureRepository;
+    private final EnrollmentRepository enrollmentRepository;
+    private final ChatroomRepository chatroomRepository;
 
     private SignUpRequest getSignUpRequest(String name) {
         return SignUpRequest.builder()
@@ -109,14 +115,14 @@ public class InitService {
                 .build();
     }
 
-    private AddLectureRequest getAddLectureRequest() {
+    private AddLectureRequest getAddLectureRequest(String title, Long pertimeCost, Integer pertimeLecture, Integer totalTime, String krSubject) {
 
-        AddLectureRequest.AddLecturePriceRequest price1 = getAddLecturePriceRequest(1000L, 3, 10);
-        AddLectureRequest.AddLectureSubjectRequest subject1 = getAddLectureSubjectRequest("파이썬");
+        AddLectureRequest.AddLecturePriceRequest price1 = getAddLecturePriceRequest(pertimeCost, pertimeLecture, totalTime);
+        AddLectureRequest.AddLectureSubjectRequest subject1 = getAddLectureSubjectRequest(krSubject);
 
         return AddLectureRequest.builder()
                 .thumbnailUrl("https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c")
-                .title("제목")
+                .title(title)
                 .subTitle("소제목")
                 .introduce("소개")
                 .difficulty(DifficultyType.BEGINNER)
@@ -127,16 +133,32 @@ public class InitService {
                 .build();
     }
 
+    private EnrollmentRequest getEnrollmentRequest(Long lectureId) {
+        EnrollmentRequest enrollmentRequest = new EnrollmentRequest();
+        enrollmentRequest.setLectureId(lectureId);
+
+        return enrollmentRequest;
+    }
+
     @PostConstruct
     @Transactional
     void init() {
 
+        chatroomRepository.deleteAll();
+        enrollmentRepository.deleteAll();
+        lectureRepository.deleteAll();
+        careerRepository.deleteAll();
+        educationRepository.deleteAll();
+        tutorRepository.deleteAll();
+        tuteeRepository.deleteAll();
+        userRepository.deleteAll();
+
         // user / tutee
-        loginService.signUp(getSignUpRequest("user1"));
-        loginService.signUp(getSignUpRequest("user2"));
-        loginService.signUp(getSignUpRequest("user3"));
-        loginService.signUp(getSignUpRequest("user4"));
-        loginService.signUp(getSignUpRequest("user5"));
+        Tutee tutee1 = loginService.signUp(getSignUpRequest("user1"));
+        Tutee tutee2 = loginService.signUp(getSignUpRequest("user2"));
+        Tutee tutee3 = loginService.signUp(getSignUpRequest("user3"));
+        Tutee tutee4 = loginService.signUp(getSignUpRequest("user4"));
+        Tutee tutee5 = loginService.signUp(getSignUpRequest("user5"));
 
         // tutor - career, education
         User user4 = userRepository.findByName("user4");
@@ -145,59 +167,19 @@ public class InitService {
         Tutor tutor2 = tutorService.createTutor(user5, getTutorSignUpRequest("go,java", "company2", "engineer", "school2", "science"));
 
         // lecture
+        LectureResponse lectureResponse1 = lectureService.addLecture(getAddLectureRequest("파이썬강의", 1000L, 3, 10, "파이썬"), user4);
+        LectureResponse lectureResponse2 = lectureService.addLecture(getAddLectureRequest("자바강의", 3000L, 3, 10, "자바"), user4);
+        LectureResponse lectureResponse3 = lectureService.addLecture(getAddLectureRequest("자바강의", 2000L, 5, 20, "자바"), user5);
+
         // enrollment
         // chatroom
+        enrollmentService.enroll(tutee1, getEnrollmentRequest(1L));
+        enrollmentService.enroll(tutee1, getEnrollmentRequest(2L));
+        enrollmentService.enroll(tutee2, getEnrollmentRequest(1L));
+        enrollmentService.enroll(tutee2, getEnrollmentRequest(2L));
+        enrollmentService.enroll(tutee3, getEnrollmentRequest(3L));
+
         // review
     }
-
-//    @PostConstruct
-//    @Transactional
-//    void init() {
-//
-//        educationRepository.deleteAll();
-//        careerRepository.deleteAll();
-//        tutorRepository.deleteAll();
-//        tuteeRepository.deleteAll();
-//        userRepository.deleteAll();
-
-//        Lecture lecture = Lecture.builder()
-//                .tutor(tutor)
-//                .title("test")
-//                .subTitle("test")
-//                .introduce("소개")
-//                .content("test")
-//                .difficultyType(DifficultyType.BEGINNER)
-//                .systemTypes(Arrays.asList(SystemType.OFFLINE, SystemType.ONLINE))
-//                .lecturePrices(new ArrayList<>())
-//                .lectureSubjects(new ArrayList<>())
-//                .build();
-//
-//        LecturePrice lecturePrice = LecturePrice.builder()
-//                .isGroup(true)
-//                .groupNumber(3)
-//                .pertimeLecture(3)
-//                .pertimeCost(10000L)
-//                .totalTime(10)
-//                .totalCost(300000L)
-//                .build();
-//
-//        LectureSubject lectureSubject = LectureSubject.builder()
-//                .parent("개발")
-//                .enSubject("java")
-//                .krSubject("자바")
-//                .build();
-//
-//        lecture.addPrice(lecturePrice);
-//        lecture.addSubject(lectureSubject);
-//
-//        Long lectureId = lectureRepository.save(lecture).getId();
-//
-//        EnrollmentRequest enrollmentRequest = new EnrollmentRequest();
-//        enrollmentRequest.setLectureId(lectureId);
-//
-//        // When
-//        Tutee tutee = tuteeRepository.findByUser(userRepository.findByName("tutee"));
-//        enrollmentService.enroll(user, enrollmentRequest);
-
 
 }

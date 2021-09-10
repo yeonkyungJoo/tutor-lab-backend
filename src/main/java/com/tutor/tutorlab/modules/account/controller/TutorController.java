@@ -262,20 +262,20 @@ public class TutorController extends AbstractController {
                                     @PathVariable(name = "parent_id") Long parentId,
                                     @RequestBody @Valid ReviewCreateRequest reviewCreateRequest) {
 
-
+        return null;
     }
 
-    @ApiOperation("튜터 리뷰 수정")
-    @PutMapping("/my-lectures/{lecture_id}/reviews/{parent_id}/{review_id}")
-    public ResponseEntity newReview() {
-
-    }
-
-    @ApiOperation("튜터 리뷰 삭제")
-    @DeleteMapping("/my-lectures/{lecture_id}/reviews/{parent_id}/{review_id}")
-    public ResponseEntity newReview() {
-
-    }
+//    @ApiOperation("튜터 리뷰 수정")
+//    @PutMapping("/my-lectures/{lecture_id}/reviews/{parent_id}/{review_id}")
+//    public ResponseEntity newReview() {
+//
+//    }
+//
+//    @ApiOperation("튜터 리뷰 삭제")
+//    @DeleteMapping("/my-lectures/{lecture_id}/reviews/{parent_id}/{review_id}")
+//    public ResponseEntity newReview() {
+//
+//    }
 
     @ApiOperation("채팅방 전체 조회 - 페이징")
     @GetMapping("/my-chatrooms")
