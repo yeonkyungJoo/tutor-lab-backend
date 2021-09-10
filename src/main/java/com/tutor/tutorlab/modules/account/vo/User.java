@@ -54,6 +54,8 @@ public class User extends BaseEntity {
     private boolean deleted = false;
     private LocalDateTime deletedAt;
 
+    // TODO - Notification과 양방향
+
     @Builder
     public User(String username, String password, String name, String gender, String phoneNumber, String email, String nickname, String bio, String zone, RoleType role,
                 OAuthType provider, String providerId) {

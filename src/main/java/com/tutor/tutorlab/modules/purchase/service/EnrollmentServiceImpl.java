@@ -44,7 +44,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .lecture(lecture)
                 .tutee(tutee)
                 .build();
-
+        enrollmentRepository.save(enrollment);
         // 수강 시 채팅방 자동 생성
         Chatroom chatroom = Chatroom.builder()
                 .enrollment(enrollment)
@@ -52,7 +52,11 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 .tutor(lecture.getTutor())
                 .build();
         enrollment.setChatroom(chatroom);
+        // TODO - CHECK
         tutee.addEnrollment(enrollment);
+        // TODO - CHECK : 자동 생성?!
+        chatroom.setEnrollment(enrollment);
+        chatroomRepository.save(chatroom);
     }
 
     @Override

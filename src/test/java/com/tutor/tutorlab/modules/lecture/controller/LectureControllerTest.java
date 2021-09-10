@@ -44,8 +44,8 @@ public class LectureControllerTest extends AbstractTest {
         AddLectureRequest.AddLecturePriceRequest price1 = LectureBuilder.getAddLecturePriceRequest(true, 3, 1000L, 3, 3000L, 10);
         AddLectureRequest.AddLecturePriceRequest price2 = LectureBuilder.getAddLecturePriceRequest(false, 3, 1000L, 3, 30000L, 10);
 
-        AddLectureRequest.AddLectureSubjectRequest subject1 = LectureBuilder.getAddLectureSubjectRequest("개발", "java", "자바");
-        AddLectureRequest.AddLectureSubjectRequest subject2 = LectureBuilder.getAddLectureSubjectRequest("개발", "javascript", "자바스크립트");
+        AddLectureRequest.AddLectureSubjectRequest subject1 = LectureBuilder.getAddLectureSubjectRequest("개발", "자바");
+        AddLectureRequest.AddLectureSubjectRequest subject2 = LectureBuilder.getAddLectureSubjectRequest("개발", "자바스크립트");
 
         AddLectureRequest param = AddLectureRequest.builder()
                 .thumbnailUrl("https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c")

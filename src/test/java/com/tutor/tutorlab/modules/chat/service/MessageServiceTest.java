@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -14,8 +16,16 @@ class MessageServiceTest {
 
     @Autowired
     MessageService messageService;
-//    @Autowired
-//    MessageRepository messageRepository;
+    @Autowired
+    MessageRepository messageRepository;
+
+    @Test
+    void getMessages() {
+
+        List<Message> messages = messageRepository.findAllByChatroomId(1L);
+        Integer count = messageRepository.countAllByChatroomId(1L);
+        System.out.println(count);
+    }
 
     @Test
     void saveMessage() {

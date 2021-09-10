@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.account.vo;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
+import com.tutor.tutorlab.modules.purchase.vo.Pick;
 import lombok.*;
 
 import javax.persistence.*;
@@ -36,6 +37,10 @@ public class Tutee extends BaseEntity {
     @OneToMany(mappedBy = "tutee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Enrollment> enrollments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "tutee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pick> picks = new ArrayList<>();
+
+    // TODO - CHECK
     @ToString.Exclude
     @OneToMany(mappedBy = "tutee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chatroom> chatrooms = new ArrayList<>();
@@ -50,6 +55,11 @@ public class Tutee extends BaseEntity {
     public void addEnrollment(Enrollment enrollment) {
         this.enrollments.add(enrollment);
         enrollment.setTutee(this);
+    }
+
+    public void addPick(Pick pick) {
+        this.picks.add(pick);
+        pick.setTutee(this);
     }
 
 //    public void quit() {

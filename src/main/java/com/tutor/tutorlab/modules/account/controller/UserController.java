@@ -6,6 +6,10 @@ import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.UserService;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.notification.repository.NotificationRepository;
+import com.tutor.tutorlab.modules.notification.service.NotificationService;
+import com.tutor.tutorlab.modules.notification.vo.Notification;
+import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
@@ -18,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Api(tags = {"UserController"})
 @RequestMapping("/users")
@@ -27,6 +32,9 @@ public class UserController extends AbstractController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+
+    private final NotificationRepository notificationRepository;
+    private final NotificationService notificationService;
 
 /*
     @ApiOperation("회원 전체 조회")
@@ -60,8 +68,9 @@ public class UserController extends AbstractController {
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
         return new ResponseEntity(new UserDto(user), HttpStatus.OK);
     }
+
     @ApiOperation("내정보 조회")
-    @GetMapping("/me")
+    @GetMapping("/my-info")
     public ResponseEntity getMyInfo(@CurrentUser User user) {
 
         User returnUser = userRepository.findByDeletedAndId(false, user.getId())
@@ -84,6 +93,60 @@ public class UserController extends AbstractController {
 
         userService.deleteUser(user);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @ApiOperation("알림 리스트 - 페이징")
+    @GetMapping("/my-notifications")
+    public ResponseEntity getNotifications(@CurrentUser User user,
+                                           @RequestParam(defaultValue = "1") Integer page) {
+
+        Page<NotificationDto> notifications = notificationRepository.findByUser(user,
+                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
+                .map(notification -> new NotificationDto(notification));
+        return new ResponseEntity(notifications, HttpStatus.OK);
+    }
+
+    @ApiOperation("알림 확인")
+    @PutMapping("/my-notifications/{notification_id}")
+    public ResponseEntity getNotification(@CurrentUser User user,
+                                          @PathVariable(name = "notification_id") Long notificationId) {
+        Notification notification = notificationService.check(user, notificationId);
+        return new ResponseEntity(notification, HttpStatus.OK);
+    }
+
+    @ApiOperation("알림 삭제")
+    @DeleteMapping("/my-notifications/{notification_id}")
+    public ResponseEntity deleteNotification(@CurrentUser User user,
+                                             @PathVariable(name = "notification_id") Long notificationId) {
+        notificationService.deleteNotification(notificationId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    // TODO - 알림 전체 삭제 / 선택 삭제
+    @ApiOperation("알림 선택 삭제")
+    @DeleteMapping("/my-notifications")
+    public ResponseEntity deleteNotifications(@CurrentUser User user,
+                                              @RequestParam(value = "notification_ids") List<Long> notificationIds) {
+        notificationService.deleteNotifications(notificationIds);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @Data
+    static class NotificationDto {
+
+        public NotificationDto(Notification notification) {
+            // this.username = notification.getUser().getUsername();
+            this.contents = notification.getContents();
+            this.checked = notification.isChecked();
+            this.createdAt = LocalDateTimeUtil.getDateTimeToString(notification.getCreatedAt());
+            this.checkedAt = LocalDateTimeUtil.getDateTimeToString(notification.getCheckedAt());
+        }
+
+        // private String username;    // 수신인
+        private String contents;
+        private boolean checked;
+        private String createdAt;
+        private String checkedAt;
     }
 
     @Data

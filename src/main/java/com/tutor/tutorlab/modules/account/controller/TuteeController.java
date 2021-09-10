@@ -13,6 +13,8 @@ import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
+import com.tutor.tutorlab.modules.purchase.repository.PickRepository;
+import com.tutor.tutorlab.modules.purchase.vo.Pick;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
@@ -39,6 +41,7 @@ public class TuteeController extends AbstractController {
     private final LectureMapstructUtil lectureMapstructUtil;
 
     private final ChatroomRepository chatroomRepository;
+    private final PickRepository pickRepository;
 
 /*
     @ApiOperation("튜티 전체 조회")
@@ -125,6 +128,18 @@ public class TuteeController extends AbstractController {
         Chatroom chatroom = chatroomRepository.findById(chatroomId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 채팅방입니다."));
         return new ResponseEntity(new ChatroomController.ChatroomDto(chatroom), HttpStatus.OK);
+    }
+
+    @ApiOperation("장바구니 조회 - 페이징")
+    @GetMapping("/my-picks")
+    public ResponseEntity getPicks(@CurrentUser User user,
+                                   @RequestParam(defaultValue = "1") Integer page) {
+
+        Tutee tutee = tuteeRepository.findByUser(user);
+        Page<Pick> picks = pickRepository.findByTutee(tutee,
+                PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
+        // TODO - PickDto
+        return new ResponseEntity(picks, HttpStatus.OK);
     }
 
     @Data

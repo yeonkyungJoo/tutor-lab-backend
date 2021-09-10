@@ -20,8 +20,4 @@ public class MessageService {
         messageRepository.save(message);
     }
 
-    public List<Message> findChatRoom() {
-        return messageRepository.findAll();
-        //return messageRepository.findAllByChatroomId(chatroomId);
-    }
 }
