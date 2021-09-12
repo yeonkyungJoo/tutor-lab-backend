@@ -13,7 +13,9 @@ import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.chat.controller.ChatroomController;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
+import com.tutor.tutorlab.modules.chat.repository.MessageRepository;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
+import com.tutor.tutorlab.modules.chat.vo.Message;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
@@ -58,6 +60,7 @@ public class TutorController extends AbstractController {
     private final LectureMapstructUtil lectureMapstructUtil;
 
     private final ChatroomRepository chatroomRepository;
+    private final MessageRepository messageRepository;
 
     private final ReviewRepository reviewRepository;
     private final ReviewService reviewService;
@@ -304,9 +307,9 @@ public class TutorController extends AbstractController {
             throw new UnauthorizedException();
         }
 
-        Chatroom chatroom = chatroomRepository.findById(chatroomId)
-                .orElseThrow(() -> new EntityNotFoundException(CHATROOM));
-        return new ResponseEntity(new ChatroomController.ChatroomDto(chatroom), HttpStatus.OK);
+        List<Message> message = messageRepository.findAllByChatroomId(chatroomId);
+        //    new EntityNotFoundException(CHATROOM)
+        return new ResponseEntity(message,HttpStatus.OK);
     }
 
     @Data
