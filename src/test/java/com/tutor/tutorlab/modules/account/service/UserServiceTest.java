@@ -24,7 +24,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Transactional
+// @Transactional
 @SpringBootTest
 class UserServiceTest {
 
@@ -49,45 +49,122 @@ class UserServiceTest {
     @Autowired
     EducationRepository educationRepository;
 
-    @BeforeEach
-    void init() {
+//    @BeforeEach
+//    void init() {
+//
+//        CareerCreateRequest careerCreateRequest1 = CareerCreateRequest.builder()
+//                .companyName("tutorlab")
+//                .duty("engineer")
+//                .startDate("2007-12-03")
+//                .endDate("2007-12-04")
+//                .present(false)
+//                .build();
+//
+//        CareerCreateRequest careerCreateRequest2 = CareerCreateRequest.builder()
+//                .companyName("tutorlab2")
+//                .duty("engineer")
+//                .startDate("2007-12-05")
+//                .endDate("2007-12-06")
+//                .present(false)
+//                .build();
+//        List<CareerCreateRequest> careers = new ArrayList<>();
+//        careers.add(careerCreateRequest1);
+//        careers.add(careerCreateRequest2);
+//
+//        EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
+//                .schoolName("school")
+//                .major("computer")
+//                .entranceDate("2021-01-01")
+//                .graduationDate("2021-02-01")
+//                .score(4.01)
+//                .degree("Bachelor")
+//                .build();
+//        List<EducationCreateRequest> educations = new ArrayList<>();
+//        educations.add(educationCreateRequest);
+//
+//        tutorSignUpRequest = TutorSignUpRequest.builder()
+//                .subjects("java,spring")
+//                .careers(careers)
+//                .educations(educations)
+//                .specialist(false)
+//                .build();
+//    }
 
-        CareerCreateRequest careerCreateRequest1 = CareerCreateRequest.builder()
-                .companyName("tutorlab")
-                .duty("engineer")
-                .startDate("2007-12-03")
-                .endDate("2007-12-04")
-                .present(false)
+    @DisplayName("트랜잭션 쓰기지연 테스트")
+    @Transactional
+    @Test
+    void transactionTest1() {
+        educationRepository.deleteById(1L);
+        /*
+        Hibernate: select education0_.education_id as educatio1_4_0_, education0_.created_at as created_2_4_0_, education0_.updated_at as updated_3_4_0_, education0_.degree as degree4_4_0_, education0_.entrance_date as entrance5_4_0_, education0_.graduation_date as graduati6_4_0_, education0_.major as major7_4_0_, education0_.school_name as school_n8_4_0_, education0_.score as score9_4_0_, education0_.tutor_id as tutor_i10_4_0_ from education education0_ where education0_.education_id=?
+         */
+    }
+
+    @DisplayName("트랜잭션 쓰기지연 테스트")
+    @Transactional
+    @Test
+    void transactionTest2() {
+
+        User user = User.builder()
+                .username("yk@email.com")
+                .password("password")
+                .name("yk")
+                .gender(null)
+                .phoneNumber(null)
+                .email("yk@email.com")
+                .nickname(null)
+                .bio(null)
+                .zone(null)
+                .role(RoleType.ROLE_TUTEE)
+                .provider(null)
+                .providerId(null)
                 .build();
 
-        CareerCreateRequest careerCreateRequest2 = CareerCreateRequest.builder()
-                .companyName("tutorlab2")
-                .duty("engineer")
-                .startDate("2007-12-05")
-                .endDate("2007-12-06")
-                .present(false)
-                .build();
-        List<CareerCreateRequest> careers = new ArrayList<>();
-        careers.add(careerCreateRequest1);
-        careers.add(careerCreateRequest2);
+        userRepository.save(user);
+        userRepository.delete(user);
 
-        EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
-                .schoolName("school")
-                .major("computer")
-                .entranceDate("2021-01-01")
-                .graduationDate("2021-02-01")
-                .score(4.01)
-                .degree("Bachelor")
-                .build();
-        List<EducationCreateRequest> educations = new ArrayList<>();
-        educations.add(educationCreateRequest);
+        /*
+        Hibernate: insert into user (created_at, bio, deleted, deleted_at, email, gender, name, nickname, password, phone_number, provider, provider_id, role, username, zone) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         */
+    }
 
-        tutorSignUpRequest = TutorSignUpRequest.builder()
-                .subjects("java,spring")
-                .careers(careers)
-                .educations(educations)
-                .specialist(false)
+    @DisplayName("트랜잭션 쓰기지연 테스트")
+    @Transactional
+    @Test
+    void transactionTest3() {
+
+        User user = User.builder()
+                .username("yk@email.com")
+                .password("password")
+                .name("yk")
+                .gender(null)
+                .phoneNumber(null)
+                .email("yk@email.com")
+                .nickname(null)
+                .bio(null)
+                .zone(null)
+                .role(RoleType.ROLE_TUTEE)
+                .provider(null)
+                .providerId(null)
                 .build();
+
+        userRepository.save(user);
+
+        user.setNickname("nickname");
+
+        System.out.println(">>> 1 : " + userRepository.findById(6L).get());
+        userRepository.flush();
+        System.out.println(">>> 2 : " + userRepository.findById(6L).get());
+
+        /*
+        Hibernate: insert into user (created_at, bio, deleted, deleted_at, email, gender, name, nickname, password, phone_number, provider, provider_id, role, username, zone) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        >>> 1 : User(super=com.tutor.tutorlab.modules.account.vo.User@6a29f6aa, username=yk@email.com, password=password, name=yk, gender=FEMALE, phoneNumber=null,
+                    email=yk@email.com, nickname=nickname, bio=null, zone=null, role=ROLE_TUTEE, provider=null, providerId=null, deleted=false, deletedAt=null)
+
+        Hibernate: update user set updated_at=?, bio=?, deleted=?, deleted_at=?, email=?, gender=?, name=?, nickname=?, password=?, phone_number=?, provider=?, provider_id=?, role=?, zone=? where user_id=?
+        >>> 2 : User(super=com.tutor.tutorlab.modules.account.vo.User@6a29f6aa, username=yk@email.com, password=password, name=yk, gender=FEMALE, phoneNumber=null,
+                    email=yk@email.com, nickname=nickname, bio=null, zone=null, role=ROLE_TUTEE, provider=null, providerId=null, deleted=false, deletedAt=null)
+         */
     }
 
     @DisplayName("EntityListener preUpdate 테스트")

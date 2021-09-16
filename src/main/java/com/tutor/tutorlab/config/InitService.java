@@ -1,7 +1,5 @@
 package com.tutor.tutorlab.config;
 
-import com.tutor.tutorlab.config.security.oauth.provider.OAuthInfo;
-import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
@@ -19,18 +17,20 @@ import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
-import com.tutor.tutorlab.modules.lecture.vo.Lecture;
-import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
-import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
 import com.tutor.tutorlab.modules.purchase.controller.request.EnrollmentRequest;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
+import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
+import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
+import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
+import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
+import com.tutor.tutorlab.modules.review.service.ReviewService;
+import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 @Component
@@ -41,6 +41,8 @@ public class InitService {
     private final TutorService tutorService;
     private final LectureService lectureService;
     private final EnrollmentService enrollmentService;
+
+    private final ReviewService reviewService;
 
     private final UserRepository userRepository;
     private final TuteeRepository tuteeRepository;
@@ -140,10 +142,37 @@ public class InitService {
         return enrollmentRequest;
     }
 
+    private TuteeReviewCreateRequest getTuteeReviewCreateRequest(Integer score, String content) {
+        return TuteeReviewCreateRequest.builder()
+                .score(score)
+                .content(content)
+                .build();
+    }
+
+    private TuteeReviewUpdateRequest getTuteeReviewUpdateRequest(Integer score, String content) {
+        return TuteeReviewUpdateRequest.builder()
+                .score(score)
+                .content(content)
+                .build();
+    }
+
+    private TutorReviewCreateRequest getTutorReviewCreateRequest(String content) {
+        return TutorReviewCreateRequest.builder()
+                .content(content)
+                .build();
+    }
+
+    private TutorReviewUpdateRequest getTutorReviewUpdateRequest(String content) {
+        return TutorReviewUpdateRequest.builder()
+                .content(content)
+                .build();
+    }
+
     @PostConstruct
     @Transactional
     void init() {
 
+        /*
         chatroomRepository.deleteAll();
         enrollmentRepository.deleteAll();
         lectureRepository.deleteAll();
@@ -178,8 +207,22 @@ public class InitService {
         enrollmentService.enroll(tutee2, getEnrollmentRequest(1L));
         enrollmentService.enroll(tutee2, getEnrollmentRequest(2L));
         enrollmentService.enroll(tutee3, getEnrollmentRequest(3L));
+        */
 
         // review
+        User user1 = userRepository.findByName("user1");
+        Tutee tutee1 = tuteeRepository.findByUser(user1);
+        User user2 = userRepository.findByName("user2");
+        Tutee tutee2 = tuteeRepository.findByUser(user2);
+
+        User user4 = userRepository.findByName("user4");
+        Tutor tutor1 = tutorRepository.findByUser(user4);
+
+        Review parent1 = reviewService.createTuteeReview(tutee1, 1L, getTuteeReviewCreateRequest(5, "좋아요"));
+        Review child1 = reviewService.createTutorReview(tutor1, 1L, parent1.getId(), getTutorReviewCreateRequest("감사합니다!"));
+
+        Review parent2 = reviewService.createTuteeReview(tutee2, 1L, getTuteeReviewCreateRequest(3, "별로에요"));
+        Review child2 = reviewService.createTutorReview(tutor1, 1L, parent2.getId(), getTutorReviewCreateRequest("아쉽네요!"));
     }
 
 }

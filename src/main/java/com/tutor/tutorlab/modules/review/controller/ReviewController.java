@@ -23,7 +23,8 @@ public class ReviewController extends AbstractController {
     // 튜티 리뷰 삭제 : /my-lectures/{lecture_id}/reviews/{review_id} or /my-enrollments/{enrollment_id}/reviews/{review_id}
 
     // 튜터 강의별 리뷰 리스트 : /my-lectures/{lecture_id}/reviews
+    // 튜터 리뷰 개별 조회 : /my-lectures/{lecture_id}/reviews/{review_id}
     // 튜터 리뷰 작성 : /my-lectures/{lecture_id}/reviews/{parent_id}
-    // 튜터 리뷰 수정 : /my-lectures/{lecture_id}/reviews/{parent_id}/{review_id}
-    // 튜터 리뷰 삭제 : /my-lectures/{lecture_id}/reviews/{parent_id}/{review_id}
+    // 튜터 리뷰 수정 : /my-lectures/{lecture_id}/reviews/{parent_id}/children/review_id}
+    // 튜터 리뷰 삭제 : /my-lectures/{lecture_id}/reviews/{parent_id}/children/{review_id}
 }

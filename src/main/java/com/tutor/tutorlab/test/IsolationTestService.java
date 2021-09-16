@@ -11,10 +11,36 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class IsolationTestService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void get(Long id) {
+
+        System.out.println(userRepository.findById(id));
+        System.out.println(userRepository.findAll());
+
+        System.out.println(userRepository.findById(id));
+        System.out.println(userRepository.findAll());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Transactional
+    public void get2(Long id) {
         System.out.println(userRepository.findById(id));
         System.out.println(userRepository.findAll());
 

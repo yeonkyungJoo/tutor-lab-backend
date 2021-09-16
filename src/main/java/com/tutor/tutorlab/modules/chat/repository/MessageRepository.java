@@ -10,4 +10,5 @@ import java.util.List;
 public interface MessageRepository extends MongoRepository<Message, Long> {
 
     List<Message> findAllByChatroomId(Long chatroomId);
+    Message findFirstByChatroomIdOrderByIdDesc(Long chatroomId);
 }

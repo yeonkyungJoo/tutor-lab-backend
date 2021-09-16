@@ -3,7 +3,6 @@ package com.tutor.tutorlab.configuration;
 import com.tutor.tutorlab.TutorlabApplication;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.vo.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;

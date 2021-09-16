@@ -7,6 +7,7 @@ import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 @AttributeOverride(name = "id", column = @Column(name = "review_id"))
 @NoArgsConstructor
 @Getter @Setter
@@ -49,6 +51,7 @@ public class Review extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_REVIEW_LECTURE_ID"))
     private Lecture lecture;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id",
             referencedColumnName = "review_id",

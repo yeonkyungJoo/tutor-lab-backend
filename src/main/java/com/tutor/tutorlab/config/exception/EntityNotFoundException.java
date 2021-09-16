@@ -24,6 +24,7 @@ public class EntityNotFoundException extends GlobalException {
         TUTEE("존재하지 않는 튜티입니다."),
         TUTOR("존재하지 않는 튜터입니다."),
         LECTURE("존재하지 않는 강의입니다."),
+        ENROLLMENT("수강 내역이 존재하지 않습니다."),
         REVIEW("존재하지 않는 리뷰입니다."),
         CHATROOM("존재하지 않는 채팅방입니다.");
 

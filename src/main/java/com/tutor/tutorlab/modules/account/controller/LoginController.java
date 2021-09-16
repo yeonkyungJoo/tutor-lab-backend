@@ -145,9 +145,9 @@ public class LoginController extends AbstractController {
 
     @ApiOperation("일반 로그인")
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity login(@Valid @RequestBody LoginRequest loginRequest) {
 
-        Map<String, String> result = loginService.login(request);
+        Map<String, String> result = loginService.login(loginRequest);
         // return new ResponseEntity(getHeaders(result), HttpStatus.OK);
         return new ResponseEntity(result.get("token"), HttpStatus.OK);
     }

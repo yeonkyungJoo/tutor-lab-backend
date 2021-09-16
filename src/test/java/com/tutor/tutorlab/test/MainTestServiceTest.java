@@ -22,11 +22,11 @@ public class MainTestServiceTest {
     @Autowired
     TutorRepository tutorRepository;
 
-    @BeforeEach
-    void init() {
-        userRepository.deleteAll();
-        tutorRepository.deleteAll();
-    }
+//    @BeforeEach
+//    void init() {
+//        userRepository.deleteAll();
+//        tutorRepository.deleteAll();
+//    }
 
     @Test
     void propagationTest() {

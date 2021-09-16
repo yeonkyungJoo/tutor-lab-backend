@@ -38,6 +38,7 @@ public class ChatroomController extends AbstractController {
         private Long chatroomId;
         private String tutorName;
         private String tuteeName;
+        private Message lastMessage;
     }
 
 }

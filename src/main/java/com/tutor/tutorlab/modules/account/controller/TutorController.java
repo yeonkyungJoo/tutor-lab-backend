@@ -13,13 +13,15 @@ import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.chat.controller.ChatroomController;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
+import com.tutor.tutorlab.modules.chat.repository.MessageRepository;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
-import com.tutor.tutorlab.modules.review.controller.request.ReviewCreateRequest;
+import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
+import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
 import com.tutor.tutorlab.modules.review.dto.ReviewDto;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
@@ -35,7 +37,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,25 +59,13 @@ public class TutorController extends AbstractController {
     private final LectureMapstructUtil lectureMapstructUtil;
 
     private final ChatroomRepository chatroomRepository;
+    private final MessageRepository messageRepository;
 
     private final ReviewRepository reviewRepository;
     private final ReviewService reviewService;
 
-/*
-    @ApiOperation("튜터 전체 조회")
-    @GetMapping
-    public ResponseEntity getTutors() {
-
-        List<TutorDto> tutors = tutorRepository.findAll().stream()
-                .map(tutor -> new TutorDto(tutor)).collect(Collectors.toList());
-        return new ResponseEntity(tutors, HttpStatus.OK);
-    }
-*/
 
     // TODO - 검색
-    /**
-     * 튜터 전체 조회 - 페이징
-     */
     @ApiOperation("튜터 전체 조회 - 페이징")
     @GetMapping
     public ResponseEntity getTutors(@RequestParam(defaultValue = "1") Integer page) {
@@ -88,9 +77,6 @@ public class TutorController extends AbstractController {
         return new ResponseEntity(tutors, HttpStatus.OK);
     }
 
-    /**
-     * 튜터 조회
-     */
     @ApiOperation("튜터 조회")
     @GetMapping("/{tutor_id}")
     public ResponseEntity getTutor(@PathVariable(name = "tutor_id") Long tutorId) {
@@ -99,9 +85,7 @@ public class TutorController extends AbstractController {
                 .orElseThrow(() -> new EntityNotFoundException(TUTOR));
         return new ResponseEntity(new TutorDto(tutor), HttpStatus.OK);
     }
-    /**
-     * 튜터가 등록한 강의조회
-     */
+
     @ApiOperation("튜터 강의조회")
     @GetMapping("/mylectures")
     public ResponseEntity getTutorLecture(@CurrentUser User user) {
@@ -115,9 +99,6 @@ public class TutorController extends AbstractController {
         return new ResponseEntity(lectures, HttpStatus.OK);
     }
 
-    /**
-     * 튜터 등록
-     */
     @ApiOperation("튜터 등록")
     @PostMapping
     public ResponseEntity newTutor(@CurrentUser User user,
@@ -127,9 +108,6 @@ public class TutorController extends AbstractController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    /**
-     * 튜터 정보 수정
-     */
     @ApiOperation("튜터 정보 수정")
     @PutMapping
     public ResponseEntity editTutor(@CurrentUser User user,
@@ -139,9 +117,6 @@ public class TutorController extends AbstractController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    /**
-     * 튜터 탈퇴
-     */
     @ApiOperation("튜터 탈퇴")
     @DeleteMapping
     public ResponseEntity quitTutor(@CurrentUser User user) {
@@ -150,9 +125,6 @@ public class TutorController extends AbstractController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    /**
-     * Career 리스트
-     */
     @ApiOperation("튜터의 Career 리스트")
     @GetMapping("/{tutor_id}/careers")
     public ResponseEntity getCareers(@PathVariable(name = "tutor_id") Long tutorId) {
@@ -166,9 +138,6 @@ public class TutorController extends AbstractController {
         return new ResponseEntity(careers, HttpStatus.OK);
     }
 
-    /**
-     * Education 리스트
-     */
     @ApiOperation("튜터의 Education 리스트")
     @GetMapping("/{tutor_id}/educations")
     public ResponseEntity getEducations(@PathVariable(name = "tutor_id") Long tutorId) {
@@ -255,27 +224,72 @@ public class TutorController extends AbstractController {
         return new ResponseEntity(reviews, HttpStatus.OK);
     }
 
+    @ApiOperation("등록 강의별 리뷰 개별 조회")
+    @GetMapping("/my-lectures/{lecture_id}/reviews/{review_id}")
+    public ResponseEntity getReviewOfLecture(@CurrentUser User user,
+                                             @PathVariable(name = "lecture_id") Long lectureId,
+                                             @PathVariable(name = "review_id") Long reviewId) {
+
+        // TODO - CHECK : 조회도 Service Layer에서?
+        Tutor tutor = tutorRepository.findByUser(user);
+        if (tutor == null) {
+            throw new UnauthorizedException();
+        }
+
+        Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
+
+        Review review = reviewRepository.findByLectureAndId(lecture, reviewId)
+                .orElseThrow(() -> new EntityNotFoundException(REVIEW));
+
+        return new ResponseEntity(new ReviewDto(review), HttpStatus.OK);
+    }
+
     @ApiOperation("튜터 리뷰 작성")
     @PostMapping("/my-lectures/{lecture_id}/reviews/{parent_id}")
     public ResponseEntity newReview(@CurrentUser User user,
                                     @PathVariable(name = "lecture_id") Long lectureId,
                                     @PathVariable(name = "parent_id") Long parentId,
-                                    @RequestBody @Valid ReviewCreateRequest reviewCreateRequest) {
+                                    @RequestBody @Valid TutorReviewCreateRequest tutorReviewCreateRequest) {
 
-        return null;
+        Tutor tutor = tutorRepository.findByUser(user);
+        if (tutor == null) {
+            throw new UnauthorizedException();
+        }
+        Review review = reviewService.createTutorReview(tutor, lectureId, parentId, tutorReviewCreateRequest);
+        return new ResponseEntity(new ReviewDto(review), HttpStatus.CREATED);
     }
 
-//    @ApiOperation("튜터 리뷰 수정")
-//    @PutMapping("/my-lectures/{lecture_id}/reviews/{parent_id}/{review_id}")
-//    public ResponseEntity newReview() {
-//
-//    }
-//
-//    @ApiOperation("튜터 리뷰 삭제")
-//    @DeleteMapping("/my-lectures/{lecture_id}/reviews/{parent_id}/{review_id}")
-//    public ResponseEntity newReview() {
-//
-//    }
+    @ApiOperation("튜터 리뷰 수정")
+    @PutMapping("/my-lectures/{lecture_id}/reviews/{parent_id}/children/{review_id}")
+    public ResponseEntity editReview(@CurrentUser User user,
+                                    @PathVariable(name = "lecture_id") Long lectureId,
+                                    @PathVariable(name = "parent_id") Long parentId,
+                                    @PathVariable(name = "review_id") Long reviewId,
+                                    @RequestBody @Valid TutorReviewUpdateRequest tutorReviewUpdateRequest) {
+
+        Tutor tutor = tutorRepository.findByUser(user);
+        if (tutor == null) {
+            throw new UnauthorizedException();
+        }
+        reviewService.updateTutorReview(tutor, lectureId, parentId, reviewId, tutorReviewUpdateRequest);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @ApiOperation("튜터 리뷰 삭제")
+    @DeleteMapping("/my-lectures/{lecture_id}/reviews/{parent_id}/children/review_id}")
+    public ResponseEntity deleteReview(@CurrentUser User user,
+                                    @PathVariable(name = "lecture_id") Long lectureId,
+                                    @PathVariable(name = "parent_id") Long parentId,
+                                    @PathVariable(name = "review_id") Long reviewId) {
+
+        Tutor tutor = tutorRepository.findByUser(user);
+        if (tutor == null) {
+            throw new UnauthorizedException();
+        }
+        reviewService.deleteTutorReview(tutor, lectureId, parentId, reviewId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     @ApiOperation("채팅방 전체 조회 - 페이징")
     @GetMapping("/my-chatrooms")
@@ -290,7 +304,11 @@ public class TutorController extends AbstractController {
         // TODO - CHECK : Fetch join
         Page<ChatroomController.ChatroomDto> chatrooms = chatroomRepository.findByTutor(tutor,
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
-                .map(chatroom -> new ChatroomController.ChatroomDto(chatroom));
+                .map(chatroom -> {
+                    ChatroomController.ChatroomDto chatroomDto = new ChatroomController.ChatroomDto(chatroom);
+                    chatroomDto.setLastMessage(messageRepository.findFirstByChatroomIdOrderByIdDesc(chatroom.getId()));
+                    return chatroomDto;
+                });
         return new ResponseEntity(chatrooms, HttpStatus.OK);
     }
 

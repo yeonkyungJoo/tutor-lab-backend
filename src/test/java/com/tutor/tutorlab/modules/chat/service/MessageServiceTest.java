@@ -21,10 +21,6 @@ class MessageServiceTest {
 
     @Test
     void getMessages() {
-
-        List<Message> messages = messageRepository.findAllByChatroomId(1L);
-        Integer count = messageRepository.countAllByChatroomId(1L);
-        System.out.println(count);
     }
 
     @Test

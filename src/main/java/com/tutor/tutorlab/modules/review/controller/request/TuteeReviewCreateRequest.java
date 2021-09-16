@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-public class ReviewCreateRequest {
+public class TuteeReviewCreateRequest {
 
     @Min(0) @Max(5)
     @NotNull
@@ -21,7 +21,7 @@ public class ReviewCreateRequest {
     private String content;
 
     @Builder
-    public ReviewCreateRequest(@Min(0) @Max(5) @NotNull Integer score, @NotBlank String content) {
+    public TuteeReviewCreateRequest(@Min(0) @Max(5) @NotNull Integer score, @NotBlank String content) {
         this.score = score;
         this.content = content;
     }

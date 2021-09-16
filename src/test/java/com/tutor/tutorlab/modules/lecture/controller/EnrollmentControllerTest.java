@@ -90,7 +90,6 @@ class EnrollmentControllerTest {
 
         LectureSubject lectureSubject = LectureSubject.builder()
                 .parent("개발")
-                .enSubject("java")
                 .krSubject("자바")
                 .build();
 
