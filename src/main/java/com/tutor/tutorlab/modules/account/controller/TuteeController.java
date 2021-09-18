@@ -9,7 +9,9 @@ import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.chat.controller.ChatroomController;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
+import com.tutor.tutorlab.modules.chat.repository.MessageRepository;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
+import com.tutor.tutorlab.modules.chat.vo.Message;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
@@ -37,6 +39,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.List;
+
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.REVIEW;
 
@@ -58,6 +62,8 @@ public class TuteeController extends AbstractController {
 
     private final ChatroomRepository chatroomRepository;
     private final PickRepository pickRepository;
+
+    private final MessageRepository messageRepository;
 
     // TODO - 검색
     @ApiOperation("튜티 전체 조회 - 페이징")
@@ -209,11 +215,13 @@ public class TuteeController extends AbstractController {
     @GetMapping("/my-chatrooms/{chatroom_id}")
     public ResponseEntity getChatroom(@CurrentUser User user,
                                       @PathVariable(name = "chatroom_id") Long chatroomId) {
+        List<Message> message = messageRepository.findAllByChatroomId(chatroomId);
 
-        Chatroom chatroom = chatroomRepository.findById(chatroomId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 채팅방입니다."));
-        return new ResponseEntity(new ChatroomController.ChatroomDto(chatroom), HttpStatus.OK);
+//        Chatroom chatroom = chatroomRepository.findById(chatroomId)
+//                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 채팅방입니다."));
+        return new ResponseEntity(message,HttpStatus.OK);
     }
+
 
     @ApiOperation("장바구니 조회 - 페이징")
     @GetMapping("/my-picks")
