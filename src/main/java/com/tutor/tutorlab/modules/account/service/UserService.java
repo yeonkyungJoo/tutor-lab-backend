@@ -31,6 +31,7 @@ public class UserService {
         user.setNickname(userUpdateRequest.getNickname());
         user.setBio(userUpdateRequest.getBio());
         user.setZone(userUpdateRequest.getZone());
+        user.setImage(userUpdateRequest.getImage());
     }
 
     // TODO - Admin인 경우

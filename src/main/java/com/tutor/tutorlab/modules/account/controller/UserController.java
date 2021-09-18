@@ -36,20 +36,7 @@ public class UserController extends AbstractController {
     private final NotificationRepository notificationRepository;
     private final NotificationService notificationService;
 
-/*
-    @ApiOperation("회원 전체 조회")
-    @GetMapping
-    public ResponseEntity getUsers() {
-
-        List<UserDto> users = userRepository.findAll().stream()
-                .map(user -> new UserDto(user))
-                .collect(Collectors.toList());
-        return new ResponseEntity(users, HttpStatus.OK);
-    }
-*/
-
     // TODO - 검색
-    // 페이징
     @ApiOperation("회원 전체 조회 - 페이징")
     @GetMapping
     public ResponseEntity getUsers(@RequestParam(defaultValue = "1") Integer page) {

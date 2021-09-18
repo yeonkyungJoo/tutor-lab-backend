@@ -30,13 +30,16 @@ public class SignUpOAuthDetailRequest {
     @ApiModelProperty(value = "지역", example = "서울특별시 강남구", required = false)
     private String zone;
 
+    private String image;
+
     @Builder
-    public SignUpOAuthDetailRequest(String gender, String phoneNumber, @Email String email, String nickname, String bio, String zone) {
+    public SignUpOAuthDetailRequest(String gender, String phoneNumber, @Email String email, String nickname, String bio, String zone, String image) {
         this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.nickname = nickname;
         this.bio = bio;
         this.zone = zone;
+        this.image = image;
     }
 }

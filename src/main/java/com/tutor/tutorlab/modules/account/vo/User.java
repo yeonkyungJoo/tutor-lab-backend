@@ -36,6 +36,8 @@ public class User extends BaseEntity {
     private String email;
     private String nickname;
 
+    private String image;       // 프로필 이미지
+
     @Lob
     private String bio;         // 소개글
 
@@ -57,8 +59,8 @@ public class User extends BaseEntity {
     // TODO - Notification과 양방향
 
     @Builder
-    public User(String username, String password, String name, String gender, String phoneNumber, String email, String nickname, String bio, String zone, RoleType role,
-                OAuthType provider, String providerId) {
+    public User(String username, String password, String name, String gender, String phoneNumber, String email, String nickname, String bio, String zone, String image,
+                RoleType role, OAuthType provider, String providerId) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -68,6 +70,7 @@ public class User extends BaseEntity {
         this.nickname = nickname;
         this.bio = bio;
         this.zone = zone;
+        this.image = image;
         this.role = role;
         this.provider = provider;
         this.providerId = providerId;

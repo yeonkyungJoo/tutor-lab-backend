@@ -9,6 +9,7 @@ import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.chat.controller.ChatroomController;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
+import com.tutor.tutorlab.modules.chat.repository.MessageRepository;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
@@ -58,6 +59,8 @@ public class TuteeController extends AbstractController {
 
     private final ChatroomRepository chatroomRepository;
     private final PickRepository pickRepository;
+
+    private final MessageRepository messageRepository;
 
     // TODO - 검색
     @ApiOperation("튜티 전체 조회 - 페이징")
@@ -201,7 +204,11 @@ public class TuteeController extends AbstractController {
         // TODO - CHECK : Fetch join
         Page<ChatroomController.ChatroomDto> chatrooms = chatroomRepository.findByTutee(tutee,
                 PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
-                .map(chatroom -> new ChatroomController.ChatroomDto(chatroom));
+                .map(chatroom -> {
+                    ChatroomController.ChatroomDto chatroomDto = new ChatroomController.ChatroomDto(chatroom);
+                    chatroomDto.setLastMessage(messageRepository.findFirstByChatroomIdOrderByIdDesc(chatroom.getId()));
+                    return chatroomDto;
+                });
         return new ResponseEntity(chatrooms, HttpStatus.OK);
     }
 

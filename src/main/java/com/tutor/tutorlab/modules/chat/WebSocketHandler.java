@@ -6,6 +6,7 @@ import com.tutor.tutorlab.modules.chat.service.MessageService;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.chat.vo.Message;
 import com.tutor.tutorlab.utils.JsonUtil;
+import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
@@ -99,7 +100,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
         msg.setSessionId(session.getId());
         msg.setMessage((String) object.get("message"));
         msg.setUsername((String) object.get("username"));
-        msg.setSentAt(LocalDateTime.now());
+        // msg.setSentAt(LocalDateTime.now());
+        msg.setSentAt(LocalDateTimeUtil.getDateTimeToString(LocalDateTime.now()));
         messageService.saveMessage(msg);
     }
 

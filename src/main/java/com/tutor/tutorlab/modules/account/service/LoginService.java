@@ -196,6 +196,7 @@ public class LoginService {
         user.setNickname(signUpOAuthDetailRequest.getNickname());
         user.setBio(signUpOAuthDetailRequest.getBio());
         user.setZone(signUpOAuthDetailRequest.getZone());
+        user.setImage(signUpOAuthDetailRequest.getImage());
     }
 
     public Tutee signUp(SignUpRequest signUpRequest) {
@@ -215,6 +216,7 @@ public class LoginService {
                 .nickname(signUpRequest.getNickname())
                 .bio(signUpRequest.getBio())
                 .zone(signUpRequest.getZone())
+                .image(signUpRequest.getImage())
                 .role(RoleType.ROLE_TUTEE)
                 .provider(null)
                 .providerId(null)

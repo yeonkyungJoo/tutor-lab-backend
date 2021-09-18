@@ -1,6 +1,9 @@
 package com.tutor.tutorlab.modules.chat.controller;
 
 import com.tutor.tutorlab.modules.account.controller.AbstractController;
+import com.tutor.tutorlab.modules.account.vo.Tutee;
+import com.tutor.tutorlab.modules.account.vo.Tutor;
+import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.chat.repository.MessageRepository;
 import com.tutor.tutorlab.modules.chat.service.ChatroomService;
 import com.tutor.tutorlab.modules.chat.service.MessageService;
@@ -31,13 +34,21 @@ public class ChatroomController extends AbstractController {
 
         public ChatroomDto(Chatroom chatroom) {
             this.chatroomId = chatroom.getId();
-            this.tutorName = chatroom.getTutor().getUser().getName();
-            this.tuteeName = chatroom.getTutee().getUser().getName();
+            this.lectureTitle = chatroom.getEnrollment().getLecture().getTitle();
+            this.tutorId = chatroom.getTutor().getUser().getId();
+            this.tutorImage = chatroom.getTutor().getUser().getImage();
+            this.tuteeId = chatroom.getTutee().getUser().getId();
+            this.tuteeImage = chatroom.getTutee().getUser().getImage();
         }
 
         private Long chatroomId;
-        private String tutorName;
-        private String tuteeName;
+        // private User tutor;
+        // private User tutee;
+        private String lectureTitle;
+        private Long tutorId;
+        private String tutorImage;
+        private Long tuteeId;
+        private String tuteeImage;
         private Message lastMessage;
     }
 

@@ -25,5 +25,6 @@ public class Message {
     private String sessionId;
     private String username;
     private String message;
-    private LocalDateTime sentAt;
+    // private LocalDateTime sentAt;
+    private String sentAt;
 }
