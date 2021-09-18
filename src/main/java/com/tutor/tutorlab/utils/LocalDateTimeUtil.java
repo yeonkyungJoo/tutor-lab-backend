@@ -23,7 +23,7 @@ public class LocalDateTimeUtil {
         if (dateTime == null) {
             return StringUtils.EMPTY;
         }
-        return dateTime.format(DateTimeFormatter.ISO_DATE);
+        return dateTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
     // parse
