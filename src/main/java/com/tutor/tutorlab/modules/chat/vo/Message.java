@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.time.LocalDateTime;
 
 @Document(collection = "messages")
 @Getter
@@ -24,5 +25,5 @@ public class Message {
     private String sessionId;
     private String username;
     private String message;
-
+    private LocalDateTime sentAt;
 }

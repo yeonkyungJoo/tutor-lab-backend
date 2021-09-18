@@ -16,6 +16,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -98,6 +99,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         msg.setSessionId(session.getId());
         msg.setMessage((String) object.get("message"));
         msg.setUsername((String) object.get("username"));
+        msg.setSentAt(LocalDateTime.now());
         messageService.saveMessage(msg);
     }
 
