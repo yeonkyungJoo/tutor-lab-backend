@@ -158,4 +158,23 @@ public class LoginController extends AbstractController {
         return headers;
     }
 
+    // 계정 인증
+    // TODO - CHECK : GET vs POST
+    @ApiIgnore
+    @GetMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestParam(name = "email") String email,
+                                         @RequestParam(name = "token") String token) {
+        log.info("email : {}, token : {}", email, token);
+        loginService.verifyEmail(email, token);
+        return ResponseEntity.ok(null);
+    }
+
+    // 비밀번호 찾기
+    @ApiOperation("비밀번호 찾기")
+    @GetMapping("/find-password")
+    public ResponseEntity<?> findPassword(@RequestParam(name = "username", required = true) String username) {
+        loginService.findPassword(username);
+        return ResponseEntity.ok(null);
+    }
+
 }

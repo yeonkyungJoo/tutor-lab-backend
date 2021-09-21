@@ -9,13 +9,8 @@ import lombok.NoArgsConstructor;
 public class EmailMessage {
 
     private String to;
-    private String from;
-    private String message;
+    // private String from;
+    private String subject;   // title
+    private String content;
 
-    @Builder
-    public EmailMessage(String to, String from, String message) {
-        this.to = to;
-        this.from = from;
-        this.message = message;
-    }
 }

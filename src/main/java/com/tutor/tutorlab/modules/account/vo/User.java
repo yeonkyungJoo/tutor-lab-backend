@@ -5,13 +5,15 @@ import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
-import org.hibernate.annotations.Where;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 // TODO - @Where 사용
 // @Where(clause = "deleted = false")
+// @Where(clause = "emailVerified = true")
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Getter @Setter
@@ -53,6 +55,10 @@ public class User extends BaseEntity {
     private OAuthType provider;
     private String providerId;
 
+    private boolean emailVerified = false;
+    private String emailVerifyToken;
+    private LocalDateTime emailVerifiedAt;
+
     private boolean deleted = false;
     private LocalDateTime deletedAt;
 
@@ -81,4 +87,21 @@ public class User extends BaseEntity {
         setDeletedAt(LocalDateTime.now());
     }
 
+    // TODO - CHECK : pre or post
+    @PrePersist
+    public void generateEmailVerifyToken() {
+        this.emailVerifyToken = UUID.randomUUID().toString();
+    }
+
+    public void verifyEmail() {
+        if (isEmailVerified()) {
+            // TODO - 예외
+        }
+        setEmailVerified(true);
+        setEmailVerifiedAt(LocalDateTime.now());
+    }
+
+/*    public void generateRandomPassword(int count) {
+        setPassword(RandomStringUtils.randomAlphanumeric(count));
+    }*/
 }

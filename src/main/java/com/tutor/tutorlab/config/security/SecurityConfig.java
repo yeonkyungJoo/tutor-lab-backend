@@ -36,27 +36,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            http
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .httpBasic().disable()
-            .formLogin().disable()
+                .httpBasic().disable()
+                .formLogin().disable()
 
-            .authorizeRequests()
-            //.antMatchers("/swagger-ui/**", "/swagger-ui.html/**", "/swagger-resources/**", "/v2/**", "/webjars/**").permitAll()
-            // TODO - CHECK : 테스트 코드
-            //.antMatchers("/login", "/sign-up/**", "/oauth/**").permitAll()
-            .antMatchers("/**").permitAll()
-            .antMatchers("/addresses/**", "/subjects/**").permitAll()
-            .antMatchers("/sign-up/oauth/detail").authenticated()
-            .antMatchers(HttpMethod.POST, "/**").authenticated()
-            .antMatchers(HttpMethod.PUT, "/**").authenticated()
-            .antMatchers(HttpMethod.DELETE, "/**").authenticated()
+                .authorizeRequests()
+                //.antMatchers("/swagger-ui/**", "/swagger-ui.html/**", "/swagger-resources/**", "/v2/**", "/webjars/**").permitAll()
+                // TODO - CHECK : 테스트 코드
+                //.antMatchers("/login", "/sign-up/**", "/oauth/**").permitAll()
+                .antMatchers("/**").permitAll()
+                .antMatchers("/addresses/**", "/subjects/**").permitAll()
+                .antMatchers("/sign-up/oauth/detail").authenticated()
+                .antMatchers(HttpMethod.POST, "/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/**").authenticated()
             .and()
-            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-            ;
-            // .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+            .and()
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
             // .oauth2Login();
     }
 }

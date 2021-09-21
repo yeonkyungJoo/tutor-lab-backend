@@ -16,6 +16,8 @@ import com.tutor.tutorlab.config.security.oauth.provider.kakao.KakaoResponse;
 import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverInfo;
 import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverOAuth;
 import com.tutor.tutorlab.config.security.oauth.provider.naver.NaverResponse;
+import com.tutor.tutorlab.mail.EmailMessage;
+import com.tutor.tutorlab.mail.EmailService;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
@@ -27,6 +29,7 @@ import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.security.authentication.*;
@@ -36,9 +39,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
 
 @Slf4j
 @Service
@@ -55,6 +63,9 @@ public class LoginService {
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenManager jwtTokenManager;
+
+    private final EmailService emailService;
+    private final TemplateEngine templateEngine;
 
     private boolean checkUsernameDuplication(String username) {
         boolean duplicated = false;
@@ -222,8 +233,51 @@ public class LoginService {
                 .providerId(null)
                 .build();
 
+        // TODO - email-verify
+        User unverified = userRepository.save(user);
+        // TODO - builder
+//        EmailMessage emailMessage = new EmailMessage();
+//        emailMessage.setTo(unverified.getUsername());
+//        emailMessage.setSubject("Welcome to TUTORLAB, please verify your email!");
+//        // emailMessage.setContent("Welcome! We recently received a request to create an account. To verify that you made this request, we're sending this confirmation email.");
+//        emailMessage.setContent("/verifyEmail?email=" + unverified.getUsername() + "&token=" + unverified.getEmailVerifyToken());
+//        emailService.send(emailMessage);
+
+
+        Map<String, Object> variables = new HashMap<>();
+        // TODO - 상수
+        variables.put("host", "http://localhost:8080");
+        variables.put("link", "/verify-email?email=" + unverified.getUsername() + "&token=" + unverified.getEmailVerifyToken());
+        variables.put("content", "Welcome! We recently received a request to create an account. To verify that you made this request, we're sending this confirmation email.");
+        String content = templateEngine.process("verify-email", getContext(variables));
+        
+        // TODO - 상수
+        sendEmail(unverified.getUsername(), "Welcome to TUTORLAB, please verify your email!", content);
+
+        // TODO - CHECK : 튜티 생성?
         Tutee tutee = new Tutee(user);
         return tuteeRepository.save(tutee);
+    }
+
+    // TODO
+    private Context getContext(Map<String, Object> variables) {
+
+        Context context = new Context();
+
+        Iterator<Map.Entry<String, Object>> iterator = variables.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Object> variable = iterator.next();
+            context.setVariable(variable.getKey(), variable.getValue());
+        }
+        return context;
+    }
+
+    private void sendEmail(String to, String subject, String content) {
+        EmailMessage emailMessage = new EmailMessage();
+        emailMessage.setTo(to);
+        emailMessage.setSubject(subject);
+        emailMessage.setContent(content);
+        emailService.send(emailMessage);
     }
 
     private Authentication authenticate(String username, String password) {
@@ -268,6 +322,38 @@ public class LoginService {
 
     public Map<String, String> login(LoginRequest request) {
         return this.login(request.getUsername(), request.getPassword());
+    }
+
+    public void verifyEmail(String email, String token) {
+
+        User user = userRepository.findByUsername(email);
+        if (token.equals(user.getEmailVerifyToken())) {
+            user.verifyEmail();
+        }
+    }
+
+    public void findPassword(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new EntityNotFoundException(USER);
+        }
+        // 랜덤 비밀번호로 변경
+        String randomPassword = generateRandomPassword(10);
+        user.setPassword(bCryptPasswordEncoder.encode(randomPassword));
+
+        // 랜덤 비밀번호가 담긴 이메일 전송
+        Map<String, Object> variables = new HashMap<>();
+        // TODO - 상수
+        variables.put("host", "http://localhost:8080");
+        variables.put("password", randomPassword);
+        String content = templateEngine.process("find-password", getContext(variables));
+
+        // TODO - 상수
+        sendEmail(user.getUsername(), "Welcome to TUTORLAB, find your password!", content);
+    }
+
+    public String generateRandomPassword(int count) {
+        return RandomStringUtils.randomAlphanumeric(count);
     }
 
 }

@@ -71,6 +71,9 @@ dependencies {
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
 	implementation 'com.querydsl:querydsl-jpa'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 //querydsl 추가 시작

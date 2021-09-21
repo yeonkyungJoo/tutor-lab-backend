@@ -12,8 +12,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Transactional
+// @Transactional
 @AutoConfigureMockMvc(addFilters = false)
-@SpringBootTest(properties = {"spring.config.location=classpath:application-test.yml"})
+// @SpringBootTest(properties = {"spring.config.location=classpath:application-test.yml"})
+@SpringBootTest
 public @interface MockMvcTest {
 }

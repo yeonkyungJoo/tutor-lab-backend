@@ -6,6 +6,7 @@ import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+// @SpringBootTest
 class LoginServiceTest {
 
     @Autowired
@@ -117,5 +118,11 @@ class LoginServiceTest {
         Assertions.assertThrows(AlreadyExistException.class, () -> {
             loginService.signUp(signUpRequest);
         });
+    }
+
+    @Test
+    public void random() {
+        String random = RandomStringUtils.randomAlphanumeric(10);
+        System.out.println(random);
     }
 }
