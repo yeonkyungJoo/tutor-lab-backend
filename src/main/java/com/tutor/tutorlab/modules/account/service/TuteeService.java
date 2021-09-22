@@ -30,7 +30,7 @@ public class TuteeService {
 
     public void deleteTutee(User user) {
 
-        if (user.getRole() != RoleType.ROLE_TUTEE) {
+        if (user.getRole() != RoleType.TUTEE) {
             throw new UnauthorizedException();
         }
 

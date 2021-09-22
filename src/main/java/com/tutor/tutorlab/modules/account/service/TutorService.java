@@ -32,7 +32,7 @@ public class TutorService {
 
     public Tutor createTutor(User user, TutorSignUpRequest tutorSignUpRequest) {
 
-        user.setRole(RoleType.ROLE_TUTOR);
+        user.setRole(RoleType.TUTOR);
         Tutor tutor = Tutor.builder()
                 .user(user)
                 .subjects(tutorSignUpRequest.getSubjects())
@@ -81,7 +81,7 @@ public class TutorService {
 
     public void deleteTutor(User user) {
 
-        if (user.getRole() != RoleType.ROLE_TUTOR) {
+        if (user.getRole() != RoleType.TUTOR) {
             throw new UnauthorizedException();
         }
 

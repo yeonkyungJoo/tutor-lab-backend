@@ -21,6 +21,7 @@ public class EntityNotFoundException extends GlobalException {
     @Getter
     @AllArgsConstructor
     public enum EntityType {
+
         USER("존재하지 않는 사용자입니다."),
         TUTEE("존재하지 않는 튜티입니다."),
         TUTOR("존재하지 않는 튜터입니다."),

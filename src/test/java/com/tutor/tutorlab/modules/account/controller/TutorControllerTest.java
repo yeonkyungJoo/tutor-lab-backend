@@ -132,7 +132,7 @@ class TutorControllerTest {
         assertNotNull(tutor);
 
         // Role
-        assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+        assertEquals(RoleType.TUTOR, user.getRole());
 
         assertEquals(2, tutor.getSubjectList().size());
         assertEquals(1, tutor.getCareers().size());
@@ -216,7 +216,7 @@ class TutorControllerTest {
         tutorSignUpRequest.addEducationCreateRequest(educationCreateRequest);
 
         tutorService.createTutor(user, tutorSignUpRequest);
-        assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+        assertEquals(RoleType.TUTOR, user.getRole());
 
         // When
         TutorUpdateRequest tutorUpdateRequest = TutorUpdateRequest.builder()
@@ -288,7 +288,7 @@ class TutorControllerTest {
 
         Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
         Long tutorId = tutor.getId();
-        assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+        assertEquals(RoleType.TUTOR, user.getRole());
 
         // When
         mockMvc.perform(delete("/tutors"))
@@ -299,7 +299,7 @@ class TutorControllerTest {
         assertNull(tutorRepository.findByUser(user));
         assertFalse(tutorRepository.findById(tutorId).isPresent());
 
-        assertEquals(RoleType.ROLE_TUTEE, user.getRole());
+        assertEquals(RoleType.TUTEE, user.getRole());
 
         assertEquals(0, careerRepository.findAll().size());
         assertEquals(0, educationRepository.findAll().size());

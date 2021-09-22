@@ -4,6 +4,7 @@ import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
+import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import java.util.List;
 import static lombok.AccessLevel.PROTECTED;
 
 @Builder
-@Getter
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "lecture_id"))
@@ -28,21 +29,22 @@ public class Lecture extends BaseEntity {
                 foreignKey = @ForeignKey(name = "FK_LECTURE_TUTOR_ID"))
     private Tutor tutor;
 
-    @Column(name = "title", nullable = false, length = 40)
+    @Column(nullable = false, length = 40)
     private String title;
 
-    @Column(name = "sub_title", nullable = false, length = 25)
+    @Column(nullable = false, length = 25)
     private String subTitle;
 
-    @Column(name = "introduce", nullable = false, length = 25)
+    @Column(nullable = false, length = 25)
     private String introduce;
 
-    @Column(name = "content", nullable = false, length = 25)
+    @Column(nullable = false, length = 25)
     private String content;
 
-    @Column(name = "difficulty_type", nullable = false, length = 20)
+    @Column(nullable = false, length = 20)
     private DifficultyType difficultyType;
 
+    // TODO - CHECK : prohannah.tistory.com/133
     @ElementCollection(targetClass = SystemType.class, fetch = FetchType.LAZY)
     @CollectionTable(
             name = "lecture_system_type",
@@ -50,7 +52,7 @@ public class Lecture extends BaseEntity {
                     nullable = false,
                     referencedColumnName = "lecture_id",
                     foreignKey = @ForeignKey(name = "FK_LECTURE_SYSTEM_TYPE_LECTURE_ID"))
-    )
+    )   // cascade = CascadeType.ALL
     private List<SystemType> systemTypes = new ArrayList<>();
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -60,6 +62,9 @@ public class Lecture extends BaseEntity {
     private List<LectureSubject> lectureSubjects = new ArrayList<>();
 
     private String thumbnail;
+
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     public void addSubject(LectureSubject lectureSubject) {
         lectureSubjects.add(lectureSubject);

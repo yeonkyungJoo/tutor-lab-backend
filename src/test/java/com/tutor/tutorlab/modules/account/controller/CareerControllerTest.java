@@ -104,7 +104,7 @@ class CareerControllerTest {
 
 
         Tutor tutor = tutorRepository.findByUser(user);
-        assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+        assertEquals(RoleType.TUTOR, user.getRole());
 
         List<Career> careers = tutor.getCareers();
         assertEquals(1, careers.size());
@@ -258,7 +258,7 @@ class CareerControllerTest {
 
         // Then
         Tutor tutor = tutorRepository.findByUser(user);
-        assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+        assertEquals(RoleType.TUTOR, user.getRole());
 
         List<Career> careers = tutor.getCareers();
         assertEquals(1, careers.size());

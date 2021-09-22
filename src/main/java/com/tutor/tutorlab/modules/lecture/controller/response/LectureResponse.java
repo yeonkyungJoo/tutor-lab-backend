@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class LectureResponse {
 
     private final Long id;
-    // TODO UserResponse 정의해야함.
+    // TODO - UserResponse 정의
     private final String thumbnail;
 
     private final String title;

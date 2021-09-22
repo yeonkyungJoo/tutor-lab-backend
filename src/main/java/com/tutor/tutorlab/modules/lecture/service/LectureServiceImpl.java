@@ -1,13 +1,15 @@
 package com.tutor.tutorlab.modules.lecture.service;
 
+import com.tutor.tutorlab.config.exception.EntityNotFoundException;
+import com.tutor.tutorlab.config.exception.UnauthorizedException;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
-import com.tutor.tutorlab.modules.lecture.enums.SystemType;
-import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstruct;
 import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepositorySupport;
@@ -18,10 +20,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
+import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -36,37 +39,17 @@ public class LectureServiceImpl implements LectureService {
 
 
     @Override
-    public LectureResponse getLecture(Long id) {
-        Lecture lecture = lectureRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 id에 맞는 강의가 없습니다."));
+    public LectureResponse getLecture(Long lectureId) {
+
+        Lecture lecture = lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
         return new LectureResponse(lecture);
-    }
-
-    @Transactional
-    @Override
-    public LectureResponse addLecture(AddLectureRequest addLectureRequest, User user) {
-        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user)).orElseThrow(() -> new RuntimeException("해당 유저는 튜터가 아닙니다."));
-
-        // TODO 유효성 -> 해당 유저의 강의 갯수 제한?
-
-        // TODO 강의 -> 유저 address 정보 넣어줘야함.
-
-        Lecture lecture = buildLecture(addLectureRequest, tutor);
-        for (AddLectureRequest.AddLecturePriceRequest lecturePriceRequest : addLectureRequest.getLecturePrices()) {
-            lecture.addPrice(buildLecturePrice(lecturePriceRequest));
-        }
-
-        for (AddLectureRequest.AddLectureSubjectRequest subjectRequest : addLectureRequest.getSubjects()) {
-            lecture.addSubject(buildLectureSubject(subjectRequest));
-        }
-
-        Lecture savedLecture = lectureRepository.save(lecture);
-        return lectureMapstructUtil.getLectureResponse(savedLecture);
     }
 
     @Override
     public List<LectureResponse> getLectures(LectureListRequest lectureListRequest) {
-        List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest).stream()
-                .map(lecture -> new LectureResponse(lecture))
+        List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest)
+                .stream().map(lecture -> new LectureResponse(lecture))
                 .collect(Collectors.toList());
         return lectures;
     }
@@ -79,16 +62,127 @@ public class LectureServiceImpl implements LectureService {
 //        return lectureMapstruct.lectureToLectureResponse(lecture, prices, systemTypes, subjects);
 //    }
 
-    private LectureSubject buildLectureSubject(AddLectureRequest.AddLectureSubjectRequest subjectRequest) {
+    @Transactional
+    @Override
+    public LectureResponse createLecture(User user, LectureCreateRequest lectureCreateRequest) {
+
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
+
+        // TODO 유효성 -> 해당 유저의 강의 갯수 제한?
+
+        // TODO 강의 -> 유저 address 정보 넣어줘야함.
+
+        Lecture lecture = buildLecture(lectureCreateRequest, tutor);
+        for (LectureCreateRequest.LecturePriceCreateRequest lecturePriceRequest : lectureCreateRequest.getLecturePrices()) {
+            lecture.addPrice(buildLecturePrice(lecturePriceRequest));
+        }
+
+        for (LectureCreateRequest.LectureSubjectCreateRequest subjectRequest : lectureCreateRequest.getSubjects()) {
+            lecture.addSubject(buildLectureSubject(subjectRequest));
+        }
+
+        Lecture savedLecture = lectureRepository.save(lecture);
+        return lectureMapstructUtil.getLectureResponse(savedLecture);
+    }
+
+    @Transactional
+    @Override
+    public void updateLecture(User user, Long lectureId, LectureUpdateRequest lectureUpdateRequest) {
+
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
+
+        Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
+
+        // TODO
+        lecture.getLecturePrices().clear();
+        lecture.getLectureSubjects().clear();
+//        List<LecturePrice> lecturePrices = lecture.getLecturePrices();
+//        for(LecturePrice lecturePrice : lecturePrices) {
+//            lecturePrice.mappingLecture(null);
+//        }
+//
+//        List<LectureSubject> lectureSubjects = lecture.getLectureSubjects();
+//        for(LectureSubject lectureSubject : lectureSubjects) {
+//            lectureSubject.mappingLecture(null);
+//        }
+
+        for (LectureUpdateRequest.LecturePriceUpdateRequest lecturePriceUpdateRequest : lectureUpdateRequest.getLecturePrices()) {
+
+            LecturePrice lecturePrice = LecturePrice.builder()
+                    .isGroup(lecturePriceUpdateRequest.getIsGroup())
+                    .groupNumber(lecturePriceUpdateRequest.getGroupNumber())
+                    .pertimeLecture(lecturePriceUpdateRequest.getPertimeLecture())
+                    .pertimeCost(lecturePriceUpdateRequest.getPertimeCost())
+                    .totalCost(lecturePriceUpdateRequest.getTotalCost())
+                    .totalTime(lecturePriceUpdateRequest.getTotalTime())
+                    .build();
+            lecture.addPrice(lecturePrice);
+        }
+
+        for (LectureUpdateRequest.LectureSubjectUpdateRequest lectureSubjectUpdateRequest : lectureUpdateRequest.getSubjects()) {
+
+            LectureSubject lectureSubject = LectureSubject.builder()
+                    .parent(lectureSubjectUpdateRequest.getParent())
+                    .krSubject(lectureSubjectUpdateRequest.getKrSubject())
+                    .build();
+            lecture.addSubject(lectureSubject);
+        }
+
+        lecture.setThumbnail(lectureUpdateRequest.getThumbnailUrl());
+        lecture.setTitle(lectureUpdateRequest.getTitle());
+        lecture.setSubTitle(lectureUpdateRequest.getSubTitle());
+        lecture.setIntroduce(lectureUpdateRequest.getIntroduce());
+        lecture.setContent(lectureUpdateRequest.getContent());
+        lecture.setDifficultyType(lectureUpdateRequest.getDifficulty());
+        lecture.setSystemTypes(lectureUpdateRequest.getSystems());
+
+        /*
+        Hibernate: select user0_.user_id as user_id1_17_, user0_.created_at as created_2_17_, user0_.updated_at as updated_3_17_, user0_.bio as bio4_17_, user0_.deleted as deleted5_17_, user0_.deleted_at as deleted_6_17_, user0_.email as email7_17_, user0_.email_verified as email_ve8_17_, user0_.email_verified_at as email_ve9_17_, user0_.email_verify_token as email_v10_17_, user0_.gender as gender11_17_, user0_.image as image12_17_, user0_.name as name13_17_, user0_.nickname as nicknam14_17_, user0_.password as passwor15_17_, user0_.phone_number as phone_n16_17_, user0_.provider as provide17_17_, user0_.provider_id as provide18_17_, user0_.role as role19_17_, user0_.username as usernam20_17_, user0_.zone as zone21_17_ from user user0_ where user0_.username=?
+        Hibernate: select user0_.user_id as user_id1_17_, user0_.created_at as created_2_17_, user0_.updated_at as updated_3_17_, user0_.bio as bio4_17_, user0_.deleted as deleted5_17_, user0_.deleted_at as deleted_6_17_, user0_.email as email7_17_, user0_.email_verified as email_ve8_17_, user0_.email_verified_at as email_ve9_17_, user0_.email_verify_token as email_v10_17_, user0_.gender as gender11_17_, user0_.image as image12_17_, user0_.name as name13_17_, user0_.nickname as nicknam14_17_, user0_.password as passwor15_17_, user0_.phone_number as phone_n16_17_, user0_.provider as provide17_17_, user0_.provider_id as provide18_17_, user0_.role as role19_17_, user0_.username as usernam20_17_, user0_.zone as zone21_17_ from user user0_ where user0_.username=?
+        Hibernate: select tutor0_.tutor_id as tutor_id1_15_, tutor0_.created_at as created_2_15_, tutor0_.updated_at as updated_3_15_, tutor0_.specialist as speciali4_15_, tutor0_.subjects as subjects5_15_, tutor0_.user_id as user_id6_15_ from tutor tutor0_ where tutor0_.user_id=?
+        Hibernate: select lecture0_.lecture_id as lecture_1_6_, lecture0_.created_at as created_2_6_, lecture0_.updated_at as updated_3_6_, lecture0_.content as content4_6_, lecture0_.difficulty_type as difficul5_6_, lecture0_.introduce as introduc6_6_, lecture0_.sub_title as sub_titl7_6_, lecture0_.thumbnail as thumbnai8_6_, lecture0_.title as title9_6_, lecture0_.tutor_id as tutor_i10_6_ from lecture lecture0_ where lecture0_.tutor_id=? and lecture0_.lecture_id=?
+        Hibernate: select lecturepri0_.lecture_id as lecture10_7_1_, lecturepri0_.lecture_price_id as lecture_1_7_1_, lecturepri0_.lecture_price_id as lecture_1_7_0_, lecturepri0_.created_at as created_2_7_0_, lecturepri0_.updated_at as updated_3_7_0_, lecturepri0_.group_number as group_nu4_7_0_, lecturepri0_.is_group as is_group5_7_0_, lecturepri0_.lecture_id as lecture10_7_0_, lecturepri0_.pertime_cost as pertime_6_7_0_, lecturepri0_.pertime_lecture as pertime_7_7_0_, lecturepri0_.total_cost as total_co8_7_0_, lecturepri0_.total_time as total_ti9_7_0_ from lecture_price lecturepri0_ where lecturepri0_.lecture_id=?
+        Hibernate: select lecturesub0_.lecture_id as lecture_6_8_1_, lecturesub0_.lecture_subject_id as lecture_1_8_1_, lecturesub0_.lecture_subject_id as lecture_1_8_0_, lecturesub0_.created_at as created_2_8_0_, lecturesub0_.updated_at as updated_3_8_0_, lecturesub0_.kr_subject as kr_subje4_8_0_, lecturesub0_.lecture_id as lecture_6_8_0_, lecturesub0_.parent as parent5_8_0_ from lecture_subject lecturesub0_ where lecturesub0_.lecture_id=?
+        Hibernate: insert into lecture_price (created_at, group_number, is_group, lecture_id, pertime_cost, pertime_lecture, total_cost, total_time) values (?, ?, ?, ?, ?, ?, ?, ?)
+        Hibernate: insert into lecture_subject (created_at, kr_subject, lecture_id, parent) values (?, ?, ?, ?)
+        Hibernate: update lecture set updated_at=?, content=?, difficulty_type=?, introduce=?, sub_title=?, thumbnail=?, title=?, tutor_id=? where lecture_id=?
+        Hibernate: delete from lecture_system_type where lecture_id=?
+        Hibernate: insert into lecture_system_type (lecture_id, system_types) values (?, ?)
+        Hibernate: delete from lecture_price where lecture_price_id=?
+        Hibernate: delete from lecture_subject where lecture_subject_id=?
+         */
+    }
+
+    @Transactional
+    @Override
+    public void deleteLecture(User user, Long lectureId) {
+
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
+
+        Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
+
+        // TODO - CHECK : vs delete(lecture);
+        // lecture_price
+        // lecture_subject
+        // lecture_system_type
+        lectureRepository.delete(lecture);
+        // lectureRepository.deleteById(lectureId);
+    }
+
+    private LectureSubject buildLectureSubject(LectureCreateRequest.LectureSubjectCreateRequest subjectRequest) {
         return LectureSubject.builder()
                 .parent(subjectRequest.getParent())
-//                .enSubject(subjectRequest.getEnSubject())
                 .krSubject(subjectRequest.getKrSubject())
                 .build();
     }
 
-    private LecturePrice buildLecturePrice(AddLectureRequest.AddLecturePriceRequest lecturePriceRequest) {
-        LecturePrice lecturePrice = LecturePrice.builder()
+    private LecturePrice buildLecturePrice(LectureCreateRequest.LecturePriceCreateRequest lecturePriceRequest) {
+        return LecturePrice.builder()
                 .isGroup(lecturePriceRequest.getIsGroup())
                 .groupNumber(lecturePriceRequest.getGroupNumber())
                 .pertimeLecture(lecturePriceRequest.getPertimeLecture())
@@ -96,19 +190,18 @@ public class LectureServiceImpl implements LectureService {
                 .totalCost(lecturePriceRequest.getTotalCost())
                 .totalTime(lecturePriceRequest.getTotalTime())
                 .build();
-        return lecturePrice;
     }
 
-    private Lecture buildLecture(AddLectureRequest addLectureRequest, Tutor tutor) {
+    private Lecture buildLecture(LectureCreateRequest lectureCreateRequest, Tutor tutor) {
         return Lecture.builder()
                 .tutor(tutor)
-                .thumbnail(addLectureRequest.getThumbnailUrl())
-                .title(addLectureRequest.getTitle())
-                .subTitle(addLectureRequest.getSubTitle())
-                .introduce(addLectureRequest.getIntroduce())
-                .content(addLectureRequest.getContent())
-                .difficultyType(addLectureRequest.getDifficulty())
-                .systemTypes(addLectureRequest.getSystems())
+                .thumbnail(lectureCreateRequest.getThumbnailUrl())
+                .title(lectureCreateRequest.getTitle())
+                .subTitle(lectureCreateRequest.getSubTitle())
+                .introduce(lectureCreateRequest.getIntroduce())
+                .content(lectureCreateRequest.getContent())
+                .difficultyType(lectureCreateRequest.getDifficulty())
+                .systemTypes(lectureCreateRequest.getSystems())
                 .lecturePrices(new ArrayList<>())
                 .lectureSubjects(new ArrayList<>())
                 .build();

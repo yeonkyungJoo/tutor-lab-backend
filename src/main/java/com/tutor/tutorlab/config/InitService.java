@@ -11,7 +11,7 @@ import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
-import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
@@ -24,6 +24,7 @@ import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateReq
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
+import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,7 @@ public class InitService {
     private final LectureRepository lectureRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ChatroomRepository chatroomRepository;
+    private final ReviewRepository reviewRepository;
 
     private SignUpRequest getSignUpRequest(String name) {
         return SignUpRequest.builder()
@@ -99,8 +101,8 @@ public class InitService {
         return tutorSignUpRequest;
     }
 
-    private AddLectureRequest.AddLecturePriceRequest getAddLecturePriceRequest(Long pertimeCost, Integer pertimeLecture, Integer totalTime) {
-        return AddLectureRequest.AddLecturePriceRequest.builder()
+    private LectureCreateRequest.LecturePriceCreateRequest getLecturePriceCreateRequest(Long pertimeCost, Integer pertimeLecture, Integer totalTime) {
+        return LectureCreateRequest.LecturePriceCreateRequest.builder()
                 .isGroup(true)
                 .groupNumber(3)
                 .pertimeCost(pertimeCost)
@@ -110,19 +112,19 @@ public class InitService {
                 .build();
     }
 
-    private AddLectureRequest.AddLectureSubjectRequest getAddLectureSubjectRequest(String krSubject) {
-        return AddLectureRequest.AddLectureSubjectRequest.builder()
+    private LectureCreateRequest.LectureSubjectCreateRequest getLectureSubjectCreateRequest(String krSubject) {
+        return LectureCreateRequest.LectureSubjectCreateRequest.builder()
                 .parent("개발")
                 .krSubject(krSubject)
                 .build();
     }
 
-    private AddLectureRequest getAddLectureRequest(String title, Long pertimeCost, Integer pertimeLecture, Integer totalTime, String krSubject) {
+    private LectureCreateRequest getLectureCreateRequest(String title, Long pertimeCost, Integer pertimeLecture, Integer totalTime, String krSubject) {
 
-        AddLectureRequest.AddLecturePriceRequest price1 = getAddLecturePriceRequest(pertimeCost, pertimeLecture, totalTime);
-        AddLectureRequest.AddLectureSubjectRequest subject1 = getAddLectureSubjectRequest(krSubject);
+        LectureCreateRequest.LecturePriceCreateRequest price1 = getLecturePriceCreateRequest(pertimeCost, pertimeLecture, totalTime);
+        LectureCreateRequest.LectureSubjectCreateRequest subject1 = getLectureSubjectCreateRequest(krSubject);
 
-        return AddLectureRequest.builder()
+        return LectureCreateRequest.builder()
                 .thumbnailUrl("https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c")
                 .title(title)
                 .subTitle("소제목")
@@ -172,7 +174,7 @@ public class InitService {
     @Transactional
     void init() {
 
-        /*
+        reviewRepository.deleteAll();
         chatroomRepository.deleteAll();
         enrollmentRepository.deleteAll();
         lectureRepository.deleteAll();
@@ -196,9 +198,9 @@ public class InitService {
         Tutor tutor2 = tutorService.createTutor(user5, getTutorSignUpRequest("go,java", "company2", "engineer", "school2", "science"));
 
         // lecture
-        LectureResponse lectureResponse1 = lectureService.addLecture(getAddLectureRequest("파이썬강의", 1000L, 3, 10, "파이썬"), user4);
-        LectureResponse lectureResponse2 = lectureService.addLecture(getAddLectureRequest("자바강의", 3000L, 3, 10, "자바"), user4);
-        LectureResponse lectureResponse3 = lectureService.addLecture(getAddLectureRequest("자바강의", 2000L, 5, 20, "자바"), user5);
+        LectureResponse lectureResponse1 = lectureService.createLecture(user4, getLectureCreateRequest("파이썬강의", 1000L, 3, 10, "파이썬"));
+        LectureResponse lectureResponse2 = lectureService.createLecture(user4, getLectureCreateRequest("자바강의", 3000L, 3, 10, "자바"));
+        LectureResponse lectureResponse3 = lectureService.createLecture(user5, getLectureCreateRequest("자바강의", 2000L, 5, 20, "자바"));
 
         // enrollment
         // chatroom
@@ -207,16 +209,16 @@ public class InitService {
         enrollmentService.enroll(tutee2, getEnrollmentRequest(1L));
         enrollmentService.enroll(tutee2, getEnrollmentRequest(2L));
         enrollmentService.enroll(tutee3, getEnrollmentRequest(3L));
-        */
+
 
         // review
         User user1 = userRepository.findByName("user1");
-        Tutee tutee1 = tuteeRepository.findByUser(user1);
+        // Tutee tutee1 = tuteeRepository.findByUser(user1);
         User user2 = userRepository.findByName("user2");
-        Tutee tutee2 = tuteeRepository.findByUser(user2);
+        // Tutee tutee2 = tuteeRepository.findByUser(user2);
 
-        User user4 = userRepository.findByName("user4");
-        Tutor tutor1 = tutorRepository.findByUser(user4);
+        // User user4 = userRepository.findByName("user4");
+        // Tutor tutor1 = tutorRepository.findByUser(user4);
 
         Review parent1 = reviewService.createTuteeReview(tutee1, 1L, getTuteeReviewCreateRequest(5, "좋아요"));
         Review child1 = reviewService.createTutorReview(tutor1, 1L, parent1.getId(), getTutorReviewCreateRequest("감사합니다!"));

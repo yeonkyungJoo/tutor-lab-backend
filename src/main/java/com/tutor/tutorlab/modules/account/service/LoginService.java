@@ -175,7 +175,7 @@ public class LoginService {
                 .nickname(null)
                 .bio(null)
                 .zone(null)
-                .role(RoleType.ROLE_TUTEE)
+                .role(RoleType.TUTEE)
                 .provider(oAuthInfo.getProvider())
                 .providerId(oAuthInfo.getProviderId())
                 .build();
@@ -228,7 +228,7 @@ public class LoginService {
                 .bio(signUpRequest.getBio())
                 .zone(signUpRequest.getZone())
                 .image(signUpRequest.getImage())
-                .role(RoleType.ROLE_TUTEE)
+                .role(RoleType.TUTEE)
                 .provider(null)
                 .providerId(null)
                 .build();

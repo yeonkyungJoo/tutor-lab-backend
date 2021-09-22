@@ -6,6 +6,8 @@ import com.tutor.tutorlab.modules.base.Enumerable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import javax.persistence.Converter;
+
 @Getter
 @AllArgsConstructor
 public enum DifficultyType implements Enumerable {

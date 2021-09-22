@@ -18,7 +18,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class AddLectureRequest {
+public class LectureCreateRequest {
 
     @GroupSequence({OrderFirst.class, OrderSecond.class})
     public interface Order {}
@@ -52,23 +52,21 @@ public class AddLectureRequest {
     @Valid
     @Length(min = 1, max = 5, message = "강의방식2는 최소 {min}개 ~ 최대 {max}개만 선택할 수 있습니다.")
     @NotNull(message = "강의방식2를 입력해주세요.")
-    private List<AddLecturePriceRequest> lecturePrices;
+    private List<LecturePriceCreateRequest> lecturePrices;
 
     @Valid
     @Length(min = 1, message = "강의종류를 최소 1개 입력해주세요.")
     @NotNull(message = "강의종류를 입력해주세요.")
-    private List<AddLectureSubjectRequest> subjects;
+    private List<LectureSubjectCreateRequest> subjects;
 
     @Getter
     @Builder
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @NoArgsConstructor
-    public static class AddLectureSubjectRequest {
+    public static class LectureSubjectCreateRequest {
+
         @NotBlank(message = "강의 종류를 입력해주세요.")
         private String parent;
-
-//        @NotBlank(message = "언어를 입력해주세요.")
-//        private String enSubject;
 
         @NotBlank(message = "언어를 입력해주세요.")
         private String krSubject;
@@ -78,7 +76,8 @@ public class AddLectureRequest {
     @Builder
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @NoArgsConstructor
-    public static class AddLecturePriceRequest {
+    public static class LecturePriceCreateRequest {
+
         @NotNull(message = "그룹여부를 선택해주세요.", groups = OrderFirst.class)
         private Boolean isGroup;
 

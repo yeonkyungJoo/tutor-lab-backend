@@ -59,7 +59,7 @@ public class Review extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_REVIEW_PARENT_ID"))
     private Review parent;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Review> children = new ArrayList<>();
 
     public void addChild(Review review) {

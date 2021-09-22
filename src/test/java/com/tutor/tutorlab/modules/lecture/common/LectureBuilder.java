@@ -1,6 +1,6 @@
 package com.tutor.tutorlab.modules.lecture.common;
 
-import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
@@ -8,15 +8,11 @@ import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import java.util.List;
 
 public class LectureBuilder {
-    public static AddLectureRequest.AddLecturePriceRequest getAddLecturePriceRequest(
-            Boolean isGroup,
-            Integer groupNumber,
-            Long pertimeCost,
-            Integer pertimeLecture,
-            Long totalCost,
-            Integer totalTime
-    ) {
-        AddLectureRequest.AddLecturePriceRequest price = AddLectureRequest.AddLecturePriceRequest.builder()
+
+    public static LectureCreateRequest.LecturePriceCreateRequest getLecturePriceCreateRequest(
+            Boolean isGroup, Integer groupNumber, Long pertimeCost, Integer pertimeLecture, Long totalCost, Integer totalTime) {
+
+        return LectureCreateRequest.LecturePriceCreateRequest.builder()
                 .isGroup(isGroup)
                 .groupNumber(groupNumber)
                 .pertimeCost(pertimeCost)
@@ -24,26 +20,18 @@ public class LectureBuilder {
                 .totalCost(totalCost)
                 .totalTime(totalTime)
                 .build();
-        return price;
     }
 
-    public static AddLectureRequest.AddLectureSubjectRequest getAddLectureSubjectRequest(
-            String parent,
-            String krSubject
-    ) {
-        return AddLectureRequest.AddLectureSubjectRequest.builder()
+    public static LectureCreateRequest.LectureSubjectCreateRequest getLectureSubjectCreateRequest(String parent, String krSubject) {
+        return LectureCreateRequest.LectureSubjectCreateRequest.builder()
                 .parent(parent)
                 .krSubject(krSubject)
                 .build();
     }
 
     public static LectureListRequest getLectureListRequest(
-            List<String> parents,
-            List<String> subjects,
-            List<DifficultyType> difficultyTypes,
-            List<SystemType> systemTypes,
-            boolean isGroup
-    ) {
+            List<String> parents, List<String> subjects, List<DifficultyType> difficultyTypes, List<SystemType> systemTypes, boolean isGroup) {
+
         return LectureListRequest.builder()
                 .parents(parents)
                 .subjects(subjects)

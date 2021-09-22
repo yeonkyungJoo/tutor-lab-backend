@@ -4,9 +4,9 @@ import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.AbstractController;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
-import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
@@ -23,6 +23,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.REVIEW;
@@ -44,9 +46,29 @@ public class LectureController extends AbstractController {
 
     @ApiOperation("강의 등록")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity addLecture(@CurrentUser User user,
-                                     @RequestBody @Validated(AddLectureRequest.Order.class) AddLectureRequest addLectureRequest) {
-        return new ResponseEntity(lectureService.addLecture(addLectureRequest, user), HttpStatus.CREATED);
+    public ResponseEntity newLecture(@CurrentUser User user,
+                                     @RequestBody @Validated(LectureCreateRequest.Order.class) LectureCreateRequest lectureCreateRequest) {
+        return new ResponseEntity(lectureService.createLecture(user, lectureCreateRequest), HttpStatus.CREATED);
+    }
+
+    // TODO
+    @ApiOperation("강의 수정")
+    @PutMapping("/{lecture_id}")
+    public ResponseEntity<?> editLecture(@CurrentUser User user,
+                                         @PathVariable(name = "lecture_id") Long lectureId,
+                                         // TODO
+                                         @RequestBody @Valid LectureUpdateRequest lectureUpdateRequest) {
+        lectureService.updateLecture(user, lectureId, lectureUpdateRequest);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    // TODO
+    @ApiOperation("강의 삭제")
+    @DeleteMapping("/{lecture_id}")
+    public ResponseEntity<?> deleteLecture(@CurrentUser User user,
+                                           @PathVariable(name = "lecture_id") Long lectureId) {
+        lectureService.deleteLecture(user, lectureId);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     // TODO

@@ -4,7 +4,7 @@
 //import com.tutor.tutorlab.modules.account.repository.UserRepository;
 //import com.tutor.tutorlab.modules.account.vo.User;
 //import com.tutor.tutorlab.modules.lecture.common.LectureBuilder;
-//import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
+//import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 //import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 //import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 //import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
@@ -47,13 +47,13 @@
 //    void 강의등록_테스트() throws Exception {
 //        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("테스트 실패, 유저 없음."));
 //
-//        AddLectureRequest.AddLecturePriceRequest price1 = LectureBuilder.getAddLecturePriceRequest(true, 3, 1000L, 3, 3000L, 10);
-//        AddLectureRequest.AddLecturePriceRequest price2 = LectureBuilder.getAddLecturePriceRequest(false, 3, 1000L, 3, 30000L, 10);
+//        LectureCreateRequest.AddLecturePriceRequest price1 = LectureBuilder.getAddLecturePriceRequest(true, 3, 1000L, 3, 3000L, 10);
+//        LectureCreateRequest.AddLecturePriceRequest price2 = LectureBuilder.getAddLecturePriceRequest(false, 3, 1000L, 3, 30000L, 10);
 //
-//        AddLectureRequest.AddLectureSubjectRequest subject1 = LectureBuilder.getAddLectureSubjectRequest("개발", "java", "자바");
-//        AddLectureRequest.AddLectureSubjectRequest subject2 = LectureBuilder.getAddLectureSubjectRequest("개발", "javascript", "자바스크립트");
+//        LectureCreateRequest.AddLectureSubjectRequest subject1 = LectureBuilder.getAddLectureSubjectRequest("개발", "java", "자바");
+//        LectureCreateRequest.AddLectureSubjectRequest subject2 = LectureBuilder.getAddLectureSubjectRequest("개발", "javascript", "자바스크립트");
 //
-//        AddLectureRequest param = AddLectureRequest.builder()
+//        LectureCreateRequest param = LectureCreateRequest.builder()
 //                .thumbnailUrl("https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c")
 //                .title("제목입니다.")
 //                .subTitle("소제목입니다.")

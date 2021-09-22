@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+
 @Service
 @Transactional(readOnly = false)
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class UserService {
         // TODO - check : GrantedAuthority
         RoleType role = user.getRole();
 
-        if (role == RoleType.ROLE_TUTOR) {
+        if (role == RoleType.TUTOR) {
             tutorService.deleteTutor(user);
         }
         tuteeService.deleteTutee(user); // setAuthentication(null)

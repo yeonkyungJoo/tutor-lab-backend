@@ -61,7 +61,7 @@ public class MainTestServiceTest {
                 .nickname(null)
                 .bio(null)
                 .zone(null)
-                .role(RoleType.ROLE_TUTEE)
+                .role(RoleType.TUTEE)
                 .provider(null)
                 .providerId(null)
                 .build();

@@ -63,7 +63,7 @@ public class Tutor extends BaseEntity {
         this.getCareers().clear();
         this.getEducations().clear();
 
-        user.setRole(RoleType.ROLE_TUTEE);
+        user.setRole(RoleType.TUTEE);
     }
 
     @Builder

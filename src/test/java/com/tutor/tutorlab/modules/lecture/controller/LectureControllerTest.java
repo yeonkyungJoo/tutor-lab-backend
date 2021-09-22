@@ -2,24 +2,20 @@ package com.tutor.tutorlab.modules.lecture.controller;
 
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.lecture.common.LectureBuilder;
-import com.tutor.tutorlab.modules.lecture.controller.request.AddLectureRequest;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
-import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.utils.JsonUtil;
 import com.tutor.tutorlab.utils.MultiValueConverter;
-import org.apache.commons.lang3.StringUtils;
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,13 +37,13 @@ public class LectureControllerTest extends AbstractTest {
 
     @Test
     void 강의등록_테스트() throws Exception {
-        AddLectureRequest.AddLecturePriceRequest price1 = LectureBuilder.getAddLecturePriceRequest(true, 3, 1000L, 3, 3000L, 10);
-        AddLectureRequest.AddLecturePriceRequest price2 = LectureBuilder.getAddLecturePriceRequest(false, 3, 1000L, 3, 30000L, 10);
+        LectureCreateRequest.LecturePriceCreateRequest price1 = LectureBuilder.getLecturePriceCreateRequest(true, 3, 1000L, 3, 3000L, 10);
+        LectureCreateRequest.LecturePriceCreateRequest price2 = LectureBuilder.getLecturePriceCreateRequest(false, 3, 1000L, 3, 30000L, 10);
 
-        AddLectureRequest.AddLectureSubjectRequest subject1 = LectureBuilder.getAddLectureSubjectRequest("개발", "자바");
-        AddLectureRequest.AddLectureSubjectRequest subject2 = LectureBuilder.getAddLectureSubjectRequest("개발", "자바스크립트");
+        LectureCreateRequest.LectureSubjectCreateRequest subject1 = LectureBuilder.getLectureSubjectCreateRequest("개발", "자바");
+        LectureCreateRequest.LectureSubjectCreateRequest subject2 = LectureBuilder.getLectureSubjectCreateRequest("개발", "자바스크립트");
 
-        AddLectureRequest param = AddLectureRequest.builder()
+        LectureCreateRequest param = LectureCreateRequest.builder()
                 .thumbnailUrl("https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c")
                 .title("제목입니다.")
                 .subTitle("소제목입니다.")

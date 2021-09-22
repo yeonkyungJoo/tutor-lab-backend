@@ -85,7 +85,7 @@ class TutorServiceTest {
 
         // Given
         User user = userRepository.findByName("yk");
-        Assertions.assertEquals(RoleType.ROLE_TUTEE, user.getRole());
+        Assertions.assertEquals(RoleType.TUTEE, user.getRole());
         Assertions.assertEquals(0, tutorRepository.count());
 
         // When
@@ -93,7 +93,7 @@ class TutorServiceTest {
         em.flush();
 
         // Then
-        Assertions.assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+        Assertions.assertEquals(RoleType.TUTOR, user.getRole());
         Assertions.assertEquals(1, tutorRepository.count());
 
         Assertions.assertEquals(1, careerRepository.count());
@@ -113,7 +113,7 @@ class TutorServiceTest {
         Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
         em.flush();
 
-        Assertions.assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+        Assertions.assertEquals(RoleType.TUTOR, user.getRole());
         Assertions.assertEquals(1, userRepository.count());
         Assertions.assertEquals(1, tuteeRepository.count());
         Assertions.assertEquals(1, tutorRepository.count());
@@ -125,7 +125,7 @@ class TutorServiceTest {
         em.flush();
 
         // Then
-        Assertions.assertEquals(RoleType.ROLE_TUTEE, user.getRole());
+        Assertions.assertEquals(RoleType.TUTEE, user.getRole());
         Assertions.assertEquals(1, userRepository.count());
         Assertions.assertEquals(1, tuteeRepository.count());
         Assertions.assertEquals(0, tutorRepository.count());

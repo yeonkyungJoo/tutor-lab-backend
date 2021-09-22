@@ -50,7 +50,7 @@ class TuteeControllerTest {
 
         // Given
         User user = userRepository.findByName("yk");
-        assertEquals(RoleType.ROLE_TUTEE, user.getRole());
+        assertEquals(RoleType.TUTEE, user.getRole());
 
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(tutee);
@@ -93,7 +93,7 @@ class TuteeControllerTest {
 
         // Given
         User user = userRepository.findByName("yk");
-        assertEquals(RoleType.ROLE_TUTEE, user.getRole());
+        assertEquals(RoleType.TUTEE, user.getRole());
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(tutee);
 

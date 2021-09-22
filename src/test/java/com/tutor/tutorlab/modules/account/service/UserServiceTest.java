@@ -90,6 +90,14 @@ class UserServiceTest {
 //                .build();
 //    }
 
+    // TODO
+    // @Transactional
+    @Test
+    void whereTest() {
+        List<User> users = userRepository.findAll();
+        System.out.println(users);
+    }
+
     @DisplayName("트랜잭션 쓰기지연 테스트")
     @Transactional
     @Test
@@ -115,7 +123,7 @@ class UserServiceTest {
                 .nickname(null)
                 .bio(null)
                 .zone(null)
-                .role(RoleType.ROLE_TUTEE)
+                .role(RoleType.TUTEE)
                 .provider(null)
                 .providerId(null)
                 .build();
@@ -143,7 +151,7 @@ class UserServiceTest {
                 .nickname(null)
                 .bio(null)
                 .zone(null)
-                .role(RoleType.ROLE_TUTEE)
+                .role(RoleType.TUTEE)
                 .provider(null)
                 .providerId(null)
                 .build();
@@ -199,7 +207,7 @@ class UserServiceTest {
         Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
         em.flush();
 
-        Assertions.assertEquals(RoleType.ROLE_TUTOR, user.getRole());
+        Assertions.assertEquals(RoleType.TUTOR, user.getRole());
         Assertions.assertEquals(1, userRepository.count());
         Assertions.assertEquals(1, tuteeRepository.count());
         Assertions.assertEquals(1, tutorRepository.count());
@@ -213,7 +221,7 @@ class UserServiceTest {
         // Then
         Assertions.assertEquals(1, userRepository.count());
         User findUser = userRepository.findAll().get(0);
-        Assertions.assertEquals(RoleType.ROLE_TUTEE, findUser.getRole());
+        Assertions.assertEquals(RoleType.TUTEE, findUser.getRole());
         Assertions.assertTrue(findUser.isDeleted());
         Assertions.assertNotNull(findUser.getDeletedAt());
 
