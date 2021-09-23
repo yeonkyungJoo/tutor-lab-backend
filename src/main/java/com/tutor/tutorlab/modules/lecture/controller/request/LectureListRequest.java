@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Builder
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 public class LectureListRequest {
 

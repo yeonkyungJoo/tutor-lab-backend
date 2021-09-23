@@ -15,9 +15,12 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
 
-    // 메세지 저장
     public void saveMessage(Message message) {
         messageRepository.save(message);
     }
 
+    @Transactional(readOnly = true)
+    public List<Message> getMessages() {
+        return messageRepository.findAll();
+    }
 }

@@ -5,9 +5,10 @@ import lombok.Value;
 
 import java.util.List;
 
+// TODO - CHECK
 @RequiredArgsConstructor(staticName = "of")
 @Value
 public class ParentResponse {
 
-    private final List<String> parents;
+    List<String> parents;
 }

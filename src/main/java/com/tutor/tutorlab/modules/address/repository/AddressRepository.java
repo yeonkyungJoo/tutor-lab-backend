@@ -25,7 +25,5 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 
     @Query(nativeQuery = true,
            value = "SELECT dong_myun_li FROM address GROUP BY state, si_gun, gu, dong_myun_li HAVING state = :state and si_gun = :si_gun and gu = :gu")
-    List<String> findDongByStateAndSiGunGu(@Param("state") String state,
-                                            @Param("si_gun") String siGun,
-                                            @Param("gu") String gu);
+    List<String> findDongByStateAndSiGunGu(@Param("state") String state, @Param("si_gun") String siGun, @Param("gu") String gu);
 }

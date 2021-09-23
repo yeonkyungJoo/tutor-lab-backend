@@ -12,12 +12,10 @@ import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
-import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
-import com.tutor.tutorlab.modules.purchase.controller.request.EnrollmentRequest;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
@@ -137,13 +135,6 @@ public class InitService {
                 .build();
     }
 
-    private EnrollmentRequest getEnrollmentRequest(Long lectureId) {
-        EnrollmentRequest enrollmentRequest = new EnrollmentRequest();
-        enrollmentRequest.setLectureId(lectureId);
-
-        return enrollmentRequest;
-    }
-
     private TuteeReviewCreateRequest getTuteeReviewCreateRequest(Integer score, String content) {
         return TuteeReviewCreateRequest.builder()
                 .score(score)
@@ -170,7 +161,7 @@ public class InitService {
                 .build();
     }
 
-    @PostConstruct
+    // @PostConstruct
     @Transactional
     void init() {
 
@@ -185,46 +176,43 @@ public class InitService {
         userRepository.deleteAll();
 
         // user / tutee
-        Tutee tutee1 = loginService.signUp(getSignUpRequest("user1"));
-        Tutee tutee2 = loginService.signUp(getSignUpRequest("user2"));
-        Tutee tutee3 = loginService.signUp(getSignUpRequest("user3"));
-        Tutee tutee4 = loginService.signUp(getSignUpRequest("user4"));
-        Tutee tutee5 = loginService.signUp(getSignUpRequest("user5"));
+        User user1 = loginService.signUp(getSignUpRequest("user1"));
+        Tutee tutee1 = loginService.verifyEmail(user1.getUsername(), user1.getEmailVerifyToken());
 
-        // tutor - career, education
-        User user4 = userRepository.findByName("user4");
-        User user5 = userRepository.findByName("user5");
+        User user2 = loginService.signUp(getSignUpRequest("user2"));
+        Tutee tutee2 = loginService.verifyEmail(user2.getUsername(), user2.getEmailVerifyToken());
+
+        User user3 = loginService.signUp(getSignUpRequest("user3"));
+        Tutee tutee3 = loginService.verifyEmail(user3.getUsername(), user3.getEmailVerifyToken());
+
+        User user4 = loginService.signUp(getSignUpRequest("user4"));
+        Tutee tutee4 = loginService.verifyEmail(user4.getUsername(), user4.getEmailVerifyToken());
+
+        User user5 = loginService.signUp(getSignUpRequest("user5"));
+        Tutee tutee5 = loginService.verifyEmail(user5.getUsername(), user5.getEmailVerifyToken());
+
         Tutor tutor1 = tutorService.createTutor(user4, getTutorSignUpRequest("python,java", "company1", "engineer", "school1", "computer"));
         Tutor tutor2 = tutorService.createTutor(user5, getTutorSignUpRequest("go,java", "company2", "engineer", "school2", "science"));
 
         // lecture
-        LectureResponse lectureResponse1 = lectureService.createLecture(user4, getLectureCreateRequest("파이썬강의", 1000L, 3, 10, "파이썬"));
-        LectureResponse lectureResponse2 = lectureService.createLecture(user4, getLectureCreateRequest("자바강의", 3000L, 3, 10, "자바"));
-        LectureResponse lectureResponse3 = lectureService.createLecture(user5, getLectureCreateRequest("자바강의", 2000L, 5, 20, "자바"));
+        lectureService.createLecture(user4, getLectureCreateRequest("파이썬강의", 1000L, 3, 10, "파이썬"));
+        lectureService.createLecture(user4, getLectureCreateRequest("자바강의", 3000L, 3, 10, "자바"));
+        lectureService.createLecture(user5, getLectureCreateRequest("자바강의", 2000L, 5, 20, "자바"));
 
         // enrollment
         // chatroom
-        enrollmentService.enroll(tutee1, getEnrollmentRequest(1L));
-        enrollmentService.enroll(tutee1, getEnrollmentRequest(2L));
-        enrollmentService.enroll(tutee2, getEnrollmentRequest(1L));
-        enrollmentService.enroll(tutee2, getEnrollmentRequest(2L));
-        enrollmentService.enroll(tutee3, getEnrollmentRequest(3L));
-
+        enrollmentService.enroll(user1, 1L);
+        enrollmentService.enroll(user1, 2L);
+        enrollmentService.enroll(user2, 1L);
+        enrollmentService.enroll(user2, 2L);
+        enrollmentService.enroll(user3, 3L);
 
         // review
-        User user1 = userRepository.findByName("user1");
-        // Tutee tutee1 = tuteeRepository.findByUser(user1);
-        User user2 = userRepository.findByName("user2");
-        // Tutee tutee2 = tuteeRepository.findByUser(user2);
+        Review parent1 = reviewService.createTuteeReview(user1, 1L, getTuteeReviewCreateRequest(5, "좋아요"));
+        Review child1 = reviewService.createTutorReview(user4, 1L, parent1.getId(), getTutorReviewCreateRequest("감사합니다!"));
 
-        // User user4 = userRepository.findByName("user4");
-        // Tutor tutor1 = tutorRepository.findByUser(user4);
-
-        Review parent1 = reviewService.createTuteeReview(tutee1, 1L, getTuteeReviewCreateRequest(5, "좋아요"));
-        Review child1 = reviewService.createTutorReview(tutor1, 1L, parent1.getId(), getTutorReviewCreateRequest("감사합니다!"));
-
-        Review parent2 = reviewService.createTuteeReview(tutee2, 1L, getTuteeReviewCreateRequest(3, "별로에요"));
-        Review child2 = reviewService.createTutorReview(tutor1, 1L, parent2.getId(), getTutorReviewCreateRequest("아쉽네요!"));
+        Review parent2 = reviewService.createTuteeReview(user2, 1L, getTuteeReviewCreateRequest(3, "별로에요"));
+        Review child2 = reviewService.createTutorReview(user4, 1L, parent2.getId(), getTutorReviewCreateRequest("아쉽네요!"));
     }
 
 }

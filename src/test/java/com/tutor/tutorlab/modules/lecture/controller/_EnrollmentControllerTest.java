@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @MockMvcTest
-class EnrollmentControllerTest {
+public class _EnrollmentControllerTest {
 
     @Autowired
     UserRepository userRepository;

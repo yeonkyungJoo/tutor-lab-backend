@@ -1,13 +1,13 @@
-package com.tutor.tutorlab.modules.review.dto;
+package com.tutor.tutorlab.modules.review.response;
 
 import com.tutor.tutorlab.modules.review.vo.Review;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.Data;
 
 @Data
-public class ReviewDto {
+public class ReviewResponse {
 
-    public ReviewDto(Review review) {
+    public ReviewResponse(Review review) {
         this.score = review.getScore();
         this.content = review.getContent();
         this.username = review.getUser().getUsername();

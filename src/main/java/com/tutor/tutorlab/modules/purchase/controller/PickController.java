@@ -13,38 +13,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/picks")
 public class PickController {
 
-    private final TuteeRepository tuteeRepository;
     private final PickService pickService;
 
     @ApiOperation("장바구니 추가")
-    @PostMapping("/{lecture_id}")
-    public ResponseEntity addPick(@CurrentUser User user,
-                                  @RequestParam(name = "lecture_id") Long lectureId) {
-
-        // TODO - AuthAspect or Interceptor로 처리
-        Tutee tutee = tuteeRepository.findByUser(user);
-        pickService.add(tutee, lectureId);
-        return new ResponseEntity(HttpStatus.CREATED);
+    @PostMapping("/lectures/{lecture_id}/picks")
+    public ResponseEntity<?> addPick(@CurrentUser User user,
+                                     @RequestParam(name = "lecture_id") Long lectureId) {
+        pickService.add(user, lectureId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @ApiOperation("장바구니 제거")
-    @DeleteMapping("/{pick_id}")
-    public ResponseEntity subtractPick(@CurrentUser User user,
-                                       @RequestParam(name = "pick_id") Long pickId) {
-
-        Tutee tutee = tuteeRepository.findByUser(user);
-        pickService.subtract(tutee, pickId);
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @ApiOperation("장바구니 비우기")
-    public ResponseEntity clear(@CurrentUser User user) {
-
-        Tutee tutee = tuteeRepository.findByUser(user);
-        pickService.clear(tutee);
-        return new ResponseEntity(HttpStatus.OK);
-    }
 }

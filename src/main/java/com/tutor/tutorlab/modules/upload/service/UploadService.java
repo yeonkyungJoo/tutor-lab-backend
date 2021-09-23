@@ -5,5 +5,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UploadService {
 
-    UploadResponse uploadImage(MultipartFile file) throws Exception;
+    UploadResponse uploadImage(MultipartFile file);
 }

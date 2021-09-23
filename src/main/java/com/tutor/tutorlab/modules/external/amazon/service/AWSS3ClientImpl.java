@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.tutor.tutorlab.config.exception.AmazonS3Exception;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -29,8 +30,9 @@ public class AWSS3ClientImpl implements AWSS3Client {
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, key, is, objectMetadata);
             amazonS3.putObject(putObjectRequest);
         } catch (Exception e) {
-            log.error("S3에 파일을 업로드하는 도중에 에러가 발생하였습니다.", e);
-            throw new AmazonS3Exception("S3에 파일을 업로드에 실패하였습니다.", e);
+            // TODO - 로그 포맷
+            log.error(ExceptionUtils.getMessage(e));
+            throw new AmazonS3Exception(AmazonS3Exception.UPLOAD, e);
         }
     }
 
@@ -40,8 +42,8 @@ public class AWSS3ClientImpl implements AWSS3Client {
             DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
             amazonS3.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
-            log.error("S3의 파일을 삭제하는 도중에 에러가 발생하였습니다.", e);
-            throw new AmazonS3Exception("S3의 파일을 삭제하는데에 실패하였습니다.", e);
+            log.error(ExceptionUtils.getMessage(e));
+            throw new AmazonS3Exception(AmazonS3Exception.DELETE, e);
         }
     }
 

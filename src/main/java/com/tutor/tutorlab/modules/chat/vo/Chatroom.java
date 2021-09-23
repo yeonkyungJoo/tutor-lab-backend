@@ -45,9 +45,4 @@ public class Chatroom extends BaseEntity {
         this.tutee = tutee;
     }
 
-    public void delete() {
-        setTutee(null);
-        setTutor(null);
-    }
-
 }

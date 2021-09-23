@@ -15,21 +15,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
-@Transactional(readOnly = false)
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.EDUCATION;
+import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
+
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class EducationService {
 
     private final EducationRepository educationRepository;
     private final TutorRepository tutorRepository;
+    // TODO - CHECK : user deleted/verified
+    @Transactional(readOnly = true)
+    public Education getEducation(User user, Long educationId) {
+
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
+
+        return educationRepository.findByTutorAndId(tutor, educationId)
+                .orElseThrow(() -> new EntityNotFoundException(EDUCATION));
+    }
 
     public Education createEducation(User user, EducationCreateRequest educationCreateRequest) {
 
-        Tutor tutor = tutorRepository.findByUser(user);
-        if (tutor == null) {
-            throw new UnauthorizedException();
-        }
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
 
         Education education = Education.builder()
                 .tutor(tutor)
@@ -41,13 +53,16 @@ public class EducationService {
                 .degree(educationCreateRequest.getDegree())
                 .build();
         tutor.addEducation(education);
-        return education;
+        return educationRepository.save(education);
     }
 
-    public void updateEducation(Long educationId, EducationUpdateRequest educationUpdateRequest) {
+    public void updateEducation(User user, Long educationId, EducationUpdateRequest educationUpdateRequest) {
 
-        Education education = educationRepository.findById(educationId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
+
+        Education education = educationRepository.findByTutorAndId(tutor, educationId)
+                .orElseThrow(() -> new EntityNotFoundException(EDUCATION));
 
         education.setSchoolName(educationUpdateRequest.getSchoolName());
         education.setMajor(educationUpdateRequest.getMajor());
@@ -57,11 +72,17 @@ public class EducationService {
         education.setDegree(educationUpdateRequest.getDegree());
     }
 
-    public void deleteEducation(Long educationId) {
+    public void deleteEducation(User user, Long educationId) {
 
-        Education education = educationRepository.findById(educationId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
+
+        Education education = educationRepository.findByTutorAndId(tutor, educationId)
+                .orElseThrow(() -> new EntityNotFoundException(EDUCATION));
 
         education.delete();
+        // TODO - CHECK
+        educationRepository.delete(education);
     }
+
 }

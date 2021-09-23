@@ -10,7 +10,7 @@ public class UnauthorizedException extends GlobalException {
     }
 
     public UnauthorizedException() {
-        super(ErrorCode.UNAUTHORIZED);
+        super(ErrorCode.UNAUTHORIZED, "권한이 없습니다.");
     }
 
     public UnauthorizedException(RoleType roleType) {

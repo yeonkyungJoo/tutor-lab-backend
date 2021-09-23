@@ -13,4 +13,10 @@ public class EmailMessage {
     private String subject;   // title
     private String content;
 
+    @Builder
+    public EmailMessage(String to, String subject, String content) {
+        this.to = to;
+        this.subject = subject;
+        this.content = content;
+    }
 }

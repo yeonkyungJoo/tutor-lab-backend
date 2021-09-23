@@ -1,10 +1,10 @@
 package com.tutor.tutorlab.modules.subject.service;
 
 import com.tutor.tutorlab.modules.subject.controller.response.ParentResponse;
-import com.tutor.tutorlab.modules.subject.vo.Subject;
-import com.tutor.tutorlab.modules.subject.mapstruct.SubjectMapstruct;
 import com.tutor.tutorlab.modules.subject.controller.response.SubjectResponse;
+import com.tutor.tutorlab.modules.subject.mapstruct.SubjectMapstruct;
 import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
+import com.tutor.tutorlab.modules.subject.vo.Subject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,14 +23,14 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public ParentResponse getParents() {
-        return ParentResponse.of(subjectRepository.findParentAll());
+        return ParentResponse.of(subjectRepository.findParent());
     }
 
     @Override
     public List<SubjectResponse> getSubjects(String parent) {
-        List<Subject> subjects = subjectRepository.findSubjectAllByParent(parent);
+        List<Subject> subjects = subjectRepository.findAllByParent(parent);
         return subjects.stream()
-                       .map(subject -> subjectMapstruct.subjectToSubjectResponse(subject))
-                       .collect(toList());
+                .map(subjectMapstruct::subjectToSubjectResponse)
+                .collect(toList());
     }
 }

@@ -71,19 +71,9 @@ public class Lecture extends BaseEntity {
         lectureSubject.mappingLecture(this);
     }
 
-    public void removeSubject(LectureSubject lectureSubject) {
-        lectureSubjects.remove(lectureSubject);
-        lectureSubject.mappingLecture(null);
-    }
-
     public void addPrice(LecturePrice lecturePrice) {
         lecturePrices.add(lecturePrice);
         lecturePrice.mappingLecture(this);
     };
-
-    public void removePrice(LecturePrice lecturePrice) {
-        lecturePrices.remove(lecturePrice);
-        lecturePrice.mappingLecture(null);
-    }
 
 }

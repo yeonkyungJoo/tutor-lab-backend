@@ -12,10 +12,10 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
     @Query(nativeQuery = true,
            value = "SELECT DISTINCT parent FROM subject"
     )
-    List<String> findParentAll();
+    List<String> findParent();
 
     @Query(nativeQuery = true,
            value = "SELECT * FROM subject WHERE parent = :parent"
     )
-    List<Subject> findSubjectAllByParent(@Param("parent") String parent);
+    List<Subject> findAllByParent(@Param("parent") String parent);
 }

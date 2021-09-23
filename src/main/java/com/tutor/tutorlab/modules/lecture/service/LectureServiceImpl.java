@@ -37,34 +37,31 @@ public class LectureServiceImpl implements LectureService {
 
     private final LectureMapstructUtil lectureMapstructUtil;
 
+    @Override
+    public Lecture getLecture(Long lectureId) {
+        return lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
+    }
 
     @Override
-    public LectureResponse getLecture(Long lectureId) {
-
-        Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
-        return new LectureResponse(lecture);
+    public LectureResponse getLectureResponse(Long lectureId) {
+        // TODO - CHECK : mapstruct vs 생성자
+        // return new LectureResponse(lecture);
+        return lectureMapstructUtil.getLectureResponse(getLecture(lectureId));
     }
 
     @Override
     public List<LectureResponse> getLectures(LectureListRequest lectureListRequest) {
-        List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest)
-                .stream().map(lecture -> new LectureResponse(lecture))
+        List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest).stream()
+                // TODO - CHECK : mapstruct vs 생성자
+                .map(LectureResponse::new)
                 .collect(Collectors.toList());
         return lectures;
     }
 
-//    private LectureResponse getLectureResponse(Lecture lecture) {
-//        List<LectureResponse.LecturePriceResponse> prices = lectureMapstruct.lecturePriceListToLecturePriceResponseList(lecture.getLecturePrices());
-//        List<LectureResponse.LectureSubjectResponse> subjects = lectureMapstruct.lectureSubjectListToLectureSubjectResponseList(lecture.getLectureSubjects());
-//        List<LectureResponse.SystemTypeResponse> systemTypes = lectureMapstruct.systemTypeListToSystemTypeResponseList(lecture.getSystemTypes().stream().map(systemType -> SystemType.find(systemType.getType())).collect(Collectors.toList()));
-//
-//        return lectureMapstruct.lectureToLectureResponse(lecture, prices, systemTypes, subjects);
-//    }
-
     @Transactional
     @Override
-    public LectureResponse createLecture(User user, LectureCreateRequest lectureCreateRequest) {
+    public Lecture createLecture(User user, LectureCreateRequest lectureCreateRequest) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTOR));
@@ -82,8 +79,7 @@ public class LectureServiceImpl implements LectureService {
             lecture.addSubject(buildLectureSubject(subjectRequest));
         }
 
-        Lecture savedLecture = lectureRepository.save(lecture);
-        return lectureMapstructUtil.getLectureResponse(savedLecture);
+        return lectureRepository.save(lecture);
     }
 
     @Transactional
@@ -96,18 +92,8 @@ public class LectureServiceImpl implements LectureService {
         Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        // TODO
         lecture.getLecturePrices().clear();
         lecture.getLectureSubjects().clear();
-//        List<LecturePrice> lecturePrices = lecture.getLecturePrices();
-//        for(LecturePrice lecturePrice : lecturePrices) {
-//            lecturePrice.mappingLecture(null);
-//        }
-//
-//        List<LectureSubject> lectureSubjects = lecture.getLectureSubjects();
-//        for(LectureSubject lectureSubject : lectureSubjects) {
-//            lectureSubject.mappingLecture(null);
-//        }
 
         for (LectureUpdateRequest.LecturePriceUpdateRequest lecturePriceUpdateRequest : lectureUpdateRequest.getLecturePrices()) {
 

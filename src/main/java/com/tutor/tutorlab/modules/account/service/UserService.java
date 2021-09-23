@@ -1,32 +1,47 @@
 package com.tutor.tutorlab.modules.account.service;
 
+import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.base.AbstractService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
+
 
 @Service
-@Transactional(readOnly = false)
+@Transactional
 @RequiredArgsConstructor
-public class UserService {
+public class UserService extends AbstractService {
 
     private final UserRepository userRepository;
 
     private final TutorService tutorService;
     private final TuteeService tuteeService;
 
+    @Transactional(readOnly = true)
+    public Page<User> getUsers(Integer page) {
+        return userRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
+    }
+
+    @Transactional(readOnly = true)
+    public User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER));
+    }
+
     public void updateUser(User user, UserUpdateRequest userUpdateRequest) {
 
-        user = userRepository.findByUsername(user.getUsername());
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
+        user = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(USER));
 
         user.setPhoneNumber(userUpdateRequest.getPhoneNumber());
         user.setEmail(userUpdateRequest.getEmail());
@@ -39,10 +54,11 @@ public class UserService {
     // TODO - Admin인 경우
     public void deleteUser(User user) {
 
-        // TODO - check : GrantedAuthority
-        RoleType role = user.getRole();
+        user = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(USER));
 
-        if (role == RoleType.TUTOR) {
+        // TODO - check : GrantedAuthority
+        if (user.getRole() == RoleType.TUTOR) {
             tutorService.deleteTutor(user);
         }
         tuteeService.deleteTutee(user); // setAuthentication(null)

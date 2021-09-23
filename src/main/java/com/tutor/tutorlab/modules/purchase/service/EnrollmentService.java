@@ -1,16 +1,18 @@
 package com.tutor.tutorlab.modules.purchase.service;
 
-import com.tutor.tutorlab.modules.account.vo.Tutee;
-import com.tutor.tutorlab.modules.account.vo.Tutor;
-import com.tutor.tutorlab.modules.purchase.controller.request.EnrollmentRequest;
+import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import org.springframework.data.domain.Page;
 
 public interface EnrollmentService {
 
+    Page<Lecture> getLecturesOfTutee(User user, Integer page);
+
     // 강의 수강
-    void enroll(Tutee tutee, EnrollmentRequest enrollmentRequest);
+    void enroll(User user, Long lectureId);
 
     // 수강 취소
-    void cancel(Tutee tutee, Long lectureId);
+    void cancel(User user, Long lectureId);
 
-    void close(Tutor tutor, Long enrollmentId);
+    void close(User user, Long lectureId, Long enrollmentId);
 }

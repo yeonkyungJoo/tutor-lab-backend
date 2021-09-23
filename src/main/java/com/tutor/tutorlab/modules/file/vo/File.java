@@ -2,9 +2,15 @@ package com.tutor.tutorlab.modules.file.vo;
 
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.file.enums.FileType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -17,19 +23,15 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 public class File extends BaseEntity {
 
-    @Column(name = "uuid")
     private String uuid;
 
-    @Column(name = "type", length = 50)
+    @Column(length = 50)
     private FileType type;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "content_type")
     private String contentType;
 
-    @Column(name = "size")
     private Long size;
 
 }

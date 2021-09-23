@@ -1,16 +1,17 @@
 package com.tutor.tutorlab.modules.upload.controller;
 
 import com.tutor.tutorlab.modules.upload.controller.request.UploadImageRequest;
+import com.tutor.tutorlab.modules.upload.controller.response.UploadResponse;
 import com.tutor.tutorlab.modules.upload.service.UploadService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,8 +21,9 @@ public class UploadController {
     private final UploadService uploadService;
 
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity uploadImage(@ModelAttribute @Validated UploadImageRequest param) throws Exception {
-        return new ResponseEntity(uploadService.uploadImage(param.getFile()), HttpStatus.OK);
+    public ResponseEntity<?> uploadImage(@ModelAttribute @Valid UploadImageRequest param) {
+        UploadResponse upload = uploadService.uploadImage(param.getFile());
+        return ResponseEntity.ok(upload);
     }
 
 }

@@ -46,7 +46,7 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
 
         String name = withAccount.value();
         String username = name + "@email.com";
-        if (userRepository.findByUsername(username) == null) {
+        if (!userRepository.findByUsername(username).isPresent()) {
 
             SignUpRequest signUpRequest = SignUpRequest.builder()
                     .username(username)
@@ -60,7 +60,8 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
                     .bio(null)
                     .zone(null)
                     .build();
-            loginService.signUp(signUpRequest);
+            User user = loginService.signUp(signUpRequest);
+            loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
         }
 
         PrincipalDetails principalDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(username);

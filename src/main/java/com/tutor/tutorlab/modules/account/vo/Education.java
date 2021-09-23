@@ -43,6 +43,5 @@ public class Education extends BaseEntity {
 
     public void delete() {
         this.tutor.getEducations().remove(this);
-        // this.tutor = null;
     }
 }

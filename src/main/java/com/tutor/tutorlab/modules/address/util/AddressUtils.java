@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class AddressUtils {
 
-    private static final String EMPTY_STRING = "";
+    private static final String EMPTY_STRING = StringUtils.EMPTY;
 
     private AddressUtils() {}
 

@@ -9,8 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatroomRepository extends JpaRepository<Chatroom, Long> {
+
+    Optional<Chatroom> findByTuteeAndId(Tutee tutee, Long chatroomId);
+    Optional<Chatroom> findByTutorAndId(Tutor tutor, Long chatroomId);
 
     List<Chatroom> findByTutor(Tutor tutor);
     Page<Chatroom> findByTutor(Tutor tutor, Pageable pageable);

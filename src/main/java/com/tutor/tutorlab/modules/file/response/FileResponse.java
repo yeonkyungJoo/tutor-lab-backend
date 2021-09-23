@@ -4,18 +4,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 @EqualsAndHashCode(of = "id")
-@Value
+@Value  // TODO - CHECK : @Value
 public class FileResponse {
 
-    private final long id;
-
-    private final String uuid;
-
-    private final String name;
-
-    private final String contentType;
-
-    private final String type;
-
-    private final long size;
+    Long id;
+    String uuid;
+    String name;
+    String contentType;
+    String type;
+    Long size;
 }

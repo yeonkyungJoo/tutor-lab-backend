@@ -1,6 +1,10 @@
 package com.tutor.tutorlab.config.exception;
 
 public class AmazonS3Exception extends RuntimeException {
+
+    public static final String UPLOAD = "S3 파일 업로드 실패";
+    public static final String DELETE = "S3 파일 삭제 실패";
+
     private static final long serialVersionUID = 395373762474915663L;
 
     public AmazonS3Exception() {

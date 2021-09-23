@@ -7,11 +7,13 @@ import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Where(clause = "closed = false")
 @AttributeOverride(name = "id", column = @Column(name = "enrollment_id"))
 @NoArgsConstructor
 @Getter @Setter

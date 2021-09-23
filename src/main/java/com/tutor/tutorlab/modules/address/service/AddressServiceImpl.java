@@ -1,6 +1,6 @@
 package com.tutor.tutorlab.modules.address.service;
 
-import com.tutor.tutorlab.modules.address.controller.result.SiGunGuResponse;
+import com.tutor.tutorlab.modules.address.controller.response.SiGunGuResponse;
 import com.tutor.tutorlab.modules.address.mapstruct.AddressMapstruct;
 import com.tutor.tutorlab.modules.address.repository.AddressRepository;
 import com.tutor.tutorlab.modules.address.vo.Address;
@@ -24,8 +24,13 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<SiGunGuResponse> getSiGunGus(String state) {
-        List<Address> list = addressRepository.findSiGunGuByState(state);
+    public List<Address> getSiGunGus(String state) {
+        return addressRepository.findSiGunGuByState(state);
+    }
+
+    @Override
+    public List<SiGunGuResponse> getSiGunGuResponses(String state) {
+        List<Address> list = getSiGunGus(state);
         return addressMapstruct.addressListToSiGunGuResponseList(list);
     }
 

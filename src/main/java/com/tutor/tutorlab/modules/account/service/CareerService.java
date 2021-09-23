@@ -14,9 +14,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.util.Optional;
 
-@Transactional(readOnly = false)
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.CAREER;
+import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
+
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class CareerService {
@@ -24,12 +27,20 @@ public class CareerService {
     private final CareerRepository careerRepository;
     private final TutorRepository tutorRepository;
 
+    @Transactional(readOnly = true)
+    public Career getCareer(User user, Long careerId) {
+
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
+
+        return careerRepository.findByTutorAndId(tutor, careerId)
+                .orElseThrow(() -> new EntityNotFoundException(CAREER));
+    }
+
     public Career createCareer(User user, CareerCreateRequest careerCreateRequest) {
 
-        Tutor tutor = tutorRepository.findByUser(user);
-        if (tutor == null) {
-            throw new UnauthorizedException();
-        }
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
 
         Career career = Career.builder()
                 .tutor(tutor)
@@ -40,13 +51,16 @@ public class CareerService {
                 .present(careerCreateRequest.isPresent())
                 .build();
         tutor.addCareer(career);
-        return career;
+        return careerRepository.save(career);
     }
 
-    public void updateCareer(Long careerId, CareerUpdateRequest careerUpdateRequest) {
+    public void updateCareer(User user, Long careerId, CareerUpdateRequest careerUpdateRequest) {
 
-        Career career = careerRepository.findById(careerId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
+
+        Career career = careerRepository.findByTutorAndId(tutor, careerId)
+                .orElseThrow(() -> new EntityNotFoundException(CAREER));
 
         career.setCompanyName(careerUpdateRequest.getCompanyName());
         career.setDuty(careerUpdateRequest.getDuty());
@@ -55,11 +69,16 @@ public class CareerService {
         career.setPresent(careerUpdateRequest.isPresent());
     }
 
-    public void deleteCareer(Long careerId) {
+    public void deleteCareer(User user, Long careerId) {
 
-        Career career = careerRepository.findById(careerId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTOR));
+
+        Career career = careerRepository.findByTutorAndId(tutor, careerId)
+                .orElseThrow(() -> new EntityNotFoundException(CAREER));
 
         career.delete();
+        // TODO - CHECK
+        careerRepository.delete(career);
     }
 }

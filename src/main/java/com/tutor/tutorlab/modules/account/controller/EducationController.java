@@ -1,10 +1,9 @@
 package com.tutor.tutorlab.modules.account.controller;
 
-import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
-import com.tutor.tutorlab.modules.account.repository.EducationRepository;
+import com.tutor.tutorlab.modules.account.controller.response.EducationResponse;
 import com.tutor.tutorlab.modules.account.service.EducationService;
 import com.tutor.tutorlab.modules.account.vo.Education;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -23,79 +22,41 @@ import javax.validation.Valid;
 @RequestMapping("/educations")
 @RequiredArgsConstructor
 @RestController
-public class EducationController extends AbstractController {
+public class EducationController {
 
-    private final EducationRepository educationRepository;
     private final EducationService educationService;
 
-    /**
-     * Education 조회
-     */
     @ApiOperation("Education 조회")
     @GetMapping("/{education_id}")
-    public ResponseEntity getEducation( // @PathVariable(name = "tutor_id") Long tutorId,
-                                            @PathVariable(name = "education_id") Long educationId) {
-
-        Education education = educationRepository.findById(educationId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 데이터입니다."));
-
-        return new ResponseEntity(new EducationDto(education), HttpStatus.OK);
+    public ResponseEntity<?> getEducation(@CurrentUser User user,
+                                       @PathVariable(name = "education_id") Long educationId) {
+        Education education = educationService.getEducation(user, educationId);
+        return ResponseEntity.ok(new EducationResponse(education));
     }
 
-    /**
-     * Education 등록
-     */
     @ApiOperation("Education 등록")
     @PostMapping
     public ResponseEntity newEducation(@CurrentUser User user,
                                        @Valid @RequestBody EducationCreateRequest educationCreateRequest) {
-
         educationService.createEducation(user, educationCreateRequest);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    /**
-     * Education 수정
-     */
     @ApiOperation("Education 수정")
     @PutMapping("/{education_id}")
     public ResponseEntity editEducation(@CurrentUser User user,
                                         @PathVariable(name = "education_id") Long educationId,
                                         @Valid @RequestBody EducationUpdateRequest educationUpdateRequest) {
-
-        educationService.updateEducation(educationId, educationUpdateRequest);
-        return new ResponseEntity(HttpStatus.OK);
+        educationService.updateEducation(user, educationId, educationUpdateRequest);
+        return ResponseEntity.ok().build();
     }
 
-    /**
-     * Education 삭제
-     */
     @ApiOperation("Education 삭제")
     @DeleteMapping("/{education_id}")
-    public ResponseEntity removeEducation(@CurrentUser User user,
+    public ResponseEntity deleteEducation(@CurrentUser User user,
                                           @PathVariable(name = "education_id") Long educationId) {
-
-        educationService.deleteEducation(educationId);
-        return new ResponseEntity(HttpStatus.OK);
+        educationService.deleteEducation(user, educationId);
+        return ResponseEntity.ok().build();
     }
 
-    @Data
-    static class EducationDto {
-
-        private String schoolName;
-        private String major;
-        private String entranceDate;
-        private String graduationDate;
-        private double score;
-        private String degree;
-
-        public EducationDto(Education education) {
-            this.schoolName = education.getSchoolName();
-            this.major = education.getMajor();
-            this.entranceDate = LocalDateTimeUtil.getDateToString(education.getEntranceDate());
-            this.graduationDate = LocalDateTimeUtil.getDateToString(education.getGraduationDate());
-            this.score = education.getScore();
-            this.degree = education.getDegree();
-        }
-    }
 }

@@ -1,14 +1,12 @@
 package com.tutor.tutorlab.modules.address.mapstruct;
 
 import com.tutor.tutorlab.config.mapstruct.MapstructConfig;
-import com.tutor.tutorlab.modules.address.controller.result.AddressResponse;
-import com.tutor.tutorlab.modules.address.controller.result.DongResponse;
-import com.tutor.tutorlab.modules.address.controller.result.SiGunGuResponse;
+import com.tutor.tutorlab.modules.address.controller.response.AddressResponse;
+import com.tutor.tutorlab.modules.address.controller.response.DongResponse;
+import com.tutor.tutorlab.modules.address.controller.response.SiGunGuResponse;
 import com.tutor.tutorlab.modules.address.vo.Address;
-import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 import java.util.List;

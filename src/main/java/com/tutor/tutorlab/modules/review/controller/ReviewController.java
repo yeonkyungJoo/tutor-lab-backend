@@ -1,6 +1,5 @@
 package com.tutor.tutorlab.modules.review.controller;
 
-import com.tutor.tutorlab.modules.account.controller.AbstractController;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
 @RestController
-public class ReviewController extends AbstractController {
+public class ReviewController {
 
     private final ReviewService reviewService;
 

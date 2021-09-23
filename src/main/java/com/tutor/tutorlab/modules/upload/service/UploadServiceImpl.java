@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Slf4j
@@ -32,10 +33,17 @@ public class UploadServiceImpl implements UploadService {
 
     @Transactional
     @Override
-    public UploadResponse uploadImage(MultipartFile file) throws Exception {
+    public UploadResponse uploadImage(MultipartFile file) {
+
         String uuid = UUID.randomUUID().toString();
-        awss3Client.putObject(amazonS3Properties.getBucket(), uuid, file.getBytes(), file.getContentType());
-        FileResponse fileResponse = fileService.add(fileMapstruct.toAddFile(uuid, file.getOriginalFilename(), file.getContentType(), file.getSize(), FileType.LECTURE_IMAGE));
-        return uploadMapstruct.fileToUploadResponse(fileResponse, amazonS3Properties.getS3UploadUrl(fileResponse.getUuid()));
+
+        try {
+            awss3Client.putObject(amazonS3Properties.getBucket(), uuid, file.getBytes(), file.getContentType());
+            FileResponse fileResponse = fileService.add(fileMapstruct.toAddFile(uuid, file.getOriginalFilename(), file.getContentType(), file.getSize(), FileType.LECTURE_IMAGE));
+            return uploadMapstruct.fileToUploadResponse(fileResponse, amazonS3Properties.getS3UploadUrl(fileResponse.getUuid()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

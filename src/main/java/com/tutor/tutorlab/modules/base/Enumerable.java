@@ -15,7 +15,7 @@ public interface Enumerable {
         T findValue = findToNull(type, values);
 
         Optional.ofNullable(findValue)
-                .orElseThrow(() -> new RuntimeException(String.format("지원 하지 않는 형식 입니다.(형식 : %s)", type)));
+                .orElseThrow(() -> new RuntimeException(String.format("지원하지 않는 형식 입니다.(형식 : %s)", type)));
 
         return findValue;
     }

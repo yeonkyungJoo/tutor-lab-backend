@@ -5,16 +5,19 @@ import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateReques
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
+import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 
 import java.util.List;
 
 public interface LectureService {
 
-    LectureResponse getLecture(Long lectureId);
+    Lecture getLecture(Long lectureId);
+    LectureResponse getLectureResponse(Long lectureId);
+
     // TODO - CHECK
     List<LectureResponse> getLectures(LectureListRequest lectureListRequest);
 
-    LectureResponse createLecture(User user, LectureCreateRequest lectureCreateRequest);
+    Lecture createLecture(User user, LectureCreateRequest lectureCreateRequest);
 
     void updateLecture(User user, Long lectureId, LectureUpdateRequest lectureUpdateRequest);
 

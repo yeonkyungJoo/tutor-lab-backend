@@ -6,14 +6,13 @@ import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-// TODO - @Where 사용
-// @Where(clause = "deleted = false")
-// @Where(clause = "emailVerified = true")
+@Where(clause = "deleted = false and email_verified = true")
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Getter @Setter
@@ -70,7 +69,7 @@ public class User extends BaseEntity {
         this.username = username;
         this.password = password;
         this.name = name;
-        this.gender = gender == "MALE" ? GenderType.MALE : GenderType.FEMALE;
+        this.gender = gender.equals("MALE") ? GenderType.MALE : GenderType.FEMALE;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.nickname = nickname;
@@ -101,7 +100,4 @@ public class User extends BaseEntity {
         setEmailVerifiedAt(LocalDateTime.now());
     }
 
-/*    public void generateRandomPassword(int count) {
-        setPassword(RandomStringUtils.randomAlphanumeric(count));
-    }*/
 }

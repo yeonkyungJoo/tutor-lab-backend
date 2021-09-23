@@ -21,10 +21,10 @@ import com.tutor.tutorlab.mail.EmailService;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
+import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
+import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
@@ -46,16 +46,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.tutor.tutorlab.config.exception.AlreadyExistException.ID;
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
+import static com.tutor.tutorlab.config.exception.OAuthAuthenticationException.UNPARSABLE;
+import static com.tutor.tutorlab.config.exception.OAuthAuthenticationException.UNSUPPORTED;
 
 @Slf4j
 @Service
-@Transactional(readOnly = false)
+@Transactional
 @RequiredArgsConstructor
 public class LoginService {
 
     private final UserRepository userRepository;
     private final TuteeRepository tuteeRepository;
+
     private final GoogleOAuth googleOAuth;
     private final KakaoOAuth kakaoOAuth;
     private final NaverOAuth naverOAuth;
@@ -70,7 +74,11 @@ public class LoginService {
     private boolean checkUsernameDuplication(String username) {
         boolean duplicated = false;
 
-        User user = userRepository.findByUsername(username);
+        if (StringUtils.isBlank(username)) {
+            throw new IllegalArgumentException();
+        }
+
+        User user = userRepository.findAllByUsername(username);
         if (user != null) {
             duplicated = true;
         }
@@ -92,12 +100,38 @@ public class LoginService {
         return null;
     }
 
-    // TODO - 리팩토링
+    public Map<String, String> oauth(String provider, String code) {
+
+        Map<String, String> result = null;
+
+        OAuthInfo oAuthInfo = getOAuthInfo(provider, code);
+        if (oAuthInfo != null) {
+
+            User user = userRepository.findByProviderAndProviderId(oAuthInfo.getProvider(), oAuthInfo.getProviderId());
+            if (user != null) {
+                // 이미 가입된 회원이므로 바로 로그인 진행
+                result = loginOAuth(user);
+            } else {
+                // 회원가입 후 강제 로그인
+                // 계정 자동 인증
+                // 추가 정보 입력 필요
+                result = signUpOAuth(oAuthInfo);
+            }
+        }
+
+        log.info("#oauth-result : " + result);
+        return result;
+    }
+
     public OAuthInfo getOAuthInfo(String provider, AuthorizeResult authorizeResult) {
 
         OAuthInfo oAuthInfo = null;
 
         OAuthType oAuthType = OAuthInfo.getOAuthType(provider);
+        if (oAuthType == null) {
+            throw new OAuthAuthenticationException(UNSUPPORTED);
+        }
+
         switch (oAuthType) {
             case GOOGLE:
                 // authorizeResult.getUser() -> Map<String, String>
@@ -111,23 +145,25 @@ public class LoginService {
             case NAVER:
                 break;
             default:
-                throw new OAuthAuthenticationException("지원하지 않는 OAuth입니다.");
+                throw new OAuthAuthenticationException(UNSUPPORTED);
         }
 
         if (oAuthInfo == null) {
-            throw new OAuthAuthenticationException("User 정보를 가져올 수 없습니다.");
+            throw new OAuthAuthenticationException(UNPARSABLE);
         }
 
         return oAuthInfo;
     }
 
-    // TODO - 리팩토링
     public OAuthInfo getOAuthInfo(String provider, String code) {
 
         OAuthInfo oAuthInfo = null;
 
-        // convert
         OAuthType oAuthType = OAuthInfo.getOAuthType(provider);
+        if (oAuthType == null) {
+            throw new OAuthAuthenticationException(UNSUPPORTED);
+        }
+
         switch (oAuthType) {
             case GOOGLE:
                 Map<String, String> googleOAuthUserInfo = googleOAuth.getUserInfo(code);
@@ -148,11 +184,11 @@ public class LoginService {
                 }
                 break;
             default:
-                throw new OAuthAuthenticationException("지원하지 않는 OAuth입니다.");
+                throw new OAuthAuthenticationException(UNSUPPORTED);
         }
 
         if (oAuthInfo == null) {
-            throw new OAuthAuthenticationException("User 정보를 가져올 수 없습니다.");
+            throw new OAuthAuthenticationException(UNPARSABLE);
         }
 
         return oAuthInfo;
@@ -162,7 +198,7 @@ public class LoginService {
 
         String username = oAuthInfo.getEmail();
         if (checkUsernameDuplication(username)) {
-            throw new AlreadyExistException("동일한 ID가 존재합니다.");
+            throw new AlreadyExistException(ID);
         }
 
         User user = User.builder()
@@ -180,6 +216,9 @@ public class LoginService {
                 .providerId(oAuthInfo.getProviderId())
                 .build();
 
+        // 계정 인증
+        user.verifyEmail();
+
         Tutee tutee = new Tutee(user);
         tuteeRepository.save(tutee);
         // 강제 로그인
@@ -187,21 +226,21 @@ public class LoginService {
     }
 
     public Map<String, String> loginOAuth(User user) {
-
         String username = user.getUsername();
         return login(username, username);
     }
 
     public void signUpOAuthDetail(User user, SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
 
-        user = userRepository.findByUsername(user.getUsername());
+        user = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(USER));
 
-        // CHECK : OAuth로 가입한 회원이 아니라면?
+        // TODO - 예외 : OAuth로 가입한 회원이 아닌 경우
         if (user.getProvider() == null || StringUtils.isBlank(user.getProviderId())) {
-            throw new EntityNotFoundException("OAuth로 가입한 회원이 아닙니다.");
+            throw new RuntimeException("OAuth로 가입한 회원이 아닙니다.");
         }
 
-        user.setGender(signUpOAuthDetailRequest.getGender() == "MALE" ? GenderType.MALE : GenderType.FEMALE);
+        user.setGender(signUpOAuthDetailRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE);
         user.setPhoneNumber(signUpOAuthDetailRequest.getPhoneNumber());
         user.setEmail(signUpOAuthDetailRequest.getEmail());
         user.setNickname(signUpOAuthDetailRequest.getNickname());
@@ -210,11 +249,11 @@ public class LoginService {
         user.setImage(signUpOAuthDetailRequest.getImage());
     }
 
-    public Tutee signUp(SignUpRequest signUpRequest) {
+    public User signUp(SignUpRequest signUpRequest) {
 
         String username = signUpRequest.getUsername();
         if (checkUsernameDuplication(username)) {
-            throw new AlreadyExistException("동일한 ID가 존재합니다.");
+            throw new AlreadyExistException(ID);
         }
 
         User user = User.builder()
@@ -233,33 +272,35 @@ public class LoginService {
                 .providerId(null)
                 .build();
 
-        // TODO - email-verify
         User unverified = userRepository.save(user);
-        // TODO - builder
-//        EmailMessage emailMessage = new EmailMessage();
-//        emailMessage.setTo(unverified.getUsername());
-//        emailMessage.setSubject("Welcome to TUTORLAB, please verify your email!");
-//        // emailMessage.setContent("Welcome! We recently received a request to create an account. To verify that you made this request, we're sending this confirmation email.");
-//        emailMessage.setContent("/verifyEmail?email=" + unverified.getUsername() + "&token=" + unverified.getEmailVerifyToken());
-//        emailService.send(emailMessage);
 
-
-        Map<String, Object> variables = new HashMap<>();
         // TODO - 상수
+        Map<String, Object> variables = new HashMap<>();
         variables.put("host", "http://localhost:8080");
         variables.put("link", "/verify-email?email=" + unverified.getUsername() + "&token=" + unverified.getEmailVerifyToken());
         variables.put("content", "Welcome! We recently received a request to create an account. To verify that you made this request, we're sending this confirmation email.");
+
         String content = templateEngine.process("verify-email", getContext(variables));
-        
-        // TODO - 상수
         sendEmail(unverified.getUsername(), "Welcome to TUTORLAB, please verify your email!", content);
 
-        // TODO - CHECK : 튜티 생성?
-        Tutee tutee = new Tutee(user);
-        return tuteeRepository.save(tutee);
+        return unverified;
     }
 
-    // TODO
+    public Tutee verifyEmail(String email, String token) {
+
+        User user = userRepository.findUnverifiedUserByUsername(email)
+                .orElseThrow(() -> new RuntimeException("해당 계정의 미인증 사용자가 존재하지 않습니다."));
+
+        if (token.equals(user.getEmailVerifyToken())) {
+            user.verifyEmail();
+
+            Tutee tutee = new Tutee();
+            tutee.setUser(user);
+            return tuteeRepository.save(tutee);
+        }
+        return null;
+    }
+
     private Context getContext(Map<String, Object> variables) {
 
         Context context = new Context();
@@ -273,20 +314,19 @@ public class LoginService {
     }
 
     private void sendEmail(String to, String subject, String content) {
-        EmailMessage emailMessage = new EmailMessage();
-        emailMessage.setTo(to);
-        emailMessage.setSubject(subject);
-        emailMessage.setContent(content);
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(to)
+                .subject(subject)
+                .content(content)
+                .build();
         emailService.send(emailMessage);
     }
 
     private Authentication authenticate(String username, String password) {
 
         try {
-
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             // SecurityContextHolder.getContext().setAuthentication(authentication);
-            return authentication;
+            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
         } catch(BadCredentialsException e) {
             throw new BadCredentialsException("BadCredentialsException");
@@ -324,35 +364,26 @@ public class LoginService {
         return this.login(request.getUsername(), request.getPassword());
     }
 
-    public void verifyEmail(String email, String token) {
-
-        User user = userRepository.findByUsername(email);
-        if (token.equals(user.getEmailVerifyToken())) {
-            user.verifyEmail();
-        }
-    }
-
     public void findPassword(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new EntityNotFoundException(USER);
-        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(USER));
+
         // 랜덤 비밀번호로 변경
         String randomPassword = generateRandomPassword(10);
         user.setPassword(bCryptPasswordEncoder.encode(randomPassword));
 
         // 랜덤 비밀번호가 담긴 이메일 전송
-        Map<String, Object> variables = new HashMap<>();
         // TODO - 상수
+        Map<String, Object> variables = new HashMap<>();
         variables.put("host", "http://localhost:8080");
         variables.put("password", randomPassword);
-        String content = templateEngine.process("find-password", getContext(variables));
 
-        // TODO - 상수
+        String content = templateEngine.process("find-password", getContext(variables));
         sendEmail(user.getUsername(), "Welcome to TUTORLAB, find your password!", content);
     }
 
-    public String generateRandomPassword(int count) {
+    private String generateRandomPassword(int count) {
         return RandomStringUtils.randomAlphanumeric(count);
     }
 
