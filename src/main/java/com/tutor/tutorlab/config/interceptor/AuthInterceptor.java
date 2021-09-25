@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.reactive.PreFlightRequestHandler;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
@@ -28,16 +30,19 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        for (MethodParameter methodParameter : handlerMethod.getMethodParameters()) {
+        if (handler instanceof HandlerMethod) {
 
-            Parameter parameter = methodParameter.getParameter();
-            if (parameter.isAnnotationPresent(CurrentUser.class) || parameter.getType().equals(User.class)) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            for (MethodParameter methodParameter : handlerMethod.getMethodParameters()) {
 
-                if (existCurrentUser()) {
-                    return true;
-                } else {
-                    throw new UnauthorizedException();
+                Parameter parameter = methodParameter.getParameter();
+                if (parameter.isAnnotationPresent(CurrentUser.class) || parameter.getType().equals(User.class)) {
+
+                    if (existCurrentUser()) {
+                        return true;
+                    } else {
+                        throw new UnauthorizedException();
+                    }
                 }
             }
         }
