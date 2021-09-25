@@ -11,6 +11,7 @@ import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.*;
 import com.tutor.tutorlab.modules.base.AbstractService;
+import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
@@ -41,6 +42,7 @@ public class TutorService extends AbstractService {
     private final CareerRepository careerRepository;
     private final EducationRepository educationRepository;
     private final LectureRepository lectureRepository;
+    // private final LectureMapstructUtil lectureMapstructUtil;
 
     private final EnrollmentRepository enrollmentRepository;
     private final ReviewRepository reviewRepository;
@@ -138,6 +140,12 @@ public class TutorService extends AbstractService {
                 .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
 
         return lectureRepository.findByTutor(tutor, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LectureResponse> getLectureResponses(User user, Integer page) {
+        // return getLectures(user, page).map(lectureMapstructUtil::getLectureResponse);
+        return getLectures(user, page).map(LectureResponse::new);
     }
 
     @Transactional(readOnly = true)

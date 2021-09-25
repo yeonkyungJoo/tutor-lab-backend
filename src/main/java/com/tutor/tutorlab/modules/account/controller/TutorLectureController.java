@@ -5,7 +5,6 @@ import com.tutor.tutorlab.modules.account.controller.response.TuteeResponse;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
-import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.controller.response.EnrollmentResponse;
@@ -31,7 +30,6 @@ public class TutorLectureController {
 
     private final TutorService tutorService;
     private final LectureService lectureService;
-    private final LectureMapstructUtil lectureMapstructUtil;
 
     private final ReviewService reviewService;
     private final EnrollmentService enrollmentService;
@@ -41,8 +39,7 @@ public class TutorLectureController {
     public ResponseEntity<?> getLectures(@CurrentUser User user,
                                          @RequestParam(defaultValue = "1") Integer page) {
 
-        Page<LectureResponse> lectures = tutorService.getLectures(user, page)
-                .map(lectureMapstructUtil::getLectureResponse);
+        Page<LectureResponse> lectures = tutorService.getLectureResponses(user, page);
         return ResponseEntity.ok(lectures);
     }
 

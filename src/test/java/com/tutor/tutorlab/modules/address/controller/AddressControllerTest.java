@@ -1,39 +1,69 @@
 package com.tutor.tutorlab.modules.address.controller;
 
-import com.tutor.tutorlab.configuration.AbstractTest;
+import com.tutor.tutorlab.MockMvcTest;
 import com.tutor.tutorlab.modules.address.repository.AddressRepository;
 import com.tutor.tutorlab.modules.address.vo.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AddressControllerTest extends AbstractTest {
+@Transactional
+@MockMvcTest
+public class AddressControllerTest {
+        // extends AbstractTest {
+
     private final String BASE_URL = "/addresses";
+
+    @Autowired
+    MockMvc mockMvc;
 
     @Autowired
     private AddressRepository addressRepository;
 
-    private final String state = "서울특별시";
-    private final String siGun = "";
-    private final String gu = "서초구";
-    private final String dong = "역삼동";
+    private Address getAddress(String state, String siGun, String gu, String dongMyunLi) {
+        return Address.builder()
+                .state(state)
+                .siGun(siGun)
+                .gu(gu)
+                .dongMyunLi(dongMyunLi)
+                .build();
+    }
 
     @BeforeEach
-    void setUp() {
-        Address address = Address.builder()
-                               .state(state)
-                               .siGun(siGun)
-                               .gu(gu)
-                               .dongMyunLi(dong)
-                               .build();
+    void init(WebApplicationContext webAppContext) {
 
-        Address save = addressRepository.save(address);
-        System.out.println();
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(webAppContext)
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .build();
+
+        addressRepository.deleteAllInBatch();
+
+        List<Address> addresses = new ArrayList<>();
+        addresses.add(getAddress("서울특별시", "", "종로구", "효자동"));
+        addresses.add(getAddress("서울특별시", "", "광진구", "능동"));
+        addresses.add(getAddress("부산광역시", "기장군", "", "내리"));
+        addresses.add(getAddress("부산광역시", "", "금정구", "금사동"));
+        addresses.add(getAddress("부산광역시", "", "수영구", "민락동"));
+        addresses.add(getAddress("대구광역시", "", "동구", "대림동"));
+        addresses.add(getAddress("전라남도", "여수시", "", "종화동"));
+        addresses.add(getAddress("전라북도", "남원시", "", "동충동"));
+        addresses.add(getAddress("경상북도", "영주시", "", "영주동"));
+        addresses.add(getAddress("경상남도", "진주시", "", "망경동"));
+        addresses.add(getAddress("충청남도", "공주시", "", "반죽동"));
+        addressRepository.saveAll(addresses);
     }
 
     @Test
@@ -48,7 +78,7 @@ public class AddressControllerTest extends AbstractTest {
     void 시군구조회_by_state() throws Exception {
         mockMvc.perform(get(BASE_URL + "/siGunGus")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("state", state))
+                .param("state", "부산광역시"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -57,9 +87,9 @@ public class AddressControllerTest extends AbstractTest {
     void 동조회_by_state_siGun_gu() throws Exception {
         mockMvc.perform(get(BASE_URL + "/dongs")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("state", state)
-                .param("siGun", siGun)
-                .param("gu", gu))
+                .param("state", "부산광역시")
+                .param("siGun", "")
+                .param("gu", "금정구"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

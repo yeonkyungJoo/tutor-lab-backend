@@ -5,14 +5,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NotificationControllerTest {
+// TODO
 
-    @Test
-    void getNotifications() {
-    }
-
-    @Test
-    void getNotification() {
-    }
+//    @Test
+//    void getNotifications() {
+//    }
+//
+//    @Test
+//    void getNotification() {
+//    }
 
     @Test
     void deleteNotification() {

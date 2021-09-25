@@ -3,7 +3,6 @@ package com.tutor.tutorlab.modules.account.controller;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
-import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
@@ -27,8 +26,6 @@ import javax.validation.Valid;
 public class TuteeLectureController {
 
     private final EnrollmentService enrollmentService;
-    private final LectureMapstructUtil lectureMapstructUtil;
-
     private final LectureService lectureService;
     private final ReviewService reviewService;
 
@@ -37,9 +34,7 @@ public class TuteeLectureController {
     public ResponseEntity<?> getLectures(@CurrentUser User user,
                                          @RequestParam(defaultValue = "1") Integer page) {
 
-        Page<LectureResponse> lectures = enrollmentService.getLecturesOfTutee(user, page)
-                // TODO - MapstructUtil
-                .map(lectureMapstructUtil::getLectureResponse);
+        Page<LectureResponse> lectures = enrollmentService.getLectureResponsesOfTutee(user, page);
         return ResponseEntity.ok(lectures);
     }
 
