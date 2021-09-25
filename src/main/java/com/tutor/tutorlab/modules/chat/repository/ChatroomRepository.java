@@ -7,10 +7,12 @@ import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 public interface ChatroomRepository extends JpaRepository<Chatroom, Long> {
 
     Optional<Chatroom> findByTuteeAndId(Tutee tutee, Long chatroomId);
@@ -21,6 +23,7 @@ public interface ChatroomRepository extends JpaRepository<Chatroom, Long> {
     List<Chatroom> findByTutee(Tutee tutee);
     Page<Chatroom> findByTutee(Tutee tutee, Pageable pageable);
 
+    @Transactional
     void deleteByEnrollment(Enrollment enrollment);
 
 }

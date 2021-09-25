@@ -94,7 +94,7 @@ public class LectureUpdateRequest {
         private Long totalCost;
 
         @AssertTrue(message = "그룹 수업 인원수를 입력해주세요.", groups = OrderSecond.class)
-        private boolean isGroupNumberValid() {
+        private boolean isGroupNumber() {
             if (Boolean.TRUE.equals(isGroup)) {
                 return !Objects.isNull(groupNumber) && groupNumber > 0;
             }

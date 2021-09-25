@@ -38,7 +38,7 @@ class CareerServiceTest {
     @BeforeEach
     void beforeEach() {
 
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
                 .subjects("java,spring")
                 .specialist(false)
@@ -50,7 +50,7 @@ class CareerServiceTest {
     @AfterEach
     void afterEach() {
 
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
 
         tutorService.deleteTutor(user);
@@ -70,7 +70,7 @@ class CareerServiceTest {
 
         // Given
         // When
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
                 .companyName("tutorlab")
                 .duty("engineer")
@@ -92,7 +92,7 @@ class CareerServiceTest {
     void Career_수정() {
 
         // Given
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
                 .companyName("tutorlab")
                 .duty("engineer")
@@ -107,8 +107,9 @@ class CareerServiceTest {
         CareerUpdateRequest careerUpdateRequest = CareerUpdateRequest.builder()
                 .companyName("tutorlab2")
                 .duty("engineer")
-                .startDate("2007-12-03")
-                .present(true)
+                .startDate("2007-12-01")
+                .endDate("2007-12-08")
+                .present(false)
                 .build();
         careerService.updateCareer(user, careerId, careerUpdateRequest);
 
@@ -124,7 +125,7 @@ class CareerServiceTest {
     void Career_삭제() {
 
         // Given
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
                 .companyName("tutorlab")
                 .duty("engineer")

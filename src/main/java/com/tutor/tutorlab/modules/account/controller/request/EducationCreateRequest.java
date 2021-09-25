@@ -48,7 +48,7 @@ public class EducationCreateRequest {
     }
 
     @AssertTrue
-    private boolean isGraduationDateValid() {
+    private boolean isGraduationDate() {
         boolean valid = true;
 
         try {

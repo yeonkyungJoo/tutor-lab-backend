@@ -9,11 +9,13 @@ import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.QLecture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Repository
 public class LectureRepositorySupport {

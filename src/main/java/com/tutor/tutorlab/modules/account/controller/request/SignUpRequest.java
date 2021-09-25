@@ -75,7 +75,7 @@ public class SignUpRequest {
     }
 
     @AssertTrue
-    private boolean isPasswordValid() {
+    private boolean isPassword() {
         return getPassword().equals(getPasswordConfirm());
     }
 }
