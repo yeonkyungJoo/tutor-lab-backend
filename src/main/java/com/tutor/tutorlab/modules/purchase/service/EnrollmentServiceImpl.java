@@ -10,6 +10,7 @@ import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.chat.service.ChatService;
+import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
@@ -51,6 +52,11 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
 
         return enrollmentRepository.findByTutee(tutee, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(Enrollment::getLecture);
+    }
+
+    @Override
+    public Page<LectureResponse> getLectureResponsesOfTutee(User user, Integer page) {
+        return getLecturesOfTutee(user, page).map(LectureResponse::new);
     }
 
     @Override

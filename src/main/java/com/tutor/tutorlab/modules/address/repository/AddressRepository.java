@@ -21,6 +21,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
            value = "SELECT DISTINCT state FROM address")
     List<String> findStates();
 
+    // TODO - state, si_gun, gu
     @Query(nativeQuery = true,
            value = "SELECT * FROM address WHERE state = :state GROUP BY state, si_gun, gu")
     List<Address> findSiGunGuByState(@Param("state") String state);

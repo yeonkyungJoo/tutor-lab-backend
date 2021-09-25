@@ -2,7 +2,6 @@ package com.tutor.tutorlab.modules.lecture.service;
 
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
-import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -10,7 +9,6 @@ import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateReques
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
-import com.tutor.tutorlab.modules.lecture.mapstruct.LectureMapstructUtil;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepositorySupport;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
@@ -20,7 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
@@ -35,7 +35,7 @@ public class LectureServiceImpl implements LectureService {
     private final TutorRepository tutorRepository;
     private final LectureRepositorySupport lectureRepositorySupport;
 
-    private final LectureMapstructUtil lectureMapstructUtil;
+    // private final LectureMapstructUtil lectureMapstructUtil;
 
     @Override
     public Lecture getLecture(Long lectureId) {
@@ -46,8 +46,8 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public LectureResponse getLectureResponse(Long lectureId) {
         // TODO - CHECK : mapstruct vs 생성자
-        // return new LectureResponse(lecture);
-        return lectureMapstructUtil.getLectureResponse(getLecture(lectureId));
+        return new LectureResponse(getLecture(lectureId));
+        // return lectureMapstructUtil.getLectureResponse(getLecture(lectureId));
     }
 
     @Override

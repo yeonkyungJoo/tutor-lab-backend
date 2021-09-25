@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LectureListRequestTest extends AbstractRequestTest {
-
+// TODO - CHECK
     @ParameterizedTest
     @MethodSource("generateClearRequest")
     void 완벽한파라미터_테스트(List<String> parents, List<String> subjects, List<SystemType> systemTypes, List<DifficultyType> difficultyTypes, Boolean isGroup) {

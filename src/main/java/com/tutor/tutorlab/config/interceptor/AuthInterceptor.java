@@ -29,7 +29,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (handler instanceof ResourceHttpRequestHandler) {
             return true;
         }
-
+        // TODO - CHECK : CORS 에러
         if (handler instanceof HandlerMethod) {
 
             HandlerMethod handlerMethod = (HandlerMethod) handler;
