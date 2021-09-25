@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +23,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+
+        if (handler instanceof ResourceHttpRequestHandler) {
+            return true;
+        }
 
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         for (MethodParameter methodParameter : handlerMethod.getMethodParameters()) {
@@ -40,10 +45,6 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private boolean existCurrentUser() {
-
-//        if (handler instanceof ResourceHttpRequestHandler) {
-//            return true;
-//        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
