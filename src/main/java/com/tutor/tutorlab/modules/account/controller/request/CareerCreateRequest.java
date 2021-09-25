@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
@@ -46,12 +45,13 @@ public class CareerCreateRequest {
     }
 
     @AssertTrue
-    private boolean isEndDateValid() {
+    private boolean isEndDate() {
         boolean valid = true;
 
         // - if present is true, endDate must be blank
         // - if present is false, endDate must not be blank
-        if (!(!isPresent() && StringUtils.isNotEmpty(getEndDate()))) {
+        if ((isPresent() && StringUtils.isNotEmpty(getEndDate())) ||
+                (!isPresent() && StringUtils.isEmpty(getEndDate()))) {
             valid = false;
             return valid;
         }

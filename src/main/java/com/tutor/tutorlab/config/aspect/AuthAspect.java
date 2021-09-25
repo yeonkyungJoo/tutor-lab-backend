@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.config.aspect;
 
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
+import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -11,13 +12,13 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class AuthAspect {
 
-    @Pointcut("execution(* com.tutor.tutorlab.modules.*.controller.*.*(..))")
-    public void pointcut() {}
-
-    @Before("pointcut() && args(user)")
-    public void checkAuth(User user) {
-        if (user == null) {
-            throw new UnauthorizedException();
-        }
-    }
+//    @Pointcut("execution(* com.tutor.tutorlab.modules.*.controller.*.*(..))")
+//    public void pointcut() {}
+//
+//    @Before("pointcut() && args(user)")
+//    public void checkAuth(User user) {
+//        if (user == null) {
+//            throw new UnauthorizedException();
+//        }
+//    }
 }

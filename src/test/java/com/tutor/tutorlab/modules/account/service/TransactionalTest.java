@@ -26,9 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // @Transactional
 @SpringBootTest
-public class _UserServiceTest {
-
-    private TutorSignUpRequest tutorSignUpRequest;
+public class TransactionalTest {
 
     @Autowired
     EntityManager em;
@@ -37,58 +35,11 @@ public class _UserServiceTest {
     UserRepository userRepository;
     @Autowired
     UserService userService;
-    @Autowired
-    TuteeRepository tuteeRepository;
-    @Autowired
-    TutorRepository tutorRepository;
-    @Autowired
-    TutorService tutorService;
 
     @Autowired
     CareerRepository careerRepository;
     @Autowired
     EducationRepository educationRepository;
-
-//    @BeforeEach
-//    void init() {
-//
-//        CareerCreateRequest careerCreateRequest1 = CareerCreateRequest.builder()
-//                .companyName("tutorlab")
-//                .duty("engineer")
-//                .startDate("2007-12-03")
-//                .endDate("2007-12-04")
-//                .present(false)
-//                .build();
-//
-//        CareerCreateRequest careerCreateRequest2 = CareerCreateRequest.builder()
-//                .companyName("tutorlab2")
-//                .duty("engineer")
-//                .startDate("2007-12-05")
-//                .endDate("2007-12-06")
-//                .present(false)
-//                .build();
-//        List<CareerCreateRequest> careers = new ArrayList<>();
-//        careers.add(careerCreateRequest1);
-//        careers.add(careerCreateRequest2);
-//
-//        EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
-//                .schoolName("school")
-//                .major("computer")
-//                .entranceDate("2021-01-01")
-//                .graduationDate("2021-02-01")
-//                .score(4.01)
-//                .degree("Bachelor")
-//                .build();
-//        List<EducationCreateRequest> educations = new ArrayList<>();
-//        educations.add(educationCreateRequest);
-//
-//        tutorSignUpRequest = TutorSignUpRequest.builder()
-//                .subjects("java,spring")
-//                .careers(careers)
-//                .educations(educations)
-//                .specialist(false)
-//                .build();
-//    }
 
     // TODO
     // @Transactional
@@ -180,7 +131,7 @@ public class _UserServiceTest {
     @WithAccount("yk")
     void updateUser() {
 
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         System.out.println(user.getUpdatedAt());    // null
 
         UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
@@ -197,38 +148,4 @@ public class _UserServiceTest {
                 .forEach(u -> System.out.println(u.getUpdatedAt())); // 2021-08-26T23:26:14.841354400
     }
 
-    @DisplayName("회원 탈퇴")
-    @Test
-    @WithAccount("yk")
-    void deleteUser() {
-
-        // Given
-        User user = userRepository.findByName("yk");
-        Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
-        em.flush();
-
-        Assertions.assertEquals(RoleType.TUTOR, user.getRole());
-        Assertions.assertEquals(1, userRepository.count());
-        Assertions.assertEquals(1, tuteeRepository.count());
-        Assertions.assertEquals(1, tutorRepository.count());
-        Assertions.assertEquals(2, careerRepository.count());
-        Assertions.assertEquals(1, educationRepository.count());
-
-        // When
-        userService.deleteUser(user);
-        em.flush();
-
-        // Then
-        Assertions.assertEquals(1, userRepository.count());
-        User findUser = userRepository.findAll().get(0);
-        Assertions.assertEquals(RoleType.TUTEE, findUser.getRole());
-        Assertions.assertTrue(findUser.isDeleted());
-        Assertions.assertNotNull(findUser.getDeletedAt());
-
-        Assertions.assertEquals(0, tuteeRepository.count());
-        Assertions.assertEquals(0, tutorRepository.count());
-        Assertions.assertEquals(0, careerRepository.count());
-        Assertions.assertEquals(0, educationRepository.count());
-
-    }
 }

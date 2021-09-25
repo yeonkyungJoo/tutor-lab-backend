@@ -36,7 +36,7 @@ class EducationServiceTest {
     @BeforeEach
     void beforeEach() {
 
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
                 .subjects("java,spring")
                 .specialist(false)
@@ -47,7 +47,7 @@ class EducationServiceTest {
     @AfterEach
     void afterEach() {
 
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
 
         tutorService.deleteTutor(user);
@@ -65,7 +65,7 @@ class EducationServiceTest {
 
         // Given
         // When
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
                 .schoolName("school")
                 .major("computer")
@@ -87,7 +87,7 @@ class EducationServiceTest {
     void Education_수정() {
 
         // Given
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
                 .schoolName("school")
                 .major("computer")
@@ -122,7 +122,7 @@ class EducationServiceTest {
     void Education_삭제() {
 
         // Given
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
                 .schoolName("school")
                 .major("computer")

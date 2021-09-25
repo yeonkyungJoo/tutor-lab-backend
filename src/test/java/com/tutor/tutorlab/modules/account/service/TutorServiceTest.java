@@ -38,7 +38,7 @@ class TutorServiceTest {
     // @AfterEach
     void afterEach() {
 
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
 
         tutorService.deleteTutor(user);
@@ -50,7 +50,7 @@ class TutorServiceTest {
 
         // Given
         // When
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
                 .subjects("java,spring")
                 .specialist(false)
@@ -58,7 +58,7 @@ class TutorServiceTest {
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // Then
-        user = userRepository.findByName("yk");
+        user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
         Assertions.assertNotNull(tutor);
         Assertions.assertEquals(RoleType.TUTOR, user.getRole());
@@ -68,7 +68,7 @@ class TutorServiceTest {
     void Tutor_수정() {
 
         // Given
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
                 .subjects("java,spring")
                 .specialist(false)
@@ -83,7 +83,7 @@ class TutorServiceTest {
         tutorService.updateTutor(user, tutorUpdateRequest);
 
         // Then
-        user = userRepository.findByName("yk");
+        user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
         Assertions.assertNotNull(tutor);
         Assertions.assertEquals(RoleType.TUTOR, user.getRole());
@@ -95,7 +95,7 @@ class TutorServiceTest {
     void Tutor_탈퇴() {
 
         // Given
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
                 .subjects("java,spring")
                 .specialist(false)
@@ -106,7 +106,7 @@ class TutorServiceTest {
         tutorService.deleteTutor(user);
 
         // Then
-        user = userRepository.findByName("yk");
+        user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
         Assertions.assertNull(tutor);
         Assertions.assertEquals(RoleType.TUTEE, user.getRole());

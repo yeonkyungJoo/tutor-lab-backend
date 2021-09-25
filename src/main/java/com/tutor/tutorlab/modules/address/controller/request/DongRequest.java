@@ -16,6 +16,7 @@ public class DongRequest {
 
     private String gu;
 
+    // TODO - CHECK : -Valid
     @AssertTrue(message = "검색할 시/군 혹은 구를 입력해주세요.")
     private boolean isSiGunGuValid() {
         if (StringUtils.isBlank(siGun) && StringUtils.isBlank(gu)) {

@@ -36,6 +36,7 @@ public class LectureListRequest {
     // 레벨
     private List<DifficultyType> difficulties; // 난이도
 
+    // TODO - CHECK : -Duplicate
     @AssertTrue(message = "수업방식 검색이 중복되었습니다.")
     private boolean isSystemDuplicate() {
         if (CollectionUtils.isEmpty(systems)) {
@@ -45,6 +46,7 @@ public class LectureListRequest {
         return systemTypeSet.size() == systems.size();
     }
 
+    // TODO - CHECK : -Duplicate
     @AssertTrue(message = "수업난이도 검색이 중복되었습니다.")
     private boolean isDifficultyDuplicate() {
         if (CollectionUtils.isEmpty(difficulties)) {

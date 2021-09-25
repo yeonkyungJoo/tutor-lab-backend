@@ -43,14 +43,14 @@ class TuteeServiceTest {
 
         // Given
         // When
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         TuteeUpdateRequest tuteeUpdateRequest = TuteeUpdateRequest.builder()
                 .subjects("python")
                 .build();
         tuteeService.updateTutee(user, tuteeUpdateRequest);
 
         // Then
-        user = userRepository.findByName("yk");
+        user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(tutee);
         Assertions.assertEquals(RoleType.TUTEE, user.getRole());
@@ -64,11 +64,11 @@ class TuteeServiceTest {
 
         // Given
         // When
-        User user = userRepository.findByName("yk");
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         tuteeService.deleteTutee(user);
 
         // Then
-        user = userRepository.findByName("yk");
+        user = userRepository.findByUsername("yk@email.com").orElse(null);
         assertNull(user);
         user = userRepository.findAllByName("yk");
         assertTrue(user.isDeleted());

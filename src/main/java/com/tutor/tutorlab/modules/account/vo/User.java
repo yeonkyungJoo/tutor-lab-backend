@@ -6,6 +6,7 @@ import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -69,7 +70,11 @@ public class User extends BaseEntity {
         this.username = username;
         this.password = password;
         this.name = name;
-        this.gender = gender.equals("MALE") ? GenderType.MALE : GenderType.FEMALE;
+        if (!StringUtils.isBlank(gender)) {
+            this.gender = gender.equals("MALE") ? GenderType.MALE : GenderType.FEMALE;
+        } else {
+            this.gender = null;
+        }
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.nickname = nickname;
