@@ -24,7 +24,9 @@ public class Chatroom extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_CHATROOM_ENROLLMENT_ID"))
     private Enrollment enrollment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // TODO - CHECK : 페치 조인
+    // @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tutor_id",
             referencedColumnName = "tutor_id",
             nullable = false,

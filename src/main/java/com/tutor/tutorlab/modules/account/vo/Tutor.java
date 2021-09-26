@@ -19,7 +19,9 @@ import java.util.List;
 @Entity
 public class Tutor extends BaseEntity {
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    // TODO - CHECK : 페치 조인
+    // @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @NotNull
     @JoinColumn(name = "user_id",
                 referencedColumnName = "user_id",
