@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.purchase.service;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import org.springframework.data.domain.Page;
 
 public interface EnrollmentService {
@@ -11,7 +12,7 @@ public interface EnrollmentService {
     Page<LectureResponse> getLectureResponsesOfTutee(User user, Integer page);
 
     // 강의 수강
-    void enroll(User user, Long lectureId);
+    Enrollment enroll(User user, Long lectureId);
 
     // 수강 취소
     void cancel(User user, Long lectureId);

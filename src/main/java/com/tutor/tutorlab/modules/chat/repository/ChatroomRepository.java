@@ -23,6 +23,9 @@ public interface ChatroomRepository extends JpaRepository<Chatroom, Long> {
     List<Chatroom> findByTutee(Tutee tutee);
     Page<Chatroom> findByTutee(Tutee tutee, Pageable pageable);
 
+    Optional<Chatroom> findByEnrollment(Enrollment enrollment);
+    List<Chatroom> findByTutorAndTutee(Tutor tutor, Tutee tutee);
+
     @Transactional
     void deleteByEnrollment(Enrollment enrollment);
 

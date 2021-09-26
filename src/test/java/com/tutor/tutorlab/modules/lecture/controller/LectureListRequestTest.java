@@ -1,7 +1,8 @@
-package com.tutor.tutorlab.modules.lecture.controller.request;
+package com.tutor.tutorlab.modules.lecture.controller;
 
 import com.tutor.tutorlab.configuration.AbstractRequestTest;
 import com.tutor.tutorlab.modules.lecture.common.LectureBuilder;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.utils.MultiValueConverter;

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,77 +19,92 @@ class AddressRepositoryTest {
     @Autowired
     private AddressRepository addressRepository;
 
-    private final String STATE = "서울특별시";
-    private final String SIGUN = "";
-    private final String GU = "서초구";
-    private final String DONG_MYUN_LI = "역삼동";
+    private Address getAddress(String state, String siGun, String gu, String dongMyunLi) {
+        return Address.builder()
+                .state(state)
+                .siGun(siGun)
+                .gu(gu)
+                .dongMyunLi(dongMyunLi)
+                .build();
+    }
 
     @BeforeEach
-    void setUp() {
-        Address address = Address.builder()
-                                 .state(STATE)
-                                 .siGun(SIGUN)
-                                 .gu(GU)
-                                 .dongMyunLi(DONG_MYUN_LI)
-                                 .build();
+    void init() {
 
-        addressRepository.save(address);
+        addressRepository.deleteAllInBatch();
+
+        List<Address> addresses = new ArrayList<>();
+        addresses.add(getAddress("서울특별시", "", "종로구", "효자동"));
+        addresses.add(getAddress("서울특별시", "", "광진구", "능동"));
+        addresses.add(getAddress("부산광역시", "기장군", "", "내리"));
+        addresses.add(getAddress("부산광역시", "", "금정구", "금사동"));
+        addresses.add(getAddress("부산광역시", "", "수영구", "민락동"));
+        addresses.add(getAddress("대구광역시", "", "동구", "대림동"));
+        addresses.add(getAddress("전라남도", "여수시", "", "종화동"));
+        addresses.add(getAddress("전라북도", "남원시", "", "동충동"));
+        addresses.add(getAddress("경상북도", "영주시", "", "영주동"));
+        addresses.add(getAddress("경상남도", "진주시", "", "망경동"));
+        addresses.add(getAddress("충청남도", "공주시", "", "반죽동"));
+        addressRepository.saveAll(addresses);
     }
 
     @Test
-    void 주소목록테스트() {
-        List<Address> targetStateList = addressRepository.findAllByState(STATE);
-        assertThat(targetStateList).hasSize(1);
+    void 주소목록() {
 
-        List<Address> targetGuList = addressRepository.findAllByStateAndGu(STATE, GU);
+        // Given
+        // When
+        // Then
+        List<Address> targetStateList = addressRepository.findAllByState("부산광역시");
+        assertThat(targetStateList).hasSize(3);
+
+        List<Address> targetGuList = addressRepository.findAllByStateAndGu("부산광역시", "금정구");
         assertThat(targetGuList).hasSize(1);
 
-        List<Address> targetSigunList =addressRepository.findAllByStateAndSiGun(STATE, SIGUN);
+        List<Address> targetSigunList =addressRepository.findAllByStateAndSiGun("부산광역시", "기장군");
         assertThat(targetSigunList).hasSize(1);
     }
 
     @Test
     void 시군구조회_by_state() {
-        // given
-        final String targetState = STATE;
 
-        // when
+        // Given
+        // When
+        final String targetState = "부산광역시";
         List<Address> siGunGuByState = addressRepository.findSiGunGuByState(targetState);
 
-        // then
         Set<String> siGunSet = siGunGuByState.stream()
-                                             .map(siGunGu -> siGunGu.getSiGun())
+                                             .map(address -> address.getSiGun())
                                              .collect(Collectors.toSet());
-
         Set<String> guSet = siGunGuByState.stream()
-                                          .map(siGunGu -> siGunGu.getGu())
+                                          .map(address -> address.getGu())
                                           .collect(Collectors.toSet());
 
-        siGunGuByState.forEach(siGunGu -> {
-            String state = siGunGu.getState();
-            String siGun = siGunGu.getSiGun();
-            String gu = siGunGu.getGu();
+        siGunGuByState.forEach(address -> {
+            String state = address.getState();
+            String siGun = address.getSiGun();
+            String gu = address.getGu();
 
             assertThat(state).isEqualTo(targetState);
             siGunSet.remove(siGun);
             guSet.remove(gu);
         });
 
+        // Then
         assertThat(siGunSet).isNullOrEmpty();
         assertThat(guSet).isNullOrEmpty();
     }
 
     @Test
     void 동조회_by_state_siGun_gu() {
-        // given
-        final String targetState = STATE;
-        final String targetSiGun = SIGUN;
-        final String targetGu = GU;
 
-        // when
+        // Given
+        // When
+        final String targetState = "부산광역시";
+        final String targetSiGun = "";
+        final String targetGu = "금정구";
         List<String> addressList = addressRepository.findDongByStateAndSiGunGu(targetState, targetSiGun, targetGu);
 
-        // then
+        // Then
         System.out.println(addressList.toString());
     }
 
