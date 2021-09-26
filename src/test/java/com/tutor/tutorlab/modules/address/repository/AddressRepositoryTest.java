@@ -96,13 +96,15 @@ class AddressRepositoryTest {
 
     @Test
     void 동조회_by_state_siGun_gu() {
+         // given
+        final String targetState = STATE;
+        final String targetSiGun = SIGUN;
+        final String targetGu = GU;
+        final String targetSiGunGU = SIGUN +GU;
 
-        // Given
-        // When
-        final String targetState = "부산광역시";
-        final String targetSiGun = "";
-        final String targetGu = "금정구";
-        List<String> addressList = addressRepository.findDongByStateAndSiGunGu(targetState, targetSiGun, targetGu);
+        // when
+        //List<String> addressList = addressRepository.findDongByStateAndSiGunGu(targetState, targetSiGun, targetGu);
+        List<String> addressList = addressRepository.findDongByStateAndSiGunGu(targetState, targetSiGunGU);
 
         // Then
         System.out.println(addressList.toString());
