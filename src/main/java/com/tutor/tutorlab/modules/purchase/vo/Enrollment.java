@@ -38,7 +38,7 @@ public class Enrollment extends BaseEntity {
 
     private boolean closed = false;
 
-    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     private Chatroom chatroom;
 
     // TODO - CHECK : enrollment 삭제 시 review도 삭제
@@ -53,5 +53,12 @@ public class Enrollment extends BaseEntity {
 
     public void close() {
         setClosed(true);
+    }
+
+    public void delete() {
+        this.tutee.getEnrollments().remove(this);
+        this.lecture.getEnrollments().remove(this);
+        this.chatroom = null;
+        this.review = null;
     }
 }

@@ -6,13 +6,9 @@ import lombok.Value;
 @Value
 public class AddFile {
 
-    private final String uuid;
-
-    private final String name;
-
-    private final String contentType;
-
-    private final FileType type;
-
-    private final long size;
+    String uuid;
+    String name;
+    String contentType;
+    FileType type;
+    long size;
 }
