@@ -59,7 +59,15 @@ public class AddressController {
     public ResponseEntity<?> getDongs(@Valid DongRequest dongRequest) {
         List<String> dongs = addressService.getDongs(dongRequest.getState(),
                                             AddressUtils.convertAddress(dongRequest.getSiGunGu()));
-        return ResponseEntity.ok(dongs);
+        List<Map> returnList = new ArrayList<>();
+        dongs.forEach(item->{
+                    Map<String,String> map= new HashMap<String,String>();
+                    map.put("label",item);
+                    map.put("value",item);
+                    returnList.add(map);
+                }
+        );
+        return ResponseEntity.ok(returnList);
     }
 
 }
