@@ -5,12 +5,16 @@ import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
+import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
+import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.chat.service.ChatService;
+import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
+import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
@@ -24,10 +28,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
-import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.ENROLLMENT;
-import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.*;
 import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTEE;
 
 @Service
@@ -42,6 +46,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     private final LectureRepository lectureRepository;
 
     private final ChatService chatService;
+    private final ChatroomRepository chatroomRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -60,12 +65,13 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     }
 
     @Override
-    public void enroll(User user, Long lectureId) {
+    public Enrollment enroll(User user, Long lectureId) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
 
         // TODO - CHECK : lecture & tutor - fetch join
+        // TODO - CHECK : lecture의 enrollment가 null vs tutee의 enrollment는 size = 0
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
@@ -78,12 +84,14 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
                 .tutee(tutee)
                 .build();
         // TODO - CHECK
+        enrollment = enrollmentRepository.save(enrollment);
         tutee.addEnrollment(enrollment);
-        enrollmentRepository.save(enrollment);
+        lecture.addEnrollment(enrollment);
 
         // 수강 시 채팅방 자동 생성
         chatService.createChatroom(lecture.getTutor(), tutee, enrollment);
 
+        return enrollment;
     }
 
     @Override
@@ -98,6 +106,9 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
                 .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
 
+        Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment)
+                .orElseThrow(() -> new EntityNotFoundException(CHATROOM));
+
         // TODO - 환불
 
         // TODO - Entity Listener 활용해 변경
@@ -107,7 +118,13 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
                 .enrolledAt(enrollment.getCreatedAt())
                 .build();
         cancellationRepository.save(cancellation);
-        // 수강 취소 시 채팅방 자동 삭제 - cascade
+
+        chatroom.delete();
+        chatroomRepository.deleteByEnrollment(enrollment);
+
+        // this.tutee.getEnrollments().remove(this);
+        // this.lecture.getEnrollments().remove(this);
+        enrollment.delete();
         enrollmentRepository.delete(enrollment);
     }
 

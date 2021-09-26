@@ -22,7 +22,7 @@ class FileServiceImplTest {
     private FileMapstruct fileMapstruct;
 
     @Test
-    void 파일등록_테스트() {
+    void 파일등록() {
         FileResponse fileResponse = fileService.add(fileMapstruct.toAddFile(UUID.randomUUID().toString(), "test.jpg", "image/jpg", 2424L, FileType.LECTURE_IMAGE));
         FileResponse savedFileResponse = fileService.get(fileResponse.getUuid());
         assertEquals(fileResponse, savedFileResponse);
