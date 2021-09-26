@@ -6,6 +6,7 @@ import com.tutor.tutorlab.modules.address.controller.response.SiGunGuResponse;
 import com.tutor.tutorlab.modules.address.service.AddressService;
 import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,14 +32,26 @@ public class AddressController {
     @GetMapping(value = "/states", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getStates() {
         List<String> states = addressService.getStates();
-        return ResponseEntity.ok(states);
+        List<Map> returnList = new ArrayList<>();
+
+        states.forEach(item->{
+                Map<String,String> map= new HashMap<String,String>();
+                map.put("label",item);
+                map.put("value",item);
+                returnList.add(map);
+            }
+        );
+        return ResponseEntity.ok(returnList);
     }
 
     // TODO - CHECK : @ModelAttribute
     @GetMapping(value = "/siGunGus", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSiGunGus(@Valid SiGunGuRequest addressRequest) {
         List<SiGunGuResponse> siGunGus = addressService.getSiGunGuResponses(addressRequest.getState());
-        return ResponseEntity.ok(siGunGus);
+
+        List<Map> returnList =addressService.getMakeSigunGus(siGunGus);
+
+        return ResponseEntity.ok(returnList);
     }
 
     // TODO - CHECK : @ModelAttribute

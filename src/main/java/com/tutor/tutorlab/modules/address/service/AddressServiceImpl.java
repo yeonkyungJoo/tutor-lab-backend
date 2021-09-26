@@ -8,7 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -37,5 +40,25 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public List<String> getDongs(String state, String siGun, String gu) {
         return addressRepository.findDongByStateAndSiGunGu(state, siGun, gu);
+    }
+
+    @Override
+    public List<Map> getMakeSigunGus(List<SiGunGuResponse> siGunGus) {
+        List<Map> returnList = new ArrayList<>();
+        siGunGus.forEach(item->{
+            Map<String,String> map= new HashMap<String,String>();
+            if(item.getGu().length() > 0 && item.getSiGun().length() > 0){
+                map.put("label",item.getSiGun()+" "+item.getGu());
+                map.put("value",item.getSiGun()+" "+item.getGu());
+            }else if(item.getGu().length() == 0){
+                map.put("label",item.getSiGun());
+                map.put("value",item.getSiGun());
+            }else{
+                map.put("label",item.getGu());
+                map.put("value",item.getGu());
+            }
+            returnList.add(map);
+        });
+        return returnList;
     }
 }
