@@ -14,7 +14,7 @@ public interface AddressService {
 
     List<SiGunGuResponse> getSiGunGuResponses(String state);
 
-    List<String> getDongs(String state, String siGun, String gu);
+    List<String> getDongs(String state, String siGunGu);
 
     List<Map> getMakeSigunGus(List<SiGunGuResponse> siGunGus);
 }

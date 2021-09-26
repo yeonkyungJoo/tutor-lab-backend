@@ -58,8 +58,7 @@ public class AddressController {
     @GetMapping(value = "/dongs", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDongs(@Valid DongRequest dongRequest) {
         List<String> dongs = addressService.getDongs(dongRequest.getState(),
-                                            AddressUtils.convertAddress(dongRequest.getSiGun()),
-                                            AddressUtils.convertAddress(dongRequest.getGu()));
+                                            AddressUtils.convertAddress(dongRequest.getSiGunGu()));
         return ResponseEntity.ok(dongs);
     }
 

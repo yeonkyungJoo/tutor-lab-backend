@@ -38,8 +38,8 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<String> getDongs(String state, String siGun, String gu) {
-        return addressRepository.findDongByStateAndSiGunGu(state, siGun, gu);
+    public List<String> getDongs(String state, String SiGunGu) {
+        return addressRepository.findDongByStateAndSiGunGu(state,SiGunGu);
     }
 
     @Override

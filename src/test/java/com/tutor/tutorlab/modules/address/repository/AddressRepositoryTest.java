@@ -84,9 +84,11 @@ class AddressRepositoryTest {
         final String targetState = STATE;
         final String targetSiGun = SIGUN;
         final String targetGu = GU;
+        final String targetSiGunGU = SIGUN +GU;
 
         // when
-        List<String> addressList = addressRepository.findDongByStateAndSiGunGu(targetState, targetSiGun, targetGu);
+        //List<String> addressList = addressRepository.findDongByStateAndSiGunGu(targetState, targetSiGun, targetGu);
+        List<String> addressList = addressRepository.findDongByStateAndSiGunGu(targetState, targetSiGunGU);
 
         // then
         System.out.println(addressList.toString());
