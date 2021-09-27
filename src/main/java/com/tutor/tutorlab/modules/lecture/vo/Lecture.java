@@ -38,6 +38,7 @@ public class Lecture extends BaseEntity {
     @Column(nullable = false, length = 25)
     private String introduce;
 
+    @Lob
     @Column(nullable = false, length = 25)
     private String content;
 
