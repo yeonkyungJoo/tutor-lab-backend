@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static com.tutor.tutorlab.config.exception.AlreadyExistException.ID;
+import static com.tutor.tutorlab.config.exception.AlreadyExistException.NICKNAME;
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
 import static com.tutor.tutorlab.config.exception.OAuthAuthenticationException.UNPARSABLE;
 import static com.tutor.tutorlab.config.exception.OAuthAuthenticationException.UNSUPPORTED;
@@ -82,6 +83,21 @@ public class LoginService {
         if (user != null) {
             duplicated = true;
         }
+        return duplicated;
+    }
+
+    private boolean checkNicknameDuplication(String nickname) {
+        boolean duplicated = false;
+
+        if (StringUtils.isBlank(nickname)) {
+            throw new IllegalArgumentException();
+        }
+
+        User user = userRepository.findAllByNickname(nickname);
+        if (user != null) {
+            duplicated = true;
+        }
+
         return duplicated;
     }
 
@@ -208,7 +224,7 @@ public class LoginService {
                 .gender(null)
                 .phoneNumber(null)
                 .email(null)
-                .nickname(null)
+                .nickname(username)
                 .bio(null)
                 .zone(null)
                 .role(RoleType.TUTEE)
@@ -238,6 +254,10 @@ public class LoginService {
         // TODO - 예외 : OAuth로 가입한 회원이 아닌 경우
         if (user.getProvider() == null || StringUtils.isBlank(user.getProviderId())) {
             throw new RuntimeException("OAuth로 가입한 회원이 아닙니다.");
+        }
+
+        if (checkNicknameDuplication(signUpOAuthDetailRequest.getNickname())) {
+            throw new AlreadyExistException(NICKNAME);
         }
 
         user.setGender(signUpOAuthDetailRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE);

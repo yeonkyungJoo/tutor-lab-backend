@@ -26,10 +26,10 @@ public class LectureResponse {
     private List<LecturePriceResponse> lecturePrices;
     private List<LectureSubjectResponse> lectureSubjects;
 
-//    // 리뷰 총 개수
-//    private Integer reviewCount;
-//    // 강의 평점
-//    private Integer scoreAverage;
+    // 리뷰 총 개수
+    private Integer reviewCount;
+    // 강의 평점
+    private double scoreAverage;
 
 
     public LectureResponse(Lecture lecture) {

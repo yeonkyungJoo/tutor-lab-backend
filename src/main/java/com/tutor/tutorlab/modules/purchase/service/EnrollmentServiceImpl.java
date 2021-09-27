@@ -126,7 +126,8 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         cancellationRepository.save(cancellation);
 
         chatroom.delete();
-        chatroomRepository.deleteByEnrollment(enrollment);
+        // chatroomRepository.deleteByEnrollment(enrollment);
+        chatService.deleteChatroom(enrollment);
 
         // this.tutee.getEnrollments().remove(this);
         // this.lecture.getEnrollments().remove(this);

@@ -28,7 +28,8 @@ import java.util.Map;
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
 
-    private final Map<Long, Map<String, WebSocketSession>> chatroomMap = new HashMap<>();
+    // TODO - CHECK
+    public static final Map<Long, Map<String, WebSocketSession>> chatroomMap = new HashMap<>();
     private final ChatroomRepository chatroomRepository;
 
     private final MessageService messageService;
@@ -40,10 +41,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         chatrooms.stream().forEach(chatroom -> {
             chatroomMap.put(chatroom.getId(), new HashMap<>());
         });
-
-//        chatroomMap.put(1L, new HashMap<>());
-//        chatroomMap.put(2L, new HashMap<>());
-//        chatroomMap.put(3L, new HashMap<>());
     }
 
     // 소켓 연결

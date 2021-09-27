@@ -48,7 +48,8 @@ public class SignUpRequest {
     @Email
     private String email;
 
-    @ApiModelProperty(value = "닉네임", example = "sh", required = false)
+    @ApiModelProperty(value = "닉네임", example = "sh", required = true)
+    @NotBlank
     private String nickname;
 
     @ApiModelProperty(value = "소개글", example = "안녕하세요", required = false)

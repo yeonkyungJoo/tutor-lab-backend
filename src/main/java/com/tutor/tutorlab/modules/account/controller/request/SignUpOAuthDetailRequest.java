@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +22,8 @@ public class SignUpOAuthDetailRequest {
     @Email
     private String email;
 
-    @ApiModelProperty(value = "닉네임", example = "sj", required = false)
+    @ApiModelProperty(value = "닉네임", example = "sj", required = true)
+    @NotBlank
     private String nickname;
 
     @ApiModelProperty(value = "소개글", example = "안녕하세요", required = false)
