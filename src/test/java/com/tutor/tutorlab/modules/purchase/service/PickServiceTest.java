@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PickServiceImplTest {
+class PickServiceTest {
 
-    @Test
-    void getPicks() {
-    }
+//    @Test
+//    void getPicks() {
+//    }
 
     @Test
     void add() {

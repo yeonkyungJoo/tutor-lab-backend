@@ -27,6 +27,7 @@ public class Review extends BaseEntity {
     private Integer score;
     private String content;
 
+    // 단방향
     // TODO - CHECK : 양방향
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",
@@ -35,7 +36,7 @@ public class Review extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_REVIEW_USER_ID"))
     private User user;  // TODO - CHECK : User or Tutee/Tutor
 
-    // TODO - CHECK : 양방향
+    // OneToOne/양방향
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enrollment_id",
             referencedColumnName = "enrollment_id",
@@ -43,6 +44,7 @@ public class Review extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_REVIEW_ENROLLMENT_ID"))
     private Enrollment enrollment;
 
+    // 단방향
     // TODO - CHECK : 양방향
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id",
@@ -59,11 +61,19 @@ public class Review extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_REVIEW_PARENT_ID"))
     private Review parent;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Review> children = new ArrayList<>();
 
     public void addChild(Review review) {
         this.children.add(review);
         review.setParent(this);
+    }
+
+    public void delete() {
+        // child인 리뷰의 경우 enrollment가 null
+        if (this.enrollment != null) {
+            this.enrollment.setReview(null);
+        }
+        this.children.clear();
     }
 }

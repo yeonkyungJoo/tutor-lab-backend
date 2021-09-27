@@ -42,7 +42,7 @@ public class Enrollment extends BaseEntity {
     private Chatroom chatroom;
 
     // TODO - CHECK : enrollment 삭제 시 review도 삭제
-    @OneToOne(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Review review;
 
     @Builder

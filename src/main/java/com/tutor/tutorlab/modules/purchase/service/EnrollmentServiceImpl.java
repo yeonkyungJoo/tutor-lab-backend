@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.purchase.service;
 
+import com.tutor.tutorlab.config.exception.AlreadyExistException;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.tutor.tutorlab.config.exception.AlreadyExistException.ENROLLMENT;
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.*;
 import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTEE;
 
@@ -75,6 +77,10 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
+        if (enrollmentRepository.findByTuteeAndLecture(tutee, lecture).isPresent()) {
+            throw new AlreadyExistException(ENROLLMENT);
+        }
+
         // TODO - 구매 프로세스
         // TODO - 구매 중복 X 체크 (UNIQUE)
 
@@ -104,7 +110,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
         Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
-                .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
+                .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.ENROLLMENT));
 
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment)
                 .orElseThrow(() -> new EntityNotFoundException(CHATROOM));
@@ -138,10 +144,11 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
         Enrollment enrollment = enrollmentRepository.findByLectureAndId(lecture, enrollmentId)
-                .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
+                .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.ENROLLMENT));
 
         enrollment.close();
         // 수강 종료 시 채팅방 삭제
+        // enrollment.setChatroom(null);
         chatService.deleteChatroom(enrollment);
     }
 }

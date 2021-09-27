@@ -59,6 +59,10 @@ public class TutorService extends AbstractService {
 
     public Tutor createTutor(User user, TutorSignUpRequest tutorSignUpRequest) {
 
+        // TODO - CHECK
+        if (!user.isEmailVerified()) {
+            // TODO - throw
+        }
         user = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException(USER));
         user.setRole(RoleType.TUTOR);
 

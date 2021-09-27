@@ -104,10 +104,9 @@ public class ReviewService extends AbstractService {
         Review review = reviewRepository.findByParentAndId(parent, reviewId)
                 .orElseThrow(() -> new EntityNotFoundException(REVIEW));
 
-        // TODO - CHECK : delete
-        // TODO - CHECK : CASCADE
+        // TODO - CHECK : mappedBy된 리스트 값
         parent.getChildren().remove(review);
-
+        review.delete();
         // TODO - delete 시에 id로 먼저 조회
         reviewRepository.delete(review);
     }
@@ -140,7 +139,7 @@ public class ReviewService extends AbstractService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        // TODO : CHECK : vs enrollementRepository.findByTuteeAndLectureId(tutee, lectureId);
+        // TODO : CHECK : vs enrollmentRepository.findByTuteeAndLectureId(tutee, lectureId);
         Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
                 .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
 
@@ -166,7 +165,7 @@ public class ReviewService extends AbstractService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        // TODO : CHECK : vs enrollementRepository.findByTuteeAndLectureId(tutee, lectureId);
+        // TODO : CHECK : vs enrollmentRepository.findByTuteeAndLectureId(tutee, lectureId);
         Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
                 .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
 
@@ -185,14 +184,14 @@ public class ReviewService extends AbstractService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        // TODO : CHECK : vs enrollementRepository.findByTuteeAndLectureId(tutee, lectureId);
+        // TODO : CHECK : vs enrollmentRepository.findByTuteeAndLectureId(tutee, lectureId);
         Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
                 .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
 
         Review review = reviewRepository.findByEnrollmentAndId(enrollment, reviewId)
                 .orElseThrow(() -> new EntityNotFoundException(REVIEW));
 
-        // TODO - children 삭제 체크
+        review.delete();
         reviewRepository.delete(review);
     }
 
