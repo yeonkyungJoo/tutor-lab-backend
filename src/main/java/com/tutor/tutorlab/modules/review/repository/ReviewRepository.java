@@ -20,6 +20,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Review findByEnrollment(Enrollment enrollment);
     // List<Review> findByEnrollment(Enrollment enrollment);
 
+    List<Review> findByLectureAndEnrollmentIsNotNull(Lecture lecture);
+
     // TODO - CHECK
     Optional<Review> findByLectureAndId(Lecture lecture, Long reviewId);
     Optional<Review> findByEnrollmentAndId(Enrollment enrollment, Long reviewId);

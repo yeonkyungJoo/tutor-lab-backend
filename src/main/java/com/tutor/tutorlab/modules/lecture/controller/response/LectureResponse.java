@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @Data
 public class LectureResponse {
 
+    private Long id;
     private String thumbnail;
     private String title;
     private String subTitle;
@@ -25,13 +26,14 @@ public class LectureResponse {
     private List<LecturePriceResponse> lecturePrices;
     private List<LectureSubjectResponse> lectureSubjects;
 
-    // 리뷰 총 개수
-    private Integer reviewCount;
-    // 강의 평점
-    private Integer scoreAverage;
+//    // 리뷰 총 개수
+//    private Integer reviewCount;
+//    // 강의 평점
+//    private Integer scoreAverage;
 
 
     public LectureResponse(Lecture lecture) {
+        this.id = lecture.getId();
         this.thumbnail = lecture.getThumbnail();
         this.title = lecture.getTitle();
         this.subTitle = lecture.getSubTitle();
@@ -81,7 +83,7 @@ public class LectureResponse {
     @Data
     public static class LecturePriceResponse {
 
-        private boolean isGroup;
+        private Boolean isGroup;
         private Integer groupNumber;
         private Integer totalTime;
         private Integer pertimeLecture;

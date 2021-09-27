@@ -14,6 +14,8 @@ import com.tutor.tutorlab.modules.lecture.repository.LectureRepositorySupport;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
+import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
+import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,7 @@ public class LectureServiceImpl implements LectureService {
     private final LectureRepository lectureRepository;
     private final TutorRepository tutorRepository;
     private final LectureRepositorySupport lectureRepositorySupport;
+    private final ReviewRepository reviewRepository;
 
     // private final LectureMapstructUtil lectureMapstructUtil;
 
@@ -47,7 +50,15 @@ public class LectureServiceImpl implements LectureService {
     public LectureResponse getLectureResponse(Long lectureId) {
         // TODO - CHECK : mapstruct vs 생성자
         // return lectureMapstructUtil.getLectureResponse(getLecture(lectureId));
-        return new LectureResponse(getLecture(lectureId));
+        // return new LectureResponse(getLecture(lectureId));
+
+        Lecture lecture = getLecture(lectureId);
+        LectureResponse lectureResponse = new LectureResponse(lecture);
+
+        List<Review> reviews = reviewRepository.findByLectureAndEnrollmentIsNotNull(lecture);
+        // lectureResponse.setReviewCount(reviews.size());
+        // reviews.stream().
+        return lectureResponse;
     }
 
     @Override
