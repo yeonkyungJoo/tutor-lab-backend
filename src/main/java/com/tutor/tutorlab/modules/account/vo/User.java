@@ -36,6 +36,8 @@ public class User extends BaseEntity {
 
     private String phoneNumber;
     private String email;
+
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     private String image;       // 프로필 이미지

@@ -33,12 +33,12 @@ public class RestControllerExceptionAdvice {
         binder.initDirectFieldAccess();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ErrorResponse handleRuntimeException(RuntimeException e, HttpServletRequest req) {
+    public ErrorResponse handleRuntimeException(RuntimeException e) {
         log.error("===================== RuntimeException Handling =====================");
         e.printStackTrace();
-        return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "서버 오류가 발생하였습니다.", Collections.singletonList(e.getMessage()));
+        return ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류가 발생하였습니다.", Collections.singletonList(e.getMessage()));
     }
 
 //    @ExceptionHandler(Exception.class)
@@ -46,26 +46,31 @@ public class RestControllerExceptionAdvice {
 //        return ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류가 발생하였습니다.", Collections.singletonList(e.getMessage()));
 //    }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthenticationException.class)
     public ErrorResponse handleAuthenticationException(AuthenticationException e) {
         return ErrorResponse.of(ErrorCode.UNAUTHENTICATED, e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public ErrorResponse handleIllegalArgumentException(IllegalArgumentException e) {
         return ErrorResponse.of(ErrorCode.ENTITY_NOT_FOUND, e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public ErrorResponse handleUnauthorizedException(UnauthorizedException e) {
         return ErrorResponse.of(e.getErrorCode(), e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(EntityNotFoundException.class)
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException e) {
         return ErrorResponse.of(e.getErrorCode(), e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(AlreadyExistException.class)
     public ErrorResponse handleAlreadyExistException(AlreadyExistException e) {
         return ErrorResponse.of(e.getErrorCode(), e.getMessage());
@@ -85,11 +90,13 @@ public class RestControllerExceptionAdvice {
         return ErrorResponse.of(httpStatus.value(), defaultMessage, errorMessages);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         return ErrorResponse.of(ErrorCode.INVALID_INPUT, e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ErrorResponse handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), e.getMessage());

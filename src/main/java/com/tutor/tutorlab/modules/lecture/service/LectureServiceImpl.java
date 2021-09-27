@@ -46,8 +46,8 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public LectureResponse getLectureResponse(Long lectureId) {
         // TODO - CHECK : mapstruct vs 생성자
-        return new LectureResponse(getLecture(lectureId));
         // return lectureMapstructUtil.getLectureResponse(getLecture(lectureId));
+        return new LectureResponse(getLecture(lectureId));
     }
 
     @Override

@@ -33,7 +33,8 @@ public class Chatroom extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_CHATROOM_TUTOR_ID"))
     private Tutor tutor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // TODO - CHECK : 페치 조인
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tutee_id",
             referencedColumnName = "tutee_id",
             nullable = false,
