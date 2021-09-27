@@ -14,7 +14,7 @@ import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateReq
 
 import java.util.Arrays;
 
-public class TestData {
+public class DataBuilder {
 
     public static SignUpRequest getSignUpRequest(String name) {
         return SignUpRequest.builder()

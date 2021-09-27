@@ -16,7 +16,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByLecture(Lecture lecture);
     Page<Review> findByLecture(Lecture lecture, Pageable pageable);
-    List<Review> findByEnrollment(Enrollment enrollment);
+
+    Review findByEnrollment(Enrollment enrollment);
+    // List<Review> findByEnrollment(Enrollment enrollment);
 
     // TODO - CHECK
     Optional<Review> findByLectureAndId(Lecture lecture, Long reviewId);

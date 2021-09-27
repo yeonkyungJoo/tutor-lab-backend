@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.purchase.service;
 
 import com.tutor.tutorlab.WithAccount;
+import com.tutor.tutorlab.config.exception.AlreadyExistException;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
@@ -24,7 +25,6 @@ import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -88,6 +87,7 @@ class EnrollmentServiceTest {
                 .gender("FEMALE")
                 .build();
         User user = loginService.signUp(signUpRequest);
+        loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
                 .companyName("tutorlab")
@@ -166,6 +166,24 @@ class EnrollmentServiceTest {
         assertEquals(tutee, chatroom.getTutee());
     }
 
+    @WithAccount("yk")
+    @Test
+    void 강의중복수강_실패() {
+
+        // Given
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        Tutee tutee = tuteeRepository.findByUser(user);
+        assertNotNull(user);
+
+        enrollmentService.enroll(user, lectureId);
+
+        // When
+        assertThrows(AlreadyExistException.class, () -> {
+            enrollmentService.enroll(user, lectureId);
+        });
+
+    }
+
     @DisplayName("강의 구매 취소")
     @WithAccount("yk")
     @Test
@@ -202,9 +220,9 @@ class EnrollmentServiceTest {
         assertEquals(0, chatrooms.size());
     }
 
-//    @DisplayName("강의 종료")
-//    @WithAccount("yk")
-//    @Test
+    @DisplayName("강의 종료")
+    @WithAccount("yk")
+    @Test
     void close() {
 
         // Given
@@ -214,9 +232,28 @@ class EnrollmentServiceTest {
 
         Enrollment enrollment = enrollmentService.enroll(user, lectureId);
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
+        assertNotNull(chatroom);
+        assertFalse(enrollment.isClosed());
+
+        Long enrollmentId = enrollment.getId();
         Long chatroomId = chatroom.getId();
+        User tutorUser = userRepository.findByUsername("yk2@email.com").orElse(null);
 
         // When
+        enrollmentService.close(tutorUser, lectureId, enrollmentId);
+
         // Then
+//        enrollment = enrollmentRepository.findById(enrollmentId).orElse(null);
+//        assertTrue(enrollment.isClosed());
+        enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture).orElse(null);
+        assertNull(enrollment);
+        enrollment = enrollmentRepository.findAllById(enrollmentId);
+        assertNotNull(enrollment);
+        assertTrue(enrollment.isClosed());
+
+        assertFalse(chatroomRepository.findById(chatroomId).isPresent());
+        List<Chatroom> chatrooms = chatroomRepository.findByTutorAndTutee(tutor, tutee);
+        assertEquals(0, chatrooms.size());
+        assertFalse(chatroomRepository.findByEnrollment(enrollment).isPresent());
     }
 }
