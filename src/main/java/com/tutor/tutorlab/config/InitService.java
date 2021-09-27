@@ -16,6 +16,7 @@ import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
+import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
@@ -195,24 +196,24 @@ public class InitService {
         Tutor tutor2 = tutorService.createTutor(user5, getTutorSignUpRequest("go,java", "company2", "engineer", "school2", "science"));
 
         // lecture
-        lectureService.createLecture(user4, getLectureCreateRequest("파이썬강의", 1000L, 3, 10, "파이썬"));
-        lectureService.createLecture(user4, getLectureCreateRequest("자바강의", 3000L, 3, 10, "자바"));
-        lectureService.createLecture(user5, getLectureCreateRequest("자바강의", 2000L, 5, 20, "자바"));
+        Lecture lecture1 = lectureService.createLecture(user4, getLectureCreateRequest("파이썬강의", 1000L, 3, 10, "파이썬"));
+        Lecture lecture2 = lectureService.createLecture(user4, getLectureCreateRequest("자바강의", 3000L, 3, 10, "자바"));
+        Lecture lecture3 = lectureService.createLecture(user5, getLectureCreateRequest("자바강의", 2000L, 5, 20, "자바"));
 
         // enrollment
         // chatroom
-        enrollmentService.enroll(user1, 1L);
-        enrollmentService.enroll(user1, 2L);
-        enrollmentService.enroll(user2, 1L);
-        enrollmentService.enroll(user2, 2L);
-        enrollmentService.enroll(user3, 3L);
+        enrollmentService.enroll(user1, lecture1.getId());
+        enrollmentService.enroll(user1, lecture2.getId());
+        enrollmentService.enroll(user2, lecture1.getId());
+        enrollmentService.enroll(user2, lecture2.getId());
+        enrollmentService.enroll(user3, lecture3.getId());
 
         // review
-        Review parent1 = reviewService.createTuteeReview(user1, 1L, getTuteeReviewCreateRequest(5, "좋아요"));
-        Review child1 = reviewService.createTutorReview(user4, 1L, parent1.getId(), getTutorReviewCreateRequest("감사합니다!"));
+        Review parent1 = reviewService.createTuteeReview(user1, lecture1.getId(), getTuteeReviewCreateRequest(5, "좋아요"));
+        Review child1 = reviewService.createTutorReview(user4, lecture1.getId(), parent1.getId(), getTutorReviewCreateRequest("감사합니다!"));
 
-        Review parent2 = reviewService.createTuteeReview(user2, 1L, getTuteeReviewCreateRequest(3, "별로에요"));
-        Review child2 = reviewService.createTutorReview(user4, 1L, parent2.getId(), getTutorReviewCreateRequest("아쉽네요!"));
+        Review parent2 = reviewService.createTuteeReview(user2, lecture1.getId(), getTuteeReviewCreateRequest(3, "별로에요"));
+        Review child2 = reviewService.createTutorReview(user4, lecture1.getId(), parent2.getId(), getTutorReviewCreateRequest("아쉽네요!"));
     }
 
 }

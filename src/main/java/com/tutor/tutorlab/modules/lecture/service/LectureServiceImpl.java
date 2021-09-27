@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
@@ -52,12 +53,15 @@ public class LectureServiceImpl implements LectureService {
         // return lectureMapstructUtil.getLectureResponse(getLecture(lectureId));
         // return new LectureResponse(getLecture(lectureId));
 
+        // TODO - CHECK : 쿼리 확인
         Lecture lecture = getLecture(lectureId);
         LectureResponse lectureResponse = new LectureResponse(lecture);
 
         List<Review> reviews = reviewRepository.findByLectureAndEnrollmentIsNotNull(lecture);
-        // lectureResponse.setReviewCount(reviews.size());
-        // reviews.stream().
+        lectureResponse.setReviewCount(reviews.size());
+        OptionalDouble scoreAverage = reviews.stream().map(review -> review.getScore()).mapToInt(Integer::intValue).average();
+        lectureResponse.setScoreAverage(scoreAverage.isPresent() ? scoreAverage.getAsDouble() : 0);
+
         return lectureResponse;
     }
 
@@ -65,8 +69,17 @@ public class LectureServiceImpl implements LectureService {
     public List<LectureResponse> getLectures(LectureListRequest lectureListRequest) {
         List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest).stream()
                 // TODO - CHECK : mapstruct vs 생성자
-                .map(LectureResponse::new)
-                .collect(Collectors.toList());
+                .map(LectureResponse::new).collect(Collectors.toList());
+
+        // TODO - CHECK : 쿼리 확인
+        lectures.forEach(lectureResponse -> {
+            Lecture lecture = getLecture(lectureResponse.getId());
+            List<Review> reviews = reviewRepository.findByLectureAndEnrollmentIsNotNull(lecture);
+            lectureResponse.setReviewCount(reviews.size());
+            OptionalDouble scoreAverage = reviews.stream().map(review -> review.getScore()).mapToInt(Integer::intValue).average();
+            lectureResponse.setScoreAverage(scoreAverage.isPresent() ? scoreAverage.getAsDouble() : 0);
+        });
+
         return lectures;
     }
 
