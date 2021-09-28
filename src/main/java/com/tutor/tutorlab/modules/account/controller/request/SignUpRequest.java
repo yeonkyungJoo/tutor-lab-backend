@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
@@ -41,6 +42,10 @@ public class SignUpRequest {
     @ApiModelProperty(value = "성별", example = "MALE", required = false)
     private String gender;
 
+    @ApiModelProperty(value = "생년월일", example = "2020-01-01", required = false)
+    @Size(min = 10, max = 10)
+    private String birth;
+
     @ApiModelProperty(value = "연락처", example = "010-1111-2222", required = false)
     private String phoneNumber;
 
@@ -61,12 +66,14 @@ public class SignUpRequest {
     private String image;
 
     @Builder
-    public SignUpRequest(@NotBlank(message = "이메일 형식의 아이디를 입력해주세요.") @Email String username, @NotBlank(message = "비밀번호를 입력해주세요.") String password, @NotBlank(message = "비밀번호를 입력해주세요.") String passwordConfirm, @NotBlank String name, String gender, String phoneNumber, @Email String email, String nickname, String bio, String zone, String image) {
+    public SignUpRequest(@NotBlank(message = "이메일 형식의 아이디를 입력해주세요.") @Email String username, @NotBlank(message = "비밀번호를 입력해주세요.") String password, @NotBlank(message = "비밀번호 확인을 입력해주세요.") String passwordConfirm,
+                         @NotBlank(message = "이름을 입력해주세요.") String name, String gender, @Size(min = 8, max = 8) String birth, String phoneNumber, @Email String email, @NotBlank String nickname, String bio, String zone, String image) {
         this.username = username;
         this.password = password;
         this.passwordConfirm = passwordConfirm;
         this.name = name;
         this.gender = gender;
+        this.birth = birth;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.nickname = nickname;

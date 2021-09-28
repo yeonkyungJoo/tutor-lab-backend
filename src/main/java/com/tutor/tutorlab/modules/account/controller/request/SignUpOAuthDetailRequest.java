@@ -4,9 +4,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
@@ -14,6 +16,10 @@ public class SignUpOAuthDetailRequest {
 
     @ApiModelProperty(value = "성별", example = "MALE", required = false)
     private String gender;
+
+    @ApiModelProperty(value = "생년월일", example = "2020-01-01", required = false)
+    @Size(min = 10, max = 10)
+    private String birth;
 
     @ApiModelProperty(value = "연락처", example = "010-1234-5678", required = false)
     private String phoneNumber;
@@ -35,8 +41,9 @@ public class SignUpOAuthDetailRequest {
     private String image;
 
     @Builder
-    public SignUpOAuthDetailRequest(String gender, String phoneNumber, @Email String email, String nickname, String bio, String zone, String image) {
+    public SignUpOAuthDetailRequest(String gender, @Size(min = 8, max = 8) String birth, String phoneNumber, @Email String email, @NotBlank String nickname, String bio, String zone, String image) {
         this.gender = gender;
+        this.birth = birth;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.nickname = nickname;

@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -97,6 +98,7 @@ class LoginServiceTest {
         User user = userRepository.findByUsername("test@email.com").orElse(null);
         SignUpOAuthDetailRequest signUpOAuthDetailRequest = SignUpOAuthDetailRequest.builder()
                 .gender("FEMALE")
+                .birth("2021-01-01")
                 .phoneNumber("010-1234-5678")
                 .email("test@email.com")
                 .nickname("nickname")
@@ -108,6 +110,8 @@ class LoginServiceTest {
         user = userRepository.findByUsername("test@email.com").orElse(null);
         assertTrue(user.isEmailVerified());
         assertEquals("nickname", user.getNickname());
+
+        assertEquals(LocalDate.of(2021, 1, 1), user.getBirth());
     }
 
     @Test
@@ -121,6 +125,7 @@ class LoginServiceTest {
                 .passwordConfirm("password")
                 .name("test")
                 .gender("FEMALE")
+                .birth("2021-01-01")
                 .phoneNumber(null)
                 .email(null)
                 .nickname(null)
@@ -137,6 +142,7 @@ class LoginServiceTest {
         assertFalse(user.isEmailVerified());
         assertEquals(RoleType.TUTEE, user.getRole());
         assertEquals(GenderType.FEMALE, user.getGender());
+        assertEquals(LocalDate.of(2021, 1, 1), user.getBirth());
 
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNull(tutee);

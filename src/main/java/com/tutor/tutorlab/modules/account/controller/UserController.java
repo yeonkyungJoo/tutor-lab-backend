@@ -3,7 +3,6 @@ package com.tutor.tutorlab.modules.account.controller;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.UserResponse;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.UserService;
 import com.tutor.tutorlab.modules.account.vo.User;
 import io.swagger.annotations.Api;
@@ -22,7 +21,6 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
 
     // TODO - 검색
     @ApiOperation("회원 전체 조회 - 페이징")
