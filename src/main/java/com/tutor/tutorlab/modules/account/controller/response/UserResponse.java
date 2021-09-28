@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller.response;
 
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.Data;
 
 @Data
@@ -10,6 +11,7 @@ public class UserResponse {
     // private String password;
     private String name;
     private String gender;
+    private String birth;
     private String phoneNumber;
     private String email;
     private String nickname;
@@ -21,6 +23,7 @@ public class UserResponse {
         this.username = user.getUsername();
         this.name = user.getName();
         this.gender = user.getGender().toString();
+        this.birth = LocalDateTimeUtil.getDateToString(user.getBirth());
         this.phoneNumber = user.getPhoneNumber();
         this.email = user.getEmail();
         this.nickname = user.getNickname();

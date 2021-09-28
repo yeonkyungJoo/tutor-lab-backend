@@ -4,12 +4,14 @@ import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
+import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -33,6 +35,8 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private GenderType gender;
+
+    private LocalDate birth;
 
     private String phoneNumber;
     private String email;
@@ -67,7 +71,7 @@ public class User extends BaseEntity {
     // TODO - Notification과 양방향
 
     @Builder
-    public User(String username, String password, String name, String gender, String phoneNumber, String email, String nickname, String bio, String zone, String image,
+    public User(String username, String password, String name, String gender, String birth, String phoneNumber, String email, String nickname, String bio, String zone, String image,
                 RoleType role, OAuthType provider, String providerId) {
         this.username = username;
         this.password = password;
@@ -77,6 +81,7 @@ public class User extends BaseEntity {
         } else {
             this.gender = null;
         }
+        this.birth = LocalDateTimeUtil.getStringToDate(birth);
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.nickname = nickname;

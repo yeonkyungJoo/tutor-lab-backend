@@ -27,6 +27,7 @@ import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -222,6 +223,7 @@ public class LoginService {
                 .password(bCryptPasswordEncoder.encode(username))
                 .name(oAuthInfo.getName())
                 .gender(null)
+                .birth(null)
                 .phoneNumber(null)
                 .email(null)
                 .nickname(username)
@@ -261,6 +263,7 @@ public class LoginService {
         }
 
         user.setGender(signUpOAuthDetailRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE);
+        user.setBirth(LocalDateTimeUtil.getStringToDate(signUpOAuthDetailRequest.getBirth()));
         user.setPhoneNumber(signUpOAuthDetailRequest.getPhoneNumber());
         user.setEmail(signUpOAuthDetailRequest.getEmail());
         user.setNickname(signUpOAuthDetailRequest.getNickname());
@@ -281,6 +284,7 @@ public class LoginService {
                 .password(bCryptPasswordEncoder.encode(signUpRequest.getPassword()))
                 .name(signUpRequest.getName())
                 .gender(signUpRequest.getGender())
+                .birth(signUpRequest.getBirth())
                 .phoneNumber(signUpRequest.getPhoneNumber())
                 .email(signUpRequest.getEmail())
                 .nickname(signUpRequest.getNickname())
