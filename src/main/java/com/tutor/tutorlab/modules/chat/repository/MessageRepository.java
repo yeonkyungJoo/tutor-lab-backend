@@ -13,4 +13,9 @@ public interface MessageRepository extends MongoRepository<Message, Long> {
 
     List<Message> findAllByChatroomId(Long chatroomId);
     Message findFirstByChatroomIdOrderByIdDesc(Long chatroomId);
+
+    List<Message> findAllByChatroomIdAndCheckedIsFalseAndUsernameIsNot(Long chatroomId, String username);
+    Integer countAllByChatroomIdAndCheckedIsFalseAndUsernameIsNot(Long chatroomId, String username);
+
+
 }

@@ -1,9 +1,7 @@
 package com.tutor.tutorlab.modules.chat.vo;
 
 import com.tutor.tutorlab.modules.chat.enums.MessageType;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,8 +10,8 @@ import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
 @Document(collection = "messages")
-@Getter
-@Setter
+@NoArgsConstructor
+@Getter @Setter
 public class Message {
 
     @Id
@@ -27,4 +25,17 @@ public class Message {
     private String message;
     // private LocalDateTime sentAt;
     private String sentAt;
+
+    private boolean checked;
+
+    @Builder
+    public Message(MessageType type, Long chatroomId, String sessionId, String username, String message, String sentAt, boolean checked) {
+        this.type = type;
+        this.chatroomId = chatroomId;
+        this.sessionId = sessionId;
+        this.username = username;
+        this.message = message;
+        this.sentAt = sentAt;
+        this.checked = checked;
+    }
 }

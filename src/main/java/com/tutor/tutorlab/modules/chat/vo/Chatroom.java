@@ -25,8 +25,8 @@ public class Chatroom extends BaseEntity {
     private Enrollment enrollment;
 
     // TODO - CHECK : 페치 조인
-    // @ManyToOne(fetch = FetchType.LAZY)
-    @ManyToOne(fetch = FetchType.EAGER)
+    // @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutor_id",
             referencedColumnName = "tutor_id",
             nullable = false,
@@ -34,7 +34,8 @@ public class Chatroom extends BaseEntity {
     private Tutor tutor;
 
     // TODO - CHECK : 페치 조인
-    @ManyToOne(fetch = FetchType.EAGER)
+    // @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutee_id",
             referencedColumnName = "tutee_id",
             nullable = false,

@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +38,10 @@ public class ChatroomService extends AbstractService {
     private final ChatroomRepository chatroomRepository;
     private final TuteeRepository tuteeRepository;
     private final TutorRepository tutorRepository;
+
+    private final MongoTemplate mongoTemplate;
     private final MessageRepository messageRepository;
+
 
     public Page<Chatroom> getChatroomsOfTutee(User user, Integer page) {
 
@@ -44,14 +50,27 @@ public class ChatroomService extends AbstractService {
         return chatroomRepository.findByTutee(tutee, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
     }
 
+    // TODO - CHECK : Tutor/Tutee EAGER 체크
+    // TODO - CHECK : 쿼리 체크
     // TODO - CHECK : Fetch join
     public Page<ChatroomResponse> getChatroomResponsesOfTutee(User user, Integer page) {
         return getChatroomsOfTutee(user, page)
             .map(chatroom -> {
                 ChatroomResponse chatroomResponse = new ChatroomResponse(chatroom);
                 chatroomResponse.setLastMessage(messageRepository.findFirstByChatroomIdOrderByIdDesc(chatroom.getId()));
+                chatroomResponse.setUncheckedMessageCount(messageRepository.countAllByChatroomIdAndCheckedIsFalseAndUsernameIsNot(chatroom.getId(), user.getNickname()));
                 return chatroomResponse;
             });
+    }
+
+    // TODO - CHECK : Batch
+    private void checkAllMessages(User user, Long chatroomId) {
+        List<Message> uncheckedMessages = mongoTemplate.find(Query.query(Criteria.where("chatroomId").is(chatroomId)
+                .and("checked").is(false).and("username").ne(user.getNickname())), Message.class);
+        uncheckedMessages.forEach(message -> {
+            message.setChecked(true);
+            messageRepository.save(message);
+        });
     }
 
     public List<Message> getMessagesOfTuteeChatroom(User user, Long chatroomId) {
@@ -62,6 +81,7 @@ public class ChatroomService extends AbstractService {
         Chatroom chatroom = chatroomRepository.findByTuteeAndId(tutee, chatroomId)
                 .orElseThrow(() -> new EntityNotFoundException(CHATROOM));
 
+        checkAllMessages(user, chatroomId);
         return messageRepository.findAllByChatroomId(chatroomId);
     }
 
@@ -78,6 +98,7 @@ public class ChatroomService extends AbstractService {
                 .map(chatroom -> {
                     ChatroomResponse chatroomResponse = new ChatroomResponse(chatroom);
                     chatroomResponse.setLastMessage(messageRepository.findFirstByChatroomIdOrderByIdDesc(chatroom.getId()));
+                    chatroomResponse.setUncheckedMessageCount(messageRepository.countAllByChatroomIdAndCheckedIsFalseAndUsernameIsNot(chatroom.getId(), user.getNickname()));
                     return chatroomResponse;
                 });
     }
@@ -90,6 +111,7 @@ public class ChatroomService extends AbstractService {
         Chatroom chatroom = chatroomRepository.findByTutorAndId(tutor, chatroomId)
                 .orElseThrow(() -> new EntityNotFoundException(CHATROOM));
 
+        checkAllMessages(user, chatroomId);
         return messageRepository.findAllByChatroomId(chatroomId);
     }
 }

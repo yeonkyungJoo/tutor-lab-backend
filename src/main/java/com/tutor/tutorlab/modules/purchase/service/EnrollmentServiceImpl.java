@@ -48,7 +48,6 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     private final LectureRepository lectureRepository;
 
     private final ChatService chatService;
-    private final ChatroomRepository chatroomRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -112,9 +111,6 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
                 .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.ENROLLMENT));
 
-        Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment)
-                .orElseThrow(() -> new EntityNotFoundException(CHATROOM));
-
         // TODO - 환불
 
         // TODO - Entity Listener 활용해 변경
@@ -125,12 +121,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
                 .build();
         cancellationRepository.save(cancellation);
 
-        chatroom.delete();
-        // chatroomRepository.deleteByEnrollment(enrollment);
         chatService.deleteChatroom(enrollment);
-
-        // this.tutee.getEnrollments().remove(this);
-        // this.lecture.getEnrollments().remove(this);
         enrollment.delete();
         enrollmentRepository.delete(enrollment);
     }
