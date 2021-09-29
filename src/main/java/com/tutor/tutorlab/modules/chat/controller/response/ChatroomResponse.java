@@ -20,8 +20,6 @@ public class ChatroomResponse {
     }
 
     private Long chatroomId;
-    // private User tutor;
-    // private User tutee;
     private String lectureTitle;
     // private Long tutorId;
     private String tutorNickname;
@@ -30,4 +28,5 @@ public class ChatroomResponse {
     private String tuteeNickname;
     private String tuteeImage;
     private Message lastMessage;
+    private Integer uncheckedMessageCount = 0;
 }
