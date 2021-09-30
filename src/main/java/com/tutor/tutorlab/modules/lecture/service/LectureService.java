@@ -15,7 +15,7 @@ public interface LectureService {
     LectureResponse getLectureResponse(Long lectureId);
 
     // TODO - CHECK
-    List<LectureResponse> getLectures(LectureListRequest lectureListRequest);
+    List<LectureResponse> getLectureResponses(LectureListRequest lectureListRequest);
 
     Lecture createLecture(User user, LectureCreateRequest lectureCreateRequest);
 

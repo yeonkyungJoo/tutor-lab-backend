@@ -27,4 +27,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByEnrollmentAndId(Enrollment enrollment, Long reviewId);
 
     Optional<Review> findByParentAndId(Review parent, Long reviewId);
+
+    // TODO - CHECK : 쿼리
+    Integer countByLectureInAndEnrollmentIsNotNull(List<Lecture> lectures);
 }
