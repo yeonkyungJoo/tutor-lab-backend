@@ -25,6 +25,7 @@ public class LectureResponse {
     private List<SystemTypeResponse> systemTypes;
     private List<LecturePriceResponse> lecturePrices;
     private List<LectureSubjectResponse> lectureSubjects;
+    private LectureTutorResponse lectureTutor;
 
     // 리뷰 총 개수
     private Integer reviewCount;
@@ -90,6 +91,9 @@ public class LectureResponse {
         private Long pertimeCost;
         private Long totalCost;
 
+        private String isGroupStr;
+        private String content;
+
         public LecturePriceResponse(LecturePrice lecturePrice) {
             this.isGroup = lecturePrice.getIsGroup();
             this.groupNumber = lecturePrice.getGroupNumber();
@@ -97,6 +101,9 @@ public class LectureResponse {
             this.pertimeLecture = lecturePrice.getPertimeLecture();
             this.pertimeCost = lecturePrice.getPertimeCost();
             this.totalCost = lecturePrice.getTotalCost();
+
+            this.isGroupStr = lecturePrice.getIsGroup() ? "그룹강의" : "1:1 개인강의";
+            this.content = String.format("시간당 %d원 x 1회 %d시간 x 총 %d회 수업 진행", this.pertimeCost, this.pertimeLecture, this.totalTime);
         }
     }
 

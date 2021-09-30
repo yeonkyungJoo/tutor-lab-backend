@@ -13,6 +13,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface LectureRepository extends JpaRepository<Lecture, Long> {
 
+    Integer countByTutor(Tutor tutor);
     List<Lecture> findByTutor(Tutor tutor);
     Page<Lecture> findByTutor(Tutor tutor, Pageable pageable);
 

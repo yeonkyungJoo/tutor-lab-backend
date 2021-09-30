@@ -49,6 +49,7 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public LectureResponse getLectureResponse(Long lectureId) {
+
         // TODO - CHECK : mapstruct vs 생성자
         // return lectureMapstructUtil.getLectureResponse(getLecture(lectureId));
         // return new LectureResponse(getLecture(lectureId));
@@ -62,11 +63,22 @@ public class LectureServiceImpl implements LectureService {
         OptionalDouble scoreAverage = reviews.stream().map(review -> review.getScore()).mapToInt(Integer::intValue).average();
         lectureResponse.setScoreAverage(scoreAverage.isPresent() ? scoreAverage.getAsDouble() : 0);
 
+        lectureResponse.setLectureTutor(getLectureTutorResponse(lecture));
         return lectureResponse;
     }
 
+    private LectureResponse.LectureTutorResponse getLectureTutorResponse(Lecture lecture) {
+
+        Tutor tutor = lecture.getTutor();
+
+        LectureResponse.LectureTutorResponse lectureTutorResponse = new LectureResponse.LectureTutorResponse(tutor);
+        lectureTutorResponse.setLectureCount(lectureRepository.countByTutor(tutor));
+        lectureTutorResponse.setReviewCount(reviewRepository.countByLectureInAndEnrollmentIsNotNull(lectureRepository.findByTutor(tutor)));
+        return lectureTutorResponse;
+    }
+
     @Override
-    public List<LectureResponse> getLectures(LectureListRequest lectureListRequest) {
+    public List<LectureResponse> getLectureResponses(LectureListRequest lectureListRequest) {
         List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest).stream()
                 // TODO - CHECK : mapstruct vs 생성자
                 .map(LectureResponse::new).collect(Collectors.toList());

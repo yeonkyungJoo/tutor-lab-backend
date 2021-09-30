@@ -35,7 +35,7 @@ public class LectureController {
     @ApiOperation("강의 목록 조회")
     @GetMapping
     public ResponseEntity<?> getLectures(@ModelAttribute @Valid LectureListRequest lectureListRequest) {
-        List<LectureResponse> lectures = lectureService.getLectures(lectureListRequest);
+        List<LectureResponse> lectures = lectureService.getLectureResponses(lectureListRequest);
         return ResponseEntity.ok(lectures);
     }
 
