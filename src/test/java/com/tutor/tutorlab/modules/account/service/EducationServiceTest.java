@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest
 class EducationServiceTest {
 
@@ -33,39 +34,19 @@ class EducationServiceTest {
     @Autowired
     TutorService tutorService;
 
-    @BeforeEach
-    void beforeEach() {
+    @WithAccount("yk")
+    @Test
+    void Education_등록() {
 
+        // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
         TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
                 .subjects("java,spring")
                 .specialist(false)
                 .build();
         tutorService.createTutor(user, tutorSignUpRequest);
-    }
 
-    @AfterEach
-    void afterEach() {
-
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        Tutor tutor = tutorRepository.findByUser(user);
-
-        tutorService.deleteTutor(user);
-    }
-
-    @Transactional
-    @Test
-    void getEducation() {
-    }
-
-    @Transactional
-    @WithAccount("yk")
-    @Test
-    void Education_등록() {
-
-        // Given
         // When
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
                 .schoolName("school")
                 .major("computer")
@@ -81,13 +62,18 @@ class EducationServiceTest {
         Assertions.assertEquals(1, educationRepository.findByTutor(tutor).size());
     }
 
-    @Transactional
     @WithAccount("yk")
     @Test
     void Education_수정() {
 
         // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        tutorService.createTutor(user, tutorSignUpRequest);
+
         EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
                 .schoolName("school")
                 .major("computer")
@@ -116,13 +102,18 @@ class EducationServiceTest {
         Assertions.assertEquals("school2", updatedEducation.getSchoolName());
     }
 
-    @Transactional
     @WithAccount("yk")
     @Test
     void Education_삭제() {
 
         // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        tutorService.createTutor(user, tutorSignUpRequest);
+
         EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
                 .schoolName("school")
                 .major("computer")

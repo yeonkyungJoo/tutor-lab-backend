@@ -16,8 +16,10 @@ import com.tutor.tutorlab.modules.chat.service.ChatService;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
+import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
@@ -45,8 +47,9 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     private final CancellationRepository cancellationRepository;
     private final TuteeRepository tuteeRepository;
     private final TutorRepository tutorRepository;
-    private final LectureRepository lectureRepository;
 
+    private final LectureRepository lectureRepository;
+    private final LecturePriceRepository lecturePriceRepository;
     private final ChatService chatService;
 
     @Transactional(readOnly = true)
@@ -66,7 +69,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     }
 
     @Override
-    public Enrollment enroll(User user, Long lectureId) {
+    public Enrollment enroll(User user, Long lectureId, Long lecturePriceId) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
@@ -76,7 +79,11 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        if (enrollmentRepository.findByTuteeAndLecture(tutee, lecture).isPresent()) {
+        LecturePrice lecturePrice = lecturePriceRepository.findByLectureAndId(lecture, lecturePriceId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE_PRICE));
+
+        // 종료/취소된 강의 재구매 불가
+        if (enrollmentRepository.findAllByTuteeIdAndLectureId(tutee.getId(), lecture.getId()).isPresent()) {
             throw new AlreadyExistException(ENROLLMENT);
         }
 
@@ -86,6 +93,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         // 성공 시
         Enrollment enrollment = Enrollment.builder()
                 .lecture(lecture)
+                .lecturePrice(lecturePrice)
                 .tutee(tutee)
                 .build();
         // TODO - CHECK
@@ -117,13 +125,13 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         Cancellation cancellation = Cancellation.builder()
                 .tutee(tutee)
                 .lecture(lecture)
+                .lecturePrice(enrollment.getLecturePrice())
                 .enrolledAt(enrollment.getCreatedAt())
                 .build();
         cancellationRepository.save(cancellation);
 
+        enrollment.cancel();
         chatService.deleteChatroom(enrollment);
-        enrollment.delete();
-        enrollmentRepository.delete(enrollment);
     }
 
     @Override

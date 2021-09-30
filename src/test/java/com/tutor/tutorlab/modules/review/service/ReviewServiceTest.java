@@ -2,7 +2,10 @@ package com.tutor.tutorlab.modules.review.service;
 
 import com.tutor.tutorlab.WithAccount;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
-import com.tutor.tutorlab.modules.account.controller.request.*;
+import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
+import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.LoginService;
@@ -16,8 +19,10 @@ import com.tutor.tutorlab.modules.lecture.common.LectureBuilder;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
+import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
@@ -33,7 +38,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -61,6 +65,9 @@ class ReviewServiceTest {
     TutorService tutorService;
     @Autowired
     LectureService lectureService;
+    @Autowired
+    LecturePriceRepository lecturePriceRepository;
+
     @Autowired
     EnrollmentService enrollmentService;
     @Autowired
@@ -165,13 +172,98 @@ class ReviewServiceTest {
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(user);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id);
+        LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
+
+        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
         assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
         assertEquals(0, cancellationRepository.findByTutee(tutee).size());
         assertNotNull(chatroomRepository.findByEnrollment(enrollment));
 
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
         Long chatroomId = chatroom.getId();
+
+        // When
+        TuteeReviewCreateRequest tuteeReviewCreateRequest = TuteeReviewCreateRequest.builder()
+                .score(5)
+                .content("좋아요")
+                .build();
+        reviewService.createTuteeReview(user, lecture1Id, tuteeReviewCreateRequest);
+
+        // Then
+        Review review = reviewRepository.findByEnrollment(enrollment);
+        assertNotNull(review);
+        assertAll(
+                () -> assertEquals(enrollment, review.getEnrollment()),
+                () -> assertEquals(0, review.getChildren().size()),
+                () -> assertEquals(lecture1, review.getLecture()),
+                () -> assertEquals(tuteeReviewCreateRequest.getContent(), review.getContent()),
+                () -> assertEquals(5, review.getScore())
+        );
+    }
+
+    @WithAccount("yk")
+    @DisplayName("튜티 리뷰 등록 - 종료된 강의")
+    @Test
+    void createTuteeReview_withClosedLecture() {
+
+        // Given
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        Tutee tutee = tuteeRepository.findByUser(user);
+        assertNotNull(user);
+
+        LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
+
+        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
+        assertEquals(0, cancellationRepository.findByTutee(tutee).size());
+        assertNotNull(chatroomRepository.findByEnrollment(enrollment));
+
+        Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
+        Long chatroomId = chatroom.getId();
+
+        // 수강 종료
+        enrollmentService.close(tutorUser, lecture1Id, enrollment.getId());
+
+        // When
+        TuteeReviewCreateRequest tuteeReviewCreateRequest = TuteeReviewCreateRequest.builder()
+                .score(5)
+                .content("좋아요")
+                .build();
+        reviewService.createTuteeReview(user, lecture1Id, tuteeReviewCreateRequest);
+
+        // Then
+        Review review = reviewRepository.findByEnrollment(enrollment);
+        assertNotNull(review);
+        assertAll(
+                () -> assertEquals(enrollment, review.getEnrollment()),
+                () -> assertEquals(0, review.getChildren().size()),
+                () -> assertEquals(lecture1, review.getLecture()),
+                () -> assertEquals(tuteeReviewCreateRequest.getContent(), review.getContent()),
+                () -> assertEquals(5, review.getScore())
+        );
+    }
+
+    @WithAccount("yk")
+    @DisplayName("튜티 리뷰 등록 - 취소한 강의")
+    @Test
+    void createTuteeReview_withCanceledLecture() {
+
+        // Given
+        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        Tutee tutee = tuteeRepository.findByUser(user);
+        assertNotNull(user);
+
+        LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
+
+        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
+        assertEquals(0, cancellationRepository.findByTutee(tutee).size());
+        assertNotNull(chatroomRepository.findByEnrollment(enrollment));
+
+        Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
+        Long chatroomId = chatroom.getId();
+
+        enrollmentService.cancel(user, lecture1Id);
 
         // When
         TuteeReviewCreateRequest tuteeReviewCreateRequest = TuteeReviewCreateRequest.builder()
@@ -220,7 +312,8 @@ class ReviewServiceTest {
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutee tutee = tuteeRepository.findByUser(user);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id);
+        LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
+        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
 
         TuteeReviewCreateRequest tuteeReviewCreateRequest = TuteeReviewCreateRequest.builder()
                 .score(5)
@@ -256,7 +349,8 @@ class ReviewServiceTest {
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutee tutee = tuteeRepository.findByUser(user);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id);
+        LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
+        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
 
         TuteeReviewCreateRequest tuteeReviewCreateRequest = TuteeReviewCreateRequest.builder()
                 .score(5)
@@ -282,7 +376,8 @@ class ReviewServiceTest {
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutee tutee = tuteeRepository.findByUser(user);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id);
+        LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
+        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
 
         TuteeReviewCreateRequest tuteeReviewCreateRequest = TuteeReviewCreateRequest.builder()
                 .score(5)
@@ -320,7 +415,8 @@ class ReviewServiceTest {
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutee tutee = tuteeRepository.findByUser(user);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id);
+        LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
+        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
 
         TuteeReviewCreateRequest tuteeReviewCreateRequest = TuteeReviewCreateRequest.builder()
                 .score(5)
@@ -353,7 +449,8 @@ class ReviewServiceTest {
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutee tutee = tuteeRepository.findByUser(user);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id);
+        LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
+        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
 
         TuteeReviewCreateRequest tuteeReviewCreateRequest = TuteeReviewCreateRequest.builder()
                 .score(5)
@@ -397,7 +494,8 @@ class ReviewServiceTest {
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutee tutee = tuteeRepository.findByUser(user);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id);
+        LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
+        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
 
         TuteeReviewCreateRequest tuteeReviewCreateRequest = TuteeReviewCreateRequest.builder()
                 .score(5)

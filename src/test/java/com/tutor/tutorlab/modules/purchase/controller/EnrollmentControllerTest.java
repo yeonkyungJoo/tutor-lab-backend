@@ -20,8 +20,10 @@ import com.tutor.tutorlab.modules.lecture.common.LectureBuilder;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
+import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,6 +57,8 @@ class EnrollmentControllerTest {
     TutorService tutorService;
     @Autowired
     LectureService lectureService;
+    @Autowired
+    LecturePriceRepository lecturePriceRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -137,8 +141,11 @@ class EnrollmentControllerTest {
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(user);
 
+        LecturePrice lecturePrice = lecturePriceRepository.findByLecture(lecture).get(0);
+        Long lecturePriceId = lecturePrice.getId();
+
         // When
-        mockMvc.perform(post("/lectures/{lecture_id}/enrollments", lectureId))
+        mockMvc.perform(post("/lectures/{lecture_id}/{lecture_price_id}/enrollments", lectureId, lecturePriceId))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
@@ -150,6 +157,11 @@ class EnrollmentControllerTest {
         assertEquals("java,spring", enrollment.getLecture().getTutor().getSubjects());
         assertFalse(enrollment.getLecture().getTutor().isSpecialist());
         assertEquals("yk", enrollment.getTutee().getUser().getName());
+
+        assertTrue(enrollment.getLecturePrice().getIsGroup());
+        assertEquals(3, enrollment.getLecturePrice().getGroupNumber());
+        assertEquals(1000L, enrollment.getLecturePrice().getPertimeCost());
+        assertEquals(3, enrollment.getLecturePrice().getPertimeLecture());
 
         // 강의 수강 시 채팅방 자동 생성
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);

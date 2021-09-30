@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 @SpringBootTest
 class CareerServiceTest {
 
@@ -35,9 +36,11 @@ class CareerServiceTest {
     @Autowired
     TutorService tutorService;
 
-    @BeforeEach
-    void beforeEach() {
+    @WithAccount("yk")
+    @Test
+    void Career_등록() {
 
+        // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
         TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
                 .subjects("java,spring")
@@ -45,32 +48,7 @@ class CareerServiceTest {
                 .build();
         tutorService.createTutor(user, tutorSignUpRequest);
 
-    }
-
-    @AfterEach
-    void afterEach() {
-
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        Tutor tutor = tutorRepository.findByUser(user);
-
-        tutorService.deleteTutor(user);
-//        List<Career> careers = careerRepository.findByTutor(tutor);
-//        careerRepository.deleteAll(careers);
-//        tutorRepository.delete(tutor);
-    }
-
-    @Test
-    void getCareer() {
-    }
-
-    @Transactional
-    @WithAccount("yk")
-    @Test
-    void Career_등록() {
-
-        // Given
         // When
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
                 .companyName("tutorlab")
                 .duty("engineer")
@@ -86,13 +64,18 @@ class CareerServiceTest {
 
     }
 
-    @Transactional
     @WithAccount("yk")
     @Test
     void Career_수정() {
 
         // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        tutorService.createTutor(user, tutorSignUpRequest);
+
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
                 .companyName("tutorlab")
                 .duty("engineer")
@@ -119,13 +102,18 @@ class CareerServiceTest {
         Assertions.assertEquals("tutorlab2", updatedCareer.getCompanyName());
     }
 
-    @Transactional
     @WithAccount("yk")
     @Test
     void Career_삭제() {
 
         // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
+                .subjects("java,spring")
+                .specialist(false)
+                .build();
+        tutorService.createTutor(user, tutorSignUpRequest);
+
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
                 .companyName("tutorlab")
                 .duty("engineer")

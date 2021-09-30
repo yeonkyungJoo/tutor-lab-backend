@@ -19,8 +19,10 @@ import com.tutor.tutorlab.modules.lecture.common.LectureBuilder;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
+import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
@@ -41,14 +43,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class EnrollmentServiceTest {
 
-//    @Test
-//    void getLecturesOfTutee() {
-//    }
-//
-//    @Test
-//    void getLectureResponsesOfTutee() {
-//    }
-
     @Autowired
     EnrollmentService enrollmentService;
     @Autowired
@@ -63,6 +57,8 @@ class EnrollmentServiceTest {
 
     @Autowired
     LectureService lectureService;
+    @Autowired
+    LecturePriceRepository lecturePriceRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -143,8 +139,11 @@ class EnrollmentServiceTest {
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(user);
 
+        LecturePrice lecturePrice = lecturePriceRepository.findByLecture(lecture).get(0);
+        Long lecturePriceId = lecturePrice.getId();
+
         // When
-        enrollmentService.enroll(user, lectureId);
+        enrollmentService.enroll(user, lectureId, lecturePriceId);
 
         // Then
         assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
@@ -154,6 +153,11 @@ class EnrollmentServiceTest {
         assertEquals("java,spring", enrollment.getLecture().getTutor().getSubjects());
         assertFalse(enrollment.getLecture().getTutor().isSpecialist());
         assertEquals("yk", enrollment.getTutee().getUser().getName());
+
+        assertTrue(enrollment.getLecturePrice().getIsGroup());
+        assertEquals(3, enrollment.getLecturePrice().getGroupNumber());
+        assertEquals(1000L, enrollment.getLecturePrice().getPertimeCost());
+        assertEquals(3, enrollment.getLecturePrice().getPertimeLecture());
 
         // 강의 수강 시 채팅방 자동 생성
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
@@ -175,11 +179,14 @@ class EnrollmentServiceTest {
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(user);
 
-        enrollmentService.enroll(user, lectureId);
+        LecturePrice lecturePrice = lecturePriceRepository.findByLecture(lecture).get(0);
+        Long lecturePriceId = lecturePrice.getId();
+
+        enrollmentService.enroll(user, lectureId, lecturePriceId);
 
         // When
         assertThrows(AlreadyExistException.class, () -> {
-            enrollmentService.enroll(user, lectureId);
+            enrollmentService.enroll(user, lectureId, lecturePriceId);
         });
 
     }
@@ -194,7 +201,11 @@ class EnrollmentServiceTest {
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(user);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lectureId);
+        LecturePrice lecturePrice = lecturePriceRepository.findByLecture(lecture).get(0);
+        Long lecturePriceId = lecturePrice.getId();
+
+        Enrollment enrollment = enrollmentService.enroll(user, lectureId, lecturePriceId);
+        assertFalse(enrollment.isCanceled());
         assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
         assertEquals(0, cancellationRepository.findByTutee(tutee).size());
         assertNotNull(chatroomRepository.findByEnrollment(enrollment));
@@ -206,7 +217,8 @@ class EnrollmentServiceTest {
 
         // Then
         List<Enrollment> enrollments = enrollmentRepository.findByTutee(tutee);
-        assertEquals(0, enrollments.size());
+        assertEquals(1, enrollments.size());
+        assertTrue(enrollment.isCanceled());
 
         List<Cancellation> cancellations = cancellationRepository.findByTutee(tutee);
         assertEquals(1, cancellations.size());
@@ -230,9 +242,14 @@ class EnrollmentServiceTest {
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(user);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lectureId);
+        LecturePrice lecturePrice = lecturePriceRepository.findByLecture(lecture).get(0);
+        Long lecturePriceId = lecturePrice.getId();
+
+        Enrollment enrollment = enrollmentService.enroll(user, lectureId, lecturePriceId);
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
         assertNotNull(chatroom);
+
+        assertFalse(enrollment.isCanceled());
         assertFalse(enrollment.isClosed());
 
         Long enrollmentId = enrollment.getId();
@@ -249,6 +266,7 @@ class EnrollmentServiceTest {
         assertNull(enrollment);
         enrollment = enrollmentRepository.findAllById(enrollmentId);
         assertNotNull(enrollment);
+        assertFalse(enrollment.isCanceled());
         assertTrue(enrollment.isClosed());
 
         assertFalse(chatroomRepository.findById(chatroomId).isPresent());

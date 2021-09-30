@@ -18,10 +18,11 @@ public class EnrollmentController {
     private final EnrollmentService enrollmentService;
 
     @ApiOperation("강의 수강")
-    @PostMapping("/lectures/{lecture_id}/enrollments")
+    @PostMapping("/lectures/{lecture_id}/{lecture_price_id}/enrollments")
     public ResponseEntity<?> enroll(@CurrentUser User user,
-                                    @PathVariable(name = "lecture_id") Long lectureId) {
-        enrollmentService.enroll(user, lectureId);
+                                    @PathVariable(name = "lecture_id") Long lectureId,
+                                    @PathVariable(name = "lecture_price_id") Long lecturePriceId) {
+        enrollmentService.enroll(user, lectureId, lecturePriceId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
