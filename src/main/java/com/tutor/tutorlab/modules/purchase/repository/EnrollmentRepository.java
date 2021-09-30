@@ -19,10 +19,13 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     Enrollment findAllById(Long enrollmentId);
 
     List<Enrollment> findByTutee(Tutee tutee);
-    List<Enrollment> findByLecture(Lecture lecture);
+    // List<Enrollment> findByLecture(Lecture lecture);
     Page<Enrollment> findByTutee(Tutee tutee, Pageable pageable);
     Page<Enrollment> findByLecture(Lecture lecture, Pageable pageable);
 
     Optional<Enrollment> findByLectureAndId(Lecture lecture, Long enrollmentId);
     Optional<Enrollment> findByTuteeAndLecture(Tutee tutee, Lecture lecture);
+
+    @Query(value = "select * from enrollment where tutee_id = :tuteeId and lecture_id = :lectureId", nativeQuery = true)
+    Optional<Enrollment> findAllByTuteeIdAndLectureId(Long tuteeId, Long lectureId);
 }

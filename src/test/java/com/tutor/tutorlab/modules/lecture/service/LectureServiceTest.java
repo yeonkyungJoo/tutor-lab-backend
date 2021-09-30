@@ -373,7 +373,7 @@ public class LectureServiceTest {
                 Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE),
                 true);
 
-        List<LectureResponse> lectureResponses = lectureService.getLectures(lectureListRequest);
+        List<LectureResponse> lectureResponses = lectureService.getLectureResponses(lectureListRequest);
 
         // Then
         /*

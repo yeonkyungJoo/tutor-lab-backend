@@ -139,8 +139,8 @@ public class ReviewService extends AbstractService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        // TODO : CHECK : vs enrollmentRepository.findByTuteeAndLectureId(tutee, lectureId);
-        Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
+        // 종료/취소된 강의 리뷰 가능
+        Enrollment enrollment = enrollmentRepository.findAllByTuteeIdAndLectureId(tutee.getId(), lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
 
         // TODO - Builder
@@ -165,8 +165,8 @@ public class ReviewService extends AbstractService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        // TODO : CHECK : vs enrollmentRepository.findByTuteeAndLectureId(tutee, lectureId);
-        Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
+        // 종료/취소된 강의 리뷰 가능
+        Enrollment enrollment = enrollmentRepository.findAllByTuteeIdAndLectureId(tutee.getId(), lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
 
         Review review = reviewRepository.findByEnrollmentAndId(enrollment, reviewId)
@@ -184,8 +184,8 @@ public class ReviewService extends AbstractService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        // TODO : CHECK : vs enrollmentRepository.findByTuteeAndLectureId(tutee, lectureId);
-        Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
+        // 종료/취소된 강의 리뷰 가능
+        Enrollment enrollment = enrollmentRepository.findAllByTuteeIdAndLectureId(tutee.getId(), lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
 
         Review review = reviewRepository.findByEnrollmentAndId(enrollment, reviewId)

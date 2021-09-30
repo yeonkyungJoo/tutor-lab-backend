@@ -12,7 +12,7 @@ public interface EnrollmentService {
     Page<LectureResponse> getLectureResponsesOfTutee(User user, Integer page);
 
     // 강의 수강
-    Enrollment enroll(User user, Long lectureId);
+    Enrollment enroll(User user, Long lectureId, Long lecturePriceId);
 
     // 수강 취소
     void cancel(User user, Long lectureId);

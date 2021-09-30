@@ -14,11 +14,15 @@ import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
+import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
+import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
+import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
@@ -50,6 +54,9 @@ public class InitService {
     private final EducationRepository educationRepository;
     private final TutorRepository tutorRepository;
     private final LectureRepository lectureRepository;
+    private final LecturePriceRepository lecturePriceRepository;
+    private final LectureSubjectRepository lectureSubjectRepository;
+
     private final EnrollmentRepository enrollmentRepository;
     private final ChatroomRepository chatroomRepository;
     private final ReviewRepository reviewRepository;
@@ -169,6 +176,8 @@ public class InitService {
         reviewRepository.deleteAll();
         chatroomRepository.deleteAll();
         enrollmentRepository.deleteAll();
+        lecturePriceRepository.deleteAll();
+        lectureSubjectRepository.deleteAll();
         lectureRepository.deleteAll();
         careerRepository.deleteAll();
         educationRepository.deleteAll();
@@ -202,11 +211,19 @@ public class InitService {
 
         // enrollment
         // chatroom
-        enrollmentService.enroll(user1, lecture1.getId());
-        enrollmentService.enroll(user1, lecture2.getId());
-        enrollmentService.enroll(user2, lecture1.getId());
-        enrollmentService.enroll(user2, lecture2.getId());
-        enrollmentService.enroll(user3, lecture3.getId());
+        LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
+        LecturePrice lecturePrice2 = lecturePriceRepository.findByLecture(lecture2).get(0);
+        LecturePrice lecturePrice3 = lecturePriceRepository.findByLecture(lecture3).get(0);
+        Enrollment enrollment1 = enrollmentService.enroll(user1, lecture1.getId(), lecturePrice1.getId());
+        Enrollment enrollment2 = enrollmentService.enroll(user1, lecture2.getId(), lecturePrice2.getId());
+        Enrollment enrollment3 = enrollmentService.enroll(user2, lecture1.getId(), lecturePrice1.getId());
+        Enrollment enrollment4 = enrollmentService.enroll(user2, lecture2.getId(), lecturePrice2.getId());
+        Enrollment enrollment5 = enrollmentService.enroll(user3, lecture3.getId(), lecturePrice3.getId());
+
+        // 강의 종료
+        enrollmentService.close(user4, lecture1.getId(), enrollment1.getId());
+        // 강의 취소
+        enrollmentService.cancel(user1, lecture2.getId());
 
         // review
         Review parent1 = reviewService.createTuteeReview(user1, lecture1.getId(), getTuteeReviewCreateRequest(5, "좋아요"));
@@ -214,6 +231,9 @@ public class InitService {
 
         Review parent2 = reviewService.createTuteeReview(user2, lecture1.getId(), getTuteeReviewCreateRequest(3, "별로에요"));
         Review child2 = reviewService.createTutorReview(user4, lecture1.getId(), parent2.getId(), getTutorReviewCreateRequest("아쉽네요!"));
+
+        Review parent3 = reviewService.createTuteeReview(user1, lecture2.getId(), getTuteeReviewCreateRequest(1, "환불했어요"));
+        Review child3 = reviewService.createTutorReview(user4, lecture2.getId(), parent3.getId(), getTutorReviewCreateRequest("죄송합니다"));
     }
 
 }
