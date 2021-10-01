@@ -3,6 +3,8 @@ package com.tutor.tutorlab.modules.account.vo;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
+import com.tutor.tutorlab.modules.address.embeddable.Address;
+import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.*;
@@ -49,13 +51,13 @@ public class User extends BaseEntity {
     @Lob
     private String bio;         // 소개글
 
-    // private Zone zone;
-    private String zone;        // 지역
+    // TODO - CHECK : 정적 테이블 관리
+    @Embedded
+    private Address zone;        // 지역
+    // private String zone;
 
     @Enumerated(EnumType.STRING)
     private RoleType role;
-/*    @ColumnDefault("'ROLE_TUTEE'")
-    private String role;*/
 
     @Enumerated(EnumType.STRING)
     private OAuthType provider;
@@ -64,6 +66,8 @@ public class User extends BaseEntity {
     private boolean emailVerified = false;
     private String emailVerifyToken;
     private LocalDateTime emailVerifiedAt;
+
+    private String fcmToken;
 
     private boolean deleted = false;
     private LocalDateTime deletedAt;
@@ -86,7 +90,7 @@ public class User extends BaseEntity {
         this.email = email;
         this.nickname = nickname;
         this.bio = bio;
-        this.zone = zone;
+        this.zone = AddressUtils.convertStringToEmbeddableAddress(zone);
         this.image = image;
         this.role = role;
         this.provider = provider;

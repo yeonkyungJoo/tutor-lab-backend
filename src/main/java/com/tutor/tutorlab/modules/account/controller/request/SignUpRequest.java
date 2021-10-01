@@ -60,14 +60,14 @@ public class SignUpRequest {
     @ApiModelProperty(value = "소개글", example = "안녕하세요", required = false)
     private String bio;
 
-    @ApiModelProperty(value = "지역", example = "서울특별시 서초구", required = false)
+    @ApiModelProperty(value = "지역", example = "서울특별시 종로구 효자동", required = false)
+    @NotBlank
     private String zone;
 
     private String image;
 
     @Builder
-    public SignUpRequest(@NotBlank(message = "이메일 형식의 아이디를 입력해주세요.") @Email String username, @NotBlank(message = "비밀번호를 입력해주세요.") String password, @NotBlank(message = "비밀번호 확인을 입력해주세요.") String passwordConfirm,
-                         @NotBlank(message = "이름을 입력해주세요.") String name, String gender, @Size(min = 8, max = 8) String birth, String phoneNumber, @Email String email, @NotBlank String nickname, String bio, String zone, String image) {
+    public SignUpRequest(@NotBlank(message = "이메일 형식의 아이디를 입력해주세요.") @Email String username, @NotBlank(message = "비밀번호를 입력해주세요.") String password, @NotBlank(message = "비밀번호 확인을 입력해주세요.") String passwordConfirm, @NotBlank(message = "이름을 입력해주세요.") String name, String gender, @Size(min = 10, max = 10) String birth, String phoneNumber, @Email String email, @NotBlank String nickname, String bio, @NotBlank String zone, String image) {
         this.username = username;
         this.password = password;
         this.passwordConfirm = passwordConfirm;

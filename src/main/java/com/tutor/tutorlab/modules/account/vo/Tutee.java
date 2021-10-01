@@ -4,7 +4,9 @@ import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.purchase.vo.Pick;
+import com.tutor.tutorlab.utils.CommonUtil;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static com.tutor.tutorlab.utils.CommonUtil.COMMA;
 
 @ToString
 @AttributeOverride(name = "id", column = @Column(name = "tutee_id"))
@@ -48,7 +52,7 @@ public class Tutee extends BaseEntity {
 
     public List<String> getSubjectList() {
         if (this.subjects != null && this.subjects.length() > 0) {
-            return Arrays.asList(this.subjects.split(","));
+            return Arrays.asList(this.subjects.split(COMMA));
         }
         return Collections.emptyList();
     }

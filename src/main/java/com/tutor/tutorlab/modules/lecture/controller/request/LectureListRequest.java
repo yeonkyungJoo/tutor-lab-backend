@@ -20,21 +20,11 @@ import java.util.stream.Collectors;
 public class LectureListRequest {
 
     private String lectureName;
-
-    // 강의종류
-    private List<String> parents; // 종류
-
-    private List<String> subjects; // 언어
-
-    // 수업 방식
-    private List<SystemType> systems; // 온/오프라인 / 장소협의가능
-
-    private Boolean isGroup; // 그룹여부
-
-    // TODO 주소
-
-    // 레벨
-    private List<DifficultyType> difficulties; // 난이도
+    private List<String> parents;       // 강의종류
+    private List<String> subjects;      // 언어
+    private List<SystemType> systems;   // 수업방식 : 온/오프라인 / 장소협의가능
+    private Boolean isGroup;            // 그룹여부
+    private List<DifficultyType> difficulties; // 레벨, 난이드
 
     // TODO - CHECK : -Duplicate
     @AssertTrue(message = "수업방식 검색이 중복되었습니다.")

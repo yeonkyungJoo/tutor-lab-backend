@@ -2,9 +2,7 @@ package com.tutor.tutorlab.modules.lecture.service;
 
 import com.tutor.tutorlab.WithAccount;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
-import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
-import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.TutorService;
@@ -24,18 +22,15 @@ import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
 import com.tutor.tutorlab.modules.subject.vo.Subject;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -373,7 +368,7 @@ public class LectureServiceTest {
                 Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE),
                 true);
 
-        List<LectureResponse> lectureResponses = lectureService.getLectureResponses(lectureListRequest);
+        // List<LectureResponse> lectureResponses = lectureService.getLectureResponses(lectureListRequest);
 
         // Then
         /*

@@ -6,6 +6,7 @@ import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,4 +29,9 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
     @Query(value = "select * from enrollment where tutee_id = :tuteeId and lecture_id = :lectureId", nativeQuery = true)
     Optional<Enrollment> findAllByTuteeIdAndLectureId(Long tuteeId, Long lectureId);
+
+    @Transactional(readOnly = false)
+    @Modifying
+    @Query(value = "delete from enrollment", nativeQuery = true)
+    void deleteAllEnrollments();
 }

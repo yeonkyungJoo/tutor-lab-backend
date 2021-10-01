@@ -6,6 +6,7 @@ import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.modules.base.AbstractService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -47,7 +48,7 @@ public class UserService extends AbstractService {
         user.setEmail(userUpdateRequest.getEmail());
         user.setNickname(userUpdateRequest.getNickname());
         user.setBio(userUpdateRequest.getBio());
-        user.setZone(userUpdateRequest.getZone());
+        user.setZone(AddressUtils.convertStringToEmbeddableAddress(userUpdateRequest.getZone()));
         user.setImage(userUpdateRequest.getImage());
     }
 
