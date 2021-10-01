@@ -31,9 +31,9 @@ public class AddressController {
 
     @GetMapping(value = "/states", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getStates() {
-        List<String> states = addressService.getStates();
-        List<Map> returnList = new ArrayList<>();
 
+        List<String> states = addressService.getStates();
+        List<Map<String, String>> returnList = new ArrayList<>();
         states.forEach(item->{
                 Map<String,String> map= new HashMap<String,String>();
                 map.put("label",item);
@@ -47,21 +47,21 @@ public class AddressController {
     // TODO - CHECK : @ModelAttribute
     @GetMapping(value = "/siGunGus", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSiGunGus(@Valid SiGunGuRequest addressRequest) {
+
         List<SiGunGuResponse> siGunGus = addressService.getSiGunGuResponses(addressRequest.getState());
-
-        List<Map> returnList =addressService.getMakeSigunGus(siGunGus);
-
+        List<Map<String, String>> returnList = addressService.getMakeSigunGus(siGunGus);
         return ResponseEntity.ok(returnList);
     }
 
     // TODO - CHECK : @ModelAttribute
     @GetMapping(value = "/dongs", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDongs(@Valid DongRequest dongRequest) {
+
         List<String> dongs = addressService.getDongs(dongRequest.getState(),
                                             AddressUtils.convertAddress(dongRequest.getSiGunGu()));
-        List<Map> returnList = new ArrayList<>();
+        List<Map<String, String>> returnList = new ArrayList<>();
         dongs.forEach(item->{
-                    Map<String,String> map= new HashMap<String,String>();
+                    Map<String,String> map= new HashMap<>();
                     map.put("label",item);
                     map.put("value",item);
                     returnList.add(map);

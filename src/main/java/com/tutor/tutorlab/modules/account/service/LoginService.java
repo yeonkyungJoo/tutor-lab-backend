@@ -27,6 +27,7 @@ import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -268,7 +269,7 @@ public class LoginService {
         user.setEmail(signUpOAuthDetailRequest.getEmail());
         user.setNickname(signUpOAuthDetailRequest.getNickname());
         user.setBio(signUpOAuthDetailRequest.getBio());
-        user.setZone(signUpOAuthDetailRequest.getZone());
+        user.setZone(AddressUtils.convertStringToEmbeddableAddress(signUpOAuthDetailRequest.getZone()));
         user.setImage(signUpOAuthDetailRequest.getImage());
     }
 

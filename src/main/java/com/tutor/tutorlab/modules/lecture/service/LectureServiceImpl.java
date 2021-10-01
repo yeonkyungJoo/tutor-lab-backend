@@ -5,6 +5,9 @@ import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.address.embeddable.Address;
+import com.tutor.tutorlab.modules.address.util.AddressUtils;
+import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
@@ -16,7 +19,13 @@ import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
+import com.tutor.tutorlab.utils.CommonUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +37,12 @@ import java.util.stream.Collectors;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
 import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
+import static com.tutor.tutorlab.utils.CommonUtil.SPACE;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class LectureServiceImpl implements LectureService {
+public class LectureServiceImpl extends AbstractService implements LectureService {
 
     private final LectureRepository lectureRepository;
     private final TutorRepository tutorRepository;
@@ -77,11 +87,32 @@ public class LectureServiceImpl implements LectureService {
         return lectureTutorResponse;
     }
 
+//    @Override
+//    public List<LectureResponse> getLectureResponses(LectureListRequest lectureListRequest) {
+//
+//        List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest).stream()
+//                // TODO - CHECK : mapstruct vs 생성자
+//                .map(LectureResponse::new).collect(Collectors.toList());
+//
+//        // TODO - CHECK : 쿼리 확인
+//        lectures.forEach(lectureResponse -> {
+//            Lecture lecture = getLecture(lectureResponse.getId());
+//            List<Review> reviews = reviewRepository.findByLectureAndEnrollmentIsNotNull(lecture);
+//            lectureResponse.setReviewCount(reviews.size());
+//            OptionalDouble scoreAverage = reviews.stream().map(review -> review.getScore()).mapToInt(Integer::intValue).average();
+//            lectureResponse.setScoreAverage(scoreAverage.isPresent() ? scoreAverage.getAsDouble() : 0);
+//        });
+//
+//        return lectures;
+//    }
+
     @Override
-    public List<LectureResponse> getLectureResponses(LectureListRequest lectureListRequest) {
-        List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest).stream()
-                // TODO - CHECK : mapstruct vs 생성자
-                .map(LectureResponse::new).collect(Collectors.toList());
+    public Page<LectureResponse> getLectureResponses(String zone, Integer page) {
+
+        Page<LectureResponse> lectures = lectureRepositorySupport.findLecturesByZone(
+                AddressUtils.convertStringToEmbeddableAddress(zone), PageRequest.of(page - 1, 2, Sort.by("id").ascending()))
+                .map(LectureResponse::new);
+        // TODO - CHECK : mapstruct vs 생성자
 
         // TODO - CHECK : 쿼리 확인
         lectures.forEach(lectureResponse -> {
@@ -103,8 +134,6 @@ public class LectureServiceImpl implements LectureService {
                 .orElseThrow(() -> new UnauthorizedException(TUTOR));
 
         // TODO 유효성 -> 해당 유저의 강의 갯수 제한?
-
-        // TODO 강의 -> 유저 address 정보 넣어줘야함.
 
         Lecture lecture = buildLecture(lectureCreateRequest, tutor);
         for (LectureCreateRequest.LecturePriceCreateRequest lecturePriceRequest : lectureCreateRequest.getLecturePrices()) {

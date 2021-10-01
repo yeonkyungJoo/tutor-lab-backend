@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller.response;
 
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.Data;
 
@@ -28,6 +29,6 @@ public class UserResponse {
         this.email = user.getEmail();
         this.nickname = user.getNickname();
         this.bio = user.getBio();
-        this.zone = user.getZone();
+        this.zone = AddressUtils.convertEmbeddableToStringAddress(user.getZone());
     }
 }

@@ -5,8 +5,6 @@ import com.tutor.tutorlab.modules.lecture.common.LectureBuilder;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
-import com.tutor.tutorlab.utils.MultiValueConverter;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

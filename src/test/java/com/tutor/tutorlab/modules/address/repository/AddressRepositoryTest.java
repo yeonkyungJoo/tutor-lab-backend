@@ -28,7 +28,7 @@ class AddressRepositoryTest {
                 .build();
     }
 
-    @BeforeEach
+    // @BeforeEach
     void init() {
 
         addressRepository.deleteAllInBatch();

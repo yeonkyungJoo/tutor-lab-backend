@@ -32,10 +32,18 @@ public class LectureController {
 
     // TODO - 페이징
     // TODO - CHECK : @ModelAttribute
-    @ApiOperation("강의 목록 조회")
+//    @ApiOperation("강의 목록 조회")
+//    @GetMapping
+//    public ResponseEntity<?> getLectures(@ModelAttribute @Valid LectureListRequest lectureListRequest) {
+//        List<LectureResponse> lectures = lectureService.getLectureResponses(lectureListRequest);
+//        return ResponseEntity.ok(lectures);
+//    }
+
+    @ApiOperation("강의 목록 조회 - 위치별(튜터 주소 기준)")
     @GetMapping
-    public ResponseEntity<?> getLectures(@ModelAttribute @Valid LectureListRequest lectureListRequest) {
-        List<LectureResponse> lectures = lectureService.getLectureResponses(lectureListRequest);
+    public ResponseEntity<?> getLectures(@RequestParam(name = "zone", required = false) String zone,
+                                         @RequestParam(defaultValue = "1") Integer page) {
+        Page<LectureResponse> lectures = lectureService.getLectureResponses(zone, page);
         return ResponseEntity.ok(lectures);
     }
 

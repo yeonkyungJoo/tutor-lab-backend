@@ -20,6 +20,7 @@ import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
+import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
@@ -57,11 +58,12 @@ public class InitService {
     private final LecturePriceRepository lecturePriceRepository;
     private final LectureSubjectRepository lectureSubjectRepository;
 
+    private final CancellationRepository cancellationRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ChatroomRepository chatroomRepository;
     private final ReviewRepository reviewRepository;
 
-    private SignUpRequest getSignUpRequest(String name) {
+    private SignUpRequest getSignUpRequest(String name, String zone) {
         return SignUpRequest.builder()
                 .username(name + "@email.com")
                 .password("password")
@@ -70,9 +72,9 @@ public class InitService {
                 .gender("FEMALE")
                 .phoneNumber(null)
                 .email(null)
-                .nickname(null)
+                .nickname(name)
                 .bio(null)
-                .zone(null)
+                .zone(zone)
                 .build();
     }
 
@@ -175,7 +177,8 @@ public class InitService {
 
         reviewRepository.deleteAll();
         chatroomRepository.deleteAll();
-        enrollmentRepository.deleteAll();
+        cancellationRepository.deleteAll();
+        enrollmentRepository.deleteAllEnrollments();
         lecturePriceRepository.deleteAll();
         lectureSubjectRepository.deleteAll();
         lectureRepository.deleteAll();
@@ -186,19 +189,19 @@ public class InitService {
         userRepository.deleteAll();
 
         // user / tutee
-        User user1 = loginService.signUp(getSignUpRequest("user1"));
+        User user1 = loginService.signUp(getSignUpRequest("user1", "부산광역시 기장군 내리"));
         Tutee tutee1 = loginService.verifyEmail(user1.getUsername(), user1.getEmailVerifyToken());
 
-        User user2 = loginService.signUp(getSignUpRequest("user2"));
+        User user2 = loginService.signUp(getSignUpRequest("user2", "서울특별시 종로구 효자동"));
         Tutee tutee2 = loginService.verifyEmail(user2.getUsername(), user2.getEmailVerifyToken());
 
-        User user3 = loginService.signUp(getSignUpRequest("user3"));
+        User user3 = loginService.signUp(getSignUpRequest("user3", "경상북도 영주시 영주동"));
         Tutee tutee3 = loginService.verifyEmail(user3.getUsername(), user3.getEmailVerifyToken());
 
-        User user4 = loginService.signUp(getSignUpRequest("user4"));
+        User user4 = loginService.signUp(getSignUpRequest("user4", "부산광역시 금정구 금사동"));
         Tutee tutee4 = loginService.verifyEmail(user4.getUsername(), user4.getEmailVerifyToken());
 
-        User user5 = loginService.signUp(getSignUpRequest("user5"));
+        User user5 = loginService.signUp(getSignUpRequest("user5", "경상남도 진주시 망경동"));
         Tutee tutee5 = loginService.verifyEmail(user5.getUsername(), user5.getEmailVerifyToken());
 
         Tutor tutor1 = tutorService.createTutor(user4, getTutorSignUpRequest("python,java", "company1", "engineer", "school1", "computer"));

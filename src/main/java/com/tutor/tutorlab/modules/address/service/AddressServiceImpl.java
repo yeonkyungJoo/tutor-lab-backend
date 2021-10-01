@@ -43,17 +43,18 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<Map> getMakeSigunGus(List<SiGunGuResponse> siGunGus) {
-        List<Map> returnList = new ArrayList<>();
+    public List<Map<String, String>> getMakeSigunGus(List<SiGunGuResponse> siGunGus) {
+
+        List<Map<String, String>> returnList = new ArrayList<>();
         siGunGus.forEach(item->{
-            Map<String,String> map= new HashMap<String,String>();
-            if(item.getGu().length() > 0 && item.getSiGun().length() > 0){
+            Map<String, String> map = new HashMap<>();
+            if (item.getGu().length() > 0 && item.getSiGun().length() > 0){
                 map.put("label",item.getSiGun()+" "+item.getGu());
                 map.put("value",item.getSiGun()+" "+item.getGu());
-            }else if(item.getGu().length() == 0){
+            } else if (item.getGu().length() == 0){
                 map.put("label",item.getSiGun());
                 map.put("value",item.getSiGun());
-            }else{
+            } else{
                 map.put("label",item.getGu());
                 map.put("value",item.getGu());
             }

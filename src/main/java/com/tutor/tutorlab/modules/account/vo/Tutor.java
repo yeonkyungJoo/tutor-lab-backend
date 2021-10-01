@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.tutor.tutorlab.utils.CommonUtil.COMMA;
+
 @ToString
 @AttributeOverride(name = "id", column = @Column(name = "tutor_id"))
 @Getter @Setter
@@ -46,7 +48,7 @@ public class Tutor extends BaseEntity {
 
     public List<String> getSubjectList() {
         if (this.subjects.length() > 0) {
-            return Arrays.asList(this.subjects.split(","));
+            return Arrays.asList(this.subjects.split(COMMA));
         }
         return Collections.emptyList();
     }

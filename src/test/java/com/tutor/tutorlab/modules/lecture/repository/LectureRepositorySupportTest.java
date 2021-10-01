@@ -1,3 +1,4 @@
+/*
 package com.tutor.tutorlab.modules.lecture.repository;
 
 import com.tutor.tutorlab.configuration.AbstractTest;
@@ -51,4 +52,4 @@ class LectureRepositorySupportTest extends AbstractTest {
         });
     }
 
-}
+}*/

@@ -1,10 +1,12 @@
 package com.tutor.tutorlab.modules.address.util;
 
+import com.tutor.tutorlab.modules.address.embeddable.Address;
 import org.apache.commons.lang3.StringUtils;
 
-public class AddressUtils {
+import static com.tutor.tutorlab.utils.CommonUtil.EMPTY_STRING;
+import static com.tutor.tutorlab.utils.CommonUtil.SPACE;
 
-    private static final String EMPTY_STRING = StringUtils.EMPTY;
+public class AddressUtils {
 
     private AddressUtils() {}
 
@@ -13,6 +15,27 @@ public class AddressUtils {
             return EMPTY_STRING;
         }
         return address;
+    }
+
+    public static Address convertStringToEmbeddableAddress(String address) {
+        if (StringUtils.isBlank(address)) {
+            return null;
+        }
+
+        String[] split = address.split(SPACE);
+        if (split.length == 2) {
+            return new Address(split[0], split[1], null);
+        } else if (split.length == 3) {
+            return new Address(split[0], split[1], split[2]);
+        }
+        return null;
+    }
+
+    public static String convertEmbeddableToStringAddress(Address address) {
+        if (address == null) {
+            return null;
+        }
+        return address.toString();
     }
 
 }
