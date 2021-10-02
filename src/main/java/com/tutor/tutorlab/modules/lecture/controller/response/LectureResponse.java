@@ -84,6 +84,7 @@ public class LectureResponse {
     @Data
     public static class LecturePriceResponse {
 
+        private Long lecturePriceId;
         private Boolean isGroup;
         private Integer groupNumber;
         private Integer totalTime;
@@ -95,6 +96,7 @@ public class LectureResponse {
         private String content;
 
         public LecturePriceResponse(LecturePrice lecturePrice) {
+            this.lecturePriceId = lecturePrice.getId();
             this.isGroup = lecturePrice.getIsGroup();
             this.groupNumber = lecturePrice.getGroupNumber();
             this.totalTime = lecturePrice.getTotalTime();
