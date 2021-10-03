@@ -19,6 +19,9 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     @Query(value = "select * from enrollment where enrollment_id = :enrollmentId", nativeQuery = true)
     Enrollment findAllById(Long enrollmentId);
 
+    @Query(value = "select * from enrollment where tutee_id = :tuteeId", nativeQuery = true)
+    List<Enrollment> findAllByTutee(Long tuteeId);
+
     List<Enrollment> findByTutee(Tutee tutee);
     // List<Enrollment> findByLecture(Lecture lecture);
     Page<Enrollment> findByTutee(Tutee tutee, Pageable pageable);

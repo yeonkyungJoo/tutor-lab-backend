@@ -35,15 +35,6 @@ class TutorServiceTest {
 //    void getTutor() {
 //    }
 
-    // @AfterEach
-    void afterEach() {
-
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        Tutor tutor = tutorRepository.findByUser(user);
-
-        tutorService.deleteTutor(user);
-    }
-
     @WithAccount("yk")
     @Test
     void Tutor_등록() {
@@ -64,6 +55,7 @@ class TutorServiceTest {
         Assertions.assertEquals(RoleType.TUTOR, user.getRole());
     }
 
+    @WithAccount("yk")
     @Test
     void Tutor_수정() {
 
@@ -91,6 +83,7 @@ class TutorServiceTest {
         Assertions.assertTrue(tutor.isSpecialist());
     }
 
+    @WithAccount("yk")
     @Test
     void Tutor_탈퇴() {
 

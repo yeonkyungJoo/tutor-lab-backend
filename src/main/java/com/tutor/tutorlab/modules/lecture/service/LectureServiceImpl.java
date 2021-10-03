@@ -121,6 +121,8 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
             lectureResponse.setReviewCount(reviews.size());
             OptionalDouble scoreAverage = reviews.stream().map(review -> review.getScore()).mapToInt(Integer::intValue).average();
             lectureResponse.setScoreAverage(scoreAverage.isPresent() ? scoreAverage.getAsDouble() : 0);
+
+            lectureResponse.setLectureTutor(getLectureTutorResponse(lecture));
         });
 
         return lectures;

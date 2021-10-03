@@ -3,7 +3,6 @@ package com.tutor.tutorlab.modules.account.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.MockMvcTest;
 import com.tutor.tutorlab.WithAccount;
-import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
@@ -18,10 +17,8 @@ import com.tutor.tutorlab.modules.account.service.CareerService;
 import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Career;
-import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Transactional
 @MockMvcTest
 class CareerControllerTest {
 
@@ -63,23 +61,6 @@ class CareerControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-//    @Test
-//    void getCareer() {
-//    }
-
-    // @AfterEach
-    void afterEach() {
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        Tutor tutor = tutorRepository.findByUser(user);
-        Tutee tutee = tuteeRepository.findByUser(user);
-
-        careerRepository.deleteByTutor(tutor);
-        tutorRepository.delete(tutor);
-        tuteeRepository.delete(tutee);
-        userRepository.delete(user);
-    }
-
-    @Transactional
     @Test
     @WithAccount("yk")
     void newCareer() throws Exception {
@@ -118,7 +99,6 @@ class CareerControllerTest {
         assertEquals(career.getCompanyName(), "tutorlab");
     }
 
-    @Transactional
     @Test
     @DisplayName("Career 등록 - Invalid Input")
     @WithAccount("yk")
@@ -150,7 +130,6 @@ class CareerControllerTest {
                 .andExpect(jsonPath("$.code").value(400));
     }
 
-    @Transactional
     @Test
     @DisplayName("Career 등록 - 인증된 사용자 X")
     public void newCareer_withoutAuthenticatedUser() throws Exception {
@@ -164,9 +143,9 @@ class CareerControllerTest {
                 .gender("MALE")
                 .phoneNumber(null)
                 .email(null)
-                .nickname(null)
+                .nickname("test")
                 .bio(null)
-                .zone(null)
+                .zone("서울시 강남구 역삼동")
                 .build();
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
@@ -195,7 +174,6 @@ class CareerControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.getCode()));
     }
 
-    @Transactional
     @WithAccount("yk")
     @Test
     @DisplayName("Career 등록 - 튜터가 아닌 경우")
@@ -223,7 +201,6 @@ class CareerControllerTest {
         // .andExpect(jsonPath("$.message").value("해당 사용자는 " + RoleType.TUTOR.getName() + "가 아닙니다."));
     }
 
-    @Transactional
     @WithAccount("yk")
     @Test
     void Career_수정() throws Exception {
@@ -274,7 +251,6 @@ class CareerControllerTest {
         assertTrue(career.isPresent());
     }
 
-    @Transactional
     @WithAccount("yk")
     @Test
     void Career_삭제() throws Exception {

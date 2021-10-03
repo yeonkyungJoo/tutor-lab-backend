@@ -81,6 +81,8 @@ class EnrollmentServiceTest {
                 .passwordConfirm("password")
                 .name("yk2")
                 .gender("FEMALE")
+                .nickname("yk2")
+                .zone("서울특별시 강남구 삼성동")
                 .build();
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
@@ -148,26 +150,29 @@ class EnrollmentServiceTest {
         // Then
         assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
         Enrollment enrollment = enrollmentRepository.findByTutee(tutee).get(0);
-        assertNotNull(enrollment);
-        assertEquals("제목", enrollment.getLecture().getTitle());
-        assertEquals("java,spring", enrollment.getLecture().getTutor().getSubjects());
-        assertFalse(enrollment.getLecture().getTutor().isSpecialist());
-        assertEquals("yk", enrollment.getTutee().getUser().getName());
-
-        assertTrue(enrollment.getLecturePrice().getIsGroup());
-        assertEquals(3, enrollment.getLecturePrice().getGroupNumber());
-        assertEquals(1000L, enrollment.getLecturePrice().getPertimeCost());
-        assertEquals(3, enrollment.getLecturePrice().getPertimeLecture());
+        assertAll(
+                () -> assertNotNull(enrollment),
+                () -> assertEquals("제목", enrollment.getLecture().getTitle()),
+                () -> assertEquals("java,spring", enrollment.getLecture().getTutor().getSubjects()),
+                () -> assertFalse(enrollment.getLecture().getTutor().isSpecialist()),
+                () -> assertEquals("yk", enrollment.getTutee().getUser().getName()),
+                () -> assertTrue(enrollment.getLecturePrice().getIsGroup()),
+                () -> assertEquals(3, enrollment.getLecturePrice().getGroupNumber()),
+                () -> assertEquals(1000L, enrollment.getLecturePrice().getPertimeCost()),
+                () -> assertEquals(3, enrollment.getLecturePrice().getPertimeLecture())
+        );
 
         // 강의 수강 시 채팅방 자동 생성
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
         assertNotNull(chatroom);
         List<Chatroom> chatrooms = chatroomRepository.findByTutorAndTutee(tutor, tutee);
-        assertEquals(1, chatrooms.size());
-        assertEquals(chatroom, chatrooms.get(0));
-        assertEquals(enrollment, chatroom.getEnrollment());
-        assertEquals(enrollment.getLecture().getTutor(), chatroom.getTutor());
-        assertEquals(tutee, chatroom.getTutee());
+        assertAll(
+                () -> assertEquals(1, chatrooms.size()),
+                () -> assertEquals(chatroom, chatrooms.get(0)),
+                () -> assertEquals(enrollment, chatroom.getEnrollment()),
+                () -> assertEquals(enrollment.getLecture().getTutor(), chatroom.getTutor()),
+                () -> assertEquals(tutee, chatroom.getTutee())
+        );
     }
 
     @WithAccount("yk")
@@ -205,27 +210,31 @@ class EnrollmentServiceTest {
         Long lecturePriceId = lecturePrice.getId();
 
         Enrollment enrollment = enrollmentService.enroll(user, lectureId, lecturePriceId);
-        assertFalse(enrollment.isCanceled());
-        assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
-        assertEquals(0, cancellationRepository.findByTutee(tutee).size());
-        assertNotNull(chatroomRepository.findByEnrollment(enrollment));
+        assertAll(
+                () -> assertFalse(enrollment.isCanceled()),
+                () -> assertEquals(1, enrollmentRepository.findByTutee(tutee).size()),
+                () -> assertEquals(0, cancellationRepository.findByTutee(tutee).size())
+        );
 
+        assertNotNull(chatroomRepository.findByEnrollment(enrollment));
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
         Long chatroomId = chatroom.getId();
         // When
         enrollmentService.cancel(user, lectureId);
 
         // Then
-        List<Enrollment> enrollments = enrollmentRepository.findByTutee(tutee);
-        assertEquals(1, enrollments.size());
+        assertEquals(0, enrollmentRepository.findByTutee(tutee).size());
+        assertEquals(1, enrollmentRepository.findAllByTutee(tutee.getId()).size());
         assertTrue(enrollment.isCanceled());
 
         List<Cancellation> cancellations = cancellationRepository.findByTutee(tutee);
         assertEquals(1, cancellations.size());
         Cancellation cancellation = cancellations.get(0);
-        assertNotNull(cancellation);
-        assertEquals("제목", cancellation.getLecture().getTitle());
-        assertEquals("yk", cancellation.getTutee().getUser().getName());
+        assertAll(
+                () -> assertNotNull(cancellation),
+                () -> assertEquals("제목", cancellation.getLecture().getTitle()),
+                () -> assertEquals("yk", cancellation.getTutee().getUser().getName())
+        );
 
         assertFalse(chatroomRepository.findById(chatroomId).isPresent());
         List<Chatroom> chatrooms = chatroomRepository.findByTutorAndTutee(tutor, tutee);
@@ -264,6 +273,7 @@ class EnrollmentServiceTest {
 //        assertTrue(enrollment.isClosed());
         enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture).orElse(null);
         assertNull(enrollment);
+
         enrollment = enrollmentRepository.findAllById(enrollmentId);
         assertNotNull(enrollment);
         assertFalse(enrollment.isCanceled());

@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.account.service;
+package com.tutor.tutorlab.test;
 
 import com.tutor.tutorlab.WithAccount;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
@@ -7,6 +7,7 @@ import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.*;
+import com.tutor.tutorlab.modules.account.service.UserService;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.Assertions;

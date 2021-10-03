@@ -8,6 +8,7 @@ import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.address.embeddable.Address;
 import com.tutor.tutorlab.modules.lecture.common.LectureBuilder;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -346,49 +348,56 @@ public class LectureServiceTest {
 
     }
 
-    // TODO - TEST
     @WithAccount("yk")
     @Test
     void 강의목록() {
 
         // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        Address zone = user.getZone();
+        assertAll(
+                () -> assertEquals("서울특별시", zone.getState()),
+                () -> assertEquals("강남구", zone.getSiGunGu()),
+                () -> assertEquals("삼성동", zone.getDongMyunLi())
+        );
         TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
                 .subjects("java,spring")
                 .specialist(false)
                 .build();
         tutorService.createTutor(user, tutorSignUpRequest);
 
-        
+        LectureCreateRequest.LecturePriceCreateRequest lecturePriceCreateRequest1
+                = LectureBuilder.getLecturePriceCreateRequest(true, 3, 1000L, 3, 3000L, 10);
+        LectureCreateRequest.LectureSubjectCreateRequest lectureSubjectCreateRequest1
+                = LectureBuilder.getLectureSubjectCreateRequest("개발", "자바");
+
+        LectureCreateRequest lectureCreateRequest = LectureCreateRequest.builder()
+                .thumbnailUrl("https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c")
+                .title("제목")
+                .subTitle("소제목")
+                .introduce("소개")
+                .difficulty(DifficultyType.BEGINNER)
+                .content("<p>본문</p>")
+                .systems(Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE))
+                .lecturePrices(Arrays.asList(lecturePriceCreateRequest1))
+                .subjects(Arrays.asList(lectureSubjectCreateRequest1))
+                .build();
+        Lecture lecture = lectureService.createLecture(user, lectureCreateRequest);
+
         // When
-        LectureListRequest lectureListRequest = LectureBuilder.getLectureListRequest(
-                Arrays.asList("개발", "프로그래밍언어"),
-                Arrays.asList("자바", "백엔드", "프론트엔드"),
-                Arrays.asList(DifficultyType.BEGINNER),
-                Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE),
-                true);
-
-        // List<LectureResponse> lectureResponses = lectureService.getLectureResponses(lectureListRequest);
-
         // Then
-        /*
-                mockMvc.perform(get(BASE_URL)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .params(MultiValueConverter.convert(request)))
-                .andDo(print())
-                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.result[0].systemTypes[0].type",
-//                        is(in(request.getSystems().stream().map(SystemType::getType).collect(Collectors.toList())))))
-//                .andExpect(jsonPath("$.result[*].systemTypes[*].type"
-//                        , containsInAnyOrder(request.getSystems().stream().map(SystemType::getType).collect(Collectors.toList()))))
-                .andExpect(jsonPath("$.result[*].lecturePrices[*].isGroup"
-                        , hasItem(request.getIsGroup())))
-//                .andExpect(jsonPath("$.result[*].systemTypes[*].type"
-//                        , hasItems(request.getSystems().stream().map(SystemType::getType).collect(Collectors.toList()))))
+        Page<LectureResponse> lectureResponses = lectureService.getLectureResponses("서울특별시 강남구", 1);
+        assertEquals(1, lectureResponses.getTotalElements());
+        lectureResponses.stream().forEach(lectureResponse -> {
 
-//                .andExpect(jsonPath("$.result.difficult"))
-        ;
-         */
+            assertAll(
+                    () -> assertEquals(lectureCreateRequest.getTitle(), lectureResponse.getTitle()),
+                    () -> assertEquals(1, lectureResponse.getLecturePrices().size()),
+                    () -> assertNotNull(lectureResponse.getLectureTutor()),
+                    () -> assertEquals(1, lectureResponse.getLectureTutor().getLectureCount()),
+                    () -> assertEquals(0, lectureResponse.getLectureTutor().getReviewCount())
+                    // TODO - 리뷰 확인
+            );
+        });
     }
 }

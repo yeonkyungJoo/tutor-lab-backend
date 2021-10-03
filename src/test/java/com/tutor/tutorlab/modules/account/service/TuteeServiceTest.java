@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Transactional
 @SpringBootTest
 class TuteeServiceTest {
 
@@ -26,18 +27,7 @@ class TuteeServiceTest {
     @Autowired
     UserRepository userRepository;
 
-//    @Transactional
-//    @Test
-//    void getTutees() {
-//    }
-//
-//    @Transactional
-//    @Test
-//    void getTutee() {
-//    }
-
     @WithAccount("yk")
-    @Transactional
     @Test
     void Tutee_수정() {
 
@@ -58,7 +48,6 @@ class TuteeServiceTest {
     }
 
     @WithAccount("yk")
-    @Transactional
     @Test
     void Tutee_탈퇴() {
 

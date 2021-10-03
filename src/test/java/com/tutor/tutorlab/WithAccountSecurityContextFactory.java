@@ -56,9 +56,9 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
                     .gender("MALE")
                     .phoneNumber(null)
                     .email(null)
-                    .nickname(null)
+                    .nickname(name)
                     .bio(null)
-                    .zone(null)
+                    .zone("서울특별시 강남구 삼성동")
                     .build();
             User user = loginService.signUp(signUpRequest);
             loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
