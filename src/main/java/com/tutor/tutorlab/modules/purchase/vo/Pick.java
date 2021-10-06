@@ -3,14 +3,13 @@ package com.tutor.tutorlab.modules.purchase.vo;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
-@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "pick_id"))
 @Getter @Setter
 @Entity
@@ -30,9 +29,16 @@ public class Pick extends BaseEntity {
                 foreignKey = @ForeignKey(name = "FK_PICK_LECTURE_ID"))
     private Lecture lecture;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public Pick(Tutee tutee, Lecture lecture) {
         this.tutee = tutee;
         this.lecture = lecture;
+    }
+
+    public static Pick of(Tutee tutee, Lecture lecture) {
+        return Pick.builder()
+                .tutee(tutee)
+                .lecture(lecture)
+                .build();
     }
 }

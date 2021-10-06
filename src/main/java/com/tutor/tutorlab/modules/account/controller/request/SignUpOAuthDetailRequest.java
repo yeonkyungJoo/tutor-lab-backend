@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller.request;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignUpOAuthDetailRequest {
 
     @ApiModelProperty(value = "성별", example = "MALE", required = false)
@@ -41,7 +42,7 @@ public class SignUpOAuthDetailRequest {
 
     private String image;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public SignUpOAuthDetailRequest(String gender, @Size(min = 10, max = 10) String birth, String phoneNumber, @Email String email, @NotBlank String nickname, String bio, @NotBlank String zone, String image) {
         this.gender = gender;
         this.birth = birth;
@@ -51,5 +52,18 @@ public class SignUpOAuthDetailRequest {
         this.bio = bio;
         this.zone = zone;
         this.image = image;
+    }
+
+    public static SignUpOAuthDetailRequest of(String gender, String birth, String phoneNumber, String email, String nickname, String bio, String zone, String image) {
+        return SignUpOAuthDetailRequest.builder()
+                .gender(gender)
+                .birth(birth)
+                .phoneNumber(phoneNumber)
+                .email(email)
+                .nickname(nickname)
+                .bio(bio)
+                .zone(zone)
+                .image(image)
+                .build();
     }
 }

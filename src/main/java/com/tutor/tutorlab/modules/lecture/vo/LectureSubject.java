@@ -1,27 +1,21 @@
 package com.tutor.tutorlab.modules.lecture.vo;
 
 import com.tutor.tutorlab.modules.base.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
+import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
-@Builder
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor
 @Getter
 @AttributeOverride(name = "id", column = @Column(name = "lecture_subject_id"))
 @Entity
 @Table(name = "lecture_subject")
 public class LectureSubject extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id",
@@ -38,5 +32,20 @@ public class LectureSubject extends BaseEntity {
 
     public void mappingLecture(Lecture lecture) {
         this.lecture = lecture;
+    }
+
+    @Builder(access = PRIVATE)
+    public LectureSubject(Lecture lecture, String parent, String krSubject) {
+        this.lecture = lecture;
+        this.parent = parent;
+        this.krSubject = krSubject;
+    }
+
+    public static LectureSubject of(Lecture lecture, String parent, String krSubject) {
+        return LectureSubject.builder()
+                .lecture(lecture)
+                .parent(parent)
+                .krSubject(krSubject)
+                .build();
     }
 }

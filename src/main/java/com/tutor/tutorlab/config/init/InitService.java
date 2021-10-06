@@ -1,9 +1,5 @@
-package com.tutor.tutorlab.config;
+package com.tutor.tutorlab.config.init;
 
-import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.*;
 import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.service.TutorService;
@@ -11,9 +7,6 @@ import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
-import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
-import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
-import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
@@ -24,10 +17,6 @@ import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
-import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
-import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
-import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
-import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
 import com.tutor.tutorlab.modules.review.vo.Review;
@@ -35,8 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import java.util.Arrays;
+import static com.tutor.tutorlab.config.init.TestDataBuilder.*;
 
 @Component
 @RequiredArgsConstructor
@@ -62,114 +50,6 @@ public class InitService {
     private final EnrollmentRepository enrollmentRepository;
     private final ChatroomRepository chatroomRepository;
     private final ReviewRepository reviewRepository;
-
-    private SignUpRequest getSignUpRequest(String name, String zone) {
-        return SignUpRequest.builder()
-                .username(name + "@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name(name)
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(name)
-                .bio(null)
-                .zone(zone)
-                .build();
-    }
-
-    private CareerCreateRequest getCareerCreateRequest(String companyName, String duty) {
-        return CareerCreateRequest.builder()
-                .companyName(companyName)
-                .duty(duty)
-                .startDate("2007-12-03")
-                .endDate("2007-12-04")
-                .present(false)
-                .build();
-    }
-
-    private EducationCreateRequest getEducationCreateRequest(String schoolName, String major) {
-        return EducationCreateRequest.builder()
-                .schoolName(schoolName)
-                .major(major)
-                .entranceDate("2021-01-01")
-                .graduationDate("2021-02-01")
-                .score(4.01)
-                .degree("Bachelor")
-                .build();
-    }
-
-    private TutorSignUpRequest getTutorSignUpRequest(String subjects, String companyName, String duty, String schoolName, String major) {
-        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
-                .subjects(subjects)
-                .specialist(false)
-                .build();
-        tutorSignUpRequest.addCareerCreateRequest(getCareerCreateRequest(companyName, duty));
-        tutorSignUpRequest.addEducationCreateRequest(getEducationCreateRequest(schoolName, major));
-        return tutorSignUpRequest;
-    }
-
-    private LectureCreateRequest.LecturePriceCreateRequest getLecturePriceCreateRequest(Long pertimeCost, Integer pertimeLecture, Integer totalTime) {
-        return LectureCreateRequest.LecturePriceCreateRequest.builder()
-                .isGroup(true)
-                .groupNumber(3)
-                .pertimeCost(pertimeCost)
-                .pertimeLecture(pertimeLecture)
-                .totalCost(pertimeCost * pertimeLecture)
-                .totalTime(totalTime)
-                .build();
-    }
-
-    private LectureCreateRequest.LectureSubjectCreateRequest getLectureSubjectCreateRequest(String krSubject) {
-        return LectureCreateRequest.LectureSubjectCreateRequest.builder()
-                .parent("개발")
-                .krSubject(krSubject)
-                .build();
-    }
-
-    private LectureCreateRequest getLectureCreateRequest(String title, Long pertimeCost, Integer pertimeLecture, Integer totalTime, String krSubject) {
-
-        LectureCreateRequest.LecturePriceCreateRequest price1 = getLecturePriceCreateRequest(pertimeCost, pertimeLecture, totalTime);
-        LectureCreateRequest.LectureSubjectCreateRequest subject1 = getLectureSubjectCreateRequest(krSubject);
-
-        return LectureCreateRequest.builder()
-                .thumbnailUrl("https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c")
-                .title(title)
-                .subTitle("소제목")
-                .introduce("소개")
-                .difficulty(DifficultyType.BEGINNER)
-                .content("<p>본문</p>")
-                .systems(Arrays.asList(SystemType.ONLINE))
-                .lecturePrices(Arrays.asList(price1))
-                .subjects(Arrays.asList(subject1))
-                .build();
-    }
-
-    private TuteeReviewCreateRequest getTuteeReviewCreateRequest(Integer score, String content) {
-        return TuteeReviewCreateRequest.builder()
-                .score(score)
-                .content(content)
-                .build();
-    }
-
-    private TuteeReviewUpdateRequest getTuteeReviewUpdateRequest(Integer score, String content) {
-        return TuteeReviewUpdateRequest.builder()
-                .score(score)
-                .content(content)
-                .build();
-    }
-
-    private TutorReviewCreateRequest getTutorReviewCreateRequest(String content) {
-        return TutorReviewCreateRequest.builder()
-                .content(content)
-                .build();
-    }
-
-    private TutorReviewUpdateRequest getTutorReviewUpdateRequest(String content) {
-        return TutorReviewUpdateRequest.builder()
-                .content(content)
-                .build();
-    }
 
     // @PostConstruct
     @Transactional

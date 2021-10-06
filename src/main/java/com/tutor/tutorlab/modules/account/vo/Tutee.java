@@ -17,17 +17,13 @@ import java.util.List;
 
 import static com.tutor.tutorlab.utils.CommonUtil.COMMA;
 
-@ToString
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "tutee_id"))
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
 @Entity
 public class Tutee extends BaseEntity {
-
-    public Tutee(@NotNull User user) {
-        this.user = user;
-    }
 
     // TODO - CHECK : 페치 조인
     @NotNull
@@ -71,4 +67,13 @@ public class Tutee extends BaseEntity {
 //        this.user.quit();
 //        setUser(null);
 //    }
+
+    private Tutee(@NotNull User user) {
+        this.user = user;
+    }
+
+    public static Tutee of(User user) {
+        return new Tutee(user);
+    }
+
 }

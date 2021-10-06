@@ -1,7 +1,7 @@
 package com.tutor.tutorlab.test;
 
+import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,22 +22,6 @@ public class IsolationTestService {
         System.out.println(userRepository.findById(id));
         System.out.println(userRepository.findAll());
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Transactional
     public void get2(Long id) {
@@ -92,21 +76,7 @@ public class IsolationTestService {
     @Transactional
     public void saveUser() {
 
-        String name = "yk";
-        User user = User.builder()
-                .username(name + "@email.com")
-                .password("password")
-                .name(name)
-                .gender("MALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .role(RoleType.TUTEE)
-                .provider(null)
-                .providerId(null)
-                .build();
+        User user = TestDataBuilder.getUser("yk");
         userRepository.save(user);
 
         // RuntimeException 발생 시 롤백되어 커밋이 발생하지 않는다.

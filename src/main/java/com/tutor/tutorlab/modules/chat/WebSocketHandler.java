@@ -6,6 +6,8 @@ import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.chat.service.MessageService;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.chat.vo.Message;
+import com.tutor.tutorlab.modules.notification.enums.NotificationType;
+import com.tutor.tutorlab.modules.notification.service.NotificationService;
 import com.tutor.tutorlab.utils.JsonUtil;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private static final String TYPE = "type";
     private static final String SESSION_ID = "sessionId";
     private static final String CHATROOM_ID = "chatroomId";
-    private static final String USERNAME = "username";
+    private static final String SENDER = "sender";
+    private static final String RECEIVER = "receiver";
     private static final String MESSAGE = "message";
 
 
@@ -44,6 +47,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ChatroomRepository chatroomRepository;
 
     private final MessageService messageService;
+    private final NotificationService notificationService;
 
     @PostConstruct
     private void init() {
@@ -102,20 +106,27 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 wss.sendMessage(new TextMessage(object.toJSONString()));
             }
 
-            Message msg = Message.builder()
-                    .type(MessageType.MESSAGE)
-                    .chatroomId(chatroomId)
-                    .sessionId(session.getId())
-                    .username((String) object.get(USERNAME))    // 보낸 사람
-                    .message((String) object.get(MESSAGE))
-                    //.sentAt(LocalDateTime.now())
-                    .sentAt(LocalDateTimeUtil.getDateTimeToString(LocalDateTime.now()))
-                    .checked(sessionMap.size() == 2 ? true : false)
-                    .build();
+            Long receiverId = (Long) object.get(RECEIVER);
+            // TODO - CHECK : 웹소켓 세션 - 영속성 컨텍스트
+            // TODO - CHECK : 효율성 체크
+            if (sessionMap.size() != 2) {
+                notificationService.createNotification(receiverId, NotificationType.CHAT);
+            }
+
+            Message msg = Message.of(
+                    MessageType.MESSAGE,
+                    chatroomId,
+                    session.getId(),
+                    (String) object.get(SENDER),    // 발신인 (닉네임)
+                    receiverId,                     // 수신인 (아이디)
+                    (String) object.get(MESSAGE),
+                    // TODO- CHECK : LocalDateTime.now()
+                    LocalDateTimeUtil.getDateTimeToString(LocalDateTime.now()),
+                    sessionMap.size() == 2 ? true : false
+            );
             messageService.saveMessage(msg);
 
         }
-
     }
 
     // 소켓 종료

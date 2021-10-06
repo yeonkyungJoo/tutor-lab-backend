@@ -4,14 +4,13 @@ import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
-@NoArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
 @AttributeOverride(name = "id", column = @Column(name = "chatroom_id"))
 @Entity
@@ -42,11 +41,19 @@ public class Chatroom extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_CHATROOM_TUTEE_ID"))
     private Tutee tutee;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public Chatroom(Enrollment enrollment, Tutor tutor, Tutee tutee) {
         this.enrollment = enrollment;
         this.tutor = tutor;
         this.tutee = tutee;
+    }
+
+    public static Chatroom of(Enrollment enrollment, Tutor tutor, Tutee tutee) {
+        return Chatroom.builder()
+                .enrollment(enrollment)
+                .tutor(tutor)
+                .tutee(tutee)
+                .build();
     }
 
     public void delete() {

@@ -4,10 +4,7 @@ import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -17,9 +14,10 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-@ToString
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "review_id"))
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
 @Entity
 public class Review extends BaseEntity {
@@ -63,6 +61,27 @@ public class Review extends BaseEntity {
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Review> children = new ArrayList<>();
+
+    @Builder(access = AccessLevel.PRIVATE)
+    public Review(Integer score, String content, User user, Enrollment enrollment, Lecture lecture, Review parent) {
+        this.score = score;
+        this.content = content;
+        this.user = user;
+        this.enrollment = enrollment;
+        this.lecture = lecture;
+        this.parent = parent;
+    }
+
+    public static Review of(Integer score, String content, User user, Enrollment enrollment, Lecture lecture, Review parent) {
+        return Review.builder()
+                .score(score)
+                .content(content)
+                .user(user)
+                .enrollment(enrollment)
+                .lecture(lecture)
+                .parent(parent)
+                .build();
+    }
 
     public void addChild(Review review) {
         this.children.add(review);

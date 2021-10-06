@@ -5,7 +5,6 @@ import lombok.*;
 import javax.persistence.Embeddable;
 
 @Embeddable
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Address {
@@ -17,5 +16,20 @@ public class Address {
     @Override
     public String toString() {
         return state + " " + siGunGu + " " + dongMyunLi;
+    }
+
+    @Builder(access = AccessLevel.PRIVATE)
+    public Address(String state, String siGunGu, String dongMyunLi) {
+        this.state = state;
+        this.siGunGu = siGunGu;
+        this.dongMyunLi = dongMyunLi;
+    }
+
+    public static Address of(String state, String siGunGu, String dongMyunLi) {
+        return Address.builder()
+                .state(state)
+                .siGunGu(siGunGu)
+                .dongMyunLi(dongMyunLi)
+                .build();
     }
 }

@@ -11,11 +11,12 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
-@Builder
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Getter @Setter
-@AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "lecture_id"))
 @Entity
@@ -85,4 +86,31 @@ public class Lecture extends BaseEntity {
         enrollment.setLecture(this);
     }
 
+    @Builder(access = PRIVATE)
+    public Lecture(Tutor tutor, String title, String subTitle, String introduce, String content, DifficultyType difficultyType, List<SystemType> systemTypes, String thumbnail) {
+        this.tutor = tutor;
+        this.title = title;
+        this.subTitle = subTitle;
+        this.introduce = introduce;
+        this.content = content;
+        this.difficultyType = difficultyType;
+        this.systemTypes = systemTypes;
+        this.thumbnail = thumbnail;
+
+        this.lecturePrices = new ArrayList<>();
+        this.lectureSubjects = new ArrayList<>();
+    }
+
+    public static Lecture of(Tutor tutor, String title, String subTitle, String introduce, String content, DifficultyType difficultyType, List<SystemType> systemTypes, String thumbnail) {
+        return Lecture.builder()
+                .tutor(tutor)
+                .title(title)
+                .subTitle(subTitle)
+                .introduce(introduce)
+                .content(content)
+                .difficultyType(difficultyType)
+                .systemTypes(systemTypes)
+                .thumbnail(thumbnail)
+                .build();
+    }
 }

@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller.request;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignUpRequest {
 
     // TODO - 입력값 체크
@@ -66,7 +67,7 @@ public class SignUpRequest {
 
     private String image;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public SignUpRequest(@NotBlank(message = "이메일 형식의 아이디를 입력해주세요.") @Email String username, @NotBlank(message = "비밀번호를 입력해주세요.") String password, @NotBlank(message = "비밀번호 확인을 입력해주세요.") String passwordConfirm, @NotBlank(message = "이름을 입력해주세요.") String name, String gender, @Size(min = 10, max = 10) String birth, String phoneNumber, @Email String email, @NotBlank String nickname, String bio, @NotBlank String zone, String image) {
         this.username = username;
         this.password = password;
@@ -80,6 +81,23 @@ public class SignUpRequest {
         this.bio = bio;
         this.zone = zone;
         this.image = image;
+    }
+
+    public static SignUpRequest of(String username, String password, String passwordConfirm, String name, String gender, String birth, String phoneNumber, String email, String nickname, String bio, String zone, String image) {
+        return SignUpRequest.builder()
+                .username(username)
+                .password(password)
+                .passwordConfirm(passwordConfirm)
+                .name(name)
+                .gender(gender)
+                .birth(birth)
+                .phoneNumber(phoneNumber)
+                .email(email)
+                .nickname(nickname)
+                .bio(bio)
+                .zone(zone)
+                .image(image)
+                .build();
     }
 
     @AssertTrue

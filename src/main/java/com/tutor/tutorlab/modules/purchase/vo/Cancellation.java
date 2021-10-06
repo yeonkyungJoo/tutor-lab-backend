@@ -4,16 +4,15 @@ import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "cancellation_id"))
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
 @Entity
 public class Cancellation extends BaseEntity {
@@ -45,11 +44,20 @@ public class Cancellation extends BaseEntity {
     private LocalDateTime enrolledAt;
     // private String reason;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public Cancellation(Tutee tutee, Lecture lecture, LecturePrice lecturePrice, LocalDateTime enrolledAt) {
         this.tutee = tutee;
         this.lecture = lecture;
         this.lecturePrice = lecturePrice;
         this.enrolledAt = enrolledAt;
+    }
+
+    public static Cancellation of(Tutee tutee, Lecture lecture, LecturePrice lecturePrice, LocalDateTime enrolledAt) {
+        return Cancellation.builder()
+                .tutee(tutee)
+                .lecture(lecture)
+                .lecturePrice(lecturePrice)
+                .enrolledAt(enrolledAt)
+                .build();
     }
 }

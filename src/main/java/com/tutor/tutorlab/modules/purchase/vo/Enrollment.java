@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Where(clause = "closed = false and canceled = false")
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "enrollment_id"))
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
 @Entity
 public class Enrollment extends BaseEntity {
@@ -55,11 +57,19 @@ public class Enrollment extends BaseEntity {
     @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Review review;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public Enrollment(Tutee tutee, Lecture lecture, LecturePrice lecturePrice) {
         this.tutee = tutee;
         this.lecture = lecture;
         this.lecturePrice = lecturePrice;
+    }
+
+    public static Enrollment of(Tutee tutee, Lecture lecture, LecturePrice lecturePrice) {
+        return Enrollment.builder()
+                .tutee(tutee)
+                .lecture(lecture)
+                .lecturePrice(lecturePrice)
+                .build();
     }
 
     public void close() {

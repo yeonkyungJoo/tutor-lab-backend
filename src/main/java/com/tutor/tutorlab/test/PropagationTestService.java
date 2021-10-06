@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.test;
 
+import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.TutorService;
@@ -33,10 +34,7 @@ public class PropagationTestService {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void saveTutor(User user) {
 
-        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
-                .subjects("java,spring")
-                .specialist(false)
-                .build();
+        TutorSignUpRequest tutorSignUpRequest = TestDataBuilder.getTutorSignUpRequest("java,spring");
         Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
 
         // throw new RuntimeException("RuntimeException");

@@ -43,15 +43,15 @@ public class EducationService {
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTOR));
 
-        Education education = Education.builder()
-                .tutor(tutor)
-                .schoolName(educationCreateRequest.getSchoolName())
-                .major(educationCreateRequest.getMajor())
-                .entranceDate(LocalDateTimeUtil.getStringToDate(educationCreateRequest.getEntranceDate()))
-                .graduationDate(LocalDateTimeUtil.getStringToDate(educationCreateRequest.getGraduationDate()))
-                .score(educationCreateRequest.getScore())
-                .degree(educationCreateRequest.getDegree())
-                .build();
+        Education education = Education.of(
+                tutor,
+                educationCreateRequest.getSchoolName(),
+                educationCreateRequest.getMajor(),
+                LocalDateTimeUtil.getStringToDate(educationCreateRequest.getEntranceDate()),
+                LocalDateTimeUtil.getStringToDate(educationCreateRequest.getGraduationDate()),
+                educationCreateRequest.getScore(),
+                educationCreateRequest.getDegree()
+        );
         tutor.addEducation(education);
         return educationRepository.save(education);
     }

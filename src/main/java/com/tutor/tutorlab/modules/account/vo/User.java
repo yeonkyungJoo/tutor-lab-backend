@@ -21,8 +21,7 @@ import java.util.UUID;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "user_id"))
 @Entity
 public class User extends BaseEntity {
@@ -74,7 +73,7 @@ public class User extends BaseEntity {
 
     // TODO - Notification과 양방향
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public User(String username, String password, String name, String gender, String birth, String phoneNumber, String email, String nickname, String bio, String zone, String image,
                 RoleType role, OAuthType provider, String providerId) {
         this.username = username;
@@ -95,6 +94,26 @@ public class User extends BaseEntity {
         this.role = role;
         this.provider = provider;
         this.providerId = providerId;
+    }
+
+    public static User of(String username, String password, String name, String gender, String birth, String phoneNumber, String email, String nickname, String bio, String zone, String image,
+                                  RoleType role, OAuthType provider, String providerId) {
+        return User.builder()
+                .username(username)
+                .password(password)
+                .name(name)
+                .gender(gender)
+                .birth(birth)
+                .phoneNumber(phoneNumber)
+                .email(email)
+                .nickname(nickname)
+                .bio(bio)
+                .zone(zone)
+                .image(image)
+                .role(role)
+                .provider(provider)
+                .providerId(providerId)
+                .build();
     }
 
     public void quit() {

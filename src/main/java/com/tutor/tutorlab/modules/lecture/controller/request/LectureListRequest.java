@@ -2,10 +2,7 @@ package com.tutor.tutorlab.modules.lecture.controller.request;
 
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.AssertTrue;
@@ -13,10 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LectureListRequest {
 
     private String lectureName;
@@ -44,6 +39,27 @@ public class LectureListRequest {
         }
         Set<DifficultyType> difficultyTypeSet = difficulties.stream().collect(Collectors.toSet());
         return difficultyTypeSet.size() == difficulties.size();
+    }
+
+    @Builder(access = AccessLevel.PRIVATE)
+    public LectureListRequest(String lectureName, List<String> parents, List<String> subjects, List<SystemType> systems, Boolean isGroup, List<DifficultyType> difficulties) {
+        this.lectureName = lectureName;
+        this.parents = parents;
+        this.subjects = subjects;
+        this.systems = systems;
+        this.isGroup = isGroup;
+        this.difficulties = difficulties;
+    }
+
+    public static LectureListRequest of(String lectureName, List<String> parents, List<String> subjects, List<SystemType> systems, Boolean isGroup, List<DifficultyType> difficulties) {
+        return LectureListRequest.builder()
+                .lectureName(lectureName)
+                .parents(parents)
+                .subjects(subjects)
+                .systems(systems)
+                .isGroup(isGroup)
+                .difficulties(difficulties)
+                .build();
     }
 
 }

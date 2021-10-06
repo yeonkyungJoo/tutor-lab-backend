@@ -5,11 +5,9 @@ import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.address.embeddable.Address;
 import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
-import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
@@ -19,25 +17,19 @@ import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
-import com.tutor.tutorlab.utils.CommonUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
-import java.util.stream.Collectors;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
 import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
-import static com.tutor.tutorlab.utils.CommonUtil.SPACE;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -164,23 +156,25 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
 
         for (LectureUpdateRequest.LecturePriceUpdateRequest lecturePriceUpdateRequest : lectureUpdateRequest.getLecturePrices()) {
 
-            LecturePrice lecturePrice = LecturePrice.builder()
-                    .isGroup(lecturePriceUpdateRequest.getIsGroup())
-                    .groupNumber(lecturePriceUpdateRequest.getGroupNumber())
-                    .pertimeLecture(lecturePriceUpdateRequest.getPertimeLecture())
-                    .pertimeCost(lecturePriceUpdateRequest.getPertimeCost())
-                    .totalCost(lecturePriceUpdateRequest.getTotalCost())
-                    .totalTime(lecturePriceUpdateRequest.getTotalTime())
-                    .build();
+            LecturePrice lecturePrice = LecturePrice.of(
+                    lecture,
+                    lecturePriceUpdateRequest.getIsGroup(),
+                    lecturePriceUpdateRequest.getGroupNumber(),
+                    lecturePriceUpdateRequest.getTotalTime(),
+                    lecturePriceUpdateRequest.getPertimeLecture(),
+                    lecturePriceUpdateRequest.getPertimeCost(),
+                    lecturePriceUpdateRequest.getTotalCost()
+            );
             lecture.addPrice(lecturePrice);
         }
 
         for (LectureUpdateRequest.LectureSubjectUpdateRequest lectureSubjectUpdateRequest : lectureUpdateRequest.getSubjects()) {
 
-            LectureSubject lectureSubject = LectureSubject.builder()
-                    .parent(lectureSubjectUpdateRequest.getParent())
-                    .krSubject(lectureSubjectUpdateRequest.getKrSubject())
-                    .build();
+            LectureSubject lectureSubject = LectureSubject.of(
+                    lecture,
+                    lectureSubjectUpdateRequest.getParent(),
+                    lectureSubjectUpdateRequest.getKrSubject()
+            );
             lecture.addSubject(lectureSubject);
         }
 
@@ -227,36 +221,36 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
         // lectureRepository.deleteById(lectureId);
     }
 
-    private LectureSubject buildLectureSubject(LectureCreateRequest.LectureSubjectCreateRequest subjectRequest) {
-        return LectureSubject.builder()
-                .parent(subjectRequest.getParent())
-                .krSubject(subjectRequest.getKrSubject())
-                .build();
+    private LectureSubject buildLectureSubject(LectureCreateRequest.LectureSubjectCreateRequest lectureSubjectCreateRequest) {
+        return LectureSubject.of(
+                null,
+                lectureSubjectCreateRequest.getParent(),
+                lectureSubjectCreateRequest.getKrSubject()
+        );
     }
 
-    private LecturePrice buildLecturePrice(LectureCreateRequest.LecturePriceCreateRequest lecturePriceRequest) {
-        return LecturePrice.builder()
-                .isGroup(lecturePriceRequest.getIsGroup())
-                .groupNumber(lecturePriceRequest.getGroupNumber())
-                .pertimeLecture(lecturePriceRequest.getPertimeLecture())
-                .pertimeCost(lecturePriceRequest.getPertimeCost())
-                .totalCost(lecturePriceRequest.getTotalCost())
-                .totalTime(lecturePriceRequest.getTotalTime())
-                .build();
+    private LecturePrice buildLecturePrice(LectureCreateRequest.LecturePriceCreateRequest lecturePriceCreateRequest) {
+        return LecturePrice.of(
+                null,
+                lecturePriceCreateRequest.getIsGroup(),
+                lecturePriceCreateRequest.getGroupNumber(),
+                lecturePriceCreateRequest.getTotalTime(),
+                lecturePriceCreateRequest.getPertimeLecture(),
+                lecturePriceCreateRequest.getPertimeCost(),
+                lecturePriceCreateRequest.getTotalCost()
+        );
     }
 
     private Lecture buildLecture(LectureCreateRequest lectureCreateRequest, Tutor tutor) {
-        return Lecture.builder()
-                .tutor(tutor)
-                .thumbnail(lectureCreateRequest.getThumbnailUrl())
-                .title(lectureCreateRequest.getTitle())
-                .subTitle(lectureCreateRequest.getSubTitle())
-                .introduce(lectureCreateRequest.getIntroduce())
-                .content(lectureCreateRequest.getContent())
-                .difficultyType(lectureCreateRequest.getDifficulty())
-                .systemTypes(lectureCreateRequest.getSystems())
-                .lecturePrices(new ArrayList<>())
-                .lectureSubjects(new ArrayList<>())
-                .build();
+        return Lecture.of(
+                tutor,
+                lectureCreateRequest.getTitle(),
+                lectureCreateRequest.getSubTitle(),
+                lectureCreateRequest.getIntroduce(),
+                lectureCreateRequest.getContent(),
+                lectureCreateRequest.getDifficulty(),
+                lectureCreateRequest.getSystems(),
+                lectureCreateRequest.getThumbnailUrl()
+        );
     }
 }

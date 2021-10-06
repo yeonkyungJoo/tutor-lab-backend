@@ -6,9 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 
-@NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class UploadImageRequest {
 
@@ -16,4 +14,14 @@ public class UploadImageRequest {
     @NotNull(message = "파일을 선택해주세요.")
     private MultipartFile file;
 
+    @Builder(access = AccessLevel.PRIVATE)
+    public UploadImageRequest(@NotNull(message = "파일을 선택해주세요.") MultipartFile file) {
+        this.file = file;
+    }
+
+    public static UploadImageRequest of(MultipartFile file) {
+        return UploadImageRequest.builder()
+                .file(file)
+                .build();
+    }
 }

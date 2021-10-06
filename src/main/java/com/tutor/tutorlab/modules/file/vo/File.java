@@ -2,10 +2,7 @@ package com.tutor.tutorlab.modules.file.vo;
 
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.file.enums.FileType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -14,9 +11,9 @@ import javax.persistence.Table;
 
 import static lombok.AccessLevel.PROTECTED;
 
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "file_id"))
 @Table(name = "tutorlab_file")

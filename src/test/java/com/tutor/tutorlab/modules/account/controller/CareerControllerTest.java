@@ -3,7 +3,9 @@ package com.tutor.tutorlab.modules.account.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.MockMvcTest;
 import com.tutor.tutorlab.WithAccount;
+import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.config.response.ErrorCode;
+import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
@@ -38,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-class CareerControllerTest {
+class CareerControllerTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -67,22 +69,10 @@ class CareerControllerTest {
 
         // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
-                .subjects("java,spring")
-                .specialist(false)
-                .build();
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
         // Then
-        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
-                .companyName("tutorlab")
-                .duty("engineer")
-                .startDate("2007-12-03")
-                .endDate("2007-12-04")
-                .present(false)
-                .build();
-
         mockMvc.perform(post("/careers")
                 .content(objectMapper.writeValueAsString(careerCreateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -106,21 +96,11 @@ class CareerControllerTest {
 
         // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
-                .subjects("java,spring")
-                .specialist(false)
-                .build();
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
         // Then
-        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
-                .companyName("tutorlab")
-                .duty("engineer")
-                .startDate("2007-12-03")
-                .endDate("")
-                .present(false)
-                .build();
+        careerCreateRequest.setEndDate("");
 
         mockMvc.perform(post("/careers")
                 .content(objectMapper.writeValueAsString(careerCreateRequest))
@@ -135,38 +115,15 @@ class CareerControllerTest {
     public void newCareer_withoutAuthenticatedUser() throws Exception {
 
         // Given
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("test")
-                .gender("MALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname("test")
-                .bio(null)
-                .zone("서울시 강남구 역삼동")
-                .build();
+        SignUpRequest signUpRequest = TestDataBuilder.getSignUpRequest("test", "서울시 강남구 역삼동");
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         user = userRepository.findByUsername("test@email.com").orElse(null);
-        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
-                .subjects("java,spring")
-                .specialist(false)
-                .build();
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
         // Then
-        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
-                .companyName("tutorlab")
-                .duty("engineer")
-                .startDate("2007-12-03")
-                .endDate("2007-12-04")
-                .present(false)
-                .build();
-
         mockMvc.perform(post("/careers")
                 .content(objectMapper.writeValueAsString(careerCreateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -185,14 +142,6 @@ class CareerControllerTest {
 
         // When
         // Then
-        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
-                .companyName("tutorlab")
-                .duty("engineer")
-                .startDate("2007-12-03")
-                .endDate("2007-12-04")
-                .present(false)
-                .build();
-
         mockMvc.perform(post("/careers")
                 .content(objectMapper.writeValueAsString(careerCreateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -207,31 +156,19 @@ class CareerControllerTest {
 
         // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
-                .subjects("java,spring")
-                .specialist(false)
-                .build();
         tutorService.createTutor(user, tutorSignUpRequest);
 
-        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
-                .companyName("tutorlab")
-                .duty("engineer")
-                .startDate("2007-12-03")
-                .endDate("2007-12-04")
-                .present(false)
-                .build();
         Career career = careerService.createCareer(user, careerCreateRequest);
         Long careerId = career.getId();
 
         // When
-        CareerUpdateRequest careerUpdateRequest = CareerUpdateRequest.builder()
-                .companyName("tutorlab2")
-                .duty("engineer")
-                .startDate("2007-12-03")
-                //.endDate("")
-                .present(true)
-                .build();
-
+        CareerUpdateRequest careerUpdateRequest = CareerUpdateRequest.of(
+                "tutorlab2",
+                "engineer",
+                "2007-12-03",
+                null,
+                true
+        );
         mockMvc.perform(put("/careers/" + careerId)
                 .content(objectMapper.writeValueAsString(careerUpdateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -241,9 +178,11 @@ class CareerControllerTest {
         // Then
         user = userRepository.findByUsername("yk@email.com").orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
+
         List<Career> careers = careerRepository.findByTutor(tutor);
         assertEquals(1, careers.size());
         career = careers.get(0);
+
         assertEquals("tutorlab2", career.getCompanyName());
         assertEquals("engineer", career.getDuty());
         assertEquals(LocalDate.parse("2007-12-03"), career.getStartDate());
@@ -257,19 +196,8 @@ class CareerControllerTest {
 
         // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
-                .subjects("java,spring")
-                .specialist(false)
-                .build();
         tutorService.createTutor(user, tutorSignUpRequest);
 
-        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
-                .companyName("tutorlab")
-                .duty("engineer")
-                .startDate("2007-12-03")
-                .endDate("2007-12-04")
-                .present(false)
-                .build();
         Career career = careerService.createCareer(user, careerCreateRequest);
         Long careerId = career.getId();
 

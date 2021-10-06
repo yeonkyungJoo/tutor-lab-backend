@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller.request;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserUpdateRequest {
 
     @ApiModelProperty(value = "연락처", example = "010-1111-2222", required = false)
@@ -30,7 +31,7 @@ public class UserUpdateRequest {
 
     private String image;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public UserUpdateRequest(String phoneNumber, String email, String nickname, String bio, String zone, String image) {
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -39,4 +40,16 @@ public class UserUpdateRequest {
         this.zone = zone;
         this.image = image;
     }
+
+    public static UserUpdateRequest of(String phoneNumber, String email, String nickname, String bio, String zone, String image) {
+        return UserUpdateRequest.builder()
+                .phoneNumber(phoneNumber)
+                .email(email)
+                .nickname(nickname)
+                .bio(bio)
+                .zone(zone)
+                .image(image)
+                .build();
+    }
+
 }

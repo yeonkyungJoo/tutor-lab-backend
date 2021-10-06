@@ -1,7 +1,7 @@
 package com.tutor.tutorlab.test;
 
+import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,20 +21,7 @@ public class MainTestService {
     public void saveTutor() {
 
         String name = "yk";
-        User user = User.builder()
-                .username(name + "@email.com")
-                .password("password")
-                .name(name)
-                .gender("MALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .role(RoleType.TUTEE)
-                .provider(null)
-                .providerId(null)
-                .build();
+        User user = TestDataBuilder.getUser("yk");
         userRepository.save(user);
 
         try {

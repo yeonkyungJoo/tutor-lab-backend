@@ -29,11 +29,11 @@ public class ChatService {
     // 강의 수강 시 채팅방 자동 생성
     public void createChatroom(Tutor tutor, Tutee tutee, Enrollment enrollment) {
 
-        Chatroom chatroom = Chatroom.builder()
-                .enrollment(enrollment)
-                .tutee(tutee)
-                .tutor(tutor)
-                .build();
+        Chatroom chatroom = Chatroom.of(
+                enrollment,
+                tutor,
+                tutee
+        );
         enrollment.setChatroom(chatroom);
 
         chatroom = chatroomRepository.save(chatroom);

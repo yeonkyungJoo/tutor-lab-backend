@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.account.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.MockMvcTest;
 import com.tutor.tutorlab.WithAccount;
+import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
@@ -46,6 +47,8 @@ class TuteeControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    private TuteeUpdateRequest tuteeUpdateRequest = TestDataBuilder.getTuteeUpdateRequest("java,spring");
+
     @WithAccount("yk")
     @Test
     void Tutee_수정() throws Exception {
@@ -57,10 +60,6 @@ class TuteeControllerTest {
         assertEquals(0, tutee.getSubjectList().size());
 
         // When
-        TuteeUpdateRequest tuteeUpdateRequest = TuteeUpdateRequest.builder()
-                .subjects("java,spring")
-                .build();
-
         mockMvc.perform(put("/tutees")
                 .content(objectMapper.writeValueAsString(tuteeUpdateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -78,22 +77,12 @@ class TuteeControllerTest {
     public void editTutee_withoutAuthenticatedUser() throws Exception {
 
         // Given
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("yk@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("yk")
-                .gender("FEMALE")
-                .build();
+        SignUpRequest signUpRequest = TestDataBuilder.getSignUpRequest("yk", "서울특별시 강남구 삼성동");
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         // When
         // Then
-        TuteeUpdateRequest tuteeUpdateRequest = TuteeUpdateRequest.builder()
-                .subjects("java,spring")
-                .build();
-
         mockMvc.perform(put("/tutees")
                 .content(objectMapper.writeValueAsString(tuteeUpdateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -112,10 +101,6 @@ class TuteeControllerTest {
         assertNotNull(tutee);
 
         // When
-        TuteeUpdateRequest tuteeUpdateRequest = TuteeUpdateRequest.builder()
-                .subjects("java,spring")
-                .build();
-
         // Then
         // 세션
         assertNull(SecurityContextHolder.getContext().getAuthentication());

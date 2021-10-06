@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.account.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.MockMvcTest;
 import com.tutor.tutorlab.WithAccount;
+import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
@@ -60,13 +61,14 @@ class UserControllerTest {
 
         // Given
         // When
-        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-                .phoneNumber("010-1234-5678")
-                .email("yk@email.com")
-                .nickname("nickname")
-                .zone("서울시 서초구")
-                .build();
-
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.of(
+                "010-1234-5678",
+                "yk@email.com",
+                "nickname",
+                null,
+                "서울특별시 강남구 삼성동",
+                null
+        );
         mockMvc.perform(put("/users")
                 .content(objectMapper.writeValueAsString(userUpdateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -75,12 +77,14 @@ class UserControllerTest {
 
         // Then
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        assertNotNull(user);
-        assertEquals("010-1234-5678", user.getPhoneNumber());
-        assertEquals("yk@email.com", user.getEmail());
-        assertEquals("nickname", user.getNickname());
-        assertEquals(null, user.getBio());
-        assertEquals("서울시 서초구", user.getZone());
+        assertAll(
+                () -> assertNotNull(user),
+                () -> assertEquals("010-1234-5678", user.getPhoneNumber()),
+                () -> assertEquals("yk@email.com", user.getEmail()),
+                () -> assertEquals("nickname", user.getNickname()),
+                () -> assertEquals(null, user.getBio()),
+                () -> assertEquals("서울특별시 강남구 삼성동", user.getZone())
+        );
     }
 
     // TODO - 회원 삭제 시 연관 엔티티 전체 삭제
@@ -90,31 +94,7 @@ class UserControllerTest {
 
         // Given
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.builder()
-                .subjects("java,spring")
-                .specialist(false)
-                .build();
-
-        CareerCreateRequest careerCreateRequest = CareerCreateRequest.builder()
-                .companyName("tutorlab")
-                .duty("engineer")
-                .startDate("2007-12-03")
-                .endDate("2007-12-04")
-                .present(false)
-                .build();
-
-        EducationCreateRequest educationCreateRequest = EducationCreateRequest.builder()
-                .schoolName("school")
-                .major("computer")
-                .entranceDate("2021-01-01")
-                .graduationDate("2021-02-01")
-                .score(4.01)
-                .degree("Bachelor")
-                .build();
-
-        tutorSignUpRequest.addCareerCreateRequest(careerCreateRequest);
-        tutorSignUpRequest.addEducationCreateRequest(educationCreateRequest);
-
+        TutorSignUpRequest tutorSignUpRequest = TestDataBuilder.getTutorSignUpRequest("java,spring", "tutorlab", "engineer", "school", "computer");
         Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
         List<Long> careerIds = careerRepository.findByTutor(tutor).stream()
                 .map(career -> career.getId()).collect(Collectors.toList());

@@ -1,11 +1,14 @@
 package com.tutor.tutorlab.modules.address.controller.request;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class DongRequest {
 
@@ -17,6 +20,15 @@ public class DongRequest {
 //    private String gu;
 
     private String siGunGu;
+
+    private DongRequest(@NotBlank(message = "검색할 시/도를 입력해주세요.") String state, String siGunGu) {
+        this.state = state;
+        this.siGunGu = siGunGu;
+    }
+
+    public static DongRequest of(String state, String siGunGu) {
+        return new DongRequest(state, siGunGu);
+    }
 
     // TODO - CHECK : -Valid
 //    @AssertTrue(message = "검색할 시/군 혹은 구를 입력해주세요.")

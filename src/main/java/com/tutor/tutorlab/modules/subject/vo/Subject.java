@@ -8,8 +8,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = PROTECTED)
 @Table(name = "subject")

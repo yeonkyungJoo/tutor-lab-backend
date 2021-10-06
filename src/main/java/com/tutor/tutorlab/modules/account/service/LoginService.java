@@ -219,26 +219,26 @@ public class LoginService {
             throw new AlreadyExistException(ID);
         }
 
-        User user = User.builder()
-                .username(username)
-                .password(bCryptPasswordEncoder.encode(username))
-                .name(oAuthInfo.getName())
-                .gender(null)
-                .birth(null)
-                .phoneNumber(null)
-                .email(null)
-                .nickname(username)
-                .bio(null)
-                .zone(null)
-                .role(RoleType.TUTEE)
-                .provider(oAuthInfo.getProvider())
-                .providerId(oAuthInfo.getProviderId())
-                .build();
-
+        User user = User.of(
+                username,
+                bCryptPasswordEncoder.encode(username),
+                oAuthInfo.getName(),
+                null,
+                null,
+                null,
+                null,
+                username,
+                null,
+                null,
+                null,
+                RoleType.TUTEE,
+                oAuthInfo.getProvider(),
+                oAuthInfo.getProviderId()
+        );
         // 계정 인증
         user.verifyEmail();
 
-        Tutee tutee = new Tutee(user);
+        Tutee tutee = Tutee.of(user);
         tuteeRepository.save(tutee);
         // 강제 로그인
         return loginOAuth(user);
@@ -280,23 +280,22 @@ public class LoginService {
             throw new AlreadyExistException(ID);
         }
 
-        User user = User.builder()
-                .username(username)
-                .password(bCryptPasswordEncoder.encode(signUpRequest.getPassword()))
-                .name(signUpRequest.getName())
-                .gender(signUpRequest.getGender())
-                .birth(signUpRequest.getBirth())
-                .phoneNumber(signUpRequest.getPhoneNumber())
-                .email(signUpRequest.getEmail())
-                .nickname(signUpRequest.getNickname())
-                .bio(signUpRequest.getBio())
-                .zone(signUpRequest.getZone())
-                .image(signUpRequest.getImage())
-                .role(RoleType.TUTEE)
-                .provider(null)
-                .providerId(null)
-                .build();
-
+        User user = User.of(
+                username,
+                bCryptPasswordEncoder.encode(signUpRequest.getPassword()),
+                signUpRequest.getName(),
+                signUpRequest.getGender(),
+                signUpRequest.getBirth(),
+                signUpRequest.getPhoneNumber(),
+                signUpRequest.getEmail(),
+                signUpRequest.getNickname(),
+                signUpRequest.getBio(),
+                signUpRequest.getZone(),
+                signUpRequest.getImage(),
+                RoleType.TUTEE,
+                null,
+                null
+        );
         User unverified = userRepository.save(user);
 
         // TODO - 상수
@@ -319,8 +318,7 @@ public class LoginService {
         if (token.equals(user.getEmailVerifyToken())) {
             user.verifyEmail();
 
-            Tutee tutee = new Tutee();
-            tutee.setUser(user);
+            Tutee tutee = Tutee.of(user);
             return tuteeRepository.save(tutee);
         }
         return null;

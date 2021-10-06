@@ -6,20 +6,18 @@ import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
-import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.chat.service.ChatService;
-import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
-import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
+import com.tutor.tutorlab.modules.notification.enums.NotificationType;
+import com.tutor.tutorlab.modules.notification.service.NotificationService;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
@@ -31,11 +29,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.tutor.tutorlab.config.exception.AlreadyExistException.ENROLLMENT;
-import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.*;
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE_PRICE;
 import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTEE;
 
 @Service
@@ -51,6 +49,8 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     private final LectureRepository lectureRepository;
     private final LecturePriceRepository lecturePriceRepository;
     private final ChatService chatService;
+
+    private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     @Override
@@ -91,11 +91,11 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         // TODO - 구매 중복 X 체크 (UNIQUE)
 
         // 성공 시
-        Enrollment enrollment = Enrollment.builder()
-                .lecture(lecture)
-                .lecturePrice(lecturePrice)
-                .tutee(tutee)
-                .build();
+        Enrollment enrollment = Enrollment.of(
+                tutee,
+                lecture,
+                lecturePrice
+        );
         // TODO - CHECK
         enrollment = enrollmentRepository.save(enrollment);
         tutee.addEnrollment(enrollment);
@@ -103,6 +103,8 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
 
         // 수강 시 채팅방 자동 생성
         chatService.createChatroom(lecture.getTutor(), tutee, enrollment);
+        // 강의 등록 시 튜터에게 알림 전송
+        notificationService.createNotification(lecture.getTutor().getUser(), NotificationType.ENROLLMENT);
 
         return enrollment;
     }
@@ -122,12 +124,12 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         // TODO - 환불
 
         // TODO - Entity Listener 활용해 변경
-        Cancellation cancellation = Cancellation.builder()
-                .tutee(tutee)
-                .lecture(lecture)
-                .lecturePrice(enrollment.getLecturePrice())
-                .enrolledAt(enrollment.getCreatedAt())
-                .build();
+        Cancellation cancellation = Cancellation.of(
+                tutee,
+                lecture,
+                enrollment.getLecturePrice(),
+                enrollment.getCreatedAt()
+        );
         cancellationRepository.save(cancellation);
 
         enrollment.cancel();

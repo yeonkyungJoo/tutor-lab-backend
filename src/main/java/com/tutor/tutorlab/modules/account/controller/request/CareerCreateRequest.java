@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller.request;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CareerCreateRequest {
 
     @ApiModelProperty(value = "회사명", example = "tutorlab", required = true)
@@ -35,13 +36,23 @@ public class CareerCreateRequest {
     @NotNull
     private boolean present;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public CareerCreateRequest(String companyName, String duty, String startDate, String endDate, boolean present) {
         this.companyName = companyName;
         this.duty = duty;
         this.startDate = startDate;
         this.endDate = endDate;
         this.present = present;
+    }
+
+    public static CareerCreateRequest of(String companyName, String duty, String startDate, String endDate, boolean present) {
+        return CareerCreateRequest.builder()
+                .companyName(companyName)
+                .duty(duty)
+                .startDate(startDate)
+                .endDate(endDate)
+                .present(present)
+                .build();
     }
 
     @AssertTrue

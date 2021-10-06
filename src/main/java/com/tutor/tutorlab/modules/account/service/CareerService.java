@@ -42,14 +42,14 @@ public class CareerService {
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTOR));
 
-        Career career = Career.builder()
-                .tutor(tutor)
-                .companyName(careerCreateRequest.getCompanyName())
-                .duty(careerCreateRequest.getDuty())
-                .startDate(LocalDateTimeUtil.getStringToDate(careerCreateRequest.getStartDate()))
-                .endDate(LocalDateTimeUtil.getStringToDate(careerCreateRequest.getEndDate()))
-                .present(careerCreateRequest.isPresent())
-                .build();
+        Career career = Career.of(
+                tutor,
+                careerCreateRequest.getCompanyName(),
+                careerCreateRequest.getDuty(),
+                LocalDateTimeUtil.getStringToDate(careerCreateRequest.getStartDate()),
+                LocalDateTimeUtil.getStringToDate(careerCreateRequest.getEndDate()),
+                careerCreateRequest.isPresent()
+        );
         tutor.addCareer(career);
         return careerRepository.save(career);
     }

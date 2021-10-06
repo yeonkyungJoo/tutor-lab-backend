@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller.request;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 public class EducationUpdateRequest {
 
@@ -36,7 +37,7 @@ public class EducationUpdateRequest {
     @ApiModelProperty(value = "학위", example = "Master", required = false)
     private String degree;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public EducationUpdateRequest(String schoolName, String major, String entranceDate, String graduationDate, double score, String degree) {
         this.schoolName = schoolName;
         this.major = major;
@@ -44,6 +45,17 @@ public class EducationUpdateRequest {
         this.graduationDate = graduationDate;
         this.score = score;
         this.degree = degree;
+    }
+
+    public static EducationUpdateRequest of(String schoolName, String major, String entranceDate, String graduationDate, double score, String degree) {
+        return EducationUpdateRequest.builder()
+                .schoolName(schoolName)
+                .major(major)
+                .entranceDate(entranceDate)
+                .graduationDate(graduationDate)
+                .score(score)
+                .degree(degree)
+                .build();
     }
 
     @AssertTrue

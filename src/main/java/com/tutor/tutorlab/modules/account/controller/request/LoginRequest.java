@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller.request;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoginRequest {
 
     @ApiModelProperty(value = "아이디", example = "yk@email.com", required = true)
@@ -20,9 +21,16 @@ public class LoginRequest {
     @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public LoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public static LoginRequest of(String username, String password) {
+        return LoginRequest.builder()
+                .username(username)
+                .password(password)
+                .build();
     }
 }

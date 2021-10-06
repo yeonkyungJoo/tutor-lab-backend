@@ -57,15 +57,16 @@ public class ReviewService extends AbstractService {
         Review parent = reviewRepository.findByLectureAndId(lecture, parentId)
                 .orElseThrow(() -> new EntityNotFoundException(REVIEW));
 
-        // TODO - Builder
-        Review review = new Review();
-        review.setContent(tutorReviewCreateRequest.getContent());
-        review.setLecture(lecture);
-        review.setUser(tutor.getUser());
-        review.setParent(parent);
+        Review review = Review.of(
+                null,
+                tutorReviewCreateRequest.getContent(),
+                user,
+                null,
+                lecture,
+                parent
+        );
         // TODO - CHECK : id check
         parent.addChild(review);
-
         return reviewRepository.save(review);
     }
 
@@ -143,17 +144,14 @@ public class ReviewService extends AbstractService {
         Enrollment enrollment = enrollmentRepository.findAllByTuteeIdAndLectureId(tutee.getId(), lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
 
-        // TODO - Builder
-        // TODO - TEST
-        Review review = new Review();
-        review.setScore(tuteeReviewCreateRequest.getScore());
-        review.setContent(tuteeReviewCreateRequest.getContent());
-        review.setEnrollment(enrollment);
-        review.setLecture(lecture);
-        // TODO - DEBUG
-        // TODO - CHECK : review.setUser(user);
-        review.setUser(tutee.getUser());
-
+        Review review = Review.of(
+                tuteeReviewCreateRequest.getScore(),
+                tuteeReviewCreateRequest.getContent(),
+                user,
+                enrollment,
+                lecture,
+                null
+        );
         return reviewRepository.save(review);
     }
 

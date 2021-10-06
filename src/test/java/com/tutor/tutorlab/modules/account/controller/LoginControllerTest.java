@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.account.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.MockMvcTest;
 import com.tutor.tutorlab.WithAccount;
+import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.PrincipalDetailsService;
@@ -37,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @MockMvcTest
@@ -60,6 +62,8 @@ class LoginControllerTest {
     @Autowired
     JwtTokenManager jwtTokenManager;
 
+    private final SignUpRequest signUpRequest = TestDataBuilder.getSignUpRequest("yk", "서울특별시 강남구 삼성동");
+
     // TODO - OAuth 테스트
     // @Test
     void oauth() {
@@ -70,19 +74,6 @@ class LoginControllerTest {
 
         // Given
         // When
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("yk@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("yk")
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
-
         mockMvc.perform(post("/sign-up")
                 .content(objectMapper.writeValueAsString(signUpRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -108,13 +99,7 @@ class LoginControllerTest {
 
         // Given
         // When
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("yk@email.com")
-                .password("password")
-                .passwordConfirm("passwordconfirm")
-                .name("yk")
-                .gender("FEMALE")
-                .build();
+        signUpRequest.setPasswordConfirm("passwordconfirm");
 
         // Then
         mockMvc.perform(post("/sign-up")
@@ -129,18 +114,6 @@ class LoginControllerTest {
     void verifyEmail() throws Exception {
 
         // Given
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("yk@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("yk")
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
         User user = loginService.signUp(signUpRequest);
 
         // When
@@ -166,27 +139,11 @@ class LoginControllerTest {
     void login() throws Exception {
 
         // Given
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("yk@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("yk")
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         // When
-        LoginRequest loginRequest = LoginRequest.builder()
-                .username("yk@email.com")
-                .password("password")
-                .build();
-
+        LoginRequest loginRequest = TestDataBuilder.getLoginRequest("yk@email.com", "password");
         MockHttpServletResponse response = mockMvc.perform(post("/login")
                 .content(objectMapper.writeValueAsString(loginRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -203,28 +160,12 @@ class LoginControllerTest {
     void 로그인_실패() throws Exception {
 
         // Given
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("yk@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("yk")
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         // When
         // Then
-        LoginRequest loginRequest = LoginRequest.builder()
-                .username("yk@email.com")
-                .password("password_")
-                .build();
-
+        LoginRequest loginRequest = TestDataBuilder.getLoginRequest("yk@email.com", "password_");
         mockMvc.perform(post("/login")
                 .content(objectMapper.writeValueAsString(loginRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -252,14 +193,7 @@ class LoginControllerTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // When
-        SignUpOAuthDetailRequest signUpOAuthDetailRequest = SignUpOAuthDetailRequest.builder()
-                .gender("FEMALE")
-                .phoneNumber("010-1234-5678")
-                .email("yk@email.com")
-                .nickname("nickname")
-                .bio("hello")
-                .build();
-
+        SignUpOAuthDetailRequest signUpOAuthDetailRequest = TestDataBuilder.getSignUpOAuthDetailRequest("yk");
         mockMvc.perform(post("/sign-up/oauth/detail")
                 .content(objectMapper.writeValueAsString(signUpOAuthDetailRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -268,11 +202,13 @@ class LoginControllerTest {
 
         // Then
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        assertNotNull(user);
-        assertEquals(OAuthType.GOOGLE, user.getProvider());
-        assertEquals(RoleType.TUTEE, user.getRole());
-        assertEquals(GenderType.FEMALE, user.getGender());
-        assertEquals("nickname", user.getNickname());
+        assertAll(
+                () -> assertNotNull(user),
+                () -> assertEquals(OAuthType.GOOGLE, user.getProvider()),
+                () -> assertEquals(RoleType.TUTEE, user.getRole()),
+                () -> assertEquals(GenderType.FEMALE, user.getGender()),
+                () -> assertEquals("yk", user.getNickname())
+        );
 
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(tutee);
@@ -286,14 +222,7 @@ class LoginControllerTest {
         // Given
         // When
         // Then
-        SignUpOAuthDetailRequest signUpOAuthDetailRequest = SignUpOAuthDetailRequest.builder()
-                .gender("FEMALE")
-                .phoneNumber("010-1234-5678")
-                .email("yk@email.com")
-                .nickname("nickname")
-                .bio("hello")
-                .build();
-
+        SignUpOAuthDetailRequest signUpOAuthDetailRequest = TestDataBuilder.getSignUpOAuthDetailRequest("yk");
         mockMvc.perform(post("/sign-up/oauth/detail")
                 .content(objectMapper.writeValueAsString(signUpOAuthDetailRequest))
                 .contentType(MediaType.APPLICATION_JSON))

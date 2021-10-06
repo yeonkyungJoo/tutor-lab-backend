@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TutorUpdateRequest {
 
     @ApiModelProperty(value = "강의주제", example = "Database", required = false)
@@ -24,10 +24,17 @@ public class TutorUpdateRequest {
     @ApiModelProperty(value = "전문성", example="true", required = false)
     private boolean specialist;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public TutorUpdateRequest(String subjects, boolean specialist) {
         this.subjects = subjects;
         this.specialist = specialist;
+    }
+
+    public static TutorUpdateRequest of(String subjects, boolean specialist) {
+        return TutorUpdateRequest.builder()
+                .subjects(subjects)
+                .specialist(specialist)
+                .build();
     }
 
 }

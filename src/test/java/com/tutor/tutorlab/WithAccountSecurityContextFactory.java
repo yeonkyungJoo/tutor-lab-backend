@@ -1,8 +1,8 @@
 package com.tutor.tutorlab;
 
+import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.PrincipalDetailsService;
-import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -48,19 +48,7 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
         String username = name + "@email.com";
         if (!userRepository.findByUsername(username).isPresent()) {
 
-            SignUpRequest signUpRequest = SignUpRequest.builder()
-                    .username(username)
-                    .password("password")
-                    .passwordConfirm("password")
-                    .name(name)
-                    .gender("MALE")
-                    .phoneNumber(null)
-                    .email(null)
-                    .nickname(name)
-                    .bio(null)
-                    .zone("서울특별시 강남구 삼성동")
-                    .build();
-            User user = loginService.signUp(signUpRequest);
+            User user = loginService.signUp(TestDataBuilder.getSignUpRequest(name, "서울특별시 강남구 삼성동"));
             loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
         }
 

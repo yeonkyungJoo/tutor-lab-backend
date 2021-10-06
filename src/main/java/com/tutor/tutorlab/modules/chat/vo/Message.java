@@ -10,7 +10,7 @@ import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
 @Document(collection = "messages")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
 public class Message {
 
@@ -21,21 +21,36 @@ public class Message {
     private MessageType type;
     private Long chatroomId;
     private String sessionId;
-    private String username;
+    private String senderNickname;
+    private Long receiverId;
     private String message;
     // private LocalDateTime sentAt;
     private String sentAt;
 
     private boolean checked;
 
-    @Builder
-    public Message(MessageType type, Long chatroomId, String sessionId, String username, String message, String sentAt, boolean checked) {
+    @Builder(access = AccessLevel.PRIVATE)
+    public Message(MessageType type, Long chatroomId, String sessionId, String senderNickname, Long receiverId, String message, String sentAt, boolean checked) {
         this.type = type;
         this.chatroomId = chatroomId;
         this.sessionId = sessionId;
-        this.username = username;
+        this.senderNickname = senderNickname;
+        this.receiverId = receiverId;
         this.message = message;
         this.sentAt = sentAt;
         this.checked = checked;
+    }
+
+    public static Message of(MessageType type, Long chatroomId, String sessionId, String senderNickname, Long receiverId, String message, String sentAt, boolean checked) {
+        return Message.builder()
+                .type(type)
+                .chatroomId(chatroomId)
+                .sessionId(sessionId)
+                .senderNickname(senderNickname)
+                .receiverId(receiverId)
+                .message(message)
+                .sentAt(sentAt)
+                .checked(checked)
+                .build();
     }
 }

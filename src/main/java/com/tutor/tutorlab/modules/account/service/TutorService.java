@@ -66,34 +66,34 @@ public class TutorService extends AbstractService {
         user = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException(USER));
         user.setRole(RoleType.TUTOR);
 
-        Tutor tutor = Tutor.builder()
-            .user(user)
-            .subjects(tutorSignUpRequest.getSubjects())
-            .specialist(tutorSignUpRequest.isSpecialist())
-            .build();
+        Tutor tutor = Tutor.of(
+                user,
+                tutorSignUpRequest.getSubjects(),
+                tutorSignUpRequest.isSpecialist()
+        );
 
         tutorSignUpRequest.getCareers().forEach(careerCreateRequest -> {
-            Career career = Career.builder()
-                .tutor(tutor)
-                .companyName(careerCreateRequest.getCompanyName())
-                .duty(careerCreateRequest.getDuty())
-                .startDate(LocalDateTimeUtil.getStringToDate(careerCreateRequest.getStartDate()))
-                .endDate(LocalDateTimeUtil.getStringToDate(careerCreateRequest.getEndDate()))
-                .present(careerCreateRequest.isPresent())
-                .build();
+            Career career = Career.of(
+                    tutor,
+                    careerCreateRequest.getCompanyName(),
+                    careerCreateRequest.getDuty(),
+                    LocalDateTimeUtil.getStringToDate(careerCreateRequest.getStartDate()),
+                    LocalDateTimeUtil.getStringToDate(careerCreateRequest.getEndDate()),
+                    careerCreateRequest.isPresent()
+            );
             tutor.addCareer(career);
         });
 
         tutorSignUpRequest.getEducations().forEach(educationCreateRequest -> {
-            Education education = Education.builder()
-                .tutor(tutor)
-                .schoolName(educationCreateRequest.getSchoolName())
-                .major(educationCreateRequest.getMajor())
-                .entranceDate(LocalDateTimeUtil.getStringToDate(educationCreateRequest.getEntranceDate()))
-                .graduationDate(LocalDateTimeUtil.getStringToDate(educationCreateRequest.getGraduationDate()))
-                .score(educationCreateRequest.getScore())
-                .degree(educationCreateRequest.getDegree())
-                .build();
+            Education education = Education.of(
+                    tutor,
+                    educationCreateRequest.getSchoolName(),
+                    educationCreateRequest.getMajor(),
+                    LocalDateTimeUtil.getStringToDate(educationCreateRequest.getEntranceDate()),
+                    LocalDateTimeUtil.getStringToDate(educationCreateRequest.getGraduationDate()),
+                    educationCreateRequest.getScore(),
+                    educationCreateRequest.getDegree()
+            );
             tutor.addEducation(education);
         });
 

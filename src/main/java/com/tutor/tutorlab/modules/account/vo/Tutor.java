@@ -14,10 +14,11 @@ import java.util.List;
 
 import static com.tutor.tutorlab.utils.CommonUtil.COMMA;
 
-@ToString
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "tutor_id"))
 @Getter @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Tutor extends BaseEntity {
 
@@ -70,11 +71,19 @@ public class Tutor extends BaseEntity {
         user.setRole(RoleType.TUTEE);
     }
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public Tutor(@NotNull User user, String subjects, boolean specialist) {
         this.user = user;
         this.subjects = subjects;
         this.specialist = specialist;
+    }
+
+    public static Tutor of(User user, String subjects, boolean specialist) {
+        return Tutor.builder()
+                .user(user)
+                .subjects(subjects)
+                .specialist(specialist)
+                .build();
     }
 
 }

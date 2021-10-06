@@ -19,15 +19,14 @@ class MessageRepositoryTest {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @Test
-    void findAllByChatroomIdAndCheckedIsFalseAndUsernameIsNot() {
-        System.out.println(messageRepository.countAllByChatroomIdAndCheckedIsFalseAndUsernameIsNot(113L, "user2"));
-    }
-
-    @Test
-    void query() {
-        List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("chatroomId").is(113L)
-                .and("checked").is(false).and("username").ne("user2")), Message.class);
-        System.out.println(messages.size());
-    }
+//    @Test
+//    void findAllByChatroomIdAndCheckedIsFalseAndUsernameIsNot() {
+//        System.out.println(messageRepository.countAllByChatroomIdAndCheckedIsFalseAndUsernameIsNot(113L, "user2"));
+//    }
+//    @Test
+//    void query() {
+//        List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("chatroomId").is(113L)
+//                .and("checked").is(false).and("username").ne("user2")), Message.class);
+//        System.out.println(messages.size());
+//    }
 }

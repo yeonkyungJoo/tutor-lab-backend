@@ -5,11 +5,12 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
-@Builder
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "lecture_price_id"))
 @Entity
@@ -43,4 +44,27 @@ public class LecturePrice extends BaseEntity {
     public void mappingLecture(Lecture lecture) {
         this.lecture = lecture;
     };
+
+    @Builder(access = PRIVATE)
+    public LecturePrice(Lecture lecture, Boolean isGroup, Integer groupNumber, Integer totalTime, Integer pertimeLecture, Long pertimeCost, Long totalCost) {
+        this.lecture = lecture;
+        this.isGroup = isGroup;
+        this.groupNumber = groupNumber;
+        this.totalTime = totalTime;
+        this.pertimeLecture = pertimeLecture;
+        this.pertimeCost = pertimeCost;
+        this.totalCost = totalCost;
+    }
+
+    public static LecturePrice of(Lecture lecture, Boolean isGroup, Integer groupNumber, Integer totalTime, Integer pertimeLecture, Long pertimeCost, Long totalCost) {
+        return LecturePrice.builder()
+                .lecture(lecture)
+                .isGroup(isGroup)
+                .groupNumber(groupNumber)
+                .totalTime(totalTime)
+                .pertimeLecture(pertimeLecture)
+                .pertimeCost(pertimeCost)
+                .totalCost(totalCost)
+                .build();
+    }
 }

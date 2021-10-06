@@ -58,15 +58,17 @@ public class ChatroomService extends AbstractService {
             .map(chatroom -> {
                 ChatroomResponse chatroomResponse = new ChatroomResponse(chatroom);
                 chatroomResponse.setLastMessage(messageRepository.findFirstByChatroomIdOrderByIdDesc(chatroom.getId()));
-                chatroomResponse.setUncheckedMessageCount(messageRepository.countAllByChatroomIdAndCheckedIsFalseAndUsernameIsNot(chatroom.getId(), user.getNickname()));
+                chatroomResponse.setUncheckedMessageCount(messageRepository.countAllByChatroomIdAndCheckedIsFalseAndReceiverId(chatroom.getId(), user.getId()));
                 return chatroomResponse;
             });
     }
 
     // TODO - CHECK : Batch
     private void checkAllMessages(User user, Long chatroomId) {
+//        List<Message> uncheckedMessages = mongoTemplate.find(Query.query(Criteria.where("chatroomId").is(chatroomId)
+//                .and("checked").is(false).and("username").ne(user.getNickname())), Message.class);
         List<Message> uncheckedMessages = mongoTemplate.find(Query.query(Criteria.where("chatroomId").is(chatroomId)
-                .and("checked").is(false).and("username").ne(user.getNickname())), Message.class);
+                .and("checked").is(false).and("receiverId").is(user.getId())), Message.class);
         uncheckedMessages.forEach(message -> {
             message.setChecked(true);
             messageRepository.save(message);
@@ -98,7 +100,7 @@ public class ChatroomService extends AbstractService {
                 .map(chatroom -> {
                     ChatroomResponse chatroomResponse = new ChatroomResponse(chatroom);
                     chatroomResponse.setLastMessage(messageRepository.findFirstByChatroomIdOrderByIdDesc(chatroom.getId()));
-                    chatroomResponse.setUncheckedMessageCount(messageRepository.countAllByChatroomIdAndCheckedIsFalseAndUsernameIsNot(chatroom.getId(), user.getNickname()));
+                    chatroomResponse.setUncheckedMessageCount(messageRepository.countAllByChatroomIdAndCheckedIsFalseAndReceiverId(chatroom.getId(), user.getId()));
                     return chatroomResponse;
                 });
     }
