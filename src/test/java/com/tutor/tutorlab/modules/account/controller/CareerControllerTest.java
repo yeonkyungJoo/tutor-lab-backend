@@ -64,38 +64,38 @@ class CareerControllerTest extends AbstractTest {
     ObjectMapper objectMapper;
 
     @Test
-    @WithAccount("yk")
+    @WithAccount(NAME)
     void newCareer() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
-        // Then
         mockMvc.perform(post("/careers")
                 .content(objectMapper.writeValueAsString(careerCreateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        // Then
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
-        Assertions.assertEquals(1, careerRepository.findByTutor(tutor).size());
 
+        Assertions.assertEquals(1, careerRepository.findByTutor(tutor).size());
         Career career = careerRepository.findByTutor(tutor).get(0);
-        assertFalse(career.isPresent());
-        assertEquals(career.getDuty(), "engineer");
-        assertEquals(career.getCompanyName(), "tutorlab");
+        assertEquals(careerCreateRequest.isPresent(), career.isPresent());
+        assertEquals(careerCreateRequest.getDuty(), career.getDuty());
+        assertEquals(careerCreateRequest.getCompanyName(), career.getCompanyName());
     }
 
     @Test
     @DisplayName("Career 등록 - Invalid Input")
-    @WithAccount("yk")
+    @WithAccount(NAME)
     void newCareer_withInvalidInput() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
@@ -115,11 +115,10 @@ class CareerControllerTest extends AbstractTest {
     public void newCareer_withoutAuthenticatedUser() throws Exception {
 
         // Given
-        SignUpRequest signUpRequest = TestDataBuilder.getSignUpRequest("test", "서울시 강남구 역삼동");
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
-        user = userRepository.findByUsername("test@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
@@ -137,7 +136,7 @@ class CareerControllerTest extends AbstractTest {
     public void newCareer_notTutor() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         assertEquals(RoleType.TUTEE, user.getRole());
 
         // When
@@ -155,20 +154,13 @@ class CareerControllerTest extends AbstractTest {
     void Career_수정() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         Career career = careerService.createCareer(user, careerCreateRequest);
         Long careerId = career.getId();
 
         // When
-        CareerUpdateRequest careerUpdateRequest = CareerUpdateRequest.of(
-                "tutorlab2",
-                "engineer",
-                "2007-12-03",
-                null,
-                true
-        );
         mockMvc.perform(put("/careers/" + careerId)
                 .content(objectMapper.writeValueAsString(careerUpdateRequest))
                 .contentType(MediaType.APPLICATION_JSON))

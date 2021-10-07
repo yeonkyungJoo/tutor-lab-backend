@@ -62,6 +62,8 @@ class EducationControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+
+
     private TutorSignUpRequest tutorSignUpRequest = TestDataBuilder.getTutorSignUpRequest("java,spring");
     private EducationCreateRequest educationCreateRequest = TestDataBuilder.getEducationCreateRequest("school", "computer");
 

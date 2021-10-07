@@ -1,23 +1,10 @@
 package com.tutor.tutorlab.configuration;
 
-import com.tutor.tutorlab.TutorlabApplication;
 import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
-import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 // @ExtendWith({SpringExtension.class})
 // @SpringBootTest(classes = TutorlabApplication.class)
@@ -35,7 +22,55 @@ public abstract class AbstractTest {
 //                .build();
 //    }
 
-    protected TutorSignUpRequest tutorSignUpRequest = TestDataBuilder.getTutorSignUpRequest("java,spring");
-    protected CareerCreateRequest careerCreateRequest = TestDataBuilder.getCareerCreateRequest("tutorlab", "engineer");
+    protected static final String NAME = "yk";
+    protected static final String USERNAME = "yk@email.com";
 
+    protected final SignUpRequest signUpRequest = getSignUpRequest(NAME);
+    protected final TutorSignUpRequest tutorSignUpRequest = getTutorSignUpRequest();
+    protected final CareerCreateRequest careerCreateRequest = getCareerCreateRequest();
+    protected final CareerUpdateRequest careerUpdateRequest = getCareerUpdateRequest();
+
+    private SignUpRequest getSignUpRequest(String name) {
+        return SignUpRequest.of(
+                name + "@email.com",
+                "password",
+                "password",
+                name,
+                "FEMALE",
+                null,
+                null,
+                null,
+                name,
+                null,
+                "서울특별시 강남구 삼성동",
+                null
+        );
+    }
+
+    private TutorSignUpRequest getTutorSignUpRequest() {
+        return TutorSignUpRequest.of(
+                "java,spring",
+                false
+        );
+    }
+
+    private CareerCreateRequest getCareerCreateRequest() {
+        return CareerCreateRequest.of(
+                "tutorlab",
+                "engineer",
+                "2007-12-03",
+                "2007-12-04",
+                false
+        );
+    }
+
+    private CareerUpdateRequest getCareerUpdateRequest() {
+        return CareerUpdateRequest.of(
+                "tutorlab2",
+                "engineer",
+                "2007-12-03",
+                null,
+                true
+        );
+    }
 }
