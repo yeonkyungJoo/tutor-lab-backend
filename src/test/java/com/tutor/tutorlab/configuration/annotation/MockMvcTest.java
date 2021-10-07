@@ -1,4 +1,4 @@
-package com.tutor.tutorlab;
+package com.tutor.tutorlab.configuration.annotation;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;

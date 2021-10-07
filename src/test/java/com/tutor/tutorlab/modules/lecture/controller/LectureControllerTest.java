@@ -1,28 +1,16 @@
 package com.tutor.tutorlab.modules.lecture.controller;
 
-import com.tutor.tutorlab.MockMvcTest;
-import com.tutor.tutorlab.WithAccount;
-import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.TutorService;
-import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.lecture.common.LectureBuilder;
-import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
-import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
-import com.tutor.tutorlab.modules.lecture.enums.SystemType;
-import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
-import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @MockMvcTest

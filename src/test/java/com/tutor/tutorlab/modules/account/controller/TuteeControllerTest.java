@@ -1,12 +1,10 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutor.tutorlab.MockMvcTest;
-import com.tutor.tutorlab.WithAccount;
-import com.tutor.tutorlab.config.init.TestDataBuilder;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.config.response.ErrorCode;
-import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
+import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
@@ -30,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-class TuteeControllerTest {
+class TuteeControllerTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -47,14 +45,12 @@ class TuteeControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    private TuteeUpdateRequest tuteeUpdateRequest = TestDataBuilder.getTuteeUpdateRequest("java,spring");
-
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Tutee_수정() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(tutee);
         assertEquals(0, tutee.getSubjectList().size());
@@ -67,9 +63,11 @@ class TuteeControllerTest {
                 .andExpect(status().isOk());
 
         // Then
-        tutee = tuteeRepository.findByUser(user);
-        assertEquals(2, tutee.getSubjectList().size());
-        assertTrue(tutee.getSubjects().contains("spring"));
+        Tutee updatedTutee = tuteeRepository.findByUser(user);
+        assertAll(
+                () -> assertEquals(2, updatedTutee.getSubjectList().size()),
+                () -> assertTrue(updatedTutee.getSubjects().contains("spring"))
+        );
     }
 
     @Test
@@ -77,7 +75,6 @@ class TuteeControllerTest {
     public void editTutee_withoutAuthenticatedUser() throws Exception {
 
         // Given
-        SignUpRequest signUpRequest = TestDataBuilder.getSignUpRequest("yk", "서울특별시 강남구 삼성동");
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
@@ -91,12 +88,12 @@ class TuteeControllerTest {
     }
 
     // TODO - Tutee 삭제 시 연관 엔티티 전체 삭제
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
-    void Tutee_탈퇴() throws Exception {
+    void Tutee_탈퇴() {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(tutee);
 
@@ -106,12 +103,15 @@ class TuteeControllerTest {
         assertNull(SecurityContextHolder.getContext().getAuthentication());
 
         // 유저
-        user = userRepository.findAllByUsername("yk@email.com");
-        assertTrue(user.isDeleted());
-        assertNotNull(user.getDeletedAt());
-        assertEquals(RoleType.TUTEE, user.getRole());
+        User deletedUser = userRepository.findAllByUsername(USERNAME);
+        assertAll(
+                () -> assertTrue(deletedUser.isDeleted()),
+                () -> assertNotNull(deletedUser.getDeletedAt()),
+                () -> assertEquals(RoleType.TUTEE, deletedUser.getRole())
+        );
+
         // 튜티
-        assertNull(tuteeRepository.findByUser(user));
+        assertNull(tuteeRepository.findByUser(deletedUser));
         // chatroom
         // message
         // lecture - lecturePrice, lectureSubject

@@ -1,6 +1,6 @@
 package com.tutor.tutorlab.modules.review.service;
 
-import com.tutor.tutorlab.WithAccount;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;

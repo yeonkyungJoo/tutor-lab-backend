@@ -1,8 +1,8 @@
 package com.tutor.tutorlab.modules.purchase.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutor.tutorlab.MockMvcTest;
-import com.tutor.tutorlab.WithAccount;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
@@ -29,7 +29,6 @@ import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 

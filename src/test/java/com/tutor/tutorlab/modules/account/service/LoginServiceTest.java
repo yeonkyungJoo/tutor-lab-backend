@@ -3,10 +3,7 @@ package com.tutor.tutorlab.modules.account.service;
 import com.tutor.tutorlab.config.exception.AlreadyExistException;
 import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
-import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
-import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
-import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.enums.GenderType;
+import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
@@ -17,20 +14,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class LoginServiceTest {
+class LoginServiceTest extends AbstractTest {
 
     @Autowired
     LoginService loginService;
@@ -56,24 +48,20 @@ class LoginServiceTest {
 
         // Given
         // When
-        Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("id", "1234567890");
-        userInfo.put("name", "test");
-        userInfo.put("email", "test@email.com");
-
-        GoogleInfo googleInfo = new GoogleInfo(userInfo);
-        Map<String, String> result = loginService.signUpOAuth(googleInfo);
+        Map<String, String> result = loginService.signUpOAuth(new GoogleInfo(userInfo));
 
         // Then
         // 유저 생성 확인
         // 이메일 verify 확인
-        User user = userRepository.findByUsername("test@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         assertNotNull(user);
         assertTrue(user.isEmailVerified());
         System.out.println(String.format("provider : %s, providerId : %s", user.getProvider(), user.getProviderId()));
+
         // 튜티 생성 확인
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(tutee);
+
         // 로그인 확인 - jwt 토큰생성
         assertTrue(result.containsKey("header"));
         assertTrue(result.containsKey("token"));
@@ -88,30 +76,16 @@ class LoginServiceTest {
     void signUpOAuthDetail() {
 
         // Given
-        Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("id", "1234567890");
-        userInfo.put("name", "test");
-        userInfo.put("email", "test@email.com");
         loginService.signUpOAuth(new GoogleInfo(userInfo));
 
         // When
-        User user = userRepository.findByUsername("test@email.com").orElse(null);
-        SignUpOAuthDetailRequest signUpOAuthDetailRequest = SignUpOAuthDetailRequest.builder()
-                .gender("FEMALE")
-                .birth("2021-01-01")
-                .phoneNumber("010-1234-5678")
-                .email("test@email.com")
-                .nickname("nickname")
-                .bio("hello")
-                .build();
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         loginService.signUpOAuthDetail(user, signUpOAuthDetailRequest);
 
         // Then
-        user = userRepository.findByUsername("test@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         assertTrue(user.isEmailVerified());
-        assertEquals("nickname", user.getNickname());
-
-        assertEquals(LocalDate.of(2021, 1, 1), user.getBirth());
+        assertEquals(signUpOAuthDetailRequest.getPhoneNumber(), user.getPhoneNumber());
     }
 
     @Test
@@ -119,30 +93,20 @@ class LoginServiceTest {
 
         // Given
         // When
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("test")
-                .gender("FEMALE")
-                .birth("2021-01-01")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
         loginService.signUp(signUpRequest);
 
         // Then
-        User user = userRepository.findByUsername("test@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         assertNull(user);
-        user = userRepository.findAllByUsername("test@email.com");
-        assertNotNull(user);
-        assertFalse(user.isEmailVerified());
-        assertEquals(RoleType.TUTEE, user.getRole());
-        assertEquals(GenderType.FEMALE, user.getGender());
-        assertEquals(LocalDate.of(2021, 1, 1), user.getBirth());
+
+        User unverifiedUser = userRepository.findAllByUsername(USERNAME);
+        assertAll(
+                () -> assertNotNull(unverifiedUser),
+                () -> assertFalse(unverifiedUser.isEmailVerified()),
+                () -> assertEquals(RoleType.TUTEE, unverifiedUser.getRole()),
+                () -> assertEquals(signUpRequest.getZone(), unverifiedUser.getZone()),
+                () -> assertEquals(signUpRequest.getPhoneNumber(), unverifiedUser.getPhoneNumber())
+        );
 
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNull(tutee);
@@ -153,34 +117,10 @@ class LoginServiceTest {
     void signUpWithExistingUsername() {
 
         // Given
-        SignUpRequest _signUpRequest = SignUpRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("test")
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
-        loginService.signUp(_signUpRequest);
-        assertNotNull(userRepository.findAllByUsername("test@email.com"));
+        loginService.signUp(signUpRequest);
+        assertNotNull(userRepository.findAllByUsername(USERNAME));
 
         // When
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("test")
-                .gender("MALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
         assertThrows(AlreadyExistException.class, () -> {
             loginService.signUp(signUpRequest);
         });
@@ -190,28 +130,16 @@ class LoginServiceTest {
     void verifyEmail() {
 
         // Given
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("test")
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
         User user = loginService.signUp(signUpRequest);
         assertFalse(user.isEmailVerified());
-        assertNull(userRepository.findByUsername("test@email.com").orElse(null));
-        assertNotNull(userRepository.findAllByUsername("test@email.com"));
+        assertTrue(userRepository.findByUsername(USERNAME).isEmpty());
+        assertNotNull(userRepository.findAllByUsername(USERNAME));
 
         // When
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         // Then
-        user = userRepository.findByUsername("test@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         assertNotNull(user);
         assertTrue(user.isEmailVerified());
     }
@@ -221,32 +149,12 @@ class LoginServiceTest {
     void signUpOAuthDetail_notOAuthUser() {
 
         // Given
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("test")
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         // When
         // Then
-        User verifiedUser = userRepository.findByUsername("test@email.com").orElse(null);
-        SignUpOAuthDetailRequest signUpOAuthDetailRequest = SignUpOAuthDetailRequest.builder()
-                .gender("FEMALE")
-                .phoneNumber("010-1234-5678")
-                .email("test@email.com")
-                .nickname("nickname")
-                .bio("hello")
-                .build();
-
+        User verifiedUser = userRepository.findByUsername(USERNAME).orElse(null);
         assertThrows(RuntimeException.class, () -> {
             loginService.signUpOAuthDetail(verifiedUser, signUpOAuthDetailRequest);
         });
@@ -256,26 +164,10 @@ class LoginServiceTest {
     void login() {
 
         // Given
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("test")
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         // When
-        LoginRequest loginRequest = LoginRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .build();
         Map<String, String> result = loginService.login(loginRequest);
 
         // Then
@@ -283,34 +175,17 @@ class LoginServiceTest {
         assertTrue(result.containsKey("token"));
 
         String jwtToken = result.get("token").replace("Bearer ", "");
-        assertEquals(jwtTokenManager.getClaim(jwtToken, "username"), "test@email.com");
+        assertEquals(USERNAME, jwtTokenManager.getClaim(jwtToken, "username"));
     }
 
     @Test
     void login_unverifiedUser() {
 
         // Given
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("test")
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
-        User user = loginService.signUp(signUpRequest);
+        loginService.signUp(signUpRequest);
 
         // When
         // Then
-        LoginRequest loginRequest = LoginRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .build();
-
         assertThrows(BadCredentialsException.class, () -> loginService.login(loginRequest));
     }
 
@@ -318,28 +193,12 @@ class LoginServiceTest {
     void login_wrongPassword() {
 
         // Given
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-                .username("test@email.com")
-                .password("password")
-                .passwordConfirm("password")
-                .name("test")
-                .gender("FEMALE")
-                .phoneNumber(null)
-                .email(null)
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .build();
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         // When
         // Then
-        LoginRequest loginRequest = LoginRequest.builder()
-                .username("test@email.com")
-                .password("wrong")
-                .build();
-
+        loginRequest.setPassword("password_");
         assertThrows(BadCredentialsException.class, () -> loginService.login(loginRequest));
     }
 

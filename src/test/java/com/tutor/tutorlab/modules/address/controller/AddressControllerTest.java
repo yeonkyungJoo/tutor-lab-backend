@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.address.controller;
 
-import com.tutor.tutorlab.MockMvcTest;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
+import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.address.repository.AddressRepository;
 import com.tutor.tutorlab.modules.address.vo.Address;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,8 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-public class AddressControllerTest {
-        // extends AbstractTest {
+public class AddressControllerTest extends AbstractTest {
 
     private final String BASE_URL = "/addresses";
 
@@ -32,15 +32,6 @@ public class AddressControllerTest {
 
     @Autowired
     private AddressRepository addressRepository;
-
-    private Address getAddress(String state, String siGun, String gu, String dongMyunLi) {
-        return Address.builder()
-                .state(state)
-                .siGun(siGun)
-                .gu(gu)
-                .dongMyunLi(dongMyunLi)
-                .build();
-    }
 
     @BeforeEach
     void init(WebApplicationContext webAppContext) {

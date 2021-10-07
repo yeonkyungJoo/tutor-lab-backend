@@ -1,4 +1,4 @@
-package com.tutor.tutorlab;
+package com.tutor.tutorlab.configuration.auth;
 
 import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.config.security.PrincipalDetails;

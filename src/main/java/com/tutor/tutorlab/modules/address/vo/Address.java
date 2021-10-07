@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
@@ -29,4 +30,21 @@ public class Address {
 
     @Column(length = 50)
     private String dongMyunLi;
+
+    @Builder(access = PRIVATE)
+    public Address(String state, String siGun, String gu, String dongMyunLi) {
+        this.state = state;
+        this.siGun = siGun;
+        this.gu = gu;
+        this.dongMyunLi = dongMyunLi;
+    }
+
+    public static Address of(String state, String siGun, String gu, String dongMyunLi) {
+        return Address.builder()
+                .state(state)
+                .siGun(siGun)
+                .gu(gu)
+                .dongMyunLi(dongMyunLi)
+                .build();
+    }
 }

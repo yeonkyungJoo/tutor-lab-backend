@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.address.repository;
 
+import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.address.vo.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,19 +15,10 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class AddressRepositoryTest {
+class AddressRepositoryTest extends AbstractTest {
 
     @Autowired
     private AddressRepository addressRepository;
-
-    private Address getAddress(String state, String siGun, String gu, String dongMyunLi) {
-        return Address.builder()
-                .state(state)
-                .siGun(siGun)
-                .gu(gu)
-                .dongMyunLi(dongMyunLi)
-                .build();
-    }
 
     // @BeforeEach
     void init() {

@@ -3,10 +3,12 @@ package com.tutor.tutorlab.modules.chat.service;
 import com.tutor.tutorlab.modules.chat.enums.MessageType;
 import com.tutor.tutorlab.modules.chat.repository.MessageRepository;
 import com.tutor.tutorlab.modules.chat.vo.Message;
+import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,22 +27,16 @@ class MessageServiceTest {
 
     @Test
     void saveMessage() {
-        /*
-        {
-            "type" : "message",
-            "chatroomId" : 1L,
-            "sessionId" : "4253d14c-c3d5-ef9d-22cb-8823c7632c24",
-            "username" : "user1",
-            "message" : "hi~"
-        }
-        */
-        Message message = new Message();
-        message.setType(MessageType.MESSAGE);
-        message.setChatroomId(1L);
-        message.setSessionId("4253d14c-c3d5-ef9d-22cb-8823c7632c24");
-        message.setUsername("user1");
-        message.setMessage("hi!");
-
+        Message message = Message.of(
+                MessageType.MESSAGE,
+                1L,
+                "4253d14c-c3d5-ef9d-22cb-8823c7632c24",
+                "user1",
+                1L,
+                "hi",
+                LocalDateTime.now(),
+                true
+        );
         messageService.saveMessage(message);
 //        System.out.println(messageRepository.findAll());
     }

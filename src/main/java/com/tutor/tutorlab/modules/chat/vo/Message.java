@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.chat.vo;
 
 import com.tutor.tutorlab.modules.chat.enums.MessageType;
+import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,24 +25,24 @@ public class Message {
     private String senderNickname;
     private Long receiverId;
     private String message;
-    // private LocalDateTime sentAt;
+    // TODO - CHECK : private LocalDateTime sentAt;
     private String sentAt;
 
     private boolean checked;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Message(MessageType type, Long chatroomId, String sessionId, String senderNickname, Long receiverId, String message, String sentAt, boolean checked) {
+    public Message(MessageType type, Long chatroomId, String sessionId, String senderNickname, Long receiverId, String message, LocalDateTime sentAt, boolean checked) {
         this.type = type;
         this.chatroomId = chatroomId;
         this.sessionId = sessionId;
         this.senderNickname = senderNickname;
         this.receiverId = receiverId;
         this.message = message;
-        this.sentAt = sentAt;
+        this.sentAt = LocalDateTimeUtil.getDateTimeToString(sentAt);
         this.checked = checked;
     }
 
-    public static Message of(MessageType type, Long chatroomId, String sessionId, String senderNickname, Long receiverId, String message, String sentAt, boolean checked) {
+    public static Message of(MessageType type, Long chatroomId, String sessionId, String senderNickname, Long receiverId, String message, LocalDateTime sentAt, boolean checked) {
         return Message.builder()
                 .type(type)
                 .chatroomId(chatroomId)

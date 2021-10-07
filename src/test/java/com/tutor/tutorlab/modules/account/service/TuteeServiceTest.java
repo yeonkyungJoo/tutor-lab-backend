@@ -1,7 +1,7 @@
 package com.tutor.tutorlab.modules.account.service;
 
-import com.tutor.tutorlab.WithAccount;
-import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
+import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class TuteeServiceTest {
+class TuteeServiceTest extends AbstractTest {
 
     @Autowired
     TuteeService tuteeService;
@@ -27,39 +27,37 @@ class TuteeServiceTest {
     @Autowired
     UserRepository userRepository;
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Tutee_수정() {
 
         // Given
         // When
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
-        TuteeUpdateRequest tuteeUpdateRequest = TuteeUpdateRequest.builder()
-                .subjects("python")
-                .build();
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         tuteeService.updateTutee(user, tuteeUpdateRequest);
 
         // Then
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutee tutee = tuteeRepository.findByUser(user);
         assertNotNull(tutee);
         Assertions.assertEquals(RoleType.TUTEE, user.getRole());
-        Assertions.assertEquals("python", tutee.getSubjects());
+        Assertions.assertEquals(tuteeUpdateRequest.getSubjects(), tutee.getSubjects());
     }
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Tutee_탈퇴() {
 
         // Given
         // When
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         tuteeService.deleteTutee(user);
 
         // Then
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         assertNull(user);
-        user = userRepository.findAllByName("yk");
+
+        user = userRepository.findAllByUsername(USERNAME);
         assertTrue(user.isDeleted());
         assertNotNull(user.getDeletedAt());
         Tutee tutee = tuteeRepository.findByUser(user);

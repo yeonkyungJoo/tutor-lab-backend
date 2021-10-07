@@ -120,8 +120,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     (String) object.get(SENDER),    // 발신인 (닉네임)
                     receiverId,                     // 수신인 (아이디)
                     (String) object.get(MESSAGE),
-                    // TODO- CHECK : LocalDateTime.now()
-                    LocalDateTimeUtil.getDateTimeToString(LocalDateTime.now()),
+                    LocalDateTime.now(),
                     sessionMap.size() == 2 ? true : false
             );
             messageService.saveMessage(msg);

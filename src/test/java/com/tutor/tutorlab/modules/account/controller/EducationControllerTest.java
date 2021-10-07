@@ -1,14 +1,10 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutor.tutorlab.MockMvcTest;
-import com.tutor.tutorlab.WithAccount;
-import com.tutor.tutorlab.config.init.TestDataBuilder;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.config.response.ErrorCode;
-import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
+import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.EducationRepository;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
@@ -38,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-class EducationControllerTest {
+class EducationControllerTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -63,20 +59,16 @@ class EducationControllerTest {
     ObjectMapper objectMapper;
 
 
-
-    private TutorSignUpRequest tutorSignUpRequest = TestDataBuilder.getTutorSignUpRequest("java,spring");
-    private EducationCreateRequest educationCreateRequest = TestDataBuilder.getEducationCreateRequest("school", "computer");
-
 //    @Test
 //    void getEducation() {
 //    }
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Education_등록() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
@@ -87,30 +79,31 @@ class EducationControllerTest {
                 .andExpect(status().isCreated());
 
         // Then
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
         Assertions.assertEquals(1, educationRepository.findByTutor(tutor).size());
 
-        Education education = educationRepository.findByTutor(tutor).get(0);
+        Education createdEducation = educationRepository.findByTutor(tutor).get(0);
         assertAll(
-                () -> assertEquals("school", education.getSchoolName()),
-                () -> assertEquals("computer", education.getMajor()),
-                () -> assertEquals(LocalDate.parse("2021-01-01"), education.getEntranceDate()),
-                () -> assertEquals(LocalDate.parse("2021-02-01"), education.getGraduationDate()),
-                () -> assertEquals(4.01, education.getScore()),
-                () -> assertEquals("Bachelor", education.getDegree())
+                () -> assertEquals(educationCreateRequest.getSchoolName(), createdEducation.getSchoolName()),
+                () -> assertEquals(educationCreateRequest.getMajor(), createdEducation.getMajor()),
+                () -> assertEquals(LocalDate.parse(educationCreateRequest.getEntranceDate()), createdEducation.getEntranceDate()),
+                () -> assertEquals(LocalDate.parse(educationCreateRequest.getGraduationDate()), createdEducation.getGraduationDate()),
+                () -> assertEquals(educationCreateRequest.getScore(), createdEducation.getScore()),
+                () -> assertEquals(educationCreateRequest.getDegree(), createdEducation.getDegree())
         );
     }
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Education_등록_withInvalidInput() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
+        // Then - Invalid Input
         educationCreateRequest.setEntranceDate("2021-04-01");
 
         mockMvc.perform(post("/educations")
@@ -125,14 +118,14 @@ class EducationControllerTest {
     void Education_등록_withoutAuthenticatedUser() throws Exception {
 
         // Given
-        SignUpRequest signUpRequest = TestDataBuilder.getSignUpRequest("yk", "서울특별시 강남구 삼성동");
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
+        // Then
         mockMvc.perform(post("/educations")
                 .content(objectMapper.writeValueAsString(educationCreateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -140,15 +133,16 @@ class EducationControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.getCode()));
     }
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Education_등록_notTutor() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         assertEquals(RoleType.TUTEE, user.getRole());
 
         // When
+        // Then
         mockMvc.perform(post("/educations")
                 .content(objectMapper.writeValueAsString(educationCreateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -156,46 +150,46 @@ class EducationControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.getCode()));
     }
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Education_수정() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
         Education education = educationService.createEducation(user, educationCreateRequest);
         Long educationId = education.getId();
 
-        // Then
-        EducationUpdateRequest educationUpdateRequest = TestDataBuilder.getEducationUpdateRequest("school", "computer science", "2021-01-01", "2021-09-01", 4.10, "Master");
         mockMvc.perform(put("/educations/" + educationId)
                 .content(objectMapper.writeValueAsString(educationUpdateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        // Then
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
         Assertions.assertEquals(1, educationRepository.findByTutor(tutor).size());
 
-        education = educationRepository.findByTutor(tutor).get(0);
-
-        assertEquals("school", education.getSchoolName());
-        assertEquals("computer science", education.getMajor());
-        assertEquals(LocalDate.parse("2021-01-01"), education.getEntranceDate());
-        assertEquals(LocalDate.parse("2021-09-01"), education.getGraduationDate());
-        assertEquals(4.10, education.getScore());
-        assertEquals("Master", education.getDegree());
+        Education updatedEducation = educationRepository.findByTutor(tutor).get(0);
+        assertAll(
+                () -> assertEquals(educationUpdateRequest.getSchoolName(), updatedEducation.getSchoolName()),
+                () -> assertEquals(educationUpdateRequest.getMajor(), updatedEducation.getMajor()),
+                () -> assertEquals(LocalDate.parse(educationUpdateRequest.getEntranceDate()), updatedEducation.getEntranceDate()),
+                () -> assertEquals(LocalDate.parse(educationUpdateRequest.getGraduationDate()), updatedEducation.getGraduationDate()),
+                () -> assertEquals(educationUpdateRequest.getScore(), updatedEducation.getScore()),
+                () -> assertEquals(educationUpdateRequest.getDegree(), updatedEducation.getDegree())
+        );
     }
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Education_삭제() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
@@ -208,7 +202,7 @@ class EducationControllerTest {
                 .andExpect(status().isOk());
 
         // Then
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
 
         List<Education> educations = educationRepository.findByTutor(tutor);

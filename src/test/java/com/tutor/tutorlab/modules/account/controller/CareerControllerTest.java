@@ -1,15 +1,10 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutor.tutorlab.MockMvcTest;
-import com.tutor.tutorlab.WithAccount;
-import com.tutor.tutorlab.config.init.TestDataBuilder;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.configuration.AbstractTest;
-import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.CareerRepository;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
@@ -83,10 +78,12 @@ class CareerControllerTest extends AbstractTest {
         Tutor tutor = tutorRepository.findByUser(user);
 
         Assertions.assertEquals(1, careerRepository.findByTutor(tutor).size());
-        Career career = careerRepository.findByTutor(tutor).get(0);
-        assertEquals(careerCreateRequest.isPresent(), career.isPresent());
-        assertEquals(careerCreateRequest.getDuty(), career.getDuty());
-        assertEquals(careerCreateRequest.getCompanyName(), career.getCompanyName());
+        Career createdCareer = careerRepository.findByTutor(tutor).get(0);
+        assertAll(
+                () -> assertEquals(careerCreateRequest.isPresent(), createdCareer.isPresent()),
+                () -> assertEquals(careerCreateRequest.getDuty(), createdCareer.getDuty()),
+                () -> assertEquals(careerCreateRequest.getCompanyName(), createdCareer.getCompanyName())
+        );
     }
 
     @Test
@@ -99,7 +96,7 @@ class CareerControllerTest extends AbstractTest {
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
-        // Then
+        // Then - Invalid Input
         careerCreateRequest.setEndDate("");
 
         mockMvc.perform(post("/careers")
@@ -130,7 +127,7 @@ class CareerControllerTest extends AbstractTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.getCode()));
     }
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     @DisplayName("Career 등록 - 튜터가 아닌 경우")
     public void newCareer_notTutor() throws Exception {
@@ -149,7 +146,7 @@ class CareerControllerTest extends AbstractTest {
         // .andExpect(jsonPath("$.message").value("해당 사용자는 " + RoleType.TUTOR.getName() + "가 아닙니다."));
     }
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Career_수정() throws Exception {
 
@@ -168,26 +165,28 @@ class CareerControllerTest extends AbstractTest {
                 .andExpect(status().isOk());
 
         // Then
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
 
         List<Career> careers = careerRepository.findByTutor(tutor);
         assertEquals(1, careers.size());
-        career = careers.get(0);
 
-        assertEquals("tutorlab2", career.getCompanyName());
-        assertEquals("engineer", career.getDuty());
-        assertEquals(LocalDate.parse("2007-12-03"), career.getStartDate());
-        assertNull(career.getEndDate());
-        assertTrue(career.isPresent());
+        Career updatedCareer = careers.get(0);
+        assertAll(
+                () -> assertEquals(careerUpdateRequest.getCompanyName(), updatedCareer.getCompanyName()),
+                () -> assertEquals(careerUpdateRequest.getDuty(), updatedCareer.getDuty()),
+                () -> assertEquals(LocalDate.parse(careerUpdateRequest.getStartDate()), updatedCareer.getStartDate()),
+                () -> assertNull(updatedCareer.getEndDate()),
+                () -> assertTrue(updatedCareer.isPresent())
+        );
     }
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Career_삭제() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         Career career = careerService.createCareer(user, careerCreateRequest);
@@ -199,7 +198,7 @@ class CareerControllerTest extends AbstractTest {
                 .andExpect(status().isOk());
 
         // Then
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
         List<Career> careers = careerRepository.findByTutor(tutor);
         assertEquals(0, careers.size());

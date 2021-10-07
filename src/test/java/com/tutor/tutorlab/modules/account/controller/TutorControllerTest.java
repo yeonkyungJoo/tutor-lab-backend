@@ -1,14 +1,11 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutor.tutorlab.MockMvcTest;
-import com.tutor.tutorlab.WithAccount;
-import com.tutor.tutorlab.config.init.TestDataBuilder;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.config.response.ErrorCode;
+import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.CareerRepository;
 import com.tutor.tutorlab.modules.account.repository.EducationRepository;
@@ -16,8 +13,6 @@ import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.service.TutorService;
-import com.tutor.tutorlab.modules.account.vo.Career;
-import com.tutor.tutorlab.modules.account.vo.Education;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-class TutorControllerTest {
+class TutorControllerTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -61,14 +56,13 @@ class TutorControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    private TutorSignUpRequest tutorSignUpRequest = TestDataBuilder.getTutorSignUpRequest("java,spring", "tutorlab", "engineer", "school", "computer");
-
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void newTutor() throws Exception {
 
         // Given
         // When
+        tutorSignUpRequest = AbstractTest.getTutorSignUpRequest(true);
         String content = objectMapper.writeValueAsString(tutorSignUpRequest);
         // System.out.println(content);
         mockMvc.perform(post("/tutors")
@@ -78,15 +72,14 @@ class TutorControllerTest {
                 .andExpect(status().isCreated());
 
         // Then
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         assertEquals(RoleType.TUTOR, user.getRole());
         Tutor tutor = tutorRepository.findByUser(user);
-        assertNotNull(tutor);
-
-        List<Career> careers = careerRepository.findByTutor(tutor);
-        assertEquals(1, careers.size());
-        List<Education> educations = educationRepository.findByTutor(tutor);
-        assertEquals(1, educations.size());
+        assertAll(
+                () -> assertNotNull(tutor),
+                () -> assertEquals(1, careerRepository.findByTutor(tutor).size()),
+                () -> assertEquals(1, educationRepository.findByTutor(tutor).size())
+        );
     }
 
     @Test
@@ -95,6 +88,7 @@ class TutorControllerTest {
 
         // Given
         // When
+        // Then
         CareerCreateRequest careerCreateRequest = CareerCreateRequest.of(
                 "tutorlab",
                 null,
@@ -103,9 +97,7 @@ class TutorControllerTest {
                 true
         );
 
-        TutorSignUpRequest tutorSignUpRequest = TestDataBuilder.getTutorSignUpRequest("java,spring");
         tutorSignUpRequest.addCareerCreateRequest(careerCreateRequest);
-
         mockMvc.perform(post("/tutors")
                 .content(objectMapper.writeValueAsString(tutorSignUpRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -119,13 +111,11 @@ class TutorControllerTest {
     public void newTutor_withoutAuthenticatedUser() throws Exception {
 
         // Given
-        SignUpRequest signUpRequest = TestDataBuilder.getSignUpRequest("yk", "서울특별시 강남구 삼성동");
         User user = loginService.signUp(signUpRequest);
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         // When
         // Then
-        TutorSignUpRequest tutorSignUpRequest = TestDataBuilder.getTutorSignUpRequest("java,spring");
         mockMvc.perform(post("/tutors")
                 .content(objectMapper.writeValueAsString(tutorSignUpRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -133,18 +123,16 @@ class TutorControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.getCode()));
     }
 
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Tutor_수정() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         assertEquals(RoleType.TUTEE, user.getRole());
-        TutorSignUpRequest tutorSignUpRequest = TestDataBuilder.getTutorSignUpRequest("java,spring");
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
-        TutorUpdateRequest tutorUpdateRequest = TestDataBuilder.getTutorUpdateRequest("python", true);
         mockMvc.perform(put("/tutors")
                 .content(objectMapper.writeValueAsString(tutorUpdateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -152,21 +140,23 @@ class TutorControllerTest {
                 .andExpect(status().isOk());
 
         // Then
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         assertEquals(RoleType.TUTOR, user.getRole());
 
         Tutor tutor = tutorRepository.findByUser(user);
-        assertEquals("python", tutor.getSubjects());
-        assertTrue(tutor.isSpecialist());
+        assertAll(
+                () -> assertEquals(tutorUpdateRequest.getSubjects(), tutor.getSubjects()),
+                () -> assertTrue(tutor.isSpecialist())
+        );
     }
 
     // TODO - Tutor 삭제 시 연관 엔티티 전체 삭제
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void Tutor_탈퇴() throws Exception {
 
         // Given
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         assertEquals(RoleType.TUTEE, user.getRole());
 
         Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
@@ -181,7 +171,7 @@ class TutorControllerTest {
                 .andExpect(status().isOk());
 
         // Then
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
+        user = userRepository.findByUsername(USERNAME).orElse(null);
         assertEquals(RoleType.TUTEE, user.getRole());
 
         // tutor
@@ -203,7 +193,7 @@ class TutorControllerTest {
     }
 
     // TODO - Tutor 삭제 시 연관 엔티티 전체 삭제
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     @DisplayName("Tutor 탈퇴 - 튜터가 아닌 경우")
     public void quitTutor_notTutor() throws Exception {

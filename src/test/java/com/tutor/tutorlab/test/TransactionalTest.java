@@ -1,17 +1,11 @@
 package com.tutor.tutorlab.test;
 
-import com.tutor.tutorlab.WithAccount;
-import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.*;
 import com.tutor.tutorlab.modules.account.service.UserService;
-import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 // @Transactional
 @SpringBootTest

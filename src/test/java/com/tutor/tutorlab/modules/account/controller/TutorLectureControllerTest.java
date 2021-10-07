@@ -1,12 +1,10 @@
 package com.tutor.tutorlab.modules.account.controller;
 
-import com.tutor.tutorlab.MockMvcTest;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @MockMvcTest

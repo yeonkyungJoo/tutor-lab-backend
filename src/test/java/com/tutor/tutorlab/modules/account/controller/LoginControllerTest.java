@@ -1,18 +1,15 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutor.tutorlab.MockMvcTest;
-import com.tutor.tutorlab.WithAccount;
-import com.tutor.tutorlab.config.init.TestDataBuilder;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.config.security.PrincipalDetailsService;
 import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
-import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
-import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
-import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
+import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
@@ -31,9 +28,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -43,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-class LoginControllerTest {
+class LoginControllerTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -62,7 +56,6 @@ class LoginControllerTest {
     @Autowired
     JwtTokenManager jwtTokenManager;
 
-    private final SignUpRequest signUpRequest = TestDataBuilder.getSignUpRequest("yk", "서울특별시 강남구 삼성동");
 
     // TODO - OAuth 테스트
     // @Test
@@ -81,15 +74,18 @@ class LoginControllerTest {
                 .andExpect(status().isCreated());
 
         // Then
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         assertNull(user);
-        user = userRepository.findAllByUsername("yk@email.com");
-        assertEquals(RoleType.TUTEE, user.getRole());
-        assertEquals(GenderType.FEMALE, user.getGender());
-        assertFalse(user.isEmailVerified());
-        assertNull(user.getEmailVerifiedAt());
 
-        Tutee tutee = tuteeRepository.findByUser(user);
+        User createdUser = userRepository.findAllByUsername(USERNAME);
+        assertAll(
+                () -> assertEquals(RoleType.TUTEE, createdUser.getRole()),
+                () -> assertEquals(signUpRequest.getGender(), createdUser.getGender()),
+                () -> assertFalse(createdUser.isEmailVerified()),
+                () -> assertNull(createdUser.getEmailVerifiedAt())
+        );
+
+        Tutee tutee = tuteeRepository.findByUser(createdUser);
         assertNull(tutee);
     }
 
@@ -99,7 +95,7 @@ class LoginControllerTest {
 
         // Given
         // When
-        signUpRequest.setPasswordConfirm("passwordconfirm");
+        signUpRequest.setPasswordConfirm("password_");
 
         // Then
         mockMvc.perform(post("/sign-up")
@@ -124,12 +120,14 @@ class LoginControllerTest {
                 .andExpect(status().isOk());
 
         // Then
-        user = userRepository.findByUsername("yk@email.com").orElse(null);
-        assertNotNull(user);
-        assertTrue(user.isEmailVerified());
-        assertNotNull(user.getEmailVerifiedAt());
+        User verifiedUser = userRepository.findByUsername(USERNAME).orElse(null);
+        assertAll(
+                () -> assertNotNull(verifiedUser),
+                () -> assertTrue(verifiedUser.isEmailVerified()),
+                () -> assertNotNull(verifiedUser.getEmailVerifiedAt())
+        );
 
-        Tutee tutee = tuteeRepository.findByUser(user);
+        Tutee tutee = tuteeRepository.findByUser(verifiedUser);
         assertNotNull(tutee);
 
     }
@@ -143,7 +141,6 @@ class LoginControllerTest {
         loginService.verifyEmail(user.getUsername(), user.getEmailVerifyToken());
 
         // When
-        LoginRequest loginRequest = TestDataBuilder.getLoginRequest("yk@email.com", "password");
         MockHttpServletResponse response = mockMvc.perform(post("/login")
                 .content(objectMapper.writeValueAsString(loginRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -165,7 +162,7 @@ class LoginControllerTest {
 
         // When
         // Then
-        LoginRequest loginRequest = TestDataBuilder.getLoginRequest("yk@email.com", "password_");
+        loginRequest.setPassword("password_");
         mockMvc.perform(post("/login")
                 .content(objectMapper.writeValueAsString(loginRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -182,18 +179,13 @@ class LoginControllerTest {
     void signUpOAuthDetail() throws Exception {
 
         // Given
-        Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("id", "1234567890");
-        userInfo.put("name", "yk");
-        userInfo.put("email", "yk@email.com");
         loginService.signUpOAuth(new GoogleInfo(userInfo));
 
-        PrincipalDetails principalDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername("yk@email.com");
+        PrincipalDetails principalDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(USERNAME);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // When
-        SignUpOAuthDetailRequest signUpOAuthDetailRequest = TestDataBuilder.getSignUpOAuthDetailRequest("yk");
         mockMvc.perform(post("/sign-up/oauth/detail")
                 .content(objectMapper.writeValueAsString(signUpOAuthDetailRequest))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -201,13 +193,13 @@ class LoginControllerTest {
                 .andExpect(status().isOk());
 
         // Then
-        User user = userRepository.findByUsername("yk@email.com").orElse(null);
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
         assertAll(
                 () -> assertNotNull(user),
                 () -> assertEquals(OAuthType.GOOGLE, user.getProvider()),
                 () -> assertEquals(RoleType.TUTEE, user.getRole()),
                 () -> assertEquals(GenderType.FEMALE, user.getGender()),
-                () -> assertEquals("yk", user.getNickname())
+                () -> assertEquals(NICKNAME, user.getNickname())
         );
 
         Tutee tutee = tuteeRepository.findByUser(user);
@@ -215,14 +207,13 @@ class LoginControllerTest {
     }
 
     @DisplayName("회원 정보 추가 입력 - OAuth 가입이 아닌 경우")
-    @WithAccount("yk")
+    @WithAccount(NAME)
     @Test
     void signUpOAuthDetail_notOAuthUser() throws Exception {
 
         // Given
         // When
         // Then
-        SignUpOAuthDetailRequest signUpOAuthDetailRequest = TestDataBuilder.getSignUpOAuthDetailRequest("yk");
         mockMvc.perform(post("/sign-up/oauth/detail")
                 .content(objectMapper.writeValueAsString(signUpOAuthDetailRequest))
                 .contentType(MediaType.APPLICATION_JSON))

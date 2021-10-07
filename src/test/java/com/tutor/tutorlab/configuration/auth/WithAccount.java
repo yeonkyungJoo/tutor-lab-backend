@@ -1,4 +1,4 @@
-package com.tutor.tutorlab;
+package com.tutor.tutorlab.configuration.auth;
 
 import org.springframework.security.test.context.support.WithSecurityContext;
 
