@@ -1,9 +1,18 @@
 package com.tutor.tutorlab.configuration;
 
-import com.tutor.tutorlab.config.init.TestDataBuilder;
 import com.tutor.tutorlab.modules.account.controller.request.*;
 import com.tutor.tutorlab.modules.address.vo.Address;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
+import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
+import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
+import com.tutor.tutorlab.modules.lecture.enums.SystemType;
+import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
+import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
+import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
+import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +54,16 @@ public abstract class AbstractTest {
     protected final Map<String, String> userInfo = getUserInfo(NAME, USERNAME);
     protected final SignUpOAuthDetailRequest signUpOAuthDetailRequest = getSignUpOAuthDetailRequest(NICKNAME);
 
+    protected final LectureCreateRequest lectureCreateRequest = getLectureCreateRequest();
+    protected final LectureUpdateRequest.LecturePriceUpdateRequest lecturePriceUpdateRequest = getLecturePriceUpdateRequest();
+    protected final LectureUpdateRequest.LectureSubjectUpdateRequest lectureSubjectUpdateRequest = getLectureSubjectUpdateRequest();
+    protected final LectureUpdateRequest lectureUpdateRequest = getLectureUpdateRequest();
+
+    protected final TuteeReviewCreateRequest tuteeReviewCreateRequest = getTuteeReviewCreateRequest();
+    protected final TuteeReviewUpdateRequest tuteeReviewUpdateRequest = getTuteeReviewUpdateRequest();
+
+    protected final TutorReviewCreateRequest tutorReviewCreateRequest = getTutorReviewCreateRequest();
+    protected final TutorReviewUpdateRequest tutorReviewUpdateRequest = getTutorReviewUpdateRequest();
 
     protected Address getAddress(String state, String siGun, String gu, String dongMyunLi) {
         return Address.of(state, siGun, gu, dongMyunLi);
@@ -113,7 +132,7 @@ public abstract class AbstractTest {
         return userInfo;
     }
 
-    private SignUpRequest getSignUpRequest(String name, String nickname) {
+    protected SignUpRequest getSignUpRequest(String name, String nickname) {
         return SignUpRequest.of(
                 name + "@email.com",
                 "password",
@@ -176,5 +195,73 @@ public abstract class AbstractTest {
         return LoginRequest.of(
                 username, "password"
         );
+    }
+
+    public static LectureCreateRequest.LecturePriceCreateRequest getLecturePriceCreateRequest() {
+        return LectureCreateRequest.LecturePriceCreateRequest.of(
+                true, null, 1000L, 3, 10, 3000L
+        );
+    }
+
+    public static LectureCreateRequest.LectureSubjectCreateRequest getLectureSubjectCreateRequest() {
+        return LectureCreateRequest.LectureSubjectCreateRequest.of(LearningKindType.IT, "자바");
+    }
+
+    public static LectureCreateRequest getLectureCreateRequest() {
+        return LectureCreateRequest.of(
+                "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
+                "제목",
+                "소제목",
+                "소개",
+                DifficultyType.BEGINNER,
+                "<p>본문</p>",
+                Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE),
+                Arrays.asList(getLecturePriceCreateRequest()),
+                Arrays.asList(getLectureSubjectCreateRequest())
+        );
+    }
+
+    public static LectureUpdateRequest.LecturePriceUpdateRequest getLecturePriceUpdateRequest() {
+        return LectureUpdateRequest.LecturePriceUpdateRequest.of(
+                false, 3, 1000L, 3, 10, 30000L
+        );
+    }
+
+    public static LectureUpdateRequest.LectureSubjectUpdateRequest getLectureSubjectUpdateRequest() {
+        return LectureUpdateRequest.LectureSubjectUpdateRequest.of(LearningKindType.IT, "자바스크립트");
+    }
+
+    public static LectureUpdateRequest getLectureUpdateRequest() {
+        return LectureUpdateRequest.of(
+                "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
+                "제목수정",
+                "소제목수정",
+                "소개수정",
+                DifficultyType.INTERMEDIATE,
+                "<p>본문수정</p>",
+                Arrays.asList(SystemType.OFFLINE),
+                Arrays.asList(getLecturePriceUpdateRequest()),
+                Arrays.asList(getLectureSubjectUpdateRequest())
+        );
+    }
+
+    private TuteeReviewCreateRequest getTuteeReviewCreateRequest() {
+        return TuteeReviewCreateRequest.of(
+                5, "좋아요"
+        );
+    }
+
+    private TuteeReviewUpdateRequest getTuteeReviewUpdateRequest() {
+        return TuteeReviewUpdateRequest.of(
+                3, "별로에요"
+        );
+    }
+
+    private TutorReviewCreateRequest getTutorReviewCreateRequest() {
+        return TutorReviewCreateRequest.of("감사합니다");
+    }
+
+    private TutorReviewUpdateRequest getTutorReviewUpdateRequest() {
+        return TutorReviewUpdateRequest.of("리뷰 감사합니다");
     }
 }

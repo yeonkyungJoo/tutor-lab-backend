@@ -1,9 +1,7 @@
 package com.tutor.tutorlab.modules.upload.service;
 
-import com.tutor.tutorlab.configuration.AbstractTest;
-import com.tutor.tutorlab.modules.file.enums.FileType;
+import com.tutor.tutorlab.modules.upload.enums.FileType;
 import com.tutor.tutorlab.modules.upload.controller.response.UploadResponse;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
@@ -12,12 +10,12 @@ import org.springframework.util.FileCopyUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UploadServiceImplTest extends AbstractTest {
-
+public class UploadServiceTest {
+// TODO - 테스트
     @Autowired
     private UploadService uploadService;
 
-    @Test
+    // @Test
     void 이미지업로드_테스트() throws Exception {
         String name = "test.png";
         MockMultipartFile mockFile = new MockMultipartFile("file",

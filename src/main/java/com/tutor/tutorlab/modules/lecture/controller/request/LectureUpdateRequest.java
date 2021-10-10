@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.lecture.controller.request;
 
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
+import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -63,21 +64,34 @@ public class LectureUpdateRequest {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class LectureSubjectUpdateRequest {
 
-        @NotBlank(message = "강의 종류를 입력해주세요.")
-        private String parent;
+        @NotBlank(message = "강의 종류를 선택해주세요.")
+        private Long learningKindId;
 
-        @NotBlank(message = "언어를 입력해주세요.")
+        @NotBlank(message = "강의 종류를 선택해주세요.")
+        private String learningKind;
+
+        @NotBlank(message = "과목을 입력해주세요.")
         private String krSubject;
 
         @Builder(access = AccessLevel.PRIVATE)
-        public LectureSubjectUpdateRequest(@NotBlank(message = "강의 종류를 입력해주세요.") String parent, @NotBlank(message = "언어를 입력해주세요.") String krSubject) {
-            this.parent = parent;
+        public LectureSubjectUpdateRequest(@NotBlank(message = "강의 종류를 선택해주세요.") Long learningKindId, @NotBlank(message = "강의 종류를 선택해주세요.") String learningKind, @NotBlank(message = "언어를 입력해주세요.") String krSubject) {
+            this.learningKindId = learningKindId;
+            this.learningKind = learningKind;
             this.krSubject = krSubject;
         }
 
-        public static LectureSubjectUpdateRequest of(String parent, String krSubject) {
+        public static LectureSubjectUpdateRequest of(Long learningKindId, String learningKind, String krSubject) {
             return LectureSubjectUpdateRequest.builder()
-                    .parent(parent)
+                    .learningKindId(learningKindId)
+                    .learningKind(learningKind)
+                    .krSubject(krSubject)
+                    .build();
+        }
+
+        public static LectureSubjectUpdateRequest of(LearningKindType type, String krSubject) {
+            return LectureSubjectUpdateRequest.builder()
+                    .learningKindId(type.getId())
+                    .learningKind(type.getName())
                     .krSubject(krSubject)
                     .build();
         }

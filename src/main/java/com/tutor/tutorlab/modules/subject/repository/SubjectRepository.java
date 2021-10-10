@@ -1,9 +1,9 @@
 package com.tutor.tutorlab.modules.subject.repository;
 
+import com.tutor.tutorlab.modules.lecture.embeddable.LearningKind;
 import com.tutor.tutorlab.modules.subject.vo.Subject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -11,13 +11,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
 
-    @Query(nativeQuery = true,
-           value = "SELECT DISTINCT parent FROM subject"
-    )
-    List<String> findParent();
+    @Query(value = "select distinct s.learningKind from Subject s")
+    List<LearningKind> findLearningKinds();
 
-    @Query(nativeQuery = true,
-           value = "SELECT * FROM subject WHERE parent = :parent"
-    )
-    List<Subject> findAllByParent(@Param("parent") String parent);
+//    @Query(value = "select * from subject where learning_kind_id = :learning_kind_id", nativeQuery = true)
+//    List<Subject> findAllByLearningKindId(@Param("learning_kind_id") Long learningKindId);
+    @Query(value = "select s from Subject s where s.learningKind.learningKindId = :learningKindId")
+    List<Subject> findAllByLearningKindId(Long learningKindId);
+
 }

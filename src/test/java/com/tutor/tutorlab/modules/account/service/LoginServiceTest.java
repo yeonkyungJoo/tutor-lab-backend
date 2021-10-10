@@ -104,7 +104,7 @@ class LoginServiceTest extends AbstractTest {
                 () -> assertNotNull(unverifiedUser),
                 () -> assertFalse(unverifiedUser.isEmailVerified()),
                 () -> assertEquals(RoleType.TUTEE, unverifiedUser.getRole()),
-                () -> assertEquals(signUpRequest.getZone(), unverifiedUser.getZone()),
+                () -> assertEquals(signUpRequest.getZone(), unverifiedUser.getZone().toString()),
                 () -> assertEquals(signUpRequest.getPhoneNumber(), unverifiedUser.getPhoneNumber())
         );
 

@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.lecture.repository;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.BooleanOperation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tutor.tutorlab.modules.account.vo.QTutor;
 import com.tutor.tutorlab.modules.account.vo.QUser;
@@ -62,9 +63,9 @@ public class LectureRepositorySupport {
                     .innerJoin(tutor.user, user)
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
-                    .orderBy(lecture.id.asc())
                     .where(eqState(zone.getState()),
                             eqSiGunGu(zone.getSiGunGu()))
+                    .orderBy(lecture.id.asc())
                     .fetchResults();
         }
 
@@ -87,14 +88,74 @@ public class LectureRepositorySupport {
         return user.zone.siGunGu.eq(siGunGu);
     }
 
+    // 강의명으로 검색
     public List<Lecture> findLecturesBySearch(LectureListRequest request) {
         return jpaQueryFactory.selectFrom(lecture)
-                .where(eqDifficulty(request.getDifficulties()),
-                       eqSystemTypes(request.getSystems()),
-                       eqIsGroup(request.getIsGroup()),
-                       eqParents(request.getParents()),
-                       eqSubjects(request.getSubjects()))
+                .where(eqTitle(request.getTitle()))
                 .fetch();
+    }
+
+    public Page<Lecture> findLecturesBySearch(LectureListRequest request, Pageable pageable) {
+
+        QueryResults<Lecture> lectures;
+        if(request == null) {
+            lectures = jpaQueryFactory.selectFrom(lecture)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetchResults();
+        } else {
+            lectures = jpaQueryFactory.selectFrom(lecture)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .where(eqTitle(request.getTitle()))
+                    .orderBy(lecture.id.asc())
+                    .fetchResults();
+        }
+
+        return new PageImpl<>(lectures.getResults(), pageable, lectures.getTotal());
+    }
+
+    public Page<Lecture> findLecturesByZoneAndSearch(Address zone, LectureListRequest request, Pageable pageable) {
+
+        QueryResults<Lecture> lectures;
+        if(zone == null && request != null) {
+            lectures = jpaQueryFactory.selectFrom(lecture)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .where(eqTitle(request.getTitle()))
+                    .orderBy(lecture.id.asc())
+                    .fetchResults();
+        } else if (zone != null && request == null) {
+            lectures = jpaQueryFactory.selectFrom(lecture)
+                    .innerJoin(lecture.tutor, tutor)
+                    .innerJoin(tutor.user, user)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .where(eqState(zone.getState()),
+                            eqSiGunGu(zone.getSiGunGu()))
+                    .orderBy(lecture.id.asc())
+                    .fetchResults();
+        } else {
+            lectures = jpaQueryFactory.selectFrom(lecture)
+                    .innerJoin(lecture.tutor, tutor)
+                    .innerJoin(tutor.user, user)
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .where(eqState(zone.getState()),
+                            eqSiGunGu(zone.getSiGunGu()),
+                            eqTitle(request.getTitle()))
+                    .orderBy(lecture.id.asc())
+                    .fetchResults();
+        }
+
+        return new PageImpl<>(lectures.getResults(), pageable, lectures.getTotal());
+    }
+
+    private BooleanExpression eqTitle(String title) {
+        if (StringUtils.isBlank(title)) {
+            return null;
+        }
+        return lecture.title.eq(title);
     }
 
     private BooleanExpression eqDifficulty(List<DifficultyType> difficulty) {
@@ -116,13 +177,6 @@ public class LectureRepositorySupport {
             return null;
         }
         return lecture.lecturePrices.any().isGroup.eq(isGroup);
-    }
-
-    private BooleanExpression eqParents(List<String> parents) {
-        if (CollectionUtils.isEmpty(parents)) {
-            return null;
-        }
-        return lecture.lectureSubjects.any().parent.in(parents);
     }
 
     private BooleanExpression eqSubjects(List<String> subjects) {

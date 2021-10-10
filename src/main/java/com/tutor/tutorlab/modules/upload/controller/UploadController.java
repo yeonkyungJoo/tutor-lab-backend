@@ -21,8 +21,8 @@ public class UploadController {
     private final UploadService uploadService;
 
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> uploadImage(@ModelAttribute @Valid UploadImageRequest param) {
-        UploadResponse upload = uploadService.uploadImage(param.getFile());
+    public ResponseEntity<?> uploadImage(@ModelAttribute @Valid UploadImageRequest uploadImageRequest) {
+        UploadResponse upload = uploadService.uploadImage(uploadImageRequest.getFile());
         return ResponseEntity.ok(upload);
     }
 

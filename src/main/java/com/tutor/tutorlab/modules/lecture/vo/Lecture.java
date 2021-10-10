@@ -23,6 +23,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "lecture")
 public class Lecture extends BaseEntity {
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutor_id",
                 referencedColumnName = "tutor_id",
@@ -57,14 +58,17 @@ public class Lecture extends BaseEntity {
     )   // cascade = CascadeType.ALL
     private List<SystemType> systemTypes = new ArrayList<>();
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LecturePrice> lecturePrices = new ArrayList<>();
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LectureSubject> lectureSubjects = new ArrayList<>();
 
     private String thumbnail;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Enrollment> enrollments = new ArrayList<>();
 

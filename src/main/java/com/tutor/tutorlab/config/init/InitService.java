@@ -7,6 +7,8 @@ import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
+import com.tutor.tutorlab.modules.lecture.embeddable.LearningKind;
+import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
 import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
@@ -20,9 +22,13 @@ import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
 import com.tutor.tutorlab.modules.review.vo.Review;
+import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
+import com.tutor.tutorlab.modules.subject.vo.Subject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
 
 import static com.tutor.tutorlab.config.init.TestDataBuilder.*;
 
@@ -51,6 +57,8 @@ public class InitService {
     private final ChatroomRepository chatroomRepository;
     private final ReviewRepository reviewRepository;
 
+    private final SubjectRepository subjectRepository;
+
     // @PostConstruct
     @Transactional
     void init() {
@@ -67,6 +75,13 @@ public class InitService {
         tutorRepository.deleteAll();
         tuteeRepository.deleteAll();
         userRepository.deleteAll();
+        subjectRepository.deleteAll();
+
+        subjectRepository.save(Subject.of(LearningKind.of(LearningKindType.IT), "자바"));
+        subjectRepository.save(Subject.of(LearningKind.of(LearningKindType.IT), "파이썬"));
+        subjectRepository.save(Subject.of(LearningKind.of(LearningKindType.IT), "C/C++"));
+        subjectRepository.save(Subject.of(LearningKind.of(LearningKindType.LANGUAGE), "영어"));
+        subjectRepository.save(Subject.of(LearningKind.of(LearningKindType.LANGUAGE), "중국어"));
 
         // user / tutee
         User user1 = loginService.signUp(getSignUpRequest("user1", "부산광역시 기장군 내리"));
@@ -88,9 +103,9 @@ public class InitService {
         Tutor tutor2 = tutorService.createTutor(user5, getTutorSignUpRequest("go,java", "company2", "engineer", "school2", "science"));
 
         // lecture
-        Lecture lecture1 = lectureService.createLecture(user4, getLectureCreateRequest("파이썬강의", 1000L, 3, 10, "파이썬"));
-        Lecture lecture2 = lectureService.createLecture(user4, getLectureCreateRequest("자바강의", 3000L, 3, 10, "자바"));
-        Lecture lecture3 = lectureService.createLecture(user5, getLectureCreateRequest("자바강의", 2000L, 5, 20, "자바"));
+        Lecture lecture1 = lectureService.createLecture(user4, getLectureCreateRequest("파이썬강의", 1000L, 3, 10, LearningKindType.IT, "파이썬"));
+        Lecture lecture2 = lectureService.createLecture(user4, getLectureCreateRequest("자바강의", 3000L, 3, 10, LearningKindType.IT, "자바"));
+        Lecture lecture3 = lectureService.createLecture(user5, getLectureCreateRequest("C/C++강의", 2000L, 5, 20, LearningKindType.IT, "C/C++"));
 
         // enrollment
         // chatroom

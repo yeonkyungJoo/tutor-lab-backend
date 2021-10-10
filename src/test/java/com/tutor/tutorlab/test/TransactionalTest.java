@@ -3,7 +3,9 @@ package com.tutor.tutorlab.test;
 import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
-import com.tutor.tutorlab.modules.account.repository.*;
+import com.tutor.tutorlab.modules.account.repository.CareerRepository;
+import com.tutor.tutorlab.modules.account.repository.EducationRepository;
+import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.UserService;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
 // @Transactional
@@ -56,21 +57,23 @@ public class TransactionalTest {
     @Test
     void transactionTest2() {
 
-        User user = User.builder()
-                .username("yk@email.com")
-                .password("password")
-                .name("yk")
-                .gender(null)
-                .phoneNumber(null)
-                .email("yk@email.com")
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .role(RoleType.TUTEE)
-                .provider(null)
-                .providerId(null)
-                .build();
-
+        String name = "yk";
+        User user = User.of(
+                name + "@email.com",
+                "password",
+                name,
+                "MALE",
+                null,
+                null,
+                null,
+                name,
+                null,
+                "서울특별시 강남구 삼성동",
+                null,
+                RoleType.TUTEE,
+                null,
+                null
+        );
         userRepository.save(user);
         userRepository.delete(user);
 
@@ -84,21 +87,23 @@ public class TransactionalTest {
     @Test
     void transactionTest3() {
 
-        User user = User.builder()
-                .username("yk@email.com")
-                .password("password")
-                .name("yk")
-                .gender(null)
-                .phoneNumber(null)
-                .email("yk@email.com")
-                .nickname(null)
-                .bio(null)
-                .zone(null)
-                .role(RoleType.TUTEE)
-                .provider(null)
-                .providerId(null)
-                .build();
-
+        String name = "yk";
+        User user = User.of(
+                name + "@email.com",
+                "password",
+                name,
+                "MALE",
+                null,
+                null,
+                null,
+                name,
+                null,
+                "서울특별시 강남구 삼성동",
+                null,
+                RoleType.TUTEE,
+                null,
+                null
+        );
         userRepository.save(user);
 
         user.setNickname("nickname");
@@ -126,13 +131,16 @@ public class TransactionalTest {
         User user = userRepository.findByUsername("yk@email.com").orElse(null);
         System.out.println(user.getUpdatedAt());    // null
 
-        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-                .phoneNumber("010-1234-5678")
-                .email("yk@email.com")
-                .nickname("nickname")
-                //.bio(null)
-                .zone("서울시 서초구")
-                .build();
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.of(
+                "FEMALE",
+                null,
+                "010-1234-5678",
+                "yk@email.com",
+                "yk",
+                null,
+                "서울특별시 강남구 삼성동",
+                null
+        );
         userService.updateUser(user, userUpdateRequest);
         em.flush();
 

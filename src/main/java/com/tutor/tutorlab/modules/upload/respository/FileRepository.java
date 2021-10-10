@@ -1,6 +1,6 @@
-package com.tutor.tutorlab.modules.file.repository;
+package com.tutor.tutorlab.modules.upload.respository;
 
-import com.tutor.tutorlab.modules.file.vo.File;
+import com.tutor.tutorlab.modules.upload.vo.File;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 

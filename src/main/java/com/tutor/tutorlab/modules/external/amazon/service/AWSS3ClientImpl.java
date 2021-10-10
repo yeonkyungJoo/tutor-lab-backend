@@ -22,13 +22,16 @@ public class AWSS3ClientImpl implements AWSS3Client {
 
     @Override
     public void putObject(String bucket, String key, byte[] bytes, String contentType) throws AmazonS3Exception {
+
         try (InputStream is = new ByteArrayInputStream(bytes)) {
+
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(contentType);
             objectMetadata.setContentLength(bytes.length);
 
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, key, is, objectMetadata);
             amazonS3.putObject(putObjectRequest);
+
         } catch (Exception e) {
             // TODO - 로그 포맷
             log.error(ExceptionUtils.getMessage(e));
@@ -38,6 +41,7 @@ public class AWSS3ClientImpl implements AWSS3Client {
 
     @Override
     public void deleteObject(String bucket, String key) throws AmazonS3Exception {
+
         try {
             DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
             amazonS3.deleteObject(deleteObjectRequest);

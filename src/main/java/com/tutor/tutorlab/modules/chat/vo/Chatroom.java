@@ -16,6 +16,8 @@ import javax.persistence.*;
 @Entity
 public class Chatroom extends BaseEntity {
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enrollment_id",
             referencedColumnName = "enrollment_id",
@@ -25,6 +27,8 @@ public class Chatroom extends BaseEntity {
 
     // TODO - CHECK : 페치 조인
     // @ManyToOne(fetch = FetchType.EAGER)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutor_id",
             referencedColumnName = "tutor_id",
@@ -34,6 +38,8 @@ public class Chatroom extends BaseEntity {
 
     // TODO - CHECK : 페치 조인
     // @ManyToOne(fetch = FetchType.EAGER)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutee_id",
             referencedColumnName = "tutee_id",

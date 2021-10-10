@@ -80,7 +80,7 @@ class LoginControllerTest extends AbstractTest {
         User createdUser = userRepository.findAllByUsername(USERNAME);
         assertAll(
                 () -> assertEquals(RoleType.TUTEE, createdUser.getRole()),
-                () -> assertEquals(signUpRequest.getGender(), createdUser.getGender()),
+                () -> assertEquals(signUpRequest.getGender(), createdUser.getGender().toString()),
                 () -> assertFalse(createdUser.isEmailVerified()),
                 () -> assertNull(createdUser.getEmailVerifiedAt())
         );
@@ -218,7 +218,7 @@ class LoginControllerTest extends AbstractTest {
                 .content(objectMapper.writeValueAsString(signUpOAuthDetailRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
 
     }
 }

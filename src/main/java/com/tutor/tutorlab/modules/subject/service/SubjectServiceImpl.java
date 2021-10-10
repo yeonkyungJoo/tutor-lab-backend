@@ -1,10 +1,9 @@
 package com.tutor.tutorlab.modules.subject.service;
 
-import com.tutor.tutorlab.modules.subject.controller.response.ParentResponse;
+import com.tutor.tutorlab.modules.lecture.embeddable.LearningKind;
+import com.tutor.tutorlab.modules.subject.controller.response.LearningKindResponse;
 import com.tutor.tutorlab.modules.subject.controller.response.SubjectResponse;
-import com.tutor.tutorlab.modules.subject.mapstruct.SubjectMapstruct;
 import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
-import com.tutor.tutorlab.modules.subject.vo.Subject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,18 +18,22 @@ import static java.util.stream.Collectors.toList;
 public class SubjectServiceImpl implements SubjectService {
 
     private final SubjectRepository subjectRepository;
-    private final SubjectMapstruct subjectMapstruct;
 
     @Override
-    public ParentResponse getParents() {
-        return ParentResponse.of(subjectRepository.findParent());
+    public List<LearningKindResponse> getLearningKindResponses() {
+        return subjectRepository.findLearningKinds().stream()
+                .map(LearningKindResponse::new).collect(toList());
     }
 
     @Override
-    public List<SubjectResponse> getSubjects(String parent) {
-        List<Subject> subjects = subjectRepository.findAllByParent(parent);
-        return subjects.stream()
-                .map(subjectMapstruct::subjectToSubjectResponse)
-                .collect(toList());
+    public List<SubjectResponse> getSubjectResponses() {
+        return subjectRepository.findAll().stream()
+                .map(SubjectResponse::new).collect(toList());
+    }
+
+    @Override
+    public List<SubjectResponse> getSubjectResponses(Long learningKindId) {
+        return subjectRepository.findAllByLearningKindId(learningKindId).stream()
+                .map(SubjectResponse::new).collect(toList());
     }
 }

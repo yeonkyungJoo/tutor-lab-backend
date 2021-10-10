@@ -1,11 +1,18 @@
 package com.tutor.tutorlab.modules.subject.controller.response;
 
-import lombok.Value;
+import com.tutor.tutorlab.modules.subject.vo.Subject;
+import lombok.Data;
 
-@Value
+@Data
 public class SubjectResponse {
 
-    String parent;
-    String subject;
+    Long learningKindId;
     String learningKind;
+    String krSubject;
+
+    public SubjectResponse(Subject subject) {
+        this.learningKindId = subject.getLearningKind().getLearningKindId();
+        this.learningKind = subject.getLearningKind().getLearningKind();
+        this.krSubject = subject.getKrSubject();
+    }
 }

@@ -102,7 +102,7 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     public Page<LectureResponse> getLectureResponses(String zone, Integer page) {
 
         Page<LectureResponse> lectures = lectureRepositorySupport.findLecturesByZone(
-                AddressUtils.convertStringToEmbeddableAddress(zone), PageRequest.of(page - 1, 2, Sort.by("id").ascending()))
+                AddressUtils.convertStringToEmbeddableAddress(zone), PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(LectureResponse::new);
         // TODO - CHECK : mapstruct vs 생성자
 
@@ -172,7 +172,8 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
 
             LectureSubject lectureSubject = LectureSubject.of(
                     lecture,
-                    lectureSubjectUpdateRequest.getParent(),
+                    lectureSubjectUpdateRequest.getLearningKindId(),
+                    lectureSubjectUpdateRequest.getLearningKind(),
                     lectureSubjectUpdateRequest.getKrSubject()
             );
             lecture.addSubject(lectureSubject);
@@ -224,7 +225,8 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     private LectureSubject buildLectureSubject(LectureCreateRequest.LectureSubjectCreateRequest lectureSubjectCreateRequest) {
         return LectureSubject.of(
                 null,
-                lectureSubjectCreateRequest.getParent(),
+                lectureSubjectCreateRequest.getLearningKindId(),
+                lectureSubjectCreateRequest.getLearningKind(),
                 lectureSubjectCreateRequest.getKrSubject()
         );
     }

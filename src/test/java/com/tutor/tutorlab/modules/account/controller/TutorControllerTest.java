@@ -82,8 +82,9 @@ class TutorControllerTest extends AbstractTest {
         );
     }
 
-    @Test
     @DisplayName("Tutor 등록 - Invalid Input")
+    @WithAccount(NAME)
+    @Test
     public void newTutor_withInvalidInput() throws Exception {
 
         // Given

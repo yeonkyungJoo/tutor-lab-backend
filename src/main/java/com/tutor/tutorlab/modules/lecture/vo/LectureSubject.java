@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.lecture.vo;
 
 import com.tutor.tutorlab.modules.base.BaseEntity;
+import com.tutor.tutorlab.modules.lecture.embeddable.LearningKind;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "lecture_subject")
 public class LectureSubject extends BaseEntity {
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id",
                 referencedColumnName = "lecture_id",
@@ -24,8 +26,8 @@ public class LectureSubject extends BaseEntity {
                 foreignKey = @ForeignKey(name = "FK_LECTURE_SUBJECT_LECTURE_ID"))
     private Lecture lecture;
 
-    @Column(length = 50, nullable = false)
-    private String parent;
+    @Embedded
+    private LearningKind learningKind;
 
     @Column(length = 50, nullable = false)
     private String krSubject;
@@ -34,17 +36,19 @@ public class LectureSubject extends BaseEntity {
         this.lecture = lecture;
     }
 
+    // TODO - Enum Converter
     @Builder(access = PRIVATE)
-    public LectureSubject(Lecture lecture, String parent, String krSubject) {
+    public LectureSubject(Lecture lecture, Long learningKindId, String learningKind, String krSubject) {
         this.lecture = lecture;
-        this.parent = parent;
+        this.learningKind = LearningKind.of(learningKindId, learningKind);
         this.krSubject = krSubject;
     }
 
-    public static LectureSubject of(Lecture lecture, String parent, String krSubject) {
+    public static LectureSubject of(Lecture lecture, Long learningKindId, String learningKind, String krSubject) {
         return LectureSubject.builder()
                 .lecture(lecture)
-                .parent(parent)
+                .learningKindId(learningKindId)
+                .learningKind(learningKind)
                 .krSubject(krSubject)
                 .build();
     }

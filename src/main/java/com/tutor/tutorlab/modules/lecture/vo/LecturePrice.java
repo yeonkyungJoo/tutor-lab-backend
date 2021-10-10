@@ -17,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "lecture_price")
 public class LecturePrice extends BaseEntity {
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id",
                 referencedColumnName = "lecture_id",

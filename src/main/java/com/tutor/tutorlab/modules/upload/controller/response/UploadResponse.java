@@ -1,11 +1,15 @@
 package com.tutor.tutorlab.modules.upload.controller.response;
 
-import com.tutor.tutorlab.modules.file.response.FileResponse;
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class UploadResponse {
 
-    FileResponse result;
-    String url;
+    private FileResponse file;
+    private String url;
+
+    public UploadResponse(FileResponse file, String url) {
+        this.file = file;
+        this.url = url;
+    }
 }

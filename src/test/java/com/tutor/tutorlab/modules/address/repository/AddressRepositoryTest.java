@@ -20,7 +20,7 @@ class AddressRepositoryTest extends AbstractTest {
     @Autowired
     private AddressRepository addressRepository;
 
-    // @BeforeEach
+    @BeforeEach
     void init() {
 
         addressRepository.deleteAllInBatch();
@@ -57,7 +57,7 @@ class AddressRepositoryTest extends AbstractTest {
     }
 
     @Test
-    void 시군구조회_by_state() {
+    void 시군구조회() {
 
         // Given
         // When
@@ -86,21 +86,8 @@ class AddressRepositoryTest extends AbstractTest {
         assertThat(guSet).isNullOrEmpty();
     }
 
-    @Test
-    void 동조회_by_state_siGun_gu() {
-
-//        // Given
-//        final String targetState = STATE;
-//        final String targetSiGun = SIGUN;
-//        final String targetGu = GU;
-//        final String targetSiGunGU = SIGUN + GU;
-//
-//        // When
-//        //List<String> addressList = addressRepository.findDongByStateAndSiGunGu(targetState, targetSiGun, targetGu);
-//        List<String> addressList = addressRepository.findDongByStateAndSiGunGu(targetState, targetSiGunGU);
-//
-//        // Then
-//        System.out.println(addressList.toString());
+    // @Test
+    void 동조회() {
     }
 
 }

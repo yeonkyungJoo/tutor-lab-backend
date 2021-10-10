@@ -69,7 +69,7 @@ class UserControllerTest extends AbstractTest {
                 () -> assertEquals(userUpdateRequest.getEmail(), user.getEmail()),
                 () -> assertEquals(userUpdateRequest.getNickname(), user.getNickname()),
                 () -> assertEquals(userUpdateRequest.getBio(), user.getBio()),
-                () -> assertEquals(userUpdateRequest.getZone(), user.getZone())
+                () -> assertEquals(userUpdateRequest.getZone(), user.getZone().toString())
         );
     }
 

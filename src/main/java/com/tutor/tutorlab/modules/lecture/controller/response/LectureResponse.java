@@ -72,11 +72,13 @@ public class LectureResponse {
     @Data
     public static class LectureSubjectResponse {
 
-        private String parent;
+        private Long learningKindId;
+        private String learningKind;
         private String krSubject;
 
         public LectureSubjectResponse(LectureSubject lectureSubject) {
-            this.parent = lectureSubject.getParent();
+            this.learningKindId = lectureSubject.getLearningKind().getLearningKindId();
+            this.learningKind = lectureSubject.getLearningKind().getLearningKind();
             this.krSubject = lectureSubject.getKrSubject();
         }
     }

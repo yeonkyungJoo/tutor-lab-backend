@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.net.FileNameMap;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Transactional
 @SpringBootTest
 public class AmazonS3ClientTest {
 
@@ -29,7 +31,7 @@ public class AmazonS3ClientTest {
     @Autowired
     private AmazonS3Client amazonS3Client;
 
-    @Test
+    // @Test
     void S3_업로드_테스트() throws Exception {
         // given
         File file = new ClassPathResource("image/test.png").getFile();

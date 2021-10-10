@@ -5,6 +5,7 @@ import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
+import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
@@ -143,17 +144,14 @@ public class TestDataBuilder {
         );
     }
 
-    public static LectureCreateRequest.LectureSubjectCreateRequest getLectureSubjectCreateRequest(String krSubject) {
-        return LectureCreateRequest.LectureSubjectCreateRequest.of(
-                "개발",
-                krSubject
-        );
+    public static LectureCreateRequest.LectureSubjectCreateRequest getLectureSubjectCreateRequest(LearningKindType type, String krSubject) {
+        return LectureCreateRequest.LectureSubjectCreateRequest.of(type, krSubject);
     }
 
-    public static LectureCreateRequest getLectureCreateRequest(String title, Long pertimeCost, Integer pertimeLecture, Integer totalTime, String krSubject) {
+    public static LectureCreateRequest getLectureCreateRequest(String title, Long pertimeCost, Integer pertimeLecture, Integer totalTime, LearningKindType type, String krSubject) {
 
-        LectureCreateRequest.LecturePriceCreateRequest price1 = getLecturePriceCreateRequest(pertimeCost, pertimeLecture, totalTime);
-        LectureCreateRequest.LectureSubjectCreateRequest subject1 = getLectureSubjectCreateRequest(krSubject);
+        LectureCreateRequest.LecturePriceCreateRequest price = getLecturePriceCreateRequest(pertimeCost, pertimeLecture, totalTime);
+        LectureCreateRequest.LectureSubjectCreateRequest subject = getLectureSubjectCreateRequest(type, krSubject);
 
         return LectureCreateRequest.of(
                 "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
@@ -163,41 +161,28 @@ public class TestDataBuilder {
                 DifficultyType.BEGINNER,
                 "<p>본문</p>",
                 Arrays.asList(SystemType.ONLINE),
-                Arrays.asList(price1),
-                Arrays.asList(subject1)
+                Arrays.asList(price),
+                Arrays.asList(subject)
         );
     }
 
     public static TuteeReviewCreateRequest getTuteeReviewCreateRequest(Integer score, String content) {
-        return TuteeReviewCreateRequest.of(
-                score,
-                content
-        );
+        return TuteeReviewCreateRequest.of(score, content);
     }
 
     public static TuteeReviewUpdateRequest getTuteeReviewUpdateRequest(Integer score, String content) {
-        return TuteeReviewUpdateRequest.of(
-                score,
-                content
-        );
+        return TuteeReviewUpdateRequest.of(score, content);
     }
 
     public static TutorReviewCreateRequest getTutorReviewCreateRequest(String content) {
-        return TutorReviewCreateRequest.of(
-                content
-        );
+        return TutorReviewCreateRequest.of(content);
     }
 
     public static TutorReviewUpdateRequest getTutorReviewUpdateRequest(String content) {
-        return TutorReviewUpdateRequest.of(
-                content
-        );
+        return TutorReviewUpdateRequest.of(content);
     }
 
     public static LoginRequest getLoginRequest(String username, String password) {
-        return LoginRequest.of(
-                username,
-                password
-        );
+        return LoginRequest.of(username, password);
     }
 }

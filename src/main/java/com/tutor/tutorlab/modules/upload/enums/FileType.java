@@ -1,12 +1,10 @@
-package com.tutor.tutorlab.modules.file.enums;
+package com.tutor.tutorlab.modules.upload.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.tutor.tutorlab.config.converter.enumconverter.EnumerableConverter;
 import com.tutor.tutorlab.modules.base.Enumerable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import javax.persistence.Converter;
 
 @Getter
 @AllArgsConstructor

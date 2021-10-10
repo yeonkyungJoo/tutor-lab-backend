@@ -1,7 +1,6 @@
 package com.tutor.tutorlab.modules.purchase.vo;
 
 import com.tutor.tutorlab.modules.account.vo.Tutee;
-import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
@@ -11,8 +10,6 @@ import lombok.*;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Where(clause = "closed = false and canceled = false")
 @EqualsAndHashCode(callSuper = true)
@@ -23,6 +20,8 @@ import java.util.List;
 @Entity
 public class Enrollment extends BaseEntity {
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutee_id",
                 referencedColumnName = "tutee_id",
@@ -32,6 +31,8 @@ public class Enrollment extends BaseEntity {
 
     // TODO - CHECK : lecture 삭제 시
     // 단방향 -> 양방향
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id",
                 referencedColumnName = "lecture_id",
@@ -40,6 +41,8 @@ public class Enrollment extends BaseEntity {
     private Lecture lecture;
 
     // 단방향
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_price_id",
             referencedColumnName = "lecture_price_id",
@@ -51,9 +54,13 @@ public class Enrollment extends BaseEntity {
 
     private boolean canceled = false;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     private Chatroom chatroom;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Review review;
 

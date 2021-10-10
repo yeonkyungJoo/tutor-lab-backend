@@ -1,10 +1,10 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
-import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.configuration.AbstractTest;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -90,7 +91,7 @@ class TuteeControllerTest extends AbstractTest {
     // TODO - Tutee 삭제 시 연관 엔티티 전체 삭제
     @WithAccount(NAME)
     @Test
-    void Tutee_탈퇴() {
+    void Tutee_탈퇴() throws Exception {
 
         // Given
         User user = userRepository.findByUsername(USERNAME).orElse(null);
@@ -98,10 +99,12 @@ class TuteeControllerTest extends AbstractTest {
         assertNotNull(tutee);
 
         // When
+        mockMvc.perform(delete("/tutees"))
+                .andDo(print())
+                .andExpect(status().isOk());
         // Then
         // 세션
         assertNull(SecurityContextHolder.getContext().getAuthentication());
-
         // 유저
         User deletedUser = userRepository.findAllByUsername(USERNAME);
         assertAll(
