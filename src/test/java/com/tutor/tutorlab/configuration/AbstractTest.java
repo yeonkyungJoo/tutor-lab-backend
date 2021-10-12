@@ -1,16 +1,34 @@
 package com.tutor.tutorlab.configuration;
 
 import com.tutor.tutorlab.modules.account.controller.request.*;
+import com.tutor.tutorlab.modules.account.repository.*;
+import com.tutor.tutorlab.modules.account.service.*;
 import com.tutor.tutorlab.modules.address.vo.Address;
+import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
+import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
+import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
+import com.tutor.tutorlab.modules.lecture.repository.LectureRepositorySupport;
+import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
+import com.tutor.tutorlab.modules.lecture.service.LectureService;
+import com.tutor.tutorlab.modules.notification.repository.NotificationRepository;
+import com.tutor.tutorlab.modules.notification.service.NotificationService;
+import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
+import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
+import com.tutor.tutorlab.modules.purchase.repository.PickRepository;
+import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
+import com.tutor.tutorlab.modules.purchase.service.PickService;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
+import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
+import com.tutor.tutorlab.modules.review.service.ReviewService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,6 +49,70 @@ public abstract class AbstractTest {
 //                .addFilters(new CharacterEncodingFilter("UTF-8", true))
 //                .build();
 //    }
+
+
+    @Autowired
+    protected LoginService loginService;
+
+    @Autowired
+    protected UserService userService;
+    @Autowired
+    protected UserRepository userRepository;
+
+    @Autowired
+    protected TuteeService tuteeService;
+    @Autowired
+    protected TuteeRepository tuteeRepository;
+
+    @Autowired
+    protected CareerService careerService;
+    @Autowired
+    protected CareerRepository careerRepository;
+    @Autowired
+    protected EducationService educationService;
+    @Autowired
+    protected EducationRepository educationRepository;
+    @Autowired
+    protected TutorService tutorService;
+    @Autowired
+    protected TutorRepository tutorRepository;
+
+    @Autowired
+    protected LectureService lectureService;
+    @Autowired
+    protected LectureRepository lectureRepository;
+    @Autowired
+    protected LectureRepositorySupport lectureRepositorySupport;
+    @Autowired
+    protected LectureSubjectRepository lectureSubjectRepository;
+    @Autowired
+    protected LecturePriceRepository lecturePriceRepository;
+
+    @Autowired
+    protected PickService pickService;
+    @Autowired
+    protected PickRepository pickRepository;
+
+    @Autowired
+    protected EnrollmentService enrollmentService;
+    @Autowired
+    protected EnrollmentRepository enrollmentRepository;
+    @Autowired
+    protected CancellationRepository cancellationRepository;
+
+    @Autowired
+    protected ChatroomRepository chatroomRepository;
+
+    @Autowired
+    protected NotificationService notificationService;
+    @Autowired
+    protected NotificationRepository notificationRepository;
+
+    @Autowired
+    protected ReviewService reviewService;
+    @Autowired
+    protected ReviewRepository reviewRepository;
+
 
     protected static final String NAME = "yk";
     protected static final String NICKNAME = NAME;

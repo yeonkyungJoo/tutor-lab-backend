@@ -25,14 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class LoginServiceTest extends AbstractTest {
 
     @Autowired
-    LoginService loginService;
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    TuteeRepository tuteeRepository;
-
-    @Autowired
     JwtTokenManager jwtTokenManager;
 
 //    @Test

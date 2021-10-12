@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.external.amazon.service;
+package com.tutor.tutorlab.modules.upload.amazon.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;

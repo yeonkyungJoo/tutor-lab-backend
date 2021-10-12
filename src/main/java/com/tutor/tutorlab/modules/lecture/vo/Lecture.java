@@ -5,6 +5,7 @@ import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
+import com.tutor.tutorlab.modules.purchase.vo.Pick;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import java.util.List;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter @Setter
 @NoArgsConstructor(access = PROTECTED)
@@ -23,6 +24,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "lecture")
 public class Lecture extends BaseEntity {
 
+    // 단방향
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutor_id",
@@ -69,8 +71,12 @@ public class Lecture extends BaseEntity {
     private String thumbnail;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Enrollment> enrollments = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Pick> picks = new ArrayList<>();
 
     public void addSubject(LectureSubject lectureSubject) {
         lectureSubjects.add(lectureSubject);
@@ -117,4 +123,5 @@ public class Lecture extends BaseEntity {
                 .thumbnail(thumbnail)
                 .build();
     }
+
 }

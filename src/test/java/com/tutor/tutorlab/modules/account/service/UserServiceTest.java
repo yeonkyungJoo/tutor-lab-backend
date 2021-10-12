@@ -16,11 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserServiceTest extends AbstractTest {
 
-    @Autowired
-    UserService userService;
-    @Autowired
-    UserRepository userRepository;
-
 //    @Test
 //    void getUsers() {
 //    }

@@ -1,7 +1,7 @@
 package com.tutor.tutorlab.modules.upload.service;
 
 import com.tutor.tutorlab.config.externalproperties.amazon.AmazonS3Properties;
-import com.tutor.tutorlab.modules.external.amazon.service.AWSS3Client;
+import com.tutor.tutorlab.modules.upload.amazon.service.AWSS3Client;
 import com.tutor.tutorlab.modules.upload.controller.response.UploadResponse;
 import com.tutor.tutorlab.modules.upload.enums.FileType;
 import com.tutor.tutorlab.modules.upload.service.request.FileRequest;

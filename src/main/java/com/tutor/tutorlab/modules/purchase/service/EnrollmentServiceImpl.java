@@ -69,7 +69,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     }
 
     @Override
-    public Enrollment enroll(User user, Long lectureId, Long lecturePriceId) {
+    public Enrollment createEnrollment(User user, Long lectureId, Long lecturePriceId) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
@@ -110,7 +110,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     }
 
     @Override
-    public void cancel(User user, Long lectureId) {
+    public Cancellation cancel(User user, Long lectureId) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
@@ -124,16 +124,12 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         // TODO - 환불
 
         // TODO - Entity Listener 활용해 변경
-        Cancellation cancellation = Cancellation.of(
-                tutee,
-                lecture,
-                enrollment.getLecturePrice(),
-                enrollment.getCreatedAt()
-        );
-        cancellationRepository.save(cancellation);
-
+        Cancellation cancellation = cancellationRepository.save(Cancellation.of(enrollment));
         enrollment.cancel();
+
         chatService.deleteChatroom(enrollment);
+
+        return cancellation;
     }
 
     @Override

@@ -20,18 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class CareerServiceTest extends AbstractTest {
 
-    @Autowired
-    CareerRepository careerRepository;
-    @Autowired
-    CareerService careerService;
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    TutorRepository tutorRepository;
-    @Autowired
-    TutorService tutorService;
-
     @WithAccount(NAME)
     @Test
     void Career_등록() {

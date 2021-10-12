@@ -3,26 +3,24 @@ package com.tutor.tutorlab.modules.lecture.service;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.configuration.auth.WithAccount;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.service.TutorService;
+import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.address.embeddable.Address;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.embeddable.LearningKind;
 import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
-import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
-import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
-import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
+import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
+import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
+import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
+import com.tutor.tutorlab.modules.purchase.vo.Pick;
 import com.tutor.tutorlab.modules.subject.vo.Subject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,31 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.tutor.tutorlab.modules.lecture.enums.LearningKindType.IT;
-import static com.tutor.tutorlab.modules.lecture.enums.LearningKindType.LANGUAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
 public class LectureServiceTest extends AbstractTest {
-
-    @Autowired
-    LectureService lectureService;
-    @Autowired
-    LectureRepository lectureRepository;
-    @Autowired
-    LectureSubjectRepository lectureSubjectRepository;
-    @Autowired
-    LecturePriceRepository lecturePriceRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    TutorService tutorService;
-    @Autowired
-    TutorRepository tutorRepository;
 
     @WithAccount(NAME)
     @Test
@@ -169,7 +148,6 @@ public class LectureServiceTest extends AbstractTest {
         // Given
         User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
-
         Lecture lecture = lectureService.createLecture(user, lectureCreateRequest);
         Long lectureId = lecture.getId();
 
@@ -183,19 +161,33 @@ public class LectureServiceTest extends AbstractTest {
         LecturePrice lecturePrice = lecturePrices.get(0);
         Long lecturePriceId = lecturePrice.getId();
 
+        // 튜티
+        SignUpRequest signUpRequest = getSignUpRequest("tutee", "tutee");
+        User tuteeUser = loginService.signUp(signUpRequest);
+        loginService.verifyEmail(tuteeUser.getUsername(), tuteeUser.getEmailVerifyToken());
+
+        Pick pick = pickService.createPick(tuteeUser, lectureId);
+        Enrollment enrollment = enrollmentService.createEnrollment(tuteeUser, lectureId, lecturePriceId);
+        Cancellation cancellation = enrollmentService.cancel(tuteeUser, lectureId);
+
         // When
         lectureService.deleteLecture(user, lectureId);
 
         // Then
+
+        // lecture
         Tutor tutor = tutorRepository.findByUser(user);
         List<Lecture> lectures = lectureRepository.findByTutor(tutor);
         assertEquals(0, lectures.size());
 
+        // lectureSubject
         assertFalse(lectureSubjectRepository.findById(lectureSubjectId).isPresent());
+        // lecturePrice
         assertFalse(lecturePriceRepository.findById(lecturePriceId).isPresent());
+        // enrollment, cancellation
 
         // review
-        // enrollment, cancellation
+
         // pick
         // chatroom
         // message

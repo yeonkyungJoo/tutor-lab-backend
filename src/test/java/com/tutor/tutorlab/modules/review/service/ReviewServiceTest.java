@@ -4,33 +4,21 @@ import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.service.LoginService;
-import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
-import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
-import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
-import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
-import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
-import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
-import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,35 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @SpringBootTest
 class ReviewServiceTest extends AbstractTest {
-
-    @Autowired
-    ReviewRepository reviewRepository;
-    @Autowired
-    ReviewService reviewService;
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    TuteeRepository tuteeRepository;
-
-    @Autowired
-    LoginService loginService;
-    @Autowired
-    TutorService tutorService;
-    @Autowired
-    LectureService lectureService;
-    @Autowired
-    LecturePriceRepository lecturePriceRepository;
-
-    @Autowired
-    EnrollmentService enrollmentService;
-    @Autowired
-    EnrollmentRepository enrollmentRepository;
-    @Autowired
-    CancellationRepository cancellationRepository;
-
-    @Autowired
-    ChatroomRepository chatroomRepository;
 
     private User tutorUser;
     private Tutor tutor;
@@ -121,9 +80,9 @@ class ReviewServiceTest extends AbstractTest {
 
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
         assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
-        assertEquals(0, cancellationRepository.findByTutee(tutee).size());
+        assertNull(cancellationRepository.findByEnrollment(enrollment));
         assertNotNull(chatroomRepository.findByEnrollment(enrollment));
 
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
@@ -156,9 +115,9 @@ class ReviewServiceTest extends AbstractTest {
 
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
         assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
-        assertEquals(0, cancellationRepository.findByTutee(tutee).size());
+        assertNull(cancellationRepository.findByEnrollment(enrollment));
         assertNotNull(chatroomRepository.findByEnrollment(enrollment));
 
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
@@ -194,15 +153,16 @@ class ReviewServiceTest extends AbstractTest {
 
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
 
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
         assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
-        assertEquals(0, cancellationRepository.findByTutee(tutee).size());
+        assertNull(cancellationRepository.findByEnrollment(enrollment));
         assertNotNull(chatroomRepository.findByEnrollment(enrollment));
 
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
         Long chatroomId = chatroom.getId();
 
         enrollmentService.cancel(user, lecture1Id);
+        assertNotNull(cancellationRepository.findByEnrollment(enrollment));
 
         // When
         reviewService.createTuteeReview(user, lecture1Id, tuteeReviewCreateRequest);
@@ -244,7 +204,7 @@ class ReviewServiceTest extends AbstractTest {
         Tutee tutee = tuteeRepository.findByUser(user);
 
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
         Review review = reviewService.createTuteeReview(user, lecture1Id, tuteeReviewCreateRequest);
 
         // When
@@ -272,7 +232,7 @@ class ReviewServiceTest extends AbstractTest {
         Tutee tutee = tuteeRepository.findByUser(user);
 
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
         Review review = reviewService.createTuteeReview(user, lecture1Id, tuteeReviewCreateRequest);
         assertEquals(1, reviewRepository.findByLecture(lecture1).size());
 
@@ -294,7 +254,7 @@ class ReviewServiceTest extends AbstractTest {
         Tutee tutee = tuteeRepository.findByUser(user);
 
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
         Review parent = reviewService.createTuteeReview(user, lecture1Id, tuteeReviewCreateRequest);
 
         // When
@@ -325,7 +285,7 @@ class ReviewServiceTest extends AbstractTest {
         Tutee tutee = tuteeRepository.findByUser(user);
 
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
         Review parent = reviewService.createTuteeReview(user, lecture1Id, tuteeReviewCreateRequest);
         Review child = reviewService.createTutorReview(tutorUser, lecture1Id, parent.getId(), tutorReviewCreateRequest);
 
@@ -350,7 +310,7 @@ class ReviewServiceTest extends AbstractTest {
         Tutee tutee = tuteeRepository.findByUser(user);
 
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
         Review parent = reviewService.createTuteeReview(user, lecture1Id, tuteeReviewCreateRequest);
         Review child = reviewService.createTutorReview(tutorUser, lecture1Id, parent.getId(), tutorReviewCreateRequest);
 
@@ -383,7 +343,7 @@ class ReviewServiceTest extends AbstractTest {
         Tutee tutee = tuteeRepository.findByUser(user);
 
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
-        Enrollment enrollment = enrollmentService.enroll(user, lecture1Id, lecturePrice1.getId());
+        Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
         Review parent = reviewService.createTuteeReview(user, lecture1Id, tuteeReviewCreateRequest);
         Review child = reviewService.createTutorReview(tutorUser, lecture1Id, parent.getId(), tutorReviewCreateRequest);
 
@@ -396,6 +356,7 @@ class ReviewServiceTest extends AbstractTest {
         assertTrue(reviewRepository.findById(parent.getId()).isPresent());
 
         // parent = reviewRepository.findById(parent.getId()).orElse(null);
+        assertEquals(reviewRepository.findByEnrollment(enrollment), reviewRepository.findByLecture(lecture1).get(0));
         parent = reviewRepository.findByLecture(lecture1).get(0);
         assertEquals(0, parent.getChildren().size());
         assertFalse(reviewRepository.findById(child.getId()).isPresent());

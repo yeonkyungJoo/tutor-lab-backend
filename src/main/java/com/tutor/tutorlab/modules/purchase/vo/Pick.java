@@ -7,7 +7,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "pick_id"))
@@ -15,6 +15,7 @@ import javax.persistence.*;
 @Entity
 public class Pick extends BaseEntity {
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutee_id",
                 referencedColumnName = "tutee_id",
@@ -22,6 +23,8 @@ public class Pick extends BaseEntity {
                 foreignKey = @ForeignKey(name = "FK_PICK_TUTEE_ID"))
     private Tutee tutee;
 
+    // 양방향
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id",
                 referencedColumnName = "lecture_id",
@@ -40,5 +43,9 @@ public class Pick extends BaseEntity {
                 .tutee(tutee)
                 .lecture(lecture)
                 .build();
+    }
+
+    public void delete() {
+        this.tutee.getPicks().remove(this);
     }
 }

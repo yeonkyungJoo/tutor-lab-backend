@@ -22,7 +22,7 @@ public class EnrollmentController {
     public ResponseEntity<?> enroll(@CurrentUser User user,
                                     @PathVariable(name = "lecture_id") Long lectureId,
                                     @PathVariable(name = "lecture_price_id") Long lecturePriceId) {
-        enrollmentService.enroll(user, lectureId, lecturePriceId);
+        enrollmentService.createEnrollment(user, lectureId, lecturePriceId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

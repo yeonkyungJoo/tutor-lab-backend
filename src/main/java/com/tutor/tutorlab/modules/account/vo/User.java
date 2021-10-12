@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Where(clause = "deleted = false and email_verified = true")
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "user_id"))

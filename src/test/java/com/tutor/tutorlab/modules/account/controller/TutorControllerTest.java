@@ -37,22 +37,6 @@ class TutorControllerTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    TutorService tutorService;
-    @Autowired
-    TutorRepository tutorRepository;
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    LoginService loginService;
-
-    @Autowired
-    CareerRepository careerRepository;
-    @Autowired
-    EducationRepository educationRepository;
-
     @Autowired
     ObjectMapper objectMapper;
 

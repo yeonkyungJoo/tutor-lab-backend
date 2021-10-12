@@ -20,14 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 class TutorServiceTest extends AbstractTest {
 
-    @Autowired
-    TutorService tutorService;
-    @Autowired
-    TutorRepository tutorRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
 //    @Test
 //    void getTutors() {
 //    }

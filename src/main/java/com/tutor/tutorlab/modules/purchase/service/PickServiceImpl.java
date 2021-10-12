@@ -43,7 +43,7 @@ public class PickServiceImpl extends AbstractService implements PickService {
     }
 
     @Override
-    public void add(User user, Long lectureId) {
+    public Pick createPick(User user, Long lectureId) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
@@ -54,11 +54,11 @@ public class PickServiceImpl extends AbstractService implements PickService {
         Pick pick = Pick.of(tutee, lecture);
         // TODO - CHECK
         tutee.addPick(pick);
-        pickRepository.save(pick);
+        return pickRepository.save(pick);
     }
 
     @Override
-    public void subtract(User user, Long pickId) {
+    public void deletePick(User user, Long pickId) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
@@ -66,11 +66,12 @@ public class PickServiceImpl extends AbstractService implements PickService {
         Pick pick = pickRepository.findByTuteeAndId(tutee, pickId)
                 .orElseThrow(() -> new EntityNotFoundException(PICK));
 
+        pick.delete();
         pickRepository.delete(pick);
     }
 
     @Override
-    public void clear(User user) {
+    public void deleteAllPicks(User user) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));

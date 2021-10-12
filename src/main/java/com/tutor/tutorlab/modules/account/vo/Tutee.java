@@ -17,7 +17,7 @@ import java.util.List;
 
 import static com.tutor.tutorlab.utils.CommonUtil.COMMA;
 
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "tutee_id"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,7 +38,7 @@ public class Tutee extends BaseEntity {
     @OneToMany(mappedBy = "tutee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Enrollment> enrollments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tutee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "tutee", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Pick> picks = new ArrayList<>();
 
     // TODO - CHECK

@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "education_id"))
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

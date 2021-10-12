@@ -18,18 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 class EducationServiceTest extends AbstractTest {
 
-    @Autowired
-    EducationRepository educationRepository;
-    @Autowired
-    EducationService educationService;
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    TutorRepository tutorRepository;
-    @Autowired
-    TutorService tutorService;
-
     @WithAccount(NAME)
     @Test
     void Education_등록() {

@@ -9,10 +9,11 @@ import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.*;
 import org.hibernate.annotations.Where;
 
+import javax.annotation.PreDestroy;
 import javax.persistence.*;
 
 @Where(clause = "closed = false and canceled = false")
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "enrollment_id"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,7 +21,6 @@ import javax.persistence.*;
 @Entity
 public class Enrollment extends BaseEntity {
 
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutee_id",
@@ -31,7 +31,6 @@ public class Enrollment extends BaseEntity {
 
     // TODO - CHECK : lecture 삭제 시
     // 단방향 -> 양방향
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id",
@@ -41,7 +40,6 @@ public class Enrollment extends BaseEntity {
     private Lecture lecture;
 
     // 단방향
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_price_id",
@@ -54,15 +52,18 @@ public class Enrollment extends BaseEntity {
 
     private boolean canceled = false;
 
-    @EqualsAndHashCode.Exclude
+    // TODO - CHECK : 양방향 VS 단방향
     @ToString.Exclude
-    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Chatroom chatroom;
 
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Review review;
+
+    @ToString.Exclude
+    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Cancellation cancellation;
 
     @Builder(access = AccessLevel.PRIVATE)
     public Enrollment(Tutee tutee, Lecture lecture, LecturePrice lecturePrice) {
@@ -87,10 +88,12 @@ public class Enrollment extends BaseEntity {
         setCanceled(true);
     }
 
-//    public void delete() {
-//        this.tutee.getEnrollments().remove(this);
-//        this.lecture.getEnrollments().remove(this);
-//        this.chatroom = null;
-//        this.review = null;
-//    }
+    @PreRemove
+    public void delete() {
+        this.tutee.getEnrollments().remove(this);
+        this.lecture.getEnrollments().remove(this);
+        this.chatroom = null;
+        this.review = null;
+        this.cancellation = null;
+    }
 }

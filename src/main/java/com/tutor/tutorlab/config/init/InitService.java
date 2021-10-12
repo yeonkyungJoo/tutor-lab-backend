@@ -28,8 +28,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-
 import static com.tutor.tutorlab.config.init.TestDataBuilder.*;
 
 @Component
@@ -112,11 +110,11 @@ public class InitService {
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
         LecturePrice lecturePrice2 = lecturePriceRepository.findByLecture(lecture2).get(0);
         LecturePrice lecturePrice3 = lecturePriceRepository.findByLecture(lecture3).get(0);
-        Enrollment enrollment1 = enrollmentService.enroll(user1, lecture1.getId(), lecturePrice1.getId());
-        Enrollment enrollment2 = enrollmentService.enroll(user1, lecture2.getId(), lecturePrice2.getId());
-        Enrollment enrollment3 = enrollmentService.enroll(user2, lecture1.getId(), lecturePrice1.getId());
-        Enrollment enrollment4 = enrollmentService.enroll(user2, lecture2.getId(), lecturePrice2.getId());
-        Enrollment enrollment5 = enrollmentService.enroll(user3, lecture3.getId(), lecturePrice3.getId());
+        Enrollment enrollment1 = enrollmentService.createEnrollment(user1, lecture1.getId(), lecturePrice1.getId());
+        Enrollment enrollment2 = enrollmentService.createEnrollment(user1, lecture2.getId(), lecturePrice2.getId());
+        Enrollment enrollment3 = enrollmentService.createEnrollment(user2, lecture1.getId(), lecturePrice1.getId());
+        Enrollment enrollment4 = enrollmentService.createEnrollment(user2, lecture2.getId(), lecturePrice2.getId());
+        Enrollment enrollment5 = enrollmentService.createEnrollment(user3, lecture3.getId(), lecturePrice3.getId());
 
         // 강의 종료
         enrollmentService.close(user4, lecture1.getId(), enrollment1.getId());

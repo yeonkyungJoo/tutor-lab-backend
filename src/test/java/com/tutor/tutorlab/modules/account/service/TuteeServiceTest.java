@@ -19,14 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class TuteeServiceTest extends AbstractTest {
 
-    @Autowired
-    TuteeService tuteeService;
-    @Autowired
-    TuteeRepository tuteeRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
     @WithAccount(NAME)
     @Test
     void Tutee_수정() {

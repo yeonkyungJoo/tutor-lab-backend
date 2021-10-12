@@ -9,14 +9,13 @@ import lombok.*;
 import javax.persistence.*;
 
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
 @AttributeOverride(name = "id", column = @Column(name = "chatroom_id"))
 @Entity
 public class Chatroom extends BaseEntity {
 
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enrollment_id",
@@ -27,7 +26,6 @@ public class Chatroom extends BaseEntity {
 
     // TODO - CHECK : 페치 조인
     // @ManyToOne(fetch = FetchType.EAGER)
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutor_id",
@@ -38,7 +36,6 @@ public class Chatroom extends BaseEntity {
 
     // TODO - CHECK : 페치 조인
     // @ManyToOne(fetch = FetchType.EAGER)
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutee_id",

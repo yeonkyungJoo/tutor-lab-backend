@@ -14,7 +14,7 @@ import java.util.List;
 
 import static com.tutor.tutorlab.utils.CommonUtil.COMMA;
 
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "tutor_id"))
 @Getter @Setter

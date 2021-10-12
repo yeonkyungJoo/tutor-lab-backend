@@ -41,16 +41,9 @@ class LoginControllerTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     ObjectMapper objectMapper;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    TuteeRepository tuteeRepository;
 
-    @Autowired
-    LoginService loginService;
     @Autowired
     PrincipalDetailsService principalDetailsService;
     @Autowired

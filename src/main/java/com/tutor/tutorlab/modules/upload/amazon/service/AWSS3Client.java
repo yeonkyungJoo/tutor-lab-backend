@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.external.amazon.service;
+package com.tutor.tutorlab.modules.upload.amazon.service;
 
 import com.tutor.tutorlab.config.exception.AmazonS3Exception;
 

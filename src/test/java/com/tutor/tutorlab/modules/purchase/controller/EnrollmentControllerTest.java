@@ -39,26 +39,6 @@ class EnrollmentControllerTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    EnrollmentRepository enrollmentRepository;
-
-    @Autowired
-    LoginService loginService;
-    @Autowired
-    TutorService tutorService;
-    @Autowired
-    LectureService lectureService;
-    @Autowired
-    LecturePriceRepository lecturePriceRepository;
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    TuteeRepository tuteeRepository;
-    @Autowired
-    ChatroomRepository chatroomRepository;
-
     @Autowired
     ObjectMapper objectMapper;
 

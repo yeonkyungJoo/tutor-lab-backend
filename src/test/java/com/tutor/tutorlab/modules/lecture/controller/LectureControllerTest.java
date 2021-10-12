@@ -21,19 +21,6 @@ class LectureControllerTest extends AbstractTest {
     @Autowired
     MockMvc mockMvc;
 
-    @Autowired
-    LectureService lectureService;
-    @Autowired
-    LectureRepository lectureRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    TutorService tutorService;
-    @Autowired
-    TutorRepository tutorRepository;
-
     @WithAccount(NAME)
     @Test
     void newLecture() {

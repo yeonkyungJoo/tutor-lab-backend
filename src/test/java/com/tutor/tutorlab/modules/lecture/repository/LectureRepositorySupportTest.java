@@ -28,15 +28,6 @@ class LectureRepositorySupportTest extends AbstractTest {
 
     @Autowired
     AddressRepository addressRepository;
-    @Autowired
-    LectureRepositorySupport lectureRepositorySupport;
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    TutorService tutorService;
-    @Autowired
-    LectureService lectureService;
 
     @WithAccount(NAME)
     @Test

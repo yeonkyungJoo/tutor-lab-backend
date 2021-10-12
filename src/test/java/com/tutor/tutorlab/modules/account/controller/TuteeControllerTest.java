@@ -33,16 +33,6 @@ class TuteeControllerTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    TuteeService tuteeService;
-    @Autowired
-    TuteeRepository tuteeRepository;
-    @Autowired
-    LoginService loginService;
-    @Autowired
-    UserRepository userRepository;
-
     @Autowired
     ObjectMapper objectMapper;
 
