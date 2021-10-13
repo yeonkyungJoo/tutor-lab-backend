@@ -32,7 +32,6 @@ public class TutorLectureController {
     private final LectureService lectureService;
 
     private final ReviewService reviewService;
-    private final EnrollmentService enrollmentService;
 
     @ApiOperation("등록 강의 전체 조회 - 페이징")
     @GetMapping
@@ -128,12 +127,13 @@ public class TutorLectureController {
         return ResponseEntity.ok(enrollments);
     }
 
-    @ApiOperation("강의 종료")
-    @PutMapping("/{lecture_id}/enrollments/{enrollment_id}")
-    public ResponseEntity<?> close(@CurrentUser User user,
-                                   @PathVariable(name = "lecture_id") Long lectureId,
-                                   @PathVariable(name = "enrollment_id") Long enrollmentId) {
-        enrollmentService.close(user, lectureId, enrollmentId);
-        return ResponseEntity.ok().build();
-    }
+    // 튜티가 강의 종료
+//    @ApiOperation("강의 종료")
+//    @PutMapping("/{lecture_id}/enrollments/{enrollment_id}")
+//    public ResponseEntity<?> close(@CurrentUser User user,
+//                                   @PathVariable(name = "lecture_id") Long lectureId,
+//                                   @PathVariable(name = "enrollment_id") Long enrollmentId) {
+//        enrollmentService.close(user, lectureId, enrollmentId);
+//        return ResponseEntity.ok().build();
+//    }
 }

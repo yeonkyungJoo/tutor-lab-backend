@@ -17,7 +17,7 @@ public class UserResponse {
     private String email;
     private String nickname;
     private String bio;
-
+    private String image;
     private String zone;
 
     public UserResponse(User user) {
@@ -29,6 +29,7 @@ public class UserResponse {
         this.email = user.getEmail();
         this.nickname = user.getNickname();
         this.bio = user.getBio();
+        this.image = user.getImage();
         this.zone = AddressUtils.convertEmbeddableToStringAddress(user.getZone());
     }
 }

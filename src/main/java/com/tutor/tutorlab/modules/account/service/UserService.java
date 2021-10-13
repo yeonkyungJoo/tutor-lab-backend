@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.account.service;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
+import com.tutor.tutorlab.modules.account.controller.response.UserResponse;
 import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
@@ -21,7 +22,7 @@ import static com.tutor.tutorlab.config.exception.EntityNotFoundException.Entity
 
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService extends AbstractService {
 
@@ -30,17 +31,24 @@ public class UserService extends AbstractService {
     private final TutorService tutorService;
     private final TuteeService tuteeService;
 
-    @Transactional(readOnly = true)
     public Page<User> getUsers(Integer page) {
         return userRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
     }
 
-    @Transactional(readOnly = true)
+    public Page<UserResponse> getUserResponses(Integer page) {
+        return getUsers(page).map(UserResponse::new);
+    }
+
     public User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER));
     }
 
+    public UserResponse getUserResponse(Long userId) {
+        return new UserResponse(getUser(userId));
+    }
+
+    @Transactional
     public void updateUser(User user, UserUpdateRequest userUpdateRequest) {
 
         user = userRepository.findById(user.getId())
@@ -57,6 +65,7 @@ public class UserService extends AbstractService {
     }
 
     // TODO - Admin인 경우
+    @Transactional
     public void deleteUser(User user) {
 
         user = userRepository.findById(user.getId())

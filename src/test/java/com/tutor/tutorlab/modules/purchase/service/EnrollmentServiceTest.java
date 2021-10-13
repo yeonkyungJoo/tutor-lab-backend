@@ -149,46 +149,47 @@ class EnrollmentServiceTest extends AbstractTest {
         assertEquals(0, chatrooms.size());
     }
 
-    @DisplayName("강의 종료")
-    @WithAccount(NAME)
-    @Test
-    void close() {
-
-        // Given
-        User user = userRepository.findByUsername(USERNAME).orElse(null);
-        Tutee tutee = tuteeRepository.findByUser(user);
-        assertNotNull(user);
-
-        LecturePrice lecturePrice = lecturePriceRepository.findByLecture(lecture).get(0);
-        Long lecturePriceId = lecturePrice.getId();
-
-        Enrollment enrollment = enrollmentService.createEnrollment(user, lectureId, lecturePriceId);
-        Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
-        assertNotNull(chatroom);
-
-        assertFalse(enrollment.isCanceled());
-        assertFalse(enrollment.isClosed());
-
-        Long enrollmentId = enrollment.getId();
-        Long chatroomId = chatroom.getId();
-        User tutorUser = tutor.getUser();
-
-        // When
-        enrollmentService.close(tutorUser, lectureId, enrollmentId);
-
-        // Then
-//        enrollment = enrollmentRepository.findById(enrollmentId).orElse(null);
+    // TODO - 튜티가 종료하는 것으로 변경
+//    @DisplayName("강의 종료")
+//    @WithAccount(NAME)
+//    @Test
+//    void close() {
+//
+//        // Given
+//        User user = userRepository.findByUsername(USERNAME).orElse(null);
+//        Tutee tutee = tuteeRepository.findByUser(user);
+//        assertNotNull(user);
+//
+//        LecturePrice lecturePrice = lecturePriceRepository.findByLecture(lecture).get(0);
+//        Long lecturePriceId = lecturePrice.getId();
+//
+//        Enrollment enrollment = enrollmentService.createEnrollment(user, lectureId, lecturePriceId);
+//        Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
+//        assertNotNull(chatroom);
+//
+//        assertFalse(enrollment.isCanceled());
+//        assertFalse(enrollment.isClosed());
+//
+//        Long enrollmentId = enrollment.getId();
+//        Long chatroomId = chatroom.getId();
+//        User tutorUser = tutor.getUser();
+//
+//        // When
+//        enrollmentService.close(tutorUser, lectureId, enrollmentId);
+//
+//        // Then
+////        enrollment = enrollmentRepository.findById(enrollmentId).orElse(null);
+////        assertTrue(enrollment.isClosed());
+//        enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture).orElse(null);
+//        assertNull(enrollment);
+//        enrollment = enrollmentRepository.findAllById(enrollmentId);
+//        assertNotNull(enrollment);
+//        assertFalse(enrollment.isCanceled());
 //        assertTrue(enrollment.isClosed());
-        enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture).orElse(null);
-        assertNull(enrollment);
-        enrollment = enrollmentRepository.findAllById(enrollmentId);
-        assertNotNull(enrollment);
-        assertFalse(enrollment.isCanceled());
-        assertTrue(enrollment.isClosed());
-
-        assertFalse(chatroomRepository.findById(chatroomId).isPresent());
-        List<Chatroom> chatrooms = chatroomRepository.findByTutorAndTutee(tutor, tutee);
-        assertEquals(0, chatrooms.size());
-        assertFalse(chatroomRepository.findByEnrollment(enrollment).isPresent());
-    }
+//
+//        assertFalse(chatroomRepository.findById(chatroomId).isPresent());
+//        List<Chatroom> chatrooms = chatroomRepository.findByTutorAndTutee(tutor, tutee);
+//        assertEquals(0, chatrooms.size());
+//        assertFalse(chatroomRepository.findByEnrollment(enrollment).isPresent());
+//    }
 }

@@ -18,5 +18,6 @@ public interface EnrollmentService {
     // 수강 취소
     Cancellation cancel(User user, Long lectureId);
 
-    void close(User user, Long lectureId, Long enrollmentId);
+//    void close(User user, Long lectureId, Long enrollmentId);
+    void close(User user, Long lectureId);
 }

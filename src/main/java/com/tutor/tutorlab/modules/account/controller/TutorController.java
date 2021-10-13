@@ -64,13 +64,13 @@ public class TutorController {
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation("튜터 탈퇴")
-    @DeleteMapping
-    public ResponseEntity<?> quitTutor(@CurrentUser User user) {
-
-        tutorService.deleteTutor(user);
-        return ResponseEntity.ok().build();
-    }
+//    @ApiOperation("튜터 탈퇴")
+//    @DeleteMapping
+//    public ResponseEntity<?> quitTutor(@CurrentUser User user) {
+//
+//        tutorService.deleteTutor(user);
+//        return ResponseEntity.ok().build();
+//    }
 
     @ApiOperation("튜터의 Career 리스트")
     @GetMapping("/{tutor_id}/careers")

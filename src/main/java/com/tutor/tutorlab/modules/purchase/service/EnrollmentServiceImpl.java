@@ -132,16 +132,33 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         return cancellation;
     }
 
+//    @Override
+//    public void close(User user, Long lectureId, Long enrollmentId) {
+//
+//        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+//                .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
+//
+//        Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
+//                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
+//
+//        Enrollment enrollment = enrollmentRepository.findByLectureAndId(lecture, enrollmentId)
+//                .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.ENROLLMENT));
+//
+//        enrollment.close();
+//        // 수강 종료 시 채팅방 삭제
+//        // enrollment.setChatroom(null);
+//        chatService.deleteChatroom(enrollment);
+//    }
     @Override
-    public void close(User user, Long lectureId, Long enrollmentId) {
+    public void close(User user, Long lectureId) {
 
-        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
-                .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
+        Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTEE));
 
-        Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
+        Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        Enrollment enrollment = enrollmentRepository.findByLectureAndId(lecture, enrollmentId)
+        Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
                 .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.ENROLLMENT));
 
         enrollment.close();

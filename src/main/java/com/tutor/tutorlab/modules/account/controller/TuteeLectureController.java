@@ -105,4 +105,12 @@ public class TuteeLectureController {
         reviewService.deleteTuteeReview(user, lectureId, reviewId);
         return ResponseEntity.ok().build();
     }
+
+    @ApiOperation("강의 종료")
+    @PutMapping("/{lecture_id}")
+    public ResponseEntity<?> close(@CurrentUser User user,
+                                   @PathVariable(name = "lecture_id") Long lectureId) {
+        enrollmentService.close(user, lectureId);
+        return ResponseEntity.ok().build();
+    }
 }

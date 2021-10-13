@@ -27,7 +27,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> getUsers(@RequestParam(defaultValue = "1") Integer page) {
 
-        Page<UserResponse> users = userService.getUsers(page).map(UserResponse::new);
+        Page<UserResponse> users = userService.getUserResponses(page);
         return ResponseEntity.ok(users);
     }
 
@@ -35,16 +35,14 @@ public class UserController {
     @GetMapping("/{user_id}")
     public ResponseEntity<?> getUser(@PathVariable(name = "user_id") Long userId) {
 
-        User user = userService.getUser(userId);
-        return ResponseEntity.ok(new UserResponse(user));
+        UserResponse user = userService.getUserResponse(userId);
+        return ResponseEntity.ok(user);
     }
 
     @ApiOperation("내정보 조회")
     @GetMapping("/my-info")
     public ResponseEntity<?> getMyInfo(@CurrentUser User user) {
-
-        user = userService.getUser(user.getId());
-        return ResponseEntity.ok(new UserResponse(user));
+        return ResponseEntity.ok(userService.getUserResponse(user.getId()));
     }
 
     @ApiOperation("회원 정보 수정")

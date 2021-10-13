@@ -117,7 +117,8 @@ public class InitService {
         Enrollment enrollment5 = enrollmentService.createEnrollment(user3, lecture3.getId(), lecturePrice3.getId());
 
         // 강의 종료
-        enrollmentService.close(user4, lecture1.getId(), enrollment1.getId());
+        // enrollmentService.close(user4, lecture1.getId(), enrollment1.getId());
+        enrollmentService.close(user1, lecture1.getId());
         // 강의 취소
         enrollmentService.cancel(user1, lecture2.getId());
 
