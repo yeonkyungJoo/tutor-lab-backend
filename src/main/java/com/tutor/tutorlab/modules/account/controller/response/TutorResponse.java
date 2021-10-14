@@ -15,6 +15,7 @@ public class TutorResponse {
     private List<EducationResponse> educations;
     private boolean specialist;
 
+    // TODO - 쿼리
     public TutorResponse(Tutor tutor) {
         this.user = new UserResponse(tutor.getUser());
         this.subjects = tutor.getSubjects();

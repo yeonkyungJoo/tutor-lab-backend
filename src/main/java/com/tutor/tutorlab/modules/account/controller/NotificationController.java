@@ -4,6 +4,7 @@ import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.response.NotificationResponse;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.notification.service.NotificationService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Api(tags = {"NotificationController"})
 @RequestMapping("/users/my-notifications")
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +26,7 @@ public class NotificationController {
     public ResponseEntity<?> getNotifications(@CurrentUser User user,
                                               @RequestParam(defaultValue = "1") Integer page) {
 
-        Page<NotificationResponse> notifications = notificationService.getNotifications(user, page)
-                .map(NotificationResponse::new);
+        Page<NotificationResponse> notifications = notificationService.getNotificationResponses(user, page);
         return ResponseEntity.ok(notifications);
     }
 

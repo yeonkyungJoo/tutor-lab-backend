@@ -24,13 +24,12 @@ public class CareerController {
 
     private final CareerService careerService;
 
-    // TODO - CHECK : user
     @ApiOperation("Career 조회")
     @GetMapping("/{career_id}")
     public ResponseEntity<?> getCareer(@CurrentUser User user,
                                        @PathVariable(name = "career_id") Long careerId) {
-        Career career = careerService.getCareer(user, careerId);
-        return ResponseEntity.ok(new CareerResponse(career));
+        CareerResponse career = careerService.getCareerResponse(user, careerId);
+        return ResponseEntity.ok(career);
     }
 
     @ApiOperation("Career 등록")

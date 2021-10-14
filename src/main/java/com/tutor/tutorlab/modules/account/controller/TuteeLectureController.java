@@ -11,6 +11,7 @@ import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateReq
 import com.tutor.tutorlab.modules.review.response.ReviewResponse;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
 import com.tutor.tutorlab.modules.review.vo.Review;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Api(tags = {"TuteeLectureController"})
 @RequestMapping("/tutees/my-lectures")
 @RestController
 @RequiredArgsConstructor
@@ -42,8 +44,8 @@ public class TuteeLectureController {
     @ApiOperation("수강 강의 개별 조회")
     @GetMapping("/{lecture_id}")
     public ResponseEntity<?> getLecture(@PathVariable(name = "lecture_id") Long lectureId) {
-        Lecture lecture = lectureService.getLecture(lectureId);
-        return ResponseEntity.ok(new LectureResponse(lecture));
+        LectureResponse lecture = lectureService.getLectureResponse(lectureId);
+        return ResponseEntity.ok(lecture);
     }
 
     @ApiOperation("강의 수강 취소")
@@ -60,8 +62,7 @@ public class TuteeLectureController {
     public ResponseEntity<?> getReviewsOfLecture(@PathVariable(name = "lecture_id") Long lectureId,
                                                  @RequestParam(defaultValue = "1") Integer page) {
 
-        Page<ReviewResponse> reviews = reviewService.getReviewsOfLecture(lectureId, page)
-                .map(ReviewResponse::new);
+        Page<ReviewResponse> reviews = reviewService.getReviewResponsesOfLecture(lectureId, page);
         return ResponseEntity.ok(reviews);
     }
 
@@ -71,8 +72,8 @@ public class TuteeLectureController {
     public ResponseEntity<?> getReviewOfLecture(@PathVariable(name = "lecture_id") Long lectureId,
                                                 @PathVariable(name = "review_id") Long reviewId) {
 
-        Review review = reviewService.getReview(lectureId, reviewId);
-        return ResponseEntity.ok(new ReviewResponse(review));
+        ReviewResponse review = reviewService.getReviewResponse(lectureId, reviewId);
+        return ResponseEntity.ok(review);
     }
 
     @ApiOperation("튜티 리뷰 작성")

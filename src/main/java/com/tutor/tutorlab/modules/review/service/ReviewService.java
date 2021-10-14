@@ -18,6 +18,7 @@ import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateReq
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
+import com.tutor.tutorlab.modules.review.response.ReviewResponse;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -114,22 +115,32 @@ public class ReviewService extends AbstractService {
 
     // 수강 강의별 리뷰 조회 : getReviewsOfLecture
     @Transactional(readOnly = true)
-    public Page<Review> getReviewsOfLecture(Long lectureId, Integer page) {
+    private Page<Review> getReviewsOfLecture(Long lectureId, Integer page) {
 
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
         return reviewRepository.findByLecture(lecture, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
     }
 
+    @Transactional(readOnly = true)
+    public Page<ReviewResponse> getReviewResponsesOfLecture(Long lectureId, Integer page) {
+        return getReviewsOfLecture(lectureId, page).map(ReviewResponse::new);
+    }
+
     // getReviewOfLecture
     @Transactional(readOnly = true)
-    public Review getReview(Long lectureId, Long reviewId) {
+    private Review getReview(Long lectureId, Long reviewId) {
 
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
         return reviewRepository.findByLectureAndId(lecture, reviewId)
                 .orElseThrow(() -> new EntityNotFoundException(REVIEW));
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewResponse getReviewResponse(Long lectureId, Long reviewId) {
+        return new ReviewResponse(getReview(lectureId, reviewId));
     }
 
     public Review createTuteeReview(User user, Long lectureId, TuteeReviewCreateRequest tuteeReviewCreateRequest) {

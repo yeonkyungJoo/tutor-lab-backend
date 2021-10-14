@@ -30,8 +30,8 @@ public class EducationController {
     @GetMapping("/{education_id}")
     public ResponseEntity<?> getEducation(@CurrentUser User user,
                                        @PathVariable(name = "education_id") Long educationId) {
-        Education education = educationService.getEducation(user, educationId);
-        return ResponseEntity.ok(new EducationResponse(education));
+        EducationResponse education = educationService.getEducationResponse(user, educationId);
+        return ResponseEntity.ok(education);
     }
 
     @ApiOperation("Education 등록")

@@ -4,6 +4,7 @@ import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
+import com.tutor.tutorlab.modules.account.controller.response.TutorResponse;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.CareerRepository;
 import com.tutor.tutorlab.modules.account.repository.EducationRepository;
@@ -48,12 +49,17 @@ public class TutorService extends AbstractService {
     private final ReviewRepository reviewRepository;
 
     @Transactional(readOnly = true)
-    public Page<Tutor> getTutors(Integer page) {
+    private Page<Tutor> getTutors(Integer page) {
         return tutorRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
     }
 
     @Transactional(readOnly = true)
-    public Tutor getTutor(Long tutorId) {
+    public Page<TutorResponse> getTutorResponses(Integer page) {
+
+    }
+
+    @Transactional(readOnly = true)
+    private Tutor getTutor(Long tutorId) {
         return tutorRepository.findById(tutorId).orElseThrow(() -> new EntityNotFoundException(TUTOR));
     }
 

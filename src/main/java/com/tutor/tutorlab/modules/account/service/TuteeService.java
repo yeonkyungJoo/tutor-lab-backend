@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.account.service;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
+import com.tutor.tutorlab.modules.account.controller.response.TuteeResponse;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -28,13 +29,23 @@ public class TuteeService extends AbstractService {
     private final TuteeRepository tuteeRepository;
 
     @Transactional(readOnly = true)
-    public Page<Tutee> getTutees(Integer page) {
+    private Page<Tutee> getTutees(Integer page) {
         return tuteeRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
     }
 
     @Transactional(readOnly = true)
-    public Tutee getTutee(Long tuteeId) {
+    public Page<TuteeResponse> getTuteeResponses(Integer page) {
+        return getTutees(page).map(TuteeResponse::new);
+    }
+
+    @Transactional(readOnly = true)
+    private Tutee getTutee(Long tuteeId) {
         return tuteeRepository.findById(tuteeId).orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.TUTEE));
+    }
+
+    @Transactional(readOnly = true)
+    public TuteeResponse getTuteeResponse(Long tuteeId) {
+        return new TuteeResponse(getTutee(tuteeId));
     }
 
     public void updateTutee(User user, TuteeUpdateRequest tuteeUpdateRequest) {

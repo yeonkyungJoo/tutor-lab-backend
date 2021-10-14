@@ -8,6 +8,7 @@ import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.purchase.controller.response.PickResponse;
 import com.tutor.tutorlab.modules.purchase.repository.PickRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Pick;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +34,18 @@ public class PickServiceImpl extends AbstractService implements PickService {
     private final LectureRepository lectureRepository;
 
     @Transactional(readOnly = true)
-    @Override
-    public Page<Pick> getPicks(User user, Integer page) {
+    private Page<Pick> getPicks(User user, Integer page) {
 
         // TODO - AuthAspect or Interceptor로 처리
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
         return pickRepository.findByTutee(tutee, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<PickResponse> getPickResponses(User user, Integer page) {
+        return getPicks(user, page).map(PickResponse::new);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class TuteeController {
     @GetMapping
     public ResponseEntity<?> getTutees(@RequestParam(defaultValue = "1") Integer page) {
 
-        Page<TuteeResponse> tutees = tuteeService.getTutees(page).map(TuteeResponse::new);
+        Page<TuteeResponse> tutees = tuteeService.getTuteeResponses(page);
         return ResponseEntity.ok(tutees);
     }
 
@@ -36,7 +36,7 @@ public class TuteeController {
     @GetMapping("/{tutee_id}")
     public ResponseEntity<?> getTutee(@PathVariable(name = "tutee_id") Long tuteeId) {
 
-        Tutee tutee = tuteeService.getTutee(tuteeId);
+        TuteeResponse tutee = tuteeService.getTuteeResponse(tuteeId);
         return ResponseEntity.ok(tutee);
     }
 

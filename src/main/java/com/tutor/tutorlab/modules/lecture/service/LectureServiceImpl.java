@@ -43,8 +43,7 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
 
     // private final LectureMapstructUtil lectureMapstructUtil;
 
-    @Override
-    public Lecture getLecture(Long lectureId) {
+    private Lecture getLecture(Long lectureId) {
         return lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
     }

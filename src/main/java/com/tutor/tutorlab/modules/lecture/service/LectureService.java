@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface LectureService {
 
-    Lecture getLecture(Long lectureId);
+    // Lecture getLecture(Long lectureId);
     LectureResponse getLectureResponse(Long lectureId);
 
     // TODO - CHECK

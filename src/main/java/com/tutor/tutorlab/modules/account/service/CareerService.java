@@ -4,6 +4,7 @@ import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
+import com.tutor.tutorlab.modules.account.controller.response.CareerResponse;
 import com.tutor.tutorlab.modules.account.repository.CareerRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Career;
@@ -28,13 +29,18 @@ public class CareerService {
     private final TutorRepository tutorRepository;
 
     @Transactional(readOnly = true)
-    public Career getCareer(User user, Long careerId) {
+    private Career getCareer(User user, Long careerId) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTOR));
 
         return careerRepository.findByTutorAndId(tutor, careerId)
                 .orElseThrow(() -> new EntityNotFoundException(CAREER));
+    }
+
+    @Transactional(readOnly = true)
+    public CareerResponse getCareerResponse(User user, Long careerId) {
+        return new CareerResponse(getCareer(user, careerId));
     }
 
     public Career createCareer(User user, CareerCreateRequest careerCreateRequest) {

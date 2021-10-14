@@ -4,6 +4,7 @@ import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
+import com.tutor.tutorlab.modules.account.controller.response.EducationResponse;
 import com.tutor.tutorlab.modules.account.repository.EducationRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Education;
@@ -29,13 +30,18 @@ public class EducationService {
     private final TutorRepository tutorRepository;
     // TODO - CHECK : user deleted/verified
     @Transactional(readOnly = true)
-    public Education getEducation(User user, Long educationId) {
+    private Education getEducation(User user, Long educationId) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTOR));
 
         return educationRepository.findByTutorAndId(tutor, educationId)
                 .orElseThrow(() -> new EntityNotFoundException(EDUCATION));
+    }
+
+    @Transactional(readOnly = true)
+    public EducationResponse getEducationResponse(User user, Long educationId) {
+        return new EducationResponse(getEducation(user, educationId));
     }
 
     public Education createEducation(User user, EducationCreateRequest educationCreateRequest) {

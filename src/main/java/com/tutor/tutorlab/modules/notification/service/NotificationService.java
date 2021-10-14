@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.notification.service;
 
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
+import com.tutor.tutorlab.modules.account.controller.response.NotificationResponse;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
@@ -30,6 +31,11 @@ public class NotificationService extends AbstractService {
     @Transactional(readOnly = true)
     public Page<Notification> getNotifications(User user, Integer page) {
         return notificationRepository.findByUser(user, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<NotificationResponse> getNotificationResponses(User user, Integer page) {
+        return getNotifications(user, page).map(NotificationResponse::new);
     }
 
     public Notification createNotification(Long userId, NotificationType type) {
