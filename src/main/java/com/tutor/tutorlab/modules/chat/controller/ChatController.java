@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.chat.controller;
 
 import com.tutor.tutorlab.modules.chat.service.MessageService;
 import com.tutor.tutorlab.modules.chat.vo.Message;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Api(tags = {"ChatController"})
 @Slf4j
 @RestController
 @RequiredArgsConstructor

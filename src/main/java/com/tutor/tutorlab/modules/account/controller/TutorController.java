@@ -7,7 +7,6 @@ import com.tutor.tutorlab.modules.account.controller.response.CareerResponse;
 import com.tutor.tutorlab.modules.account.controller.response.EducationResponse;
 import com.tutor.tutorlab.modules.account.controller.response.TutorResponse;
 import com.tutor.tutorlab.modules.account.service.TutorService;
-import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Api(tags = {"TutorController"})
 @RequestMapping("/tutors")
@@ -34,7 +32,7 @@ public class TutorController {
     @GetMapping
     public ResponseEntity<?> getTutors(@RequestParam(defaultValue = "1") Integer page) {
 
-        Page<TutorResponse> tutors = tutorService.getTutors(page).map(TutorResponse::new);
+        Page<TutorResponse> tutors = tutorService.getTutorResponses(page);
         return ResponseEntity.ok(tutors);
     }
 
@@ -42,8 +40,8 @@ public class TutorController {
     @GetMapping("/{tutor_id}")
     public ResponseEntity<?> getTutor(@PathVariable(name = "tutor_id") Long tutorId) {
 
-        Tutor tutor = tutorService.getTutor(tutorId);
-        return ResponseEntity.ok(new TutorResponse(tutor));
+        TutorResponse tutor = tutorService.getTutorResponse(tutorId);
+        return ResponseEntity.ok(tutor);
     }
 
     @ApiOperation("튜터 등록")
@@ -76,8 +74,7 @@ public class TutorController {
     @GetMapping("/{tutor_id}/careers")
     public ResponseEntity<?> getCareers(@PathVariable(name = "tutor_id") Long tutorId) {
 
-        List<CareerResponse> careers = tutorService.getCareers(tutorId).stream()
-                .map(CareerResponse::new).collect(Collectors.toList());
+        List<CareerResponse> careers = tutorService.getCareerResponses(tutorId);
         return ResponseEntity.ok(careers);
     }
 
@@ -85,8 +82,7 @@ public class TutorController {
     @GetMapping("/{tutor_id}/educations")
     public ResponseEntity<?> getEducations(@PathVariable(name = "tutor_id") Long tutorId) {
 
-        List<EducationResponse> educations = tutorService.getEducations(tutorId).stream()
-                .map(EducationResponse::new).collect(Collectors.toList());
+        List<EducationResponse> educations = tutorService.getEducationResponses(tutorId);
         return ResponseEntity.ok(educations);
     }
 

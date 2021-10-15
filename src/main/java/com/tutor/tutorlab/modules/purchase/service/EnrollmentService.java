@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 
 public interface EnrollmentService {
 
-    Page<Lecture> getLecturesOfTutee(User user, Integer page);
+    // Page<Lecture> getLecturesOfTutee(User user, Integer page);
     Page<LectureResponse> getLectureResponsesOfTutee(User user, Integer page);
 
     // 강의 수강

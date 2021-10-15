@@ -31,7 +31,7 @@ public class UserService extends AbstractService {
     private final TutorService tutorService;
     private final TuteeService tuteeService;
 
-    public Page<User> getUsers(Integer page) {
+    private Page<User> getUsers(Integer page) {
         return userRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
     }
 
@@ -39,7 +39,7 @@ public class UserService extends AbstractService {
         return getUsers(page).map(UserResponse::new);
     }
 
-    public User getUser(Long userId) {
+    private User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER));
     }

@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.upload.controller;
 import com.tutor.tutorlab.modules.upload.controller.request.UploadImageRequest;
 import com.tutor.tutorlab.modules.upload.controller.response.UploadResponse;
 import com.tutor.tutorlab.modules.upload.service.UploadService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+@Api(tags = {"UploadController"})
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/uploads")

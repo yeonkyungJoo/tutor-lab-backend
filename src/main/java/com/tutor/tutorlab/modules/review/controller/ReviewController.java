@@ -1,10 +1,12 @@
 package com.tutor.tutorlab.modules.review.controller;
 
 import com.tutor.tutorlab.modules.review.service.ReviewService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Api(tags = {"ReviewController"})
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
 @RestController

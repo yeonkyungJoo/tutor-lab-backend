@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.modules.test.controller;
+package com.tutor.tutorlab.test.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

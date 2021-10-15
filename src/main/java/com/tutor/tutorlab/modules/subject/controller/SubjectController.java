@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.subject.controller;
 import com.tutor.tutorlab.modules.subject.controller.response.LearningKindResponse;
 import com.tutor.tutorlab.modules.subject.controller.response.SubjectResponse;
 import com.tutor.tutorlab.modules.subject.service.SubjectService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Api(tags = {"SubjectController"})
 @RequiredArgsConstructor
 @RestController
 public class SubjectController {

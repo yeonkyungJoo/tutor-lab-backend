@@ -8,6 +8,7 @@ import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
@@ -98,13 +99,14 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
 //    }
 
     @Override
-    public Page<LectureResponse> getLectureResponses(String zone, Integer page) {
+    public Page<LectureResponse> getLectureResponses(String zone, LectureListRequest lectureListRequest, Integer page) {
 
-        Page<LectureResponse> lectures = lectureRepositorySupport.findLecturesByZone(
-                AddressUtils.convertStringToEmbeddableAddress(zone), PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
+        Page<LectureResponse> lectures = lectureRepositorySupport.findLecturesByZoneAndSearch(
+                AddressUtils.convertStringToEmbeddableAddress(zone), lectureListRequest, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(LectureResponse::new);
         // TODO - CHECK : mapstruct vs 생성자
 
+        // TODO - 쿼리
         // TODO - CHECK : 쿼리 확인
         lectures.forEach(lectureResponse -> {
             Lecture lecture = getLecture(lectureResponse.getId());

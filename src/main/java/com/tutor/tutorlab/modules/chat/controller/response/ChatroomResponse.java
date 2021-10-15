@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class ChatroomResponse {
 
+    // TODO - 쿼리
     // TODO - FETCH JOIN
     public ChatroomResponse(Chatroom chatroom) {
         this.chatroomId = chatroom.getId();

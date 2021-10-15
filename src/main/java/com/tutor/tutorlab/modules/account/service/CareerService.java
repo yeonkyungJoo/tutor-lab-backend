@@ -28,7 +28,6 @@ public class CareerService {
     private final CareerRepository careerRepository;
     private final TutorRepository tutorRepository;
 
-    @Transactional(readOnly = true)
     private Career getCareer(User user, Long careerId) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))

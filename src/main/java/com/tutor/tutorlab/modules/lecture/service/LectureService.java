@@ -17,7 +17,7 @@ public interface LectureService {
 
     // TODO - CHECK
     // List<LectureResponse> getLectureResponses(LectureListRequest lectureListRequest);
-    Page<LectureResponse> getLectureResponses(String zone, Integer page);
+    Page<LectureResponse> getLectureResponses(String zone, LectureListRequest LectureListRequest, Integer page);
 
     Lecture createLecture(User user, LectureCreateRequest lectureCreateRequest);
 

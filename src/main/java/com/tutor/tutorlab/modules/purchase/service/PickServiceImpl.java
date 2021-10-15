@@ -33,7 +33,6 @@ public class PickServiceImpl extends AbstractService implements PickService {
     private final TuteeRepository tuteeRepository;
     private final LectureRepository lectureRepository;
 
-    @Transactional(readOnly = true)
     private Page<Pick> getPicks(User user, Integer page) {
 
         // TODO - AuthAspect or Interceptor로 처리

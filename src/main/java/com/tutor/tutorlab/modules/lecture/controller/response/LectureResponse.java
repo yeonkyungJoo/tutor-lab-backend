@@ -33,6 +33,7 @@ public class LectureResponse {
     private double scoreAverage;
 
 
+    // TODO - 쿼리
     public LectureResponse(Lecture lecture) {
         this.id = lecture.getId();
         this.thumbnail = lecture.getThumbnail();

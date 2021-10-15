@@ -28,7 +28,6 @@ public class TuteeService extends AbstractService {
 
     private final TuteeRepository tuteeRepository;
 
-    @Transactional(readOnly = true)
     private Page<Tutee> getTutees(Integer page) {
         return tuteeRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
     }
@@ -38,7 +37,6 @@ public class TuteeService extends AbstractService {
         return getTutees(page).map(TuteeResponse::new);
     }
 
-    @Transactional(readOnly = true)
     private Tutee getTutee(Long tuteeId) {
         return tuteeRepository.findById(tuteeId).orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.TUTEE));
     }

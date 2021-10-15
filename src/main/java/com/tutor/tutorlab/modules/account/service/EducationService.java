@@ -29,7 +29,7 @@ public class EducationService {
     private final EducationRepository educationRepository;
     private final TutorRepository tutorRepository;
     // TODO - CHECK : user deleted/verified
-    @Transactional(readOnly = true)
+
     private Education getEducation(User user, Long educationId) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))

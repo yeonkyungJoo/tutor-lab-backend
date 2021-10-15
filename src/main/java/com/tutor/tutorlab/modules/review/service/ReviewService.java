@@ -18,7 +18,7 @@ import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateReq
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
-import com.tutor.tutorlab.modules.review.response.ReviewResponse;
+import com.tutor.tutorlab.modules.review.controller.response.ReviewResponse;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -114,7 +114,6 @@ public class ReviewService extends AbstractService {
     }
 
     // 수강 강의별 리뷰 조회 : getReviewsOfLecture
-    @Transactional(readOnly = true)
     private Page<Review> getReviewsOfLecture(Long lectureId, Integer page) {
 
         Lecture lecture = lectureRepository.findById(lectureId)
@@ -128,7 +127,6 @@ public class ReviewService extends AbstractService {
     }
 
     // getReviewOfLecture
-    @Transactional(readOnly = true)
     private Review getReview(Long lectureId, Long reviewId) {
 
         Lecture lecture = lectureRepository.findById(lectureId)

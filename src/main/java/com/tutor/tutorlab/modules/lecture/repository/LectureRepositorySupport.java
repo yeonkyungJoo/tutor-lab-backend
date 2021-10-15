@@ -36,7 +36,7 @@ public class LectureRepositorySupport {
     private final QUser user = QUser.user;
 
     // TODO - CHECK : Lecture에 주소 정보를 넣는 게 더 좋은가?
-    public List<Lecture> findLecturesByZone(Address zone) {
+    private List<Lecture> findLecturesByZone(Address zone) {
 
         if (zone == null) {
             return jpaQueryFactory.selectFrom(lecture).fetch();
@@ -89,7 +89,7 @@ public class LectureRepositorySupport {
     }
 
     // 강의명으로 검색
-    public List<Lecture> findLecturesBySearch(LectureListRequest request) {
+    private List<Lecture> findLecturesBySearch(LectureListRequest request) {
         return jpaQueryFactory.selectFrom(lecture)
                 .where(eqTitle(request.getTitle()))
                 .fetch();

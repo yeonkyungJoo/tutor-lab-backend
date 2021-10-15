@@ -42,9 +42,7 @@ public class ChatroomService extends AbstractService {
     private final MongoTemplate mongoTemplate;
     private final MessageRepository messageRepository;
 
-
-    public Page<Chatroom> getChatroomsOfTutee(User user, Integer page) {
-
+    private Page<Chatroom> getChatroomsOfTutee(User user, Integer page) {
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
             .orElseThrow(() -> new UnauthorizedException(TUTEE));
         return chatroomRepository.findByTutee(tutee, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
@@ -87,7 +85,7 @@ public class ChatroomService extends AbstractService {
         return messageRepository.findAllByChatroomId(chatroomId);
     }
 
-    public Page<Chatroom> getChatroomsOfTutor(User user, Integer page) {
+    private Page<Chatroom> getChatroomsOfTutor(User user, Integer page) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTOR));

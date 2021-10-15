@@ -4,6 +4,9 @@ import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
+import com.tutor.tutorlab.modules.account.controller.response.CareerResponse;
+import com.tutor.tutorlab.modules.account.controller.response.EducationResponse;
+import com.tutor.tutorlab.modules.account.controller.response.TuteeResponse;
 import com.tutor.tutorlab.modules.account.controller.response.TutorResponse;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.CareerRepository;
@@ -15,6 +18,7 @@ import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.purchase.controller.response.EnrollmentResponse;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
@@ -29,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.*;
 
@@ -48,19 +53,21 @@ public class TutorService extends AbstractService {
     private final EnrollmentRepository enrollmentRepository;
     private final ReviewRepository reviewRepository;
 
-    @Transactional(readOnly = true)
     private Page<Tutor> getTutors(Integer page) {
         return tutorRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
     }
 
     @Transactional(readOnly = true)
     public Page<TutorResponse> getTutorResponses(Integer page) {
-
+        return getTutors(page).map(TutorResponse::new);
     }
 
-    @Transactional(readOnly = true)
     private Tutor getTutor(Long tutorId) {
         return tutorRepository.findById(tutorId).orElseThrow(() -> new EntityNotFoundException(TUTOR));
+    }
+
+    public TutorResponse getTutorResponse(Long tutorId) {
+        return new TutorResponse(getTutor(tutorId));
     }
 
     public Tutor createTutor(User user, TutorSignUpRequest tutorSignUpRequest) {
@@ -127,8 +134,7 @@ public class TutorService extends AbstractService {
         tutorRepository.delete(tutor);
     }
 
-    @Transactional(readOnly = true)
-    public List<Career> getCareers(Long tutorId) {
+    private List<Career> getCareers(Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
                 .orElseThrow(() -> new EntityNotFoundException(TUTOR));
@@ -136,11 +142,22 @@ public class TutorService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public List<Education> getEducations(Long tutorId) {
+    public List<CareerResponse> getCareerResponses(Long tutorId) {
+        return getCareers(tutorId).stream()
+                .map(CareerResponse::new).collect(Collectors.toList());
+    }
+
+    private List<Education> getEducations(Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
                 .orElseThrow(() -> new EntityNotFoundException(TUTOR));
         return educationRepository.findByTutor(tutor);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EducationResponse> getEducationResponses(Long tutorId) {
+        return getEducations(tutorId).stream()
+                .map(EducationResponse::new).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -158,8 +175,7 @@ public class TutorService extends AbstractService {
         return getLectures(user, page).map(LectureResponse::new);
     }
 
-    @Transactional(readOnly = true)
-    public Page<Enrollment> getEnrollmentsOfLecture(User user, Long lectureId, Integer page) {
+    private Page<Enrollment> getEnrollmentsOfLecture(User user, Long lectureId, Integer page) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
@@ -171,7 +187,11 @@ public class TutorService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Tutee> getTuteesOfLecture(User user, Long lectureId, Integer page) {
+    public Page<EnrollmentResponse> getEnrollmentResponsesOfLecture(User user, Long lectureId, Integer page) {
+        return getEnrollmentsOfLecture(user, lectureId, page).map(EnrollmentResponse::new);
+    }
+
+    private Page<Tutee> getTuteesOfLecture(User user, Long lectureId, Integer page) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
@@ -182,6 +202,12 @@ public class TutorService extends AbstractService {
         return enrollmentRepository.findByLecture(lecture, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(Enrollment::getTutee);
     }
+
+    @Transactional(readOnly = true)
+    public Page<TuteeResponse> getTuteeResponsesOfLecture(User user, Long lectureId, Integer page) {
+        return getTuteesOfLecture(user, lectureId, page).map(TuteeResponse::new);
+    }
+
 
 //    @Transactional(readOnly = true)
 //    public Page<TuteeResponse> getTuteeResponsesOfLecture(User user, Long lectureId, Integer page) {
@@ -196,8 +222,7 @@ public class TutorService extends AbstractService {
 //                .map(enrollment -> new TuteeResponse(enrollment.getTutee()));
 //    }
 
-    @Transactional(readOnly = true)
-    public Page<Review> getReviewsOfLecture(User user, Long lectureId, Integer page) {
+    private Page<Review> getReviewsOfLecture(User user, Long lectureId, Integer page) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));

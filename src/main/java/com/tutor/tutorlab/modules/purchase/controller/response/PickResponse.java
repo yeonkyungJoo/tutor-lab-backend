@@ -8,6 +8,7 @@ public class PickResponse {
 
     private String lectureTitle;
 
+    // TODO - 쿼리
     public PickResponse(Pick pick) {
         this.lectureTitle = pick.getLecture().getTitle();
     }

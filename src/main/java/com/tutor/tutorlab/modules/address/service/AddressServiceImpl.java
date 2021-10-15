@@ -18,6 +18,9 @@ import java.util.Map;
 @Service
 public class AddressServiceImpl implements AddressService {
 
+    private final String LABEL = "label";
+    private final String VALUE = "value";
+
     private final AddressRepository addressRepository;
     private final AddressMapstruct addressMapstruct;
 
@@ -27,39 +30,66 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public List<Map<String, String>> getStatesMap() {
+
+        List<Map<String, String>> states = new ArrayList<>();
+        getStates().forEach(state -> {
+            Map<String, String> map = new HashMap<>();
+            map.put(LABEL, state);
+            map.put(VALUE, state);
+            states.add(map);
+        });
+        return states;
+    }
+
+    @Override
     public List<Address> getSiGunGus(String state) {
         return addressRepository.findSiGunGuByState(state);
     }
 
     @Override
     public List<SiGunGuResponse> getSiGunGuResponses(String state) {
-        List<Address> list = getSiGunGus(state);
-        return addressMapstruct.addressListToSiGunGuResponseList(list);
+        List<Address> siGunGus = getSiGunGus(state);
+        return addressMapstruct.addressListToSiGunGuResponseList(siGunGus);
+    }
+
+    @Override
+    public List<Map<String, String>> getSigunGusMap(String state) {
+
+        List<Map<String, String>> siGunGus = new ArrayList<>();
+        getSiGunGuResponses(state).forEach(siGunGu -> {
+            Map<String, String> map = new HashMap<>();
+            if (siGunGu.getGu().length() > 0 && siGunGu.getSiGun().length() > 0) {
+                map.put(LABEL, siGunGu.getSiGun() + " " + siGunGu.getGu());
+                map.put(VALUE, siGunGu.getSiGun() + " " + siGunGu.getGu());
+            } else if (siGunGu.getGu().length() == 0) {
+                map.put(LABEL, siGunGu.getSiGun());
+                map.put(VALUE, siGunGu.getSiGun());
+            } else {
+                map.put(LABEL, siGunGu.getGu());
+                map.put(VALUE, siGunGu.getGu());
+            }
+            siGunGus.add(map);
+        });
+        return siGunGus;
     }
 
     @Override
     public List<String> getDongs(String state, String SiGunGu) {
-        return addressRepository.findDongByStateAndSiGunGu(state,SiGunGu);
+        return addressRepository.findDongByStateAndSiGunGu(state, SiGunGu);
     }
 
     @Override
-    public List<Map<String, String>> getMakeSigunGus(List<SiGunGuResponse> siGunGus) {
+    public List<Map<String, String>> getDongsMap(String state, String siGunGu) {
 
-        List<Map<String, String>> returnList = new ArrayList<>();
-        siGunGus.forEach(item->{
+        List<Map<String, String>> dongs = new ArrayList<>();
+        getDongs(state, siGunGu).forEach(dong -> {
             Map<String, String> map = new HashMap<>();
-            if (item.getGu().length() > 0 && item.getSiGun().length() > 0){
-                map.put("label",item.getSiGun()+" "+item.getGu());
-                map.put("value",item.getSiGun()+" "+item.getGu());
-            } else if (item.getGu().length() == 0){
-                map.put("label",item.getSiGun());
-                map.put("value",item.getSiGun());
-            } else{
-                map.put("label",item.getGu());
-                map.put("value",item.getGu());
-            }
-            returnList.add(map);
+            map.put(LABEL, dong);
+            map.put(VALUE, dong);
+            dongs.add(map);
         });
-        return returnList;
+        return dongs;
     }
+
 }

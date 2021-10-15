@@ -10,6 +10,7 @@ public class EnrollmentResponse {
     private String lectureTitle;
     private boolean closed;
 
+    // TODO - 쿼리
     public EnrollmentResponse(Enrollment enrollment) {
         this.tutee = enrollment.getTutee().getUser().getUsername();
         this.lectureTitle = enrollment.getLecture().getTitle();

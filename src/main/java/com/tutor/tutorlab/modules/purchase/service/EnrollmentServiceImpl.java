@@ -44,7 +44,6 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     private final EnrollmentRepository enrollmentRepository;
     private final CancellationRepository cancellationRepository;
     private final TuteeRepository tuteeRepository;
-    private final TutorRepository tutorRepository;
 
     private final LectureRepository lectureRepository;
     private final LecturePriceRepository lecturePriceRepository;
@@ -52,9 +51,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
 
     private final NotificationService notificationService;
 
-    @Transactional(readOnly = true)
-    @Override
-    public Page<Lecture> getLecturesOfTutee(User user, Integer page) {
+    private Page<Lecture> getLecturesOfTutee(User user, Integer page) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
@@ -63,6 +60,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
                 .map(Enrollment::getLecture);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<LectureResponse> getLectureResponsesOfTutee(User user, Integer page) {
         return getLecturesOfTutee(user, page).map(LectureResponse::new);

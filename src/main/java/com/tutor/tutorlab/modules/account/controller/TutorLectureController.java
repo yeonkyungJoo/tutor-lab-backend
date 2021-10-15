@@ -6,14 +6,12 @@ import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
-import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.controller.response.EnrollmentResponse;
-import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
-import com.tutor.tutorlab.modules.review.response.ReviewResponse;
+import com.tutor.tutorlab.modules.review.controller.response.ReviewResponse;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
-import com.tutor.tutorlab.modules.review.vo.Review;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Api(tags = {"TutorLectureController"})
 @RequestMapping("/tutors/my-lectures")
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +29,6 @@ public class TutorLectureController {
 
     private final TutorService tutorService;
     private final LectureService lectureService;
-
     private final ReviewService reviewService;
 
     @ApiOperation("등록 강의 전체 조회 - 페이징")
@@ -47,9 +45,9 @@ public class TutorLectureController {
     @GetMapping("/{lecture_id}")
     public ResponseEntity<?> getLecture(@PathVariable(name = "lecture_id") Long lectureId) {
 
-        Lecture lecture = lectureService.getLecture(lectureId);
+        LectureResponse lecture = lectureService.getLectureResponse(lectureId);
         // lectureMapstructUtil.getLectureResponse(lecture);
-        return ResponseEntity.ok(new LectureResponse(lecture));
+        return ResponseEntity.ok(lecture);
     }
 
     @ApiOperation("등록 강의별 리뷰 조회 - 페이징")
@@ -57,8 +55,7 @@ public class TutorLectureController {
     public ResponseEntity<?> getReviewsOfLecture(@PathVariable(name = "lecture_id") Long lectureId,
                                                  @RequestParam(defaultValue = "1") Integer page) {
 
-        Page<ReviewResponse> reviews = reviewService.getReviewsOfLecture(lectureId, page)
-                .map(ReviewResponse::new);
+        Page<ReviewResponse> reviews = reviewService.getReviewResponsesOfLecture(lectureId, page);
         return ResponseEntity.ok(reviews);
     }
 
@@ -67,8 +64,8 @@ public class TutorLectureController {
     public ResponseEntity<?> getReviewOfLecture(@PathVariable(name = "lecture_id") Long lectureId,
                                                 @PathVariable(name = "review_id") Long reviewId) {
 
-        Review review = reviewService.getReview(lectureId, reviewId);
-        return ResponseEntity.ok(new ReviewResponse(review));
+        ReviewResponse review = reviewService.getReviewResponse(lectureId, reviewId);
+        return ResponseEntity.ok(review);
     }
 
     @ApiOperation("튜터 리뷰 작성")
@@ -111,19 +108,17 @@ public class TutorLectureController {
                                                 @PathVariable(name = "lecture_id") Long lectureId,
                                                 @RequestParam(defaultValue = "1") Integer page) {
 
-        Page<TuteeResponse> tutees = tutorService.getTuteesOfLecture(user, lectureId, page).map(TuteeResponse::new);
+        Page<TuteeResponse> tutees = tutorService.getTuteeResponsesOfLecture(user, lectureId, page);
         return ResponseEntity.ok(tutees);
     }
 
-    // TODO - EnrollmentResponse
     @ApiOperation("등록 강의별 수강내역 조회 - 페이징")
     @GetMapping("/{lecture_id}/enrollments")
     public ResponseEntity<?> getEnrollmentsOfLecture(@CurrentUser User user,
                                                      @PathVariable(name = "lecture_id") Long lectureId,
                                                      @RequestParam(defaultValue = "1") Integer page) {
 
-        Page<EnrollmentResponse> enrollments = tutorService.getEnrollmentsOfLecture(user, lectureId, page)
-                .map(EnrollmentResponse::new);
+        Page<EnrollmentResponse> enrollments = tutorService.getEnrollmentResponsesOfLecture(user, lectureId, page);
         return ResponseEntity.ok(enrollments);
     }
 
