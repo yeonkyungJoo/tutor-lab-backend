@@ -20,4 +20,6 @@ public interface EnrollmentService {
 
 //    void close(User user, Long lectureId, Long enrollmentId);
     void close(User user, Long lectureId);
+
+    void deleteEnrollment(Enrollment enrollment);
 }

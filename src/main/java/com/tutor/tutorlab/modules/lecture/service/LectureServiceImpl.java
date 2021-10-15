@@ -16,6 +16,9 @@ import com.tutor.tutorlab.modules.lecture.repository.LectureRepositorySupport;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
+import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
+import com.tutor.tutorlab.modules.purchase.repository.PickRepository;
+import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +43,12 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     private final LectureRepository lectureRepository;
     private final TutorRepository tutorRepository;
     private final LectureRepositorySupport lectureRepositorySupport;
+
+    private final PickRepository pickRepository;
+
+    private final EnrollmentService enrollmentService;
+    private final EnrollmentRepository enrollmentRepository;
+
     private final ReviewRepository reviewRepository;
 
     // private final LectureMapstructUtil lectureMapstructUtil;
@@ -205,6 +214,29 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
          */
     }
 
+    // TODO - CHECK : 리팩토링
+    @Transactional
+    @Override
+    public void deleteLecture(Lecture lecture) {
+
+        // pick
+        pickRepository.deleteByLecture(lecture);
+        enrollmentRepository.findAllByLectureId(lecture.getId()).forEach(enrollment -> {
+            // TODO - 수강중인 강의가 있는지 확인 필요
+            if (!enrollment.isClosed() && !enrollment.isCanceled()) {
+                throw new RuntimeException("수강 중인 강의가 존재합니다.");
+            }
+            enrollmentService.deleteEnrollment(enrollment);
+        });
+
+        // TODO - CHECK : vs delete(lecture);
+        // lecture_price
+        // lecture_subject
+        // lecture_system_type
+        lectureRepository.delete(lecture);
+        // lectureRepository.deleteById(lectureId);
+    }
+
     @Transactional
     @Override
     public void deleteLecture(User user, Long lectureId) {
@@ -215,12 +247,7 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
         Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        // TODO - CHECK : vs delete(lecture);
-        // lecture_price
-        // lecture_subject
-        // lecture_system_type
-        lectureRepository.delete(lecture);
-        // lectureRepository.deleteById(lectureId);
+        deleteLecture(lecture);
     }
 
     private LectureSubject buildLectureSubject(LectureCreateRequest.LectureSubjectCreateRequest lectureSubjectCreateRequest) {

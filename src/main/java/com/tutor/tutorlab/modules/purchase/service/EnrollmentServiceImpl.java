@@ -3,14 +3,13 @@ package com.tutor.tutorlab.modules.purchase.service;
 import com.tutor.tutorlab.config.exception.AlreadyExistException;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
-import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
-import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
+import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.chat.service.ChatService;
+import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
@@ -22,6 +21,8 @@ import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
+import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
+import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,7 +48,10 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
 
     private final LectureRepository lectureRepository;
     private final LecturePriceRepository lecturePriceRepository;
+
+    private final ChatroomRepository chatroomRepository;
     private final ChatService chatService;
+    private final ReviewRepository reviewRepository;
 
     private final NotificationService notificationService;
 
@@ -163,5 +167,28 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         // 수강 종료 시 채팅방 삭제
         // enrollment.setChatroom(null);
         chatService.deleteChatroom(enrollment);
+    }
+
+    @Override
+    public void deleteEnrollment(Enrollment enrollment) {
+
+        // TODO - Optional 사용법
+        // 이미 취소/종료된 강의인 경우
+        // chatService.deleteChatroom(enrollment);
+        Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
+        if (chatroom != null) {
+            chatroomRepository.deleteByEnrollment(enrollment);
+        }
+
+        Review review = reviewRepository.findByEnrollment(enrollment);
+        if (review != null) {
+            review.delete();
+            reviewRepository.delete(review);
+        }
+
+        cancellationRepository.deleteByEnrollment(enrollment);
+
+        enrollment.delete();
+        enrollmentRepository.deleteEnrollmentById(enrollment.getId());
     }
 }

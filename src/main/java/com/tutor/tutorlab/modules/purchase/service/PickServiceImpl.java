@@ -81,6 +81,6 @@ public class PickServiceImpl extends AbstractService implements PickService {
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
         // TODO - batch
-        pickRepository.deleteAllByTutee(tutee);
+        pickRepository.deleteByTutee(tutee);
     }
 }

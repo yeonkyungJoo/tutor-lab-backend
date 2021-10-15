@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.tutor.tutorlab.config.security.CurrentUser;
+import com.tutor.tutorlab.modules.account.controller.request.UserQuitRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.UserResponse;
 import com.tutor.tutorlab.modules.account.service.UserService;
@@ -12,7 +13,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @Api(tags = {"UserController"})
 @RequestMapping("/users")
@@ -56,10 +60,16 @@ public class UserController {
 
     @ApiOperation("회원 탈퇴")
     @DeleteMapping
-    public ResponseEntity<?> quitUser(@CurrentUser User user) {
+    public ResponseEntity<?> quitUser(@CurrentUser User user,
+                                      @RequestBody @Valid UserQuitRequest userQuitRequest) {
 
-        userService.deleteUser(user);
+        userService.deleteUser(user, userQuitRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/quit-reasons")
+    public Map<Integer, String> getQuitReasons() {
+        return UserQuitRequest.reasons;
     }
 
 }

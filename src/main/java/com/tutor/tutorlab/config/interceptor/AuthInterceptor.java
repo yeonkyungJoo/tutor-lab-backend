@@ -53,12 +53,16 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
-            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
-            if (principalDetails != null && principalDetails.getUser() != null) {
-                return true;
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof PrincipalDetails) {
+
+                PrincipalDetails principalDetails = (PrincipalDetails) principal;
+                if (principalDetails != null && principalDetails.getUser() != null) {
+                    return true;
+                }
             }
-
         }
 
         return false;

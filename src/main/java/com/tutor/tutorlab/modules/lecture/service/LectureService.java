@@ -23,5 +23,6 @@ public interface LectureService {
 
     void updateLecture(User user, Long lectureId, LectureUpdateRequest lectureUpdateRequest);
 
+    void deleteLecture(Lecture lecture);
     void deleteLecture(User user, Long lectureId);
 }

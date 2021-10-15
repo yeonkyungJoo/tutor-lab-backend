@@ -19,12 +19,13 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     @Query(value = "select * from enrollment where enrollment_id = :enrollmentId", nativeQuery = true)
     Enrollment findAllById(Long enrollmentId);
 
-    @Query(value = "select * from enrollment where tutee_id = :tuteeId", nativeQuery = true)
-    List<Enrollment> findAllByTutee(Long tuteeId);
-
     List<Enrollment> findByTutee(Tutee tutee);
-    // List<Enrollment> findByLecture(Lecture lecture);
+    @Query(value = "select * from enrollment where tutee_id = :tuteeId", nativeQuery = true)
+    List<Enrollment> findAllByTuteeId(Long tuteeId);
     Page<Enrollment> findByTutee(Tutee tutee, Pageable pageable);
+
+    @Query(value = "select * from enrollment where lecture_id = :lectureId", nativeQuery = true)
+    List<Enrollment> findAllByLectureId(Long lectureId);
     Page<Enrollment> findByLecture(Lecture lecture, Pageable pageable);
 
     Optional<Enrollment> findByLectureAndId(Lecture lecture, Long enrollmentId);
@@ -37,4 +38,17 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     @Modifying
     @Query(value = "delete from enrollment", nativeQuery = true)
     void deleteAllEnrollments();
+
+    @Transactional(readOnly = false)
+    @Modifying
+    @Query(value = "delete from enrollment where enrollment_id = :enrollmentId", nativeQuery = true)
+    void deleteEnrollmentById(Long enrollmentId);
+
+    // ToOne 관계 - 페치 조인
+    // and (e.closed = false and e.canceled = false)
+    @Query(value = "select e from Enrollment e" +
+            " join fetch e.lecture l" +
+            " join fetch l.tutor t" +
+            " where t.id = :tutorId")
+    List<Enrollment> findAllWithLectureTutorByTutorId(Long tutorId);
 }

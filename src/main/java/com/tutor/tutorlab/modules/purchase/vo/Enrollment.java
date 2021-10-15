@@ -9,7 +9,6 @@ import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.*;
 import org.hibernate.annotations.Where;
 
-import javax.annotation.PreDestroy;
 import javax.persistence.*;
 
 @Where(clause = "closed = false and canceled = false")
@@ -53,17 +52,9 @@ public class Enrollment extends BaseEntity {
     private boolean canceled = false;
 
     // TODO - CHECK : 양방향 VS 단방향
-    @ToString.Exclude
-    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Chatroom chatroom;
-
-    @ToString.Exclude
-    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Review review;
-
-    @ToString.Exclude
-    @OneToOne(mappedBy = "enrollment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Cancellation cancellation;
+    // - @OneToOne : chatroom
+    // - @OneToOne : review
+    // - @OneToOne : cancellation
 
     @Builder(access = AccessLevel.PRIVATE)
     public Enrollment(Tutee tutee, Lecture lecture, LecturePrice lecturePrice) {
@@ -88,12 +79,8 @@ public class Enrollment extends BaseEntity {
         setCanceled(true);
     }
 
-    @PreRemove
+//    @PreRemove
     public void delete() {
         this.tutee.getEnrollments().remove(this);
-        this.lecture.getEnrollments().remove(this);
-        this.chatroom = null;
-        this.review = null;
-        this.cancellation = null;
     }
 }

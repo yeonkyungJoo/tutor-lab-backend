@@ -9,4 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CancellationRepository extends JpaRepository<Cancellation, Long> {
 
     Cancellation findByEnrollment(Enrollment enrollment);
+    Cancellation findByEnrollmentId(Long enrollmentId);
+
+    @Transactional
+    void deleteByEnrollment(Enrollment enrollment);
 }

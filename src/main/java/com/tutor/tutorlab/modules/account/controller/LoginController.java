@@ -119,6 +119,18 @@ public class LoginController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @ApiOperation("아이디 중복체크")
+    @GetMapping("/check-username")
+    public boolean checkUsername(@RequestParam String username) {
+        return loginService.checkUsernameDuplication(username);
+    }
+
+    @ApiOperation("닉네임 중복체크")
+    @GetMapping("/check-nickname")
+    public boolean checkNickname(@RequestParam String nickname) {
+        return loginService.checkNicknameDuplication(nickname);
+    }
+
     // 계정 인증
     // TODO - CHECK : GET vs POST
     @ApiIgnore

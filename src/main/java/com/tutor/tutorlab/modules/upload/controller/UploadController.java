@@ -20,11 +20,14 @@ import javax.validation.Valid;
 @RequestMapping("/uploads")
 public class UploadController {
 
+    // TODO - application.yml
+    public static final String DIR = "user";
+
     private final UploadService uploadService;
 
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> uploadImage(@ModelAttribute @Valid UploadImageRequest uploadImageRequest) {
-        UploadResponse upload = uploadService.uploadImage(uploadImageRequest.getFile());
+        UploadResponse upload = uploadService.uploadImage(DIR, uploadImageRequest.getFile());
         return ResponseEntity.ok(upload);
     }
 

@@ -53,12 +53,12 @@ public class TuteeController {
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation("튜티 탈퇴")
-    @DeleteMapping
-    public ResponseEntity<?> quitTutee(@CurrentUser User user) {
-
-        tuteeService.deleteTutee(user);
-        return ResponseEntity.ok().build();
-    }
+//    @ApiOperation("튜티 탈퇴")
+//    @DeleteMapping
+//    public ResponseEntity<?> quitTutee(@CurrentUser User user) {
+//
+//        tuteeService.deleteTutee(user);
+//        return ResponseEntity.ok().build();
+//    }
 
 }
