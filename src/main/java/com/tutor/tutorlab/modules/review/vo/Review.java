@@ -89,10 +89,6 @@ public class Review extends BaseEntity {
     }
 
     public void delete() {
-        // child인 리뷰의 경우 enrollment가 null
-        if (this.enrollment != null) {
-            this.enrollment.setReview(null);
-        }
         this.children.clear();
     }
 }

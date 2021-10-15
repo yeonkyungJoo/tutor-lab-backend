@@ -70,14 +70,6 @@ public class Lecture extends BaseEntity {
 
     private String thumbnail;
 
-    @ToString.Exclude
-    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Enrollment> enrollments = new ArrayList<>();
-
-    @ToString.Exclude
-    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Pick> picks = new ArrayList<>();
-
     public void addSubject(LectureSubject lectureSubject) {
         lectureSubjects.add(lectureSubject);
         lectureSubject.mappingLecture(this);
@@ -89,10 +81,6 @@ public class Lecture extends BaseEntity {
     };
 
     public void addEnrollment(Enrollment enrollment) {
-        if (enrollments == null) {
-            enrollments = new ArrayList<>();
-        }
-        this.enrollments.add(enrollment);
         enrollment.setLecture(this);
     }
 

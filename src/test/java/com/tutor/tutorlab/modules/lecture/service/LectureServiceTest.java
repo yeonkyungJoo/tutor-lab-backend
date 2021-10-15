@@ -17,6 +17,7 @@ import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.purchase.vo.Pick;
+import com.tutor.tutorlab.modules.review.vo.Review;
 import com.tutor.tutorlab.modules.subject.vo.Subject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -169,6 +170,17 @@ public class LectureServiceTest extends AbstractTest {
         Pick pick = pickService.createPick(tuteeUser, lectureId);
         Enrollment enrollment = enrollmentService.createEnrollment(tuteeUser, lectureId, lecturePriceId);
         Cancellation cancellation = enrollmentService.cancel(tuteeUser, lectureId);
+        reviewService.createTuteeReview(tuteeUser, lectureId, tuteeReviewCreateRequest);
+
+        Review review = reviewRepository.findByEnrollment(enrollment);
+        assertAll(
+                () -> assertNotNull(review),
+                () -> assertEquals(enrollment, review.getEnrollment()),
+                () -> assertEquals(0, review.getChildren().size()),
+                () -> assertEquals(lecture, review.getLecture()),
+                () -> assertEquals(tuteeReviewCreateRequest.getContent(), review.getContent()),
+                () -> assertEquals(tuteeReviewCreateRequest.getScore(), review.getScore())
+        );
 
         // When
         lectureService.deleteLecture(user, lectureId);
@@ -177,21 +189,27 @@ public class LectureServiceTest extends AbstractTest {
 
         // lecture
         Tutor tutor = tutorRepository.findByUser(user);
-        List<Lecture> lectures = lectureRepository.findByTutor(tutor);
-        assertEquals(0, lectures.size());
+        assertEquals(0, lectureRepository.findByTutor(tutor).size());
 
         // lectureSubject
-        assertFalse(lectureSubjectRepository.findById(lectureSubjectId).isPresent());
+        assertTrue(lectureSubjectRepository.findByLectureId(lectureId).isEmpty());
         // lecturePrice
-        assertFalse(lecturePriceRepository.findById(lecturePriceId).isPresent());
-        // enrollment, cancellation
-
-        // review
-
+        assertTrue(lecturePriceRepository.findByLectureId(lectureId).isEmpty());
         // pick
+        assertTrue(pickRepository.findByLectureId(lectureId).isEmpty());
+        // enrollment
+        assertTrue(enrollmentRepository.findAllByLectureId(lectureId).isEmpty());
+        // cancellation
+        assertNull(cancellationRepository.findByEnrollmentId(enrollment.getId()));
+        // review
+        assertTrue(reviewRepository.findByLectureId(lectureId).isEmpty());
         // chatroom
-        // message
+        chatroomRepository.findAll().forEach(chatroom -> {
+            assertNotEquals(chatroom.getEnrollment().getLecture().getId(), lectureId);
+        });
 
+        // TODO - 보류
+        // message
     }
 
     private List<Subject> subjects = new ArrayList<>();
@@ -222,7 +240,8 @@ public class LectureServiceTest extends AbstractTest {
 
         // When
         // Then
-        Page<LectureResponse> lectureResponses = lectureService.getLectureResponses("서울특별시 강남구", 1);
+        // TODO - LectureListRequest 추가해서 테스트
+        Page<LectureResponse> lectureResponses = lectureService.getLectureResponses("서울특별시 강남구", null, 1);
         assertEquals(1, lectureResponses.getTotalElements());
 
         lectureResponses.stream().forEach(lectureResponse -> {

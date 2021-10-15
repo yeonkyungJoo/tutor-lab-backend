@@ -12,12 +12,15 @@ import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
+import com.tutor.tutorlab.modules.review.vo.Review;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,6 +32,9 @@ class EnrollmentServiceTest extends AbstractTest {
     private Tutor tutor;
     private Lecture lecture;
     private Long lectureId;
+
+    @Autowired
+    EntityManager em;
 
     @BeforeEach
     void init() {
@@ -134,7 +140,7 @@ class EnrollmentServiceTest extends AbstractTest {
 
         // Then
         assertEquals(0, enrollmentRepository.findByTutee(tutee).size());
-        assertEquals(1, enrollmentRepository.findAllByTutee(tutee.getId()).size());
+        assertEquals(1, enrollmentRepository.findAllByTuteeId(tutee.getId()).size());
         assertTrue(enrollment.isCanceled());
 
         Cancellation cancellation = cancellationRepository.findByEnrollment(enrollment);
@@ -147,6 +153,69 @@ class EnrollmentServiceTest extends AbstractTest {
         assertFalse(chatroomRepository.findById(chatroomId).isPresent());
         List<Chatroom> chatrooms = chatroomRepository.findByTutorAndTutee(tutor, tutee);
         assertEquals(0, chatrooms.size());
+    }
+
+    @WithAccount(NAME)
+    @Test
+    void delete() {
+
+        // Given
+        User user = userRepository.findByUsername(USERNAME).orElse(null);
+        Tutee tutee = tuteeRepository.findByUser(user);
+        assertNotNull(user);
+
+        LecturePrice lecturePrice = lecturePriceRepository.findByLecture(lecture).get(0);
+        Long lecturePriceId = lecturePrice.getId();
+
+        Enrollment enrollment = enrollmentService.createEnrollment(user, lectureId, lecturePriceId);
+        Long enrollmentId = enrollment.getId();
+        assertAll(
+                () -> assertFalse(enrollment.isCanceled()),
+                () -> assertEquals(1, enrollmentRepository.findByTutee(tutee).size())
+        );
+
+        assertNotNull(chatroomRepository.findByEnrollment(enrollment));
+        Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
+        Long chatroomId = chatroom.getId();
+
+        reviewService.createTuteeReview(user, lectureId, tuteeReviewCreateRequest);
+
+        // Then
+        Review review = reviewRepository.findByEnrollment(enrollment);
+        assertNotNull(review);
+        assertAll(
+                () -> assertEquals(enrollment, review.getEnrollment()),
+                () -> assertEquals(0, review.getChildren().size()),
+                () -> assertEquals(lecture, review.getLecture()),
+                () -> assertEquals(tuteeReviewCreateRequest.getContent(), review.getContent()),
+                () -> assertEquals(tuteeReviewCreateRequest.getScore(), review.getScore())
+        );
+
+//        enrollmentService.cancel(user, lectureId);
+//
+//        assertEquals(0, enrollmentRepository.findByTutee(tutee).size());
+//        assertEquals(1, enrollmentRepository.findAllByTutee(tutee.getId()).size());
+//        assertTrue(enrollment.isCanceled());
+//
+//        Cancellation cancellation = cancellationRepository.findByEnrollment(enrollment);
+//        assertAll(
+//                () -> assertNotNull(cancellation),
+//                () -> assertEquals(lecture.getTitle(), enrollment.getLecture().getTitle()),
+//                () -> assertEquals(tutee.getUser().getName(), enrollment.getTutee().getUser().getName())
+//        );
+//
+//        assertFalse(chatroomRepository.findById(chatroomId).isPresent());
+
+        // When
+        enrollmentService.deleteEnrollment(enrollment);
+
+        // Then
+        assertAll(
+                () -> assertEquals(0, chatroomRepository.findByTutorAndTutee(tutor, tutee).size()),
+                () -> assertTrue(enrollmentRepository.findAllByTuteeIdAndLectureId(tutee.getId(), lectureId).isEmpty()),
+                () -> assertTrue(reviewRepository.findByLecture(lecture).isEmpty()),
+                () -> assertNull(cancellationRepository.findByEnrollmentId(enrollmentId))
+        );
     }
 
     // TODO - 튜티가 종료하는 것으로 변경

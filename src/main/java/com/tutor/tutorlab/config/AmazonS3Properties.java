@@ -1,4 +1,4 @@
-package com.tutor.tutorlab.config.externalproperties.amazon;
+package com.tutor.tutorlab.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

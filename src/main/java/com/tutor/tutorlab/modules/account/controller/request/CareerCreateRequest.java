@@ -32,6 +32,7 @@ public class CareerCreateRequest {
     @ApiModelProperty(value = "퇴사일자", example = "2007-12-10", allowEmptyValue = true, required = false)
     private String endDate;
 
+    // TODO - CHECK : @NotNull
     @ApiModelProperty(value = "재직 여부", example = "false", required = true)
     @NotNull
     private boolean present;

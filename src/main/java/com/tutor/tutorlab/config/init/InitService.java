@@ -15,6 +15,7 @@ import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
+import com.tutor.tutorlab.modules.notification.repository.NotificationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
@@ -57,6 +58,7 @@ public class InitService {
     private final ChatroomRepository chatroomRepository;
     private final ReviewRepository reviewRepository;
 
+    private final NotificationRepository notificationRepository;
     private final SubjectRepository subjectRepository;
 
     // @PostConstruct
@@ -74,6 +76,7 @@ public class InitService {
         educationRepository.deleteAll();
         tutorRepository.deleteAll();
         tuteeRepository.deleteAll();
+        notificationRepository.deleteAll();
         userRepository.deleteAll();
         subjectRepository.deleteAll();
 

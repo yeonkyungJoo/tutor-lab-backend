@@ -8,6 +8,9 @@ import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
+import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
+import com.tutor.tutorlab.modules.purchase.repository.PickRepository;
+import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +30,10 @@ import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTEE;
 public class TuteeService extends AbstractService {
 
     private final TuteeRepository tuteeRepository;
+
+    private final PickRepository pickRepository;
+    private final EnrollmentService enrollmentService;
+    private final EnrollmentRepository enrollmentRepository;
 
     private Page<Tutee> getTutees(Integer page) {
         return tuteeRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
@@ -59,10 +66,12 @@ public class TuteeService extends AbstractService {
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
 
-        user.quit();
+        // pick 삭제
+        pickRepository.deleteByTutee(tutee);
+        // enrollment 삭제
+        enrollmentRepository.findAllByTuteeId(tutee.getId()).forEach(enrollment -> {
+            enrollmentService.deleteEnrollment(enrollment);
+        });
         tuteeRepository.delete(tutee);
-
-        // 로그아웃
-        SecurityContextHolder.getContext().setAuthentication(null);
     }
 }

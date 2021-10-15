@@ -34,8 +34,6 @@ public class ChatService {
                 tutor,
                 tutee
         );
-        enrollment.setChatroom(chatroom);
-
         chatroom = chatroomRepository.save(chatroom);
         // TODO - CHECK
         WebSocketHandler.chatroomMap.put(chatroom.getId(), new HashMap<>());
@@ -50,7 +48,6 @@ public class ChatService {
                 .orElseThrow(() -> new EntityNotFoundException(CHATROOM));
         Long chatroomId = chatroom.getId();
 
-        chatroom.delete();
         chatroomRepository.deleteByEnrollment(enrollment);
 
         // TODO - 테스트

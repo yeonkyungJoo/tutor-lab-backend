@@ -17,6 +17,7 @@ import com.tutor.tutorlab.modules.account.vo.*;
 import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
+import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.controller.response.EnrollmentResponse;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
@@ -47,6 +48,8 @@ public class TutorService extends AbstractService {
     private final UserRepository userRepository;
     private final CareerRepository careerRepository;
     private final EducationRepository educationRepository;
+
+    private final LectureService lectureService;
     private final LectureRepository lectureRepository;
     // private final LectureMapstructUtil lectureMapstructUtil;
 
@@ -129,6 +132,17 @@ public class TutorService extends AbstractService {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
+
+        // TODO - CHECK
+        // 수강 중인 강의 없는지 확인
+        if (enrollmentRepository.findAllWithLectureTutorByTutorId(tutor.getId()).size() > 0) {
+            // TODO - Error Message
+            throw new RuntimeException("수강 중인 강의가 존재합니다.");
+        }
+
+        lectureRepository.findByTutor(tutor).forEach(lecture -> {
+            lectureService.deleteLecture(lecture);
+        });
 
         tutor.quit();
         tutorRepository.delete(tutor);

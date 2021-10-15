@@ -2,7 +2,7 @@ package com.tutor.tutorlab.modules;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.S3Object;
-import com.tutor.tutorlab.config.externalproperties.amazon.AmazonS3Properties;
+import com.tutor.tutorlab.config.AmazonS3Properties;
 import com.tutor.tutorlab.modules.upload.amazon.service.AWSS3Client;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;

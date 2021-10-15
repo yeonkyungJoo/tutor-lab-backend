@@ -74,7 +74,7 @@ public class LoginService {
     private final EmailService emailService;
     private final TemplateEngine templateEngine;
 
-    private boolean checkUsernameDuplication(String username) {
+    public boolean checkUsernameDuplication(String username) {
         boolean duplicated = false;
 
         if (StringUtils.isBlank(username)) {
@@ -88,7 +88,7 @@ public class LoginService {
         return duplicated;
     }
 
-    private boolean checkNicknameDuplication(String nickname) {
+    public boolean checkNicknameDuplication(String nickname) {
         boolean duplicated = false;
 
         if (StringUtils.isBlank(nickname)) {

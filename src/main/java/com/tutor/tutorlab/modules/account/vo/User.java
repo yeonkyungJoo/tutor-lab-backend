@@ -70,6 +70,8 @@ public class User extends BaseEntity {
 
     private boolean deleted = false;
     private LocalDateTime deletedAt;
+    @Lob
+    private String quitReason;
 
     // TODO - Notification과 양방향
 

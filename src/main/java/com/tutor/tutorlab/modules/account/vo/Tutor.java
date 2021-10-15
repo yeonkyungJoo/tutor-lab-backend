@@ -2,7 +2,6 @@ package com.tutor.tutorlab.modules.account.vo;
 
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
-import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import lombok.*;
 
 import javax.persistence.*;
@@ -42,10 +41,6 @@ public class Tutor extends BaseEntity {
     private List<Education> educations = new ArrayList<>();
 
     private boolean specialist;
-
-    @ToString.Exclude
-    @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Chatroom> chatrooms = new ArrayList<>();
 
     public List<String> getSubjectList() {
         if (this.subjects.length() > 0) {
