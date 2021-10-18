@@ -5,7 +5,6 @@ import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
-import com.tutor.tutorlab.modules.purchase.vo.Pick;
 import lombok.*;
 
 import javax.persistence.*;

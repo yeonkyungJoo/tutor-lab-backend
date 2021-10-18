@@ -11,8 +11,11 @@ import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateReques
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
+import com.tutor.tutorlab.modules.lecture.repository.LectureQueryRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
-import com.tutor.tutorlab.modules.lecture.repository.LectureRepositorySupport;
+import com.tutor.tutorlab.modules.lecture.repository.LectureSearchRepository;
+import com.tutor.tutorlab.modules.lecture.repository.dto.LectureReviewQueryDto;
+import com.tutor.tutorlab.modules.lecture.repository.dto.LectureTutorQueryDto;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
@@ -21,6 +24,7 @@ import com.tutor.tutorlab.modules.purchase.repository.PickRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,8 +33,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
+import java.util.stream.Collectors;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
 import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
@@ -41,17 +47,14 @@ import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
 public class LectureServiceImpl extends AbstractService implements LectureService {
 
     private final LectureRepository lectureRepository;
+    private final LectureSearchRepository lectureSearchRepository;
+    private final LectureQueryRepository lectureQueryRepository;
+
     private final TutorRepository tutorRepository;
-    private final LectureRepositorySupport lectureRepositorySupport;
-
     private final PickRepository pickRepository;
-
     private final EnrollmentService enrollmentService;
     private final EnrollmentRepository enrollmentRepository;
-
     private final ReviewRepository reviewRepository;
-
-    // private final LectureMapstructUtil lectureMapstructUtil;
 
     private Lecture getLecture(Long lectureId) {
         return lectureRepository.findById(lectureId)
@@ -61,73 +64,80 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     @Override
     public LectureResponse getLectureResponse(Long lectureId) {
 
-        // TODO - CHECK : mapstruct vs 생성자
-        // return lectureMapstructUtil.getLectureResponse(getLecture(lectureId));
-        // return new LectureResponse(getLecture(lectureId));
-
         // TODO - CHECK : 쿼리 확인
         Lecture lecture = getLecture(lectureId);
         LectureResponse lectureResponse = new LectureResponse(lecture);
 
-        List<Review> reviews = reviewRepository.findByLectureAndEnrollmentIsNotNull(lecture);
-        lectureResponse.setReviewCount(reviews.size());
-        OptionalDouble scoreAverage = reviews.stream().map(review -> review.getScore()).mapToInt(Integer::intValue).average();
-        lectureResponse.setScoreAverage(scoreAverage.isPresent() ? scoreAverage.getAsDouble() : 0);
+        setLectureReview(lectureResponse);
+        setLectureTutor(lectureResponse);
 
-        lectureResponse.setLectureTutor(getLectureTutorResponse(lecture));
         return lectureResponse;
     }
 
-    private LectureResponse.LectureTutorResponse getLectureTutorResponse(Lecture lecture) {
-
-        Tutor tutor = lecture.getTutor();
-
-        LectureResponse.LectureTutorResponse lectureTutorResponse = new LectureResponse.LectureTutorResponse(tutor);
-        lectureTutorResponse.setLectureCount(lectureRepository.countByTutor(tutor));
-        lectureTutorResponse.setReviewCount(reviewRepository.countByLectureInAndEnrollmentIsNotNull(lectureRepository.findByTutor(tutor)));
-        return lectureTutorResponse;
-    }
-
-//    @Override
-//    public List<LectureResponse> getLectureResponses(LectureListRequest lectureListRequest) {
-//
-//        List<LectureResponse> lectures = lectureRepositorySupport.findLecturesBySearch(lectureListRequest).stream()
-//                // TODO - CHECK : mapstruct vs 생성자
-//                .map(LectureResponse::new).collect(Collectors.toList());
-//
-//        // TODO - CHECK : 쿼리 확인
-//        lectures.forEach(lectureResponse -> {
-//            Lecture lecture = getLecture(lectureResponse.getId());
-//            List<Review> reviews = reviewRepository.findByLectureAndEnrollmentIsNotNull(lecture);
-//            lectureResponse.setReviewCount(reviews.size());
-//            OptionalDouble scoreAverage = reviews.stream().map(review -> review.getScore()).mapToInt(Integer::intValue).average();
-//            lectureResponse.setScoreAverage(scoreAverage.isPresent() ? scoreAverage.getAsDouble() : 0);
-//        });
-//
-//        return lectures;
-//    }
-
+    // TODO - CHECK : mapstruct vs 생성자
+    // return lectureMapstructUtil.getLectureResponse(getLecture(lectureId));
     @Override
     public Page<LectureResponse> getLectureResponses(String zone, LectureListRequest lectureListRequest, Integer page) {
 
-        Page<LectureResponse> lectures = lectureRepositorySupport.findLecturesByZoneAndSearch(
+        Page<LectureResponse> lectures = lectureSearchRepository.findLecturesByZoneAndSearch(
                 AddressUtils.convertStringToEmbeddableAddress(zone), lectureListRequest, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(LectureResponse::new);
-        // TODO - CHECK : mapstruct vs 생성자
 
-        // TODO - 쿼리
-        // TODO - CHECK : 쿼리 확인
+        // 컬렉션 조회 최적화
+        // - 컬렉션을 MAP 한방에 조회
+        List<Long> lectureIds = lectures.stream().map(LectureResponse::getId).collect(Collectors.toList());
+        Map<Long, LectureReviewQueryDto> lectureReviewQueryDtoMap = lectureQueryRepository.findLectureReviewQueryDtoMap(lectureIds);
+        Map<Long, LectureTutorQueryDto> lectureTutorQueryDtoMap = lectureQueryRepository.findLectureTutorQueryDtoMap(lectureIds);
         lectures.forEach(lectureResponse -> {
-            Lecture lecture = getLecture(lectureResponse.getId());
-            List<Review> reviews = reviewRepository.findByLectureAndEnrollmentIsNotNull(lecture);
-            lectureResponse.setReviewCount(reviews.size());
-            OptionalDouble scoreAverage = reviews.stream().map(review -> review.getScore()).mapToInt(Integer::intValue).average();
-            lectureResponse.setScoreAverage(scoreAverage.isPresent() ? scoreAverage.getAsDouble() : 0);
 
-            lectureResponse.setLectureTutor(getLectureTutorResponse(lecture));
+            LectureReviewQueryDto lectureReviewQueryDto = lectureReviewQueryDtoMap.get(lectureResponse.getId());
+            if (lectureReviewQueryDto != null) {
+                lectureResponse.setReviewCount(lectureReviewQueryDto.getReviewCount().intValue());
+                lectureResponse.setScoreAverage(lectureReviewQueryDto.getScoreAverage());
+            } else {
+                lectureResponse.setReviewCount(0);
+                lectureResponse.setScoreAverage(0);
+            }
+
+            LectureTutorQueryDto lectureTutorQueryDto = lectureTutorQueryDtoMap.get(lectureResponse.getLectureTutor().getTutorId());
+            if (lectureTutorQueryDto != null) {
+                lectureResponse.getLectureTutor().setLectureCount(lectureTutorQueryDto.getLectureCount().intValue());
+                lectureResponse.getLectureTutor().setReviewCount(lectureTutorQueryDto.getReviewCount().intValue());
+            } else {
+                lectureResponse.getLectureTutor().setLectureCount(0);
+                lectureResponse.getLectureTutor().setReviewCount(0);
+            }
+
         });
 
+//        lectures.forEach(lectureResponse -> {
+//            setLectureReview(lectureResponse);
+//            setLectureTutor(lectureResponse);
+//        });
+
         return lectures;
+    }
+
+    private void setLectureReview(LectureResponse lectureResponse) {
+
+        Lecture lecture = getLecture(lectureResponse.getId());
+
+        List<Review> reviews = reviewRepository.findByLectureAndEnrollmentIsNotNull(lecture);
+        lectureResponse.setReviewCount(reviews.size());
+        OptionalDouble scoreAverage = reviews.stream().map(Review::getScore).mapToInt(Integer::intValue).average();
+        lectureResponse.setScoreAverage(scoreAverage.isPresent() ? scoreAverage.getAsDouble() : 0);
+
+    }
+
+    private void setLectureTutor(LectureResponse lectureResponse) {
+
+        Tutor tutor = getLecture(lectureResponse.getId()).getTutor();
+        List<Lecture> lectures = lectureRepository.findByTutor(tutor);
+
+        LectureResponse.LectureTutorResponse lectureTutorResponse = lectureResponse.getLectureTutor();
+        lectureTutorResponse.setLectureCount(lectures.size());
+        lectureTutorResponse.setReviewCount(reviewRepository.countByLectureInAndEnrollmentIsNotNull(lectures));
+        lectureResponse.setLectureTutor(lectureTutorResponse);
     }
 
     @Transactional

@@ -25,15 +25,15 @@ public class LectureResponse {
     private List<SystemTypeResponse> systemTypes;
     private List<LecturePriceResponse> lecturePrices;
     private List<LectureSubjectResponse> lectureSubjects;
-    private LectureTutorResponse lectureTutor;
 
     // 리뷰 총 개수
     private Integer reviewCount;
     // 강의 평점
     private double scoreAverage;
 
+    private LectureTutorResponse lectureTutor;
 
-    // TODO - 쿼리
+
     public LectureResponse(Lecture lecture) {
         this.id = lecture.getId();
         this.thumbnail = lecture.getThumbnail();
@@ -42,17 +42,23 @@ public class LectureResponse {
         this.introduce = lecture.getIntroduce();
         this.content = lecture.getContent();
         this.difficultyType = lecture.getDifficultyType();
+
         this.systemTypes = lecture.getSystemTypes().stream()
                 .map(SystemTypeResponse::new).collect(Collectors.toList());
+
         this.lecturePrices = lecture.getLecturePrices().stream()
                 .map(LecturePriceResponse::new).collect(Collectors.toList());
+
         this.lectureSubjects = lecture.getLectureSubjects().stream()
                 .map(LectureSubjectResponse::new).collect(Collectors.toList());
+
+        this.lectureTutor = new LectureTutorResponse(lecture.getTutor());
     }
 
     @Data
     public static class LectureTutorResponse {
 
+        private Long tutorId;
         // 총 강의 수
         private Integer lectureCount;
         // 리뷰 개수
@@ -63,6 +69,7 @@ public class LectureResponse {
         private String image;
 
         public LectureTutorResponse(Tutor tutor) {
+            this.tutorId = tutor.getId();
             this.lectureCount = 0;
             this.reviewCount = 0;
             this.nickname = tutor.getUser().getNickname();

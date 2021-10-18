@@ -12,7 +12,7 @@ import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
-import com.tutor.tutorlab.modules.lecture.repository.LectureRepositorySupport;
+import com.tutor.tutorlab.modules.lecture.repository.LectureSearchRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.notification.repository.NotificationRepository;
@@ -82,7 +82,7 @@ public abstract class AbstractTest {
     @Autowired
     protected LectureRepository lectureRepository;
     @Autowired
-    protected LectureRepositorySupport lectureRepositorySupport;
+    protected LectureSearchRepository lectureSearchRepository;
     @Autowired
     protected LectureSubjectRepository lectureSubjectRepository;
     @Autowired

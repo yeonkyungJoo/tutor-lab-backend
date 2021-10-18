@@ -22,8 +22,7 @@ import static com.tutor.tutorlab.utils.CommonUtil.COMMA;
 public class Tutor extends BaseEntity {
 
     // TODO - CHECK : 페치 조인
-    // @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @NotNull
     @JoinColumn(name = "user_id",
                 referencedColumnName = "user_id",
