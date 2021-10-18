@@ -64,10 +64,9 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     @Override
     public LectureResponse getLectureResponse(Long lectureId) {
 
-        // TODO - CHECK : 쿼리 확인
         Lecture lecture = getLecture(lectureId);
         LectureResponse lectureResponse = new LectureResponse(lecture);
-
+        // TODO - 쿼리
         setLectureReview(lectureResponse);
         setLectureTutor(lectureResponse);
 
@@ -99,13 +98,14 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
                 lectureResponse.setScoreAverage(0);
             }
 
-            LectureTutorQueryDto lectureTutorQueryDto = lectureTutorQueryDtoMap.get(lectureResponse.getLectureTutor().getTutorId());
+            LectureResponse.LectureTutorResponse lectureTutorResponse = lectureResponse.getLectureTutor();
+            LectureTutorQueryDto lectureTutorQueryDto = lectureTutorQueryDtoMap.get(lectureTutorResponse.getTutorId());
             if (lectureTutorQueryDto != null) {
-                lectureResponse.getLectureTutor().setLectureCount(lectureTutorQueryDto.getLectureCount().intValue());
-                lectureResponse.getLectureTutor().setReviewCount(lectureTutorQueryDto.getReviewCount().intValue());
+                lectureTutorResponse.setLectureCount(lectureTutorQueryDto.getLectureCount().intValue());
+                lectureTutorResponse.setReviewCount(lectureTutorQueryDto.getReviewCount().intValue());
             } else {
-                lectureResponse.getLectureTutor().setLectureCount(0);
-                lectureResponse.getLectureTutor().setReviewCount(0);
+                lectureTutorResponse.setLectureCount(0);
+                lectureTutorResponse.setReviewCount(0);
             }
 
         });

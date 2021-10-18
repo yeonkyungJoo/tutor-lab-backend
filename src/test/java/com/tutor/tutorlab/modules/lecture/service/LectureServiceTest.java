@@ -13,7 +13,6 @@ import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
-import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.purchase.vo.Pick;
@@ -202,7 +201,7 @@ public class LectureServiceTest extends AbstractTest {
         // cancellation
         assertNull(cancellationRepository.findByEnrollmentId(enrollment.getId()));
         // review
-        assertTrue(reviewRepository.findByLectureId(lectureId).isEmpty());
+        assertTrue(reviewRepository.findAllByLectureId(lectureId).isEmpty());
         // chatroom
         chatroomRepository.findAll().forEach(chatroom -> {
             assertNotEquals(chatroom.getEnrollment().getLecture().getId(), lectureId);

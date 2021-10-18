@@ -61,7 +61,7 @@ public class InitService {
     private final NotificationRepository notificationRepository;
     private final SubjectRepository subjectRepository;
 
-    @PostConstruct
+    // @PostConstruct
     @Transactional
     void init() {
 
