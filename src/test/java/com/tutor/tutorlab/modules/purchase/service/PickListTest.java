@@ -1,6 +1,5 @@
 package com.tutor.tutorlab.modules.purchase.service;
 
-import com.tutor.tutorlab.modules.account.controller.response.TutorResponse;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.purchase.controller.response.PickResponse;
