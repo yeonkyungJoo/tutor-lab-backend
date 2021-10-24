@@ -31,7 +31,7 @@ public class Message {
     private boolean checked;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Message(MessageType type, Long chatroomId, String sessionId, String senderNickname, Long receiverId, String message, LocalDateTime sentAt, boolean checked) {
+    private Message(MessageType type, Long chatroomId, String sessionId, String senderNickname, Long receiverId, String message, LocalDateTime sentAt, boolean checked) {
         this.type = type;
         this.chatroomId = chatroomId;
         this.sessionId = sessionId;

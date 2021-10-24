@@ -68,7 +68,7 @@ public class SignUpRequest {
     private String image;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public SignUpRequest(@NotBlank(message = "이메일 형식의 아이디를 입력해주세요.") @Email String username, @NotBlank(message = "비밀번호를 입력해주세요.") String password, @NotBlank(message = "비밀번호 확인을 입력해주세요.") String passwordConfirm, @NotBlank(message = "이름을 입력해주세요.") String name, String gender, @Size(min = 10, max = 10) String birth, String phoneNumber, @Email String email, @NotBlank String nickname, String bio, @NotBlank String zone, String image) {
+    private SignUpRequest(@NotBlank(message = "이메일 형식의 아이디를 입력해주세요.") @Email String username, @NotBlank(message = "비밀번호를 입력해주세요.") String password, @NotBlank(message = "비밀번호 확인을 입력해주세요.") String passwordConfirm, @NotBlank(message = "이름을 입력해주세요.") String name, String gender, @Size(min = 10, max = 10) String birth, String phoneNumber, @Email String email, @NotBlank String nickname, String bio, @NotBlank String zone, String image) {
         this.username = username;
         this.password = password;
         this.passwordConfirm = passwordConfirm;

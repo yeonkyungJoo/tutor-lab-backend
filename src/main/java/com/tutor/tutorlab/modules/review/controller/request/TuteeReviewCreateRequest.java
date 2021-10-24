@@ -22,7 +22,7 @@ public class TuteeReviewCreateRequest {
     private String content;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public TuteeReviewCreateRequest(@Min(0) @Max(5) @NotNull Integer score, @NotBlank String content) {
+    private TuteeReviewCreateRequest(@Min(0) @Max(5) @NotNull Integer score, @NotBlank String content) {
         this.score = score;
         this.content = content;
     }

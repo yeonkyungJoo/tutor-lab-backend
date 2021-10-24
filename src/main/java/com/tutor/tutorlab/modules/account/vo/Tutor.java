@@ -66,7 +66,7 @@ public class Tutor extends BaseEntity {
     }
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Tutor(@NotNull User user, String subjects, boolean specialist) {
+    private Tutor(@NotNull User user, String subjects, boolean specialist) {
         this.user = user;
         this.subjects = subjects;
         this.specialist = specialist;

@@ -36,7 +36,7 @@ public class LectureListRequest {
 //    }
 
     @Builder(access = AccessLevel.PRIVATE)
-    public LectureListRequest(String title) {
+    private LectureListRequest(String title) {
         this.title = title;
     }
 

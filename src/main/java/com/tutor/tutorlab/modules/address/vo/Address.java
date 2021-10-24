@@ -32,7 +32,7 @@ public class Address {
     private String dongMyunLi;
 
     @Builder(access = PRIVATE)
-    public Address(String state, String siGun, String gu, String dongMyunLi) {
+    private Address(String state, String siGun, String gu, String dongMyunLi) {
         this.state = state;
         this.siGun = siGun;
         this.gu = gu;

@@ -28,7 +28,7 @@ public class Career extends BaseEntity {
     private boolean present;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Career(Tutor tutor, String companyName, String duty, LocalDate startDate, LocalDate endDate, boolean present) {
+    private Career(Tutor tutor, String companyName, String duty, LocalDate startDate, LocalDate endDate, boolean present) {
         this.tutor = tutor;
         this.companyName = companyName;
         this.duty = duty;

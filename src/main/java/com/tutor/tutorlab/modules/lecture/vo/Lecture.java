@@ -84,7 +84,7 @@ public class Lecture extends BaseEntity {
     }
 
     @Builder(access = PRIVATE)
-    public Lecture(Tutor tutor, String title, String subTitle, String introduce, String content, DifficultyType difficultyType, List<SystemType> systemTypes, String thumbnail) {
+    private Lecture(Tutor tutor, String title, String subTitle, String introduce, String content, DifficultyType difficultyType, List<SystemType> systemTypes, String thumbnail) {
         this.tutor = tutor;
         this.title = title;
         this.subTitle = subTitle;

@@ -25,7 +25,7 @@ public class TutorUpdateRequest {
     private boolean specialist;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public TutorUpdateRequest(String subjects, boolean specialist) {
+    private TutorUpdateRequest(String subjects, boolean specialist) {
         this.subjects = subjects;
         this.specialist = specialist;
     }

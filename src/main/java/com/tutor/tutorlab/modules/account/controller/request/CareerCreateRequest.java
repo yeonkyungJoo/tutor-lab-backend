@@ -38,7 +38,7 @@ public class CareerCreateRequest {
     private boolean present;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public CareerCreateRequest(String companyName, String duty, String startDate, String endDate, boolean present) {
+    private CareerCreateRequest(String companyName, String duty, String startDate, String endDate, boolean present) {
         this.companyName = companyName;
         this.duty = duty;
         this.startDate = startDate;

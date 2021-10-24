@@ -39,7 +39,7 @@ public class EducationCreateRequest {
     private String degree;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public EducationCreateRequest(String schoolName, String major, String entranceDate, String graduationDate, double score, String degree) {
+    private EducationCreateRequest(String schoolName, String major, String entranceDate, String graduationDate, double score, String degree) {
         this.schoolName = schoolName;
         this.major = major;
         this.entranceDate = entranceDate;

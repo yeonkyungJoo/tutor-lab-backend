@@ -17,7 +17,7 @@ public class FileRequest {
     private long size;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public FileRequest(String uuid, String name, String contentType, FileType type, long size) {
+    private FileRequest(String uuid, String name, String contentType, FileType type, long size) {
         this.uuid = uuid;
         this.name = name;
         this.contentType = contentType;

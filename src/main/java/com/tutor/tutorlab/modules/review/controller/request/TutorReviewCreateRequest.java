@@ -15,7 +15,7 @@ public class TutorReviewCreateRequest {
     private String content;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public TutorReviewCreateRequest(@NotBlank String content) {
+    private TutorReviewCreateRequest(@NotBlank String content) {
         this.content = content;
     }
 

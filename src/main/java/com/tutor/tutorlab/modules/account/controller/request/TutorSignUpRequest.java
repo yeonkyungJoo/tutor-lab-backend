@@ -29,7 +29,7 @@ public class TutorSignUpRequest {
     private boolean specialist;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public TutorSignUpRequest(String subjects, List<CareerCreateRequest> careers, List<EducationCreateRequest> educations, boolean specialist) {
+    private TutorSignUpRequest(String subjects, List<CareerCreateRequest> careers, List<EducationCreateRequest> educations, boolean specialist) {
         this.subjects = subjects;
         if (careers != null) {
             this.careers.addAll(careers);
@@ -50,7 +50,7 @@ public class TutorSignUpRequest {
     }
 
     @Builder(access = AccessLevel.PRIVATE)
-    public TutorSignUpRequest(String subjects, boolean specialist) {
+    private TutorSignUpRequest(String subjects, boolean specialist) {
         this.subjects = subjects;
         this.specialist = specialist;
     }

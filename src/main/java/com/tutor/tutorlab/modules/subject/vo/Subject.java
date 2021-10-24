@@ -31,7 +31,7 @@ public class Subject {
     private String krSubject;
 
     @Builder(access = PRIVATE)
-    public Subject(LearningKind learningKind, String krSubject) {
+    private Subject(LearningKind learningKind, String krSubject) {
         this.learningKind = learningKind;
         this.krSubject = krSubject;
     }

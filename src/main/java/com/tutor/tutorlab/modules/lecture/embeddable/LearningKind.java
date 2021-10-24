@@ -17,7 +17,7 @@ public class LearningKind {
     private String learningKind;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public LearningKind(Long learningKindId, String learningKind) {
+    private LearningKind(Long learningKindId, String learningKind) {
         this.learningKindId = learningKindId;
         this.learningKind = learningKind;
     }

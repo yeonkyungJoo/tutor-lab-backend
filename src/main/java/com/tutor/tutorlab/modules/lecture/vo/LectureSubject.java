@@ -38,7 +38,7 @@ public class LectureSubject extends BaseEntity {
 
     // TODO - Enum Converter
     @Builder(access = PRIVATE)
-    public LectureSubject(Lecture lecture, Long learningKindId, String learningKind, String krSubject) {
+    private LectureSubject(Lecture lecture, Long learningKindId, String learningKind, String krSubject) {
         this.lecture = lecture;
         this.learningKind = LearningKind.of(learningKindId, learningKind);
         this.krSubject = krSubject;
