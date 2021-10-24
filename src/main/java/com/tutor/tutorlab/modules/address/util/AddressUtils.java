@@ -24,9 +24,9 @@ public class AddressUtils {
 
         String[] split = address.split(SPACE);
         if (split.length == 2) {
-            return new Address(split[0], split[1], null);
+            return Address.of(split[0], split[1], null);
         } else if (split.length == 3) {
-            return new Address(split[0], split[1], split[2]);
+            return Address.of(split[0], split[1], split[2]);
         }
         return null;
     }

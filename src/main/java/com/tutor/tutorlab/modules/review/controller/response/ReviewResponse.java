@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class ReviewResponse {
 
-    // TODO - 쿼리
     public ReviewResponse(Review review) {
         this.score = review.getScore();
         this.content = review.getContent();

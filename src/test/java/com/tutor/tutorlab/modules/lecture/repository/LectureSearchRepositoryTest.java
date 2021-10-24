@@ -43,7 +43,7 @@ class LectureSearchRepositoryTest extends AbstractTest {
         // Then
         Page<Lecture> lectures = lectureSearchRepository.findLecturesByZone(zone, PageRequest.of(0, 20));
         assertEquals(1, lectures.getTotalElements());
-        lectures = lectureSearchRepository.findLecturesByZone(new Address("서울특별시", "광진구", "능동"), PageRequest.of(0, 20));
+        lectures = lectureSearchRepository.findLecturesByZone(Address.of("서울특별시", "광진구", "능동"), PageRequest.of(0, 20));
         assertEquals(0, lectures.getTotalElements());
     }
 
