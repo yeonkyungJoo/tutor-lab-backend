@@ -2,13 +2,10 @@ package com.tutor.tutorlab.modules.lecture.repository;
 
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.configuration.auth.WithAccount;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.address.embeddable.Address;
 import com.tutor.tutorlab.modules.address.repository.AddressRepository;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
-import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +14,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
 @SpringBootTest
-class LectureRepositorySupportTest extends AbstractTest {
+class LectureSearchRepositoryTest extends AbstractTest {
 
     @Autowired
     AddressRepository addressRepository;
@@ -46,9 +41,9 @@ class LectureRepositorySupportTest extends AbstractTest {
 
         // When
         // Then
-        Page<Lecture> lectures = lectureRepositorySupport.findLecturesByZone(zone, PageRequest.of(0, 20));
+        Page<Lecture> lectures = lectureSearchRepository.findLecturesByZone(zone, PageRequest.of(0, 20));
         assertEquals(1, lectures.getTotalElements());
-        lectures = lectureRepositorySupport.findLecturesByZone(new Address("서울특별시", "광진구", "능동"), PageRequest.of(0, 20));
+        lectures = lectureSearchRepository.findLecturesByZone(Address.of("서울특별시", "광진구", "능동"), PageRequest.of(0, 20));
         assertEquals(0, lectures.getTotalElements());
     }
 
@@ -69,7 +64,7 @@ class LectureRepositorySupportTest extends AbstractTest {
 
         // When
         // Then
-        Page<Lecture> lectures = lectureRepositorySupport.findLecturesByZoneAndSearch(zone, LectureListRequest.of("제목"), PageRequest.of(0, 20));
+        Page<Lecture> lectures = lectureSearchRepository.findLecturesByZoneAndSearch(zone, LectureListRequest.of("제목"), PageRequest.of(0, 20));
         assertEquals(1, lectures.getTotalElements());
         lectures.get().forEach(l -> System.out.println(l));
 //        lectures = lectureRepositorySupport.findLecturesByZoneAndSearch(zone, LectureListRequest.of("제목2"), PageRequest.of(0, 20));
@@ -77,7 +72,7 @@ class LectureRepositorySupportTest extends AbstractTest {
 //        lectures = lectureRepositorySupport.findLecturesByZoneAndSearch(new Address("서울특별시", "광진구", "능동"), LectureListRequest.of("제목"), PageRequest.of(0, 20));
 //        assertEquals(0, lectures.getTotalElements());
 
-        lectures = lectureRepositorySupport.findLecturesByZoneAndSearch(null, LectureListRequest.of(""), PageRequest.of(0, 20));
+        lectures = lectureSearchRepository.findLecturesByZoneAndSearch(null, LectureListRequest.of(""), PageRequest.of(0, 20));
         assertEquals(1, lectures.getTotalElements());
     }
 

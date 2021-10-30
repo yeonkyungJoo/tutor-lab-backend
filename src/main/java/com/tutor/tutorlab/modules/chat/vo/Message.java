@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import java.time.LocalDateTime;
 
 @Document(collection = "messages")
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @Getter @Setter
 public class Message {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
     @Enumerated(EnumType.STRING)
@@ -31,7 +33,7 @@ public class Message {
     private boolean checked;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Message(MessageType type, Long chatroomId, String sessionId, String senderNickname, Long receiverId, String message, LocalDateTime sentAt, boolean checked) {
+    private Message(MessageType type, Long chatroomId, String sessionId, String senderNickname, Long receiverId, String message, LocalDateTime sentAt, boolean checked) {
         this.type = type;
         this.chatroomId = chatroomId;
         this.sessionId = sessionId;

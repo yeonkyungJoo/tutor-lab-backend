@@ -74,7 +74,7 @@ public class LectureCreateRequest {
         private String krSubject;
 
         @Builder(access = AccessLevel.PRIVATE)
-        public LectureSubjectCreateRequest(@NotBlank(message = "강의 종류를 선택해주세요.") Long learningKindId, @NotBlank(message = "강의 종류를 선택해주세요.") String learningKind, @NotBlank(message = "언어를 입력해주세요.") String krSubject) {
+        private LectureSubjectCreateRequest(@NotBlank(message = "강의 종류를 선택해주세요.") Long learningKindId, @NotBlank(message = "강의 종류를 선택해주세요.") String learningKind, @NotBlank(message = "언어를 입력해주세요.") String krSubject) {
             this.learningKindId = learningKindId;
             this.learningKind = learningKind;
             this.krSubject = krSubject;
@@ -127,7 +127,7 @@ public class LectureCreateRequest {
         }
 
         @Builder(access = AccessLevel.PRIVATE)
-        public LecturePriceCreateRequest(@NotNull(message = "그룹여부를 선택해주세요.", groups = OrderFirst.class) Boolean isGroup, Integer groupNumber, @NotNull(message = "시간당 수강료를 입력해주세요.", groups = OrderFirst.class) Long pertimeCost, @NotNull(message = "1회당 강의 시간을 입력해주세요.", groups = OrderFirst.class) Integer pertimeLecture, @NotNull(message = "총 강의 횟수를 입력해주세요.", groups = OrderFirst.class) Integer totalTime, @NotNull(message = "최종 수강료를 입력해주세요.", groups = OrderFirst.class) Long totalCost) {
+        private LecturePriceCreateRequest(@NotNull(message = "그룹여부를 선택해주세요.", groups = OrderFirst.class) Boolean isGroup, Integer groupNumber, @NotNull(message = "시간당 수강료를 입력해주세요.", groups = OrderFirst.class) Long pertimeCost, @NotNull(message = "1회당 강의 시간을 입력해주세요.", groups = OrderFirst.class) Integer pertimeLecture, @NotNull(message = "총 강의 횟수를 입력해주세요.", groups = OrderFirst.class) Integer totalTime, @NotNull(message = "최종 수강료를 입력해주세요.", groups = OrderFirst.class) Long totalCost) {
             this.isGroup = isGroup;
             this.groupNumber = groupNumber;
             this.pertimeCost = pertimeCost;
@@ -149,7 +149,7 @@ public class LectureCreateRequest {
     }
 
     @Builder(access = AccessLevel.PRIVATE)
-    public LectureCreateRequest(@NotBlank(message = "강의 소개 메인 이미지를 입력해주세요.", groups = OrderFirst.class) String thumbnailUrl, @Length(min = 1, max = 40, message = "제목을 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "강의 타이틀을 입력해주세요.", groups = OrderFirst.class) String title, @Length(min = 1, max = 25, message = "강의 소제목을 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "강의 소제목을 입력해주세요.", groups = OrderFirst.class) String subTitle, @Length(min = 1, max = 200, message = "내 소개를 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "내 소개를 입력해주세요.", groups = OrderFirst.class) String introduce, @NotNull(message = "난이도를 입력해주세요.", groups = OrderFirst.class) DifficultyType difficulty, @NotBlank(message = "강의 상세내용을 입력해주세요.", groups = OrderFirst.class) String content, @NotNull(message = "강의방식1을 입력해주세요.", groups = OrderFirst.class) List<SystemType> systems, @Valid @Length(min = 1, max = 5, message = "강의방식2는 최소 {min}개 ~ 최대 {max}개만 선택할 수 있습니다.") @NotNull(message = "강의방식2를 입력해주세요.") List<LecturePriceCreateRequest> lecturePrices, @Valid @Length(min = 1, message = "강의종류를 최소 1개 입력해주세요.") @NotNull(message = "강의종류를 입력해주세요.") List<LectureSubjectCreateRequest> subjects) {
+    private LectureCreateRequest(@NotBlank(message = "강의 소개 메인 이미지를 입력해주세요.", groups = OrderFirst.class) String thumbnailUrl, @Length(min = 1, max = 40, message = "제목을 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "강의 타이틀을 입력해주세요.", groups = OrderFirst.class) String title, @Length(min = 1, max = 25, message = "강의 소제목을 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "강의 소제목을 입력해주세요.", groups = OrderFirst.class) String subTitle, @Length(min = 1, max = 200, message = "내 소개를 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "내 소개를 입력해주세요.", groups = OrderFirst.class) String introduce, @NotNull(message = "난이도를 입력해주세요.", groups = OrderFirst.class) DifficultyType difficulty, @NotBlank(message = "강의 상세내용을 입력해주세요.", groups = OrderFirst.class) String content, @NotNull(message = "강의방식1을 입력해주세요.", groups = OrderFirst.class) List<SystemType> systems, @Valid @Length(min = 1, max = 5, message = "강의방식2는 최소 {min}개 ~ 최대 {max}개만 선택할 수 있습니다.") @NotNull(message = "강의방식2를 입력해주세요.") List<LecturePriceCreateRequest> lecturePrices, @Valid @Length(min = 1, message = "강의종류를 최소 1개 입력해주세요.") @NotNull(message = "강의종류를 입력해주세요.") List<LectureSubjectCreateRequest> subjects) {
         this.thumbnailUrl = thumbnailUrl;
         this.title = title;
         this.subTitle = subTitle;

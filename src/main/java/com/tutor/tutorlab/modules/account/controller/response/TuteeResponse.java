@@ -9,7 +9,6 @@ public class TuteeResponse {
     private UserResponse user;
     private String subjects;
 
-    // TODO - 쿼리
     public TuteeResponse(Tutee tutee) {
         this.user = new UserResponse(tutee.getUser());
         this.subjects = tutee.getSubjects();

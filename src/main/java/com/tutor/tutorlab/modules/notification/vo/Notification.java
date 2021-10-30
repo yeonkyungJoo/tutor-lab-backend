@@ -39,7 +39,7 @@ public class Notification extends BaseEntity {
     }
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Notification(User user, NotificationType type) {
+    private Notification(User user, NotificationType type) {
         this.user = user;
         this.type = type;
         this.content = type.getMessage();

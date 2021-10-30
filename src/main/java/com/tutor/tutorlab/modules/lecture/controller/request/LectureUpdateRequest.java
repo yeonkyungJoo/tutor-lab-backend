@@ -74,7 +74,7 @@ public class LectureUpdateRequest {
         private String krSubject;
 
         @Builder(access = AccessLevel.PRIVATE)
-        public LectureSubjectUpdateRequest(@NotBlank(message = "강의 종류를 선택해주세요.") Long learningKindId, @NotBlank(message = "강의 종류를 선택해주세요.") String learningKind, @NotBlank(message = "언어를 입력해주세요.") String krSubject) {
+        private LectureSubjectUpdateRequest(@NotBlank(message = "강의 종류를 선택해주세요.") Long learningKindId, @NotBlank(message = "강의 종류를 선택해주세요.") String learningKind, @NotBlank(message = "언어를 입력해주세요.") String krSubject) {
             this.learningKindId = learningKindId;
             this.learningKind = learningKind;
             this.krSubject = krSubject;
@@ -127,7 +127,7 @@ public class LectureUpdateRequest {
         }
 
         @Builder(access = AccessLevel.PRIVATE)
-        public LecturePriceUpdateRequest(@NotNull(message = "그룹여부를 선택해주세요.", groups = LectureCreateRequest.OrderFirst.class) Boolean isGroup, Integer groupNumber, @NotNull(message = "시간당 수강료를 입력해주세요.", groups = LectureCreateRequest.OrderFirst.class) Long pertimeCost, @NotNull(message = "1회당 강의 시간을 입력해주세요.", groups = LectureCreateRequest.OrderFirst.class) Integer pertimeLecture, @NotNull(message = "총 강의 횟수를 입력해주세요.", groups = LectureCreateRequest.OrderFirst.class) Integer totalTime, @NotNull(message = "최종 수강료를 입력해주세요.", groups = LectureCreateRequest.OrderFirst.class) Long totalCost) {
+        private LecturePriceUpdateRequest(@NotNull(message = "그룹여부를 선택해주세요.", groups = LectureCreateRequest.OrderFirst.class) Boolean isGroup, Integer groupNumber, @NotNull(message = "시간당 수강료를 입력해주세요.", groups = LectureCreateRequest.OrderFirst.class) Long pertimeCost, @NotNull(message = "1회당 강의 시간을 입력해주세요.", groups = LectureCreateRequest.OrderFirst.class) Integer pertimeLecture, @NotNull(message = "총 강의 횟수를 입력해주세요.", groups = LectureCreateRequest.OrderFirst.class) Integer totalTime, @NotNull(message = "최종 수강료를 입력해주세요.", groups = LectureCreateRequest.OrderFirst.class) Long totalCost) {
             this.isGroup = isGroup;
             this.groupNumber = groupNumber;
             this.pertimeCost = pertimeCost;
@@ -149,7 +149,7 @@ public class LectureUpdateRequest {
     }
 
     @Builder(access = AccessLevel.PRIVATE)
-    public LectureUpdateRequest(@NotBlank(message = "강의 소개 메인 이미지를 입력해주세요.", groups = OrderFirst.class) String thumbnailUrl, @Length(min = 1, max = 40, message = "제목을 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "강의 타이틀을 입력해주세요.", groups = OrderFirst.class) String title, @Length(min = 1, max = 25, message = "강의 소제목을 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "강의 소제목을 입력해주세요.", groups = OrderFirst.class) String subTitle, @Length(min = 1, max = 200, message = "내 소개를 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "내 소개를 입력해주세요.", groups = OrderFirst.class) String introduce, @NotNull(message = "난이도를 입력해주세요.", groups = OrderFirst.class) DifficultyType difficulty, @NotBlank(message = "강의 상세내용을 입력해주세요.", groups = OrderFirst.class) String content, @NotNull(message = "강의방식1을 입력해주세요.", groups = OrderFirst.class) List<SystemType> systems, @Valid @NotNull(message = "강의방식2를 입력해주세요.") List<LecturePriceUpdateRequest> lecturePrices, @Valid @NotNull(message = "강의종류를 입력해주세요.") List<LectureSubjectUpdateRequest> subjects) {
+    private LectureUpdateRequest(@NotBlank(message = "강의 소개 메인 이미지를 입력해주세요.", groups = OrderFirst.class) String thumbnailUrl, @Length(min = 1, max = 40, message = "제목을 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "강의 타이틀을 입력해주세요.", groups = OrderFirst.class) String title, @Length(min = 1, max = 25, message = "강의 소제목을 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "강의 소제목을 입력해주세요.", groups = OrderFirst.class) String subTitle, @Length(min = 1, max = 200, message = "내 소개를 {min}자 ~ {max}자 이내로 입력해주세요.", groups = OrderFirst.class) @NotBlank(message = "내 소개를 입력해주세요.", groups = OrderFirst.class) String introduce, @NotNull(message = "난이도를 입력해주세요.", groups = OrderFirst.class) DifficultyType difficulty, @NotBlank(message = "강의 상세내용을 입력해주세요.", groups = OrderFirst.class) String content, @NotNull(message = "강의방식1을 입력해주세요.", groups = OrderFirst.class) List<SystemType> systems, @Valid @NotNull(message = "강의방식2를 입력해주세요.") List<LecturePriceUpdateRequest> lecturePrices, @Valid @NotNull(message = "강의종류를 입력해주세요.") List<LectureSubjectUpdateRequest> subjects) {
         this.thumbnailUrl = thumbnailUrl;
         this.title = title;
         this.subTitle = subTitle;

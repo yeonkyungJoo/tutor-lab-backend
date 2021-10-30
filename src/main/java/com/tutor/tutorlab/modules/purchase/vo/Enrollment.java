@@ -57,7 +57,7 @@ public class Enrollment extends BaseEntity {
     // - @OneToOne : cancellation
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Enrollment(Tutee tutee, Lecture lecture, LecturePrice lecturePrice) {
+    private Enrollment(Tutee tutee, Lecture lecture, LecturePrice lecturePrice) {
         this.tutee = tutee;
         this.lecture = lecture;
         this.lecturePrice = lecturePrice;

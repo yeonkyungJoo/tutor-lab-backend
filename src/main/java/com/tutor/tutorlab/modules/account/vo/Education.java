@@ -29,7 +29,7 @@ public class Education extends BaseEntity {
     private String degree;  // Bachelor, Master, Doctor
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Education(Tutor tutor, String schoolName, String major, LocalDate entranceDate, LocalDate graduationDate, double score, String degree) {
+    private Education(Tutor tutor, String schoolName, String major, LocalDate entranceDate, LocalDate graduationDate, double score, String degree) {
         this.tutor = tutor;
         this.schoolName = schoolName;
         this.major = major;

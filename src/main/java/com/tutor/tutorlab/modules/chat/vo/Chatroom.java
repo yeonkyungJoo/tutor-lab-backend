@@ -45,7 +45,7 @@ public class Chatroom extends BaseEntity {
     private Tutee tutee;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Chatroom(Enrollment enrollment, Tutor tutor, Tutee tutee) {
+    private Chatroom(Enrollment enrollment, Tutor tutor, Tutee tutee) {
         this.enrollment = enrollment;
         this.tutor = tutor;
         this.tutee = tutee;

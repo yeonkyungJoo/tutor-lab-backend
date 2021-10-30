@@ -8,12 +8,11 @@ import java.util.Optional;
 public interface Enumerable {
 
     String getType();
-
     String getName();
 
     static <T extends Enumerable> T find(String type, T[] values) {
-        T findValue = findToNull(type, values);
 
+        T findValue = findToNull(type, values);
         Optional.ofNullable(findValue)
                 .orElseThrow(() -> new RuntimeException(String.format("지원하지 않는 형식 입니다.(형식 : %s)", type)));
 
@@ -21,10 +20,10 @@ public interface Enumerable {
     }
 
     static <T extends Enumerable> T findToNull(String type, T[] values) {
+
         if (StringUtils.isBlank(type)) {
             return null;
         }
-
         return Arrays.stream(values)
                 .filter(value -> value.getType().equals(type))
                 .findFirst()

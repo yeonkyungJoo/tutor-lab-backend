@@ -14,7 +14,7 @@ public class TuteeUpdateRequest {
     private String subjects;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public TuteeUpdateRequest(String subjects) {
+    private TuteeUpdateRequest(String subjects) {
         this.subjects = subjects;
     }
 

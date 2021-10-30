@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.lecture.repository;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.BooleanOperation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -8,6 +9,7 @@ import com.tutor.tutorlab.modules.account.vo.QTutor;
 import com.tutor.tutorlab.modules.account.vo.QUser;
 import com.tutor.tutorlab.modules.address.embeddable.Address;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
+import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
@@ -27,7 +29,7 @@ import java.util.function.Function;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Repository
-public class LectureRepositorySupport {
+public class LectureSearchRepository {
     // TODO - 테스트
     private final JPAQueryFactory jpaQueryFactory;
     private final QLecture lecture = QLecture.lecture;
@@ -118,27 +120,52 @@ public class LectureRepositorySupport {
     public Page<Lecture> findLecturesByZoneAndSearch(Address zone, LectureListRequest request, Pageable pageable) {
 
         QueryResults<Lecture> lectures;
-        if(zone == null && request != null) {
+        if (zone == null && request == null) {
+
             lectures = jpaQueryFactory.selectFrom(lecture)
+                    .innerJoin(lecture.tutor, tutor)
+                    .fetchJoin()
+                    .innerJoin(tutor.user, user)
+                    .fetchJoin()
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .orderBy(lecture.id.asc())
+                    .fetchResults();
+
+        } else if(zone == null && request != null) {
+
+            lectures = jpaQueryFactory.selectFrom(lecture)
+                    .innerJoin(lecture.tutor, tutor)
+                    .fetchJoin()
+                    .innerJoin(tutor.user, user)
+                    .fetchJoin()
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .where(eqTitle(request.getTitle()))
                     .orderBy(lecture.id.asc())
                     .fetchResults();
+
         } else if (zone != null && request == null) {
+
             lectures = jpaQueryFactory.selectFrom(lecture)
                     .innerJoin(lecture.tutor, tutor)
+                    .fetchJoin()
                     .innerJoin(tutor.user, user)
+                    .fetchJoin()
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .where(eqState(zone.getState()),
                             eqSiGunGu(zone.getSiGunGu()))
                     .orderBy(lecture.id.asc())
                     .fetchResults();
+
         } else {
+
             lectures = jpaQueryFactory.selectFrom(lecture)
                     .innerJoin(lecture.tutor, tutor)
+                    .fetchJoin()
                     .innerJoin(tutor.user, user)
+                    .fetchJoin()
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .where(eqState(zone.getState()),

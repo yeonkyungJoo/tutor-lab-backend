@@ -47,7 +47,7 @@ public class LecturePrice extends BaseEntity {
     };
 
     @Builder(access = PRIVATE)
-    public LecturePrice(Lecture lecture, Boolean isGroup, Integer groupNumber, Integer totalTime, Integer pertimeLecture, Long pertimeCost, Long totalCost) {
+    private LecturePrice(Lecture lecture, Boolean isGroup, Integer groupNumber, Integer totalTime, Integer pertimeLecture, Long pertimeCost, Long totalCost) {
         this.lecture = lecture;
         this.isGroup = isGroup;
         this.groupNumber = groupNumber;

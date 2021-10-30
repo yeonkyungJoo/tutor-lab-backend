@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query(value = "select * from review where lecture_id = :lectureId", nativeQuery = true)
-    List<Review> findByLectureId(Long lectureId);
+    List<Review> findAllByLectureId(Long lectureId);
 
     List<Review> findByLecture(Lecture lecture);
     Page<Review> findByLecture(Lecture lecture, Pageable pageable);
@@ -34,4 +34,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // TODO - CHECK : 쿼리
     Integer countByLectureInAndEnrollmentIsNotNull(List<Lecture> lectures);
+
 }

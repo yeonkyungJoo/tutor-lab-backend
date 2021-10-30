@@ -19,7 +19,7 @@ public class Address {
     }
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Address(String state, String siGunGu, String dongMyunLi) {
+    private Address(String state, String siGunGu, String dongMyunLi) {
         this.state = state;
         this.siGunGu = siGunGu;
         this.dongMyunLi = dongMyunLi;

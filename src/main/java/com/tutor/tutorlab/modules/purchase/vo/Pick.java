@@ -33,7 +33,7 @@ public class Pick extends BaseEntity {
     private Lecture lecture;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Pick(Tutee tutee, Lecture lecture) {
+    private Pick(Tutee tutee, Lecture lecture) {
         this.tutee = tutee;
         this.lecture = lecture;
     }

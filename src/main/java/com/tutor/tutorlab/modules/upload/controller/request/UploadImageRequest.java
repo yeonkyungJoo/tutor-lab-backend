@@ -15,7 +15,7 @@ public class UploadImageRequest {
     private MultipartFile file;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public UploadImageRequest(@NotNull(message = "파일을 선택해주세요.") MultipartFile file) {
+    private UploadImageRequest(@NotNull(message = "파일을 선택해주세요.") MultipartFile file) {
         this.file = file;
     }
 

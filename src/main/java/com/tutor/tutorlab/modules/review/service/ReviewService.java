@@ -17,8 +17,9 @@ import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateReq
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
-import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.controller.response.ReviewResponse;
+import com.tutor.tutorlab.modules.review.repository.ReviewQueryRepository;
+import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,7 @@ import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTEE;
 public class ReviewService extends AbstractService {
 
     private final ReviewRepository reviewRepository;
+    private final ReviewQueryRepository reviewQueryRepository;
 
     private final TuteeRepository tuteeRepository;
     private final TutorRepository tutorRepository;
@@ -119,6 +121,7 @@ public class ReviewService extends AbstractService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
         return reviewRepository.findByLecture(lecture, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
+        // return reviewQueryRepository.findReviewsWithUserByLecture(lecture, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
     }
 
     @Transactional(readOnly = true)

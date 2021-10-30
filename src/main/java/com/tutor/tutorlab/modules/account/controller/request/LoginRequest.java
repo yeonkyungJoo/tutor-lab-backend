@@ -22,7 +22,7 @@ public class LoginRequest {
     private String password;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public LoginRequest(String username, String password) {
+    private LoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }

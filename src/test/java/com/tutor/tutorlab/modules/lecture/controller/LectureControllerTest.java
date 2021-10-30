@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @MockMvcTest
@@ -20,6 +23,20 @@ class LectureControllerTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @WithAccount(NAME)
+    @Test
+    void getLectures() throws Exception {
+        // Given
+        // When
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> START");
+        mockMvc.perform(get("/lectures"))
+                .andDo(print())
+                .andExpect(status().isOk());
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> END");
+
+        // Then
+    }
 
     @WithAccount(NAME)
     @Test

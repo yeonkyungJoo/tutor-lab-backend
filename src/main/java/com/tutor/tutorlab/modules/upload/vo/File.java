@@ -32,7 +32,7 @@ public class File extends BaseEntity {
     private Long size;
 
     @Builder(access = PRIVATE)
-    public File(String uuid, FileType type, String name, String contentType, Long size) {
+    private File(String uuid, FileType type, String name, String contentType, Long size) {
         this.uuid = uuid;
         this.type = type;
         this.name = name;

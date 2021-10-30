@@ -63,7 +63,7 @@ public class Review extends BaseEntity {
     private List<Review> children = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Review(Integer score, String content, User user, Enrollment enrollment, Lecture lecture, Review parent) {
+    private Review(Integer score, String content, User user, Enrollment enrollment, Lecture lecture, Review parent) {
         this.score = score;
         this.content = content;
         this.user = user;

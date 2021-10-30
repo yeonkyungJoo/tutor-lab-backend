@@ -24,7 +24,7 @@ public class Tutee extends BaseEntity {
 
     // TODO - CHECK : 페치 조인
     @NotNull
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id",
                 referencedColumnName = "user_id",
                 nullable = false,
