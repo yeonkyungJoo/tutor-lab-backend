@@ -22,12 +22,12 @@ public class ChatController {
 
     private final MessageService messageService;
 
-    @ApiOperation("채팅 메시지 리스트")
-    @GetMapping("/messages")
-    public ResponseEntity<?> getMessages() {
-
-        List<Message> messages = messageService.getMessages();
-        return ResponseEntity.ok(messages);
-    }
+//    @ApiOperation("채팅 메시지 리스트")
+//    @GetMapping("/messages")
+//    public ResponseEntity<?> getMessages() {
+//
+//        List<Message> messages = messageService.getMessages();
+//        return ResponseEntity.ok(messages);
+//    }
 
 }

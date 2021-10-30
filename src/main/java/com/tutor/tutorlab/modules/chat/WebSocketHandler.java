@@ -96,7 +96,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info(object.toJSONString());
 
         if (object.get(CHATROOM_ID) != null) {
-
+//            {
+//                "chatroomId": 38,
+//                "sender": "user2",
+//                "receiver": 43,
+//                "message": "hello"
+//            }
             Long chatroomId = (Long) object.get(CHATROOM_ID);
 
             // 해당 방의 세션에만 메세지 발송

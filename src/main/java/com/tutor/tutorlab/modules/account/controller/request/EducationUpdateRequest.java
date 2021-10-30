@@ -24,7 +24,7 @@ public class EducationUpdateRequest {
     @NotBlank
     private String major;
 
-    @ApiModelProperty(value = "입학일자", example = "2021-01-01", required = true)
+    @ApiModelProperty(value = "입학일자", example = "2021-01-01", required = false)
     @NotBlank
     private String entranceDate;
 
@@ -58,24 +58,24 @@ public class EducationUpdateRequest {
                 .build();
     }
 
-    @AssertTrue
-    private boolean isGraduationDate() {
-        boolean valid = true;
-
-        try {
-
-            LocalDate entranceDate = LocalDate.parse(getEntranceDate());
-            LocalDate graduationDate = null;
-
-            if (StringUtils.isNotEmpty(getGraduationDate())) {
-                graduationDate = LocalDate.parse(getGraduationDate());
-                valid = entranceDate.isBefore(graduationDate);
-            }
-
-        } catch (DateTimeParseException e) {
-            valid = false;
-        }
-
-        return valid;
-    }
+//    @AssertTrue
+//    private boolean isGraduationDate() {
+//        boolean valid = true;
+//
+//        try {
+//
+//            LocalDate entranceDate = LocalDate.parse(getEntranceDate());
+//            LocalDate graduationDate = null;
+//
+//            if (StringUtils.isNotEmpty(getGraduationDate())) {
+//                graduationDate = LocalDate.parse(getGraduationDate());
+//                valid = entranceDate.isBefore(graduationDate);
+//            }
+//
+//        } catch (DateTimeParseException e) {
+//            valid = false;
+//        }
+//
+//        return valid;
+//    }
 }

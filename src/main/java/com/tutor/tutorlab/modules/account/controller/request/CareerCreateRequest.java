@@ -25,7 +25,7 @@ public class CareerCreateRequest {
     @NotBlank
     private String duty;
 
-    @ApiModelProperty(value = "입사일자", example = "2007-12-03", required = true)
+    @ApiModelProperty(value = "입사일자", example = "2007-12-03", required = false)
     @NotBlank
     private String startDate;
 
@@ -56,33 +56,33 @@ public class CareerCreateRequest {
                 .build();
     }
 
-    @AssertTrue
-    private boolean isEndDate() {
-        boolean valid = true;
-
-        // - if present is true, endDate must be blank
-        // - if present is false, endDate must not be blank
-        if ((isPresent() && StringUtils.isNotEmpty(getEndDate())) ||
-                (!isPresent() && StringUtils.isEmpty(getEndDate()))) {
-            valid = false;
-            return valid;
-        }
-
-        try {
-
-            LocalDate startDate = LocalDate.parse(getStartDate());
-            LocalDate endDate = null;
-
-            if (StringUtils.isNotEmpty(getEndDate())) {
-                endDate = LocalDate.parse(getEndDate());
-                // - startDate < endDate
-                valid = startDate.isBefore(endDate);
-            }
-
-        } catch (DateTimeParseException e) {
-            valid = false;
-        }
-
-        return valid;
-    }
+//    @AssertTrue
+//    private boolean isEndDate() {
+//        boolean valid = true;
+//
+//        // - if present is true, endDate must be blank
+//        // - if present is false, endDate must not be blank
+//        if ((isPresent() && StringUtils.isNotEmpty(getEndDate())) ||
+//                (!isPresent() && StringUtils.isEmpty(getEndDate()))) {
+//            valid = false;
+//            return valid;
+//        }
+//
+//        try {
+//
+//            LocalDate startDate = LocalDate.parse(getStartDate());
+//            LocalDate endDate = null;
+//
+//            if (StringUtils.isNotEmpty(getEndDate())) {
+//                endDate = LocalDate.parse(getEndDate());
+//                // - startDate < endDate
+//                valid = startDate.isBefore(endDate);
+//            }
+//
+//        } catch (DateTimeParseException e) {
+//            valid = false;
+//        }
+//
+//        return valid;
+//    }
 }
