@@ -66,7 +66,6 @@ class UserControllerTest extends AbstractTest {
         // Given
         User user = userRepository.findByUsername(USERNAME).orElse(null);
 
-        tutorSignUpRequest = AbstractTest.getTutorSignUpRequest(true);
         Tutor tutor = tutorService.createTutor(user, tutorSignUpRequest);
         List<Long> careerIds = careerRepository.findByTutor(tutor).stream()
                 .map(career -> career.getId()).collect(Collectors.toList());

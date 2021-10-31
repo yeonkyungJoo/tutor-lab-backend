@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.config.init;
 
 import com.tutor.tutorlab.modules.account.controller.request.*;
+import com.tutor.tutorlab.modules.account.enums.EducationLevelType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
@@ -13,6 +14,7 @@ import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateReq
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class TestDataBuilder {
 
@@ -69,68 +71,64 @@ public class TestDataBuilder {
         return TuteeUpdateRequest.of(subjects);
     }
 
-    public static CareerCreateRequest getCareerCreateRequest(String companyName, String duty) {
+    public static CareerCreateRequest getCareerCreateRequest(String job, String companyName) {
         return CareerCreateRequest.of(
+                job,
                 companyName,
-                duty,
-                "2007-12-03",
-                "2007-12-04",
-                false
+                null,
+                null
         );
     }
 
-    public static CareerUpdateRequest getCareerUpdateRequest(String companyName, String duty, String startDate, String endDate, boolean present) {
+    public static CareerUpdateRequest getCareerUpdateRequest(String job, String companyName, String others, String license) {
         return CareerUpdateRequest.of(
+                job,
                 companyName,
-                duty,
-                startDate,
-                endDate,
-                present
+                others,
+                license
         );
     }
 
-    public static EducationCreateRequest getEducationCreateRequest(String schoolName, String major) {
+    // TODO - Enum Check
+    public static EducationCreateRequest getEducationCreateRequest(EducationLevelType educationLevel, String schoolName, String major) {
         return EducationCreateRequest.of(
+                educationLevel,
                 schoolName,
                 major,
-                "2021-01-01",
-                "2021-02-01",
-                4.01,
-                "Bachelor"
+                null
         );
     }
 
-    public static EducationUpdateRequest getEducationUpdateRequest(String schoolName, String major,
-                                                                   String entranceDate, String graduationDate, double score, String degree) {
+    public static EducationUpdateRequest getEducationUpdateRequest(EducationLevelType educationLevel, String schoolName, String major, String others) {
         return EducationUpdateRequest.of(
+                educationLevel,
                 schoolName,
                 major,
-                entranceDate,
-                graduationDate,
-                score,
-                degree
+                others
         );
     }
 
-    public static TutorSignUpRequest getTutorSignUpRequest(String subjects) {
+    public static TutorSignUpRequest getTutorSignUpRequest(List<CareerCreateRequest> careers, List<EducationCreateRequest> educations) {
         return TutorSignUpRequest.of(
-                subjects,
-                false
+                careers,
+                educations
         );
     }
 
-    public static TutorSignUpRequest getTutorSignUpRequest(String subjects, String companyName, String duty, String schoolName, String major) {
-        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.of(
-                subjects,
-                false
+    public static TutorSignUpRequest getTutorSignUpRequest(String job, String companyName,
+                                                           EducationLevelType educationLevel, String schoolName, String major) {
+        return TutorSignUpRequest.of(
+                Arrays.asList(getCareerCreateRequest(job, companyName)),
+                Arrays.asList(getEducationCreateRequest(educationLevel, schoolName, major))
         );
-        tutorSignUpRequest.addCareerCreateRequest(getCareerCreateRequest(companyName, duty));
-        tutorSignUpRequest.addEducationCreateRequest(getEducationCreateRequest(schoolName, major));
-        return tutorSignUpRequest;
     }
 
-    public static TutorUpdateRequest getTutorUpdateRequest(String subjects, boolean specialist) {
-        return TutorUpdateRequest.of(subjects, specialist);
+    public static TutorUpdateRequest getTutorUpdateRequest(String job, String companyName, String otherCareers, String license,
+                                                           EducationLevelType educationLevel, String schoolName, String major, String otherEducations) {
+        return TutorUpdateRequest.of(
+                Arrays.asList(getCareerUpdateRequest(job, companyName, otherCareers, license)),
+                Arrays.asList(getEducationUpdateRequest(educationLevel, schoolName, major, otherEducations))
+        );
     }
 
     public static LectureCreateRequest.LecturePriceCreateRequest getLecturePriceCreateRequest(Long pertimeCost, Integer pertimeLecture, Integer totalTime) {

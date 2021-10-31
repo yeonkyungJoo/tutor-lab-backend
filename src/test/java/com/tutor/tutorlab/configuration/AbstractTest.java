@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.configuration;
 
 import com.tutor.tutorlab.modules.account.controller.request.*;
+import com.tutor.tutorlab.modules.account.enums.EducationLevelType;
 import com.tutor.tutorlab.modules.account.repository.*;
 import com.tutor.tutorlab.modules.account.service.*;
 import com.tutor.tutorlab.modules.address.vo.Address;
@@ -122,7 +123,7 @@ public abstract class AbstractTest {
     protected final SignUpRequest signUpRequest = getSignUpRequest(NAME, NICKNAME);
     protected final UserUpdateRequest userUpdateRequest = getUserUpdateRequest(EMAIL, NICKNAME);
 
-    protected TutorSignUpRequest tutorSignUpRequest = getTutorSignUpRequest(false);
+    protected TutorSignUpRequest tutorSignUpRequest = getTutorSignUpRequest();
     protected final CareerCreateRequest careerCreateRequest = getCareerCreateRequest();
     protected final CareerUpdateRequest careerUpdateRequest = getCareerUpdateRequest();
     protected final EducationCreateRequest educationCreateRequest = getEducationCreateRequest();
@@ -165,27 +166,18 @@ public abstract class AbstractTest {
     }
 
     private TutorUpdateRequest getTutorUpdateRequest() {
-        return TutorUpdateRequest.of("python", true);
-    }
-
-    public static TutorSignUpRequest getTutorSignUpRequest(boolean include) {
-        TutorSignUpRequest tutorSignUpRequest = TutorSignUpRequest.of(
-                "java,spring",
-                false
+        return TutorUpdateRequest.of(
+                Arrays.asList(getCareerUpdateRequest()),
+                Arrays.asList(getEducationUpdateRequest())
         );
-        if (include) {
-            tutorSignUpRequest.addCareerCreateRequest(getCareerCreateRequest());
-            tutorSignUpRequest.addEducationCreateRequest(getEducationCreateRequest());
-        }
-        return tutorSignUpRequest;
     }
 
-//    private TutorSignUpRequest getTutorSignUpRequest() {
-//        return TutorSignUpRequest.of(
-//                "java,spring",
-//                false
-//        );
-//    }
+    private TutorSignUpRequest getTutorSignUpRequest() {
+        return TutorSignUpRequest.of(
+                Arrays.asList(getCareerCreateRequest()),
+                Arrays.asList(getEducationCreateRequest())
+        );
+    }
 
     private TuteeUpdateRequest getTuteeUpdateRequest() {
         return TuteeUpdateRequest.of("java,spring");
@@ -233,43 +225,37 @@ public abstract class AbstractTest {
 
     public static CareerCreateRequest getCareerCreateRequest() {
         return CareerCreateRequest.of(
-                "tutorlab",
                 "engineer",
-                "2007-12-03",
-                "2007-12-04",
-                false
+                "tutorlab",
+                "",
+                ""
         );
     }
 
     private CareerUpdateRequest getCareerUpdateRequest() {
         return CareerUpdateRequest.of(
-                "tutorlab2",
                 "engineer",
-                "2007-12-03",
-                null,
-                true
+                "tutorlab2",
+                "designer",
+                "computer"
         );
     }
 
     public static EducationCreateRequest getEducationCreateRequest() {
         return EducationCreateRequest.of(
+                EducationLevelType.UNIVERSITY,
                 "school",
                 "computer",
-                "2021-01-01",
-                "2021-02-01",
-                4.01,
-                "Bachelor"
+                ""
         );
     }
 
     private EducationUpdateRequest getEducationUpdateRequest() {
         return EducationUpdateRequest.of(
+                EducationLevelType.UNIVERSITY,
                 "school",
                 "computer science",
-                "2021-01-01",
-                "2021-09-01",
-                4.10,
-                "Master"
+                "design"
         );
     }
 

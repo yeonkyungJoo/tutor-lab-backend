@@ -24,7 +24,6 @@ import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
-import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -82,20 +81,14 @@ public class TutorService extends AbstractService {
         user = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException(USER));
         user.setRole(RoleType.TUTOR);
 
-        Tutor tutor = Tutor.of(
-                user,
-                tutorSignUpRequest.getSubjects(),
-                tutorSignUpRequest.isSpecialist()
-        );
-
+        Tutor tutor = Tutor.of(user);
         tutorSignUpRequest.getCareers().forEach(careerCreateRequest -> {
             Career career = Career.of(
                     tutor,
+                    careerCreateRequest.getJob(),
                     careerCreateRequest.getCompanyName(),
-                    careerCreateRequest.getDuty(),
-                    LocalDateTimeUtil.getStringToDate(careerCreateRequest.getStartDate()),
-                    LocalDateTimeUtil.getStringToDate(careerCreateRequest.getEndDate()),
-                    careerCreateRequest.isPresent()
+                    careerCreateRequest.getOthers(),
+                    careerCreateRequest.getLicense()
             );
             tutor.addCareer(career);
         });
@@ -103,12 +96,10 @@ public class TutorService extends AbstractService {
         tutorSignUpRequest.getEducations().forEach(educationCreateRequest -> {
             Education education = Education.of(
                     tutor,
+                    educationCreateRequest.getEducationLevel(),
                     educationCreateRequest.getSchoolName(),
                     educationCreateRequest.getMajor(),
-                    LocalDateTimeUtil.getStringToDate(educationCreateRequest.getEntranceDate()),
-                    LocalDateTimeUtil.getStringToDate(educationCreateRequest.getGraduationDate()),
-                    educationCreateRequest.getScore(),
-                    educationCreateRequest.getDegree()
+                    educationCreateRequest.getOthers()
             );
             tutor.addEducation(education);
         });
@@ -117,13 +108,36 @@ public class TutorService extends AbstractService {
         return tutor;
     }
 
+    // TODO - TEST
     public void updateTutor(User user, TutorUpdateRequest tutorUpdateRequest) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
             .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
 
-        tutor.setSubjects(tutorUpdateRequest.getSubjects());
-        tutor.setSpecialist(tutorUpdateRequest.isSpecialist());
+        tutor.getCareers().clear();
+        tutor.getEducations().clear();
+
+        tutorUpdateRequest.getCareers().forEach(careerUpdateRequest -> {
+            Career career = Career.of(
+                    tutor,
+                    careerUpdateRequest.getJob(),
+                    careerUpdateRequest.getCompanyName(),
+                    careerUpdateRequest.getOthers(),
+                    careerUpdateRequest.getLicense()
+            );
+            tutor.addCareer(career);
+        });
+
+        tutorUpdateRequest.getEducations().forEach(educationUpdateRequest -> {
+            Education education = Education.of(
+                    tutor,
+                    educationUpdateRequest.getEducationLevel(),
+                    educationUpdateRequest.getSchoolName(),
+                    educationUpdateRequest.getMajor(),
+                    educationUpdateRequest.getOthers()
+            );
+            tutor.addEducation(education);
+        });
     }
 
     // TODO - CHECK

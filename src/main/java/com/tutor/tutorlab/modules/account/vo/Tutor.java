@@ -7,11 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
-import static com.tutor.tutorlab.utils.CommonUtil.COMMA;
 
 //@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -29,7 +25,7 @@ public class Tutor extends BaseEntity {
                 nullable = false,
                 foreignKey = @ForeignKey(name = "FK_TUTOR_USER_ID"))
     private User user;
-    private String subjects;
+//    private String subjects;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -39,14 +35,14 @@ public class Tutor extends BaseEntity {
     @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Education> educations = new ArrayList<>();
 
-    private boolean specialist;
+//    private boolean specialist;
 
-    public List<String> getSubjectList() {
-        if (this.subjects.length() > 0) {
-            return Arrays.asList(this.subjects.split(COMMA));
-        }
-        return Collections.emptyList();
-    }
+//    public List<String> getSubjectList() {
+//        if (this.subjects.length() > 0) {
+//            return Arrays.asList(this.subjects.split(COMMA));
+//        }
+//        return Collections.emptyList();
+//    }
 
     public void addCareer(Career career) {
         career.setTutor(this);
@@ -66,17 +62,13 @@ public class Tutor extends BaseEntity {
     }
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Tutor(@NotNull User user, String subjects, boolean specialist) {
+    private Tutor(@NotNull User user) {
         this.user = user;
-        this.subjects = subjects;
-        this.specialist = specialist;
     }
 
-    public static Tutor of(User user, String subjects, boolean specialist) {
+    public static Tutor of(User user) {
         return Tutor.builder()
                 .user(user)
-                .subjects(subjects)
-                .specialist(specialist)
                 .build();
     }
 

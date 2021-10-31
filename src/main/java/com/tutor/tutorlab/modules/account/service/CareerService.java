@@ -10,7 +10,6 @@ import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Career;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,11 +48,10 @@ public class CareerService {
 
         Career career = Career.of(
                 tutor,
+                careerCreateRequest.getJob(),
                 careerCreateRequest.getCompanyName(),
-                careerCreateRequest.getDuty(),
-                LocalDateTimeUtil.getStringToDate(careerCreateRequest.getStartDate()),
-                LocalDateTimeUtil.getStringToDate(careerCreateRequest.getEndDate()),
-                careerCreateRequest.isPresent()
+                careerCreateRequest.getOthers(),
+                careerCreateRequest.getLicense()
         );
         tutor.addCareer(career);
         return careerRepository.save(career);
@@ -67,11 +65,10 @@ public class CareerService {
         Career career = careerRepository.findByTutorAndId(tutor, careerId)
                 .orElseThrow(() -> new EntityNotFoundException(CAREER));
 
+        career.setJob(careerUpdateRequest.getJob());
         career.setCompanyName(careerUpdateRequest.getCompanyName());
-        career.setDuty(careerUpdateRequest.getDuty());
-        career.setStartDate(LocalDateTimeUtil.getStringToDate(careerUpdateRequest.getStartDate()));
-        career.setEndDate(LocalDateTimeUtil.getStringToDate(careerUpdateRequest.getEndDate()));
-        career.setPresent(careerUpdateRequest.isPresent());
+        career.setOthers(careerUpdateRequest.getOthers());
+        career.setLicense(careerUpdateRequest.getLicense());
     }
 
     public void deleteCareer(User user, Long careerId) {
