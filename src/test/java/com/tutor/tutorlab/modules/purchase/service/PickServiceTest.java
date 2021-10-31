@@ -49,7 +49,7 @@ class PickServiceTest extends AbstractTest {
         SignUpRequest signUpRequest = getSignUpRequest("tutor", "tutor");
         tutorUser = loginService.signUp(signUpRequest);
         loginService.verifyEmail(tutorUser.getUsername(), tutorUser.getEmailVerifyToken());
-        tutor = tutorService.createTutor(tutorUser, getTutorSignUpRequest(true));
+        tutor = tutorService.createTutor(tutorUser, tutorSignUpRequest);
 
         lecture1 = lectureService.createLecture(tutorUser, lectureCreateRequest);
         lecture1Id = lecture1.getId();

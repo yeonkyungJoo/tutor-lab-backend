@@ -5,55 +5,50 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 public class CareerUpdateRequest {
 
-    @ApiModelProperty(value = "회사명", example = "tutorlab", required = true)
-    @NotBlank
+    @ApiModelProperty(value = "직업", example = "engineer", required = false)
+    private String job;
+
+    @ApiModelProperty(value = "직장명", example = "tutorlab", required = false)
     private String companyName;
 
-    @ApiModelProperty(value = "직급", example = "engineer", required = true)
-    @NotBlank
-    private String duty;
+    @ApiModelProperty(value = "그 외 경력", example = "", required = false)
+    private String others;
 
-    @ApiModelProperty(value = "입사일자", example = "2007-12-01", required = false)
-    @NotBlank
-    private String startDate;
-
-    @ApiModelProperty(value = "퇴사일자", allowEmptyValue = true, required = false)
-    private String endDate;
-
-    @ApiModelProperty(value = "재직 여부", example = "true", required = true)
-    @NotNull
-    private boolean present;
+    @ApiModelProperty(value = "자격증", example = "", required = false)
+    private String license;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private CareerUpdateRequest(String companyName, String duty, String startDate, String endDate, boolean present) {
+    public CareerUpdateRequest(String job, String companyName, String others, String license) {
+        this.job = job;
         this.companyName = companyName;
-        this.duty = duty;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.present = present;
+        this.others = others;
+        this.license = license;
     }
 
-    public static CareerUpdateRequest of(String companyName, String duty, String startDate, String endDate, boolean present) {
+    public static CareerUpdateRequest of(String job, String companyName, String others, String license) {
         return CareerUpdateRequest.builder()
+                .job(job)
                 .companyName(companyName)
-                .duty(duty)
-                .startDate(startDate)
-                .endDate(endDate)
-                .present(present)
+                .others(others)
+                .license(license)
                 .build();
     }
+
+//    @ApiModelProperty(value = "입사일자", example = "2007-12-01", required = false)
+//    @NotBlank
+//    private String startDate;
+//
+//    @ApiModelProperty(value = "퇴사일자", allowEmptyValue = true, required = false)
+//    private String endDate;
+//
+//    @ApiModelProperty(value = "재직 여부", example = "true", required = true)
+//    @NotNull
+//    private boolean present;
 
 //    @AssertTrue
 //    private boolean isEndDate() {

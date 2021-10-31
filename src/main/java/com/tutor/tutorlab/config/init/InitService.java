@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.config.init;
 
+import com.tutor.tutorlab.modules.account.enums.EducationLevelType;
 import com.tutor.tutorlab.modules.account.repository.*;
 import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.service.TutorService;
@@ -102,8 +103,8 @@ public class InitService {
         User user5 = loginService.signUp(getSignUpRequest("user5", "경상남도 진주시 망경동"));
         Tutee tutee5 = loginService.verifyEmail(user5.getUsername(), user5.getEmailVerifyToken());
 
-        Tutor tutor1 = tutorService.createTutor(user4, getTutorSignUpRequest("python,java", "company1", "engineer", "school1", "computer"));
-        Tutor tutor2 = tutorService.createTutor(user5, getTutorSignUpRequest("go,java", "company2", "engineer", "school2", "science"));
+        Tutor tutor1 = tutorService.createTutor(user4, getTutorSignUpRequest("engineer", "company1", EducationLevelType.HIGH, "school1", "computer"));
+        Tutor tutor2 = tutorService.createTutor(user5, getTutorSignUpRequest("engineer", "company2", EducationLevelType.UNIVERSITY, "school2", "computer"));
 
         // lecture
         Lecture lecture1 = lectureService.createLecture(user4, getLectureCreateRequest("파이썬강의", 1000L, 3, 10, LearningKindType.IT, "파이썬"));

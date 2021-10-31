@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.vo;
 
+import com.tutor.tutorlab.modules.account.enums.EducationLevelType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
 
@@ -21,33 +22,29 @@ public class Education extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_EDUCATION_TUTOR_ID"))
     private Tutor tutor;
 
+    // 최종학력, 학교명, 전공명, 그 외 학력
+    @Enumerated(EnumType.STRING)
+    private EducationLevelType educationLevel;
     private String schoolName;
     private String major;
-    private LocalDate entranceDate;
-    private LocalDate graduationDate;
-    private double score;
-    private String degree;  // Bachelor, Master, Doctor
+    private String others;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Education(Tutor tutor, String schoolName, String major, LocalDate entranceDate, LocalDate graduationDate, double score, String degree) {
+    private Education(Tutor tutor, EducationLevelType educationLevel, String schoolName, String major, String others) {
         this.tutor = tutor;
+        this.educationLevel = educationLevel;
         this.schoolName = schoolName;
         this.major = major;
-        this.entranceDate = entranceDate;
-        this.graduationDate = graduationDate;
-        this.score = score;
-        this.degree = degree;
+        this.others = others;
     }
 
-    public static Education of(Tutor tutor, String schoolName, String major, LocalDate entranceDate, LocalDate graduationDate, double score, String degree) {
+    public static Education of(Tutor tutor, EducationLevelType educationLevel, String schoolName, String major, String others) {
         return Education.builder()
                 .tutor(tutor)
+                .educationLevel(educationLevel)
                 .schoolName(schoolName)
                 .major(major)
-                .entranceDate(entranceDate)
-                .graduationDate(graduationDate)
-                .score(score)
-                .degree(degree)
+                .others(others)
                 .build();
     }
 

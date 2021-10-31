@@ -61,7 +61,6 @@ class TutorServiceTest extends AbstractTest {
 
         Tutor tutor = tutorRepository.findByUser(user);
         assertNotNull(tutor);
-        assertEquals(tutorUpdateRequest.getSubjects(), tutor.getSubjects());
     }
 
     @WithAccount(NAME)

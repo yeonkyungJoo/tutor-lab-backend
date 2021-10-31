@@ -4,7 +4,6 @@ import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 //@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -21,30 +20,28 @@ public class Career extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_CAREER_TUTOR_ID"))
     private Tutor tutor;
 
+    // 직업, 직장명, 그 외 경력, 자격증
+    private String job;
     private String companyName;
-    private String duty;    // 직급
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private boolean present;
+    private String others;
+    private String license;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Career(Tutor tutor, String companyName, String duty, LocalDate startDate, LocalDate endDate, boolean present) {
+    private Career(Tutor tutor, String job, String companyName, String others, String license) {
         this.tutor = tutor;
+        this.job = job;
         this.companyName = companyName;
-        this.duty = duty;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.present = present;
+        this.others = others;
+        this.license = license;
     }
 
-    public static Career of(Tutor tutor, String companyName, String duty, LocalDate startDate, LocalDate endDate, boolean present) {
+    public static Career of(Tutor tutor, String job, String companyName, String others, String license) {
         return Career.builder()
                 .tutor(tutor)
+                .job(job)
                 .companyName(companyName)
-                .duty(duty)
-                .startDate(startDate)
-                .endDate(endDate)
-                .present(present)
+                .others(others)
+                .license(license)
                 .build();
     }
 

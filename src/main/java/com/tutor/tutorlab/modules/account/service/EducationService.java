@@ -10,12 +10,10 @@ import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Education;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.EDUCATION;
@@ -51,12 +49,10 @@ public class EducationService {
 
         Education education = Education.of(
                 tutor,
+                educationCreateRequest.getEducationLevel(),
                 educationCreateRequest.getSchoolName(),
                 educationCreateRequest.getMajor(),
-                LocalDateTimeUtil.getStringToDate(educationCreateRequest.getEntranceDate()),
-                LocalDateTimeUtil.getStringToDate(educationCreateRequest.getGraduationDate()),
-                educationCreateRequest.getScore(),
-                educationCreateRequest.getDegree()
+                educationCreateRequest.getOthers()
         );
         tutor.addEducation(education);
         return educationRepository.save(education);
@@ -70,12 +66,10 @@ public class EducationService {
         Education education = educationRepository.findByTutorAndId(tutor, educationId)
                 .orElseThrow(() -> new EntityNotFoundException(EDUCATION));
 
+        education.setEducationLevel(educationUpdateRequest.getEducationLevel());
         education.setSchoolName(educationUpdateRequest.getSchoolName());
         education.setMajor(educationUpdateRequest.getMajor());
-        education.setEntranceDate(LocalDateTimeUtil.getStringToDate(educationUpdateRequest.getEntranceDate()));
-        education.setGraduationDate(LocalDateTimeUtil.getStringToDate(educationUpdateRequest.getGraduationDate()));
-        education.setScore(educationUpdateRequest.getScore());
-        education.setDegree(educationUpdateRequest.getDegree());
+        education.setOthers(educationUpdateRequest.getOthers());
     }
 
     public void deleteEducation(User user, Long educationId) {
