@@ -5,20 +5,12 @@ import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
 import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.service.LoginService;
-import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
-import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
-import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
-import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,13 +68,11 @@ class EnrollmentControllerTest extends AbstractTest {
                 .andExpect(status().isCreated());
 
         // Then
-        assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
-        Enrollment enrollment = enrollmentRepository.findByTutee(tutee).get(0);
+        assertEquals(1, enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee).size());
+        Enrollment enrollment = enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee).get(0);
         assertAll(
                 () -> assertNotNull(enrollment),
                 () -> assertEquals(lecture.getTitle(), enrollment.getLecture().getTitle()),
-                () -> assertEquals(tutor.getSubjects(), enrollment.getLecture().getTutor().getSubjects()),
-                () -> assertEquals(tutor.isSpecialist(), enrollment.getLecture().getTutor().isSpecialist()),
                 () -> assertEquals(tutee.getUser().getName(), enrollment.getTutee().getUser().getName()),
                 () -> assertEquals(lecturePrice.getIsGroup(), enrollment.getLecturePrice().getIsGroup()),
                 () -> assertEquals(lecturePrice.getGroupNumber(), enrollment.getLecturePrice().getGroupNumber()),

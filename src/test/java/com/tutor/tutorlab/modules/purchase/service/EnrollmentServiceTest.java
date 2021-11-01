@@ -64,13 +64,11 @@ class EnrollmentServiceTest extends AbstractTest {
         enrollmentService.createEnrollment(user, lectureId, lecturePriceId);
 
         // Then
-        assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
-        Enrollment enrollment = enrollmentRepository.findByTutee(tutee).get(0);
+        assertEquals(1, enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee).size());
+        Enrollment enrollment = enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee).get(0);
         assertAll(
                 () -> assertNotNull(enrollment),
                 () -> assertEquals(lecture.getTitle(), enrollment.getLecture().getTitle()),
-                () -> assertEquals(tutor.getSubjects(), enrollment.getLecture().getTutor().getSubjects()),
-                () -> assertEquals(tutor.isSpecialist(), enrollment.getLecture().getTutor().isSpecialist()),
                 () -> assertEquals(tutee.getUser().getName(), enrollment.getTutee().getUser().getName()),
                 () -> assertEquals(lecturePrice.getIsGroup(), enrollment.getLecturePrice().getIsGroup()),
                 () -> assertEquals(lecturePrice.getGroupNumber(), enrollment.getLecturePrice().getGroupNumber()),
@@ -128,7 +126,7 @@ class EnrollmentServiceTest extends AbstractTest {
         Enrollment enrollment = enrollmentService.createEnrollment(user, lectureId, lecturePriceId);
         assertAll(
                 () -> assertFalse(enrollment.isCanceled()),
-                () -> assertEquals(1, enrollmentRepository.findByTutee(tutee).size())
+                () -> assertEquals(1, enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee).size())
         );
 
         assertNotNull(chatroomRepository.findByEnrollment(enrollment));
@@ -139,7 +137,7 @@ class EnrollmentServiceTest extends AbstractTest {
         enrollmentService.cancel(user, lectureId);
 
         // Then
-        assertEquals(0, enrollmentRepository.findByTutee(tutee).size());
+        assertEquals(0, enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee).size());
         assertEquals(1, enrollmentRepository.findAllByTuteeId(tutee.getId()).size());
         assertTrue(enrollment.isCanceled());
 
@@ -171,7 +169,7 @@ class EnrollmentServiceTest extends AbstractTest {
         Long enrollmentId = enrollment.getId();
         assertAll(
                 () -> assertFalse(enrollment.isCanceled()),
-                () -> assertEquals(1, enrollmentRepository.findByTutee(tutee).size())
+                () -> assertEquals(1, enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee).size())
         );
 
         assertNotNull(chatroomRepository.findByEnrollment(enrollment));

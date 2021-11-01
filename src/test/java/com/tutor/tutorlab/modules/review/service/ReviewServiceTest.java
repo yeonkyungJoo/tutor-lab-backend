@@ -81,7 +81,7 @@ class ReviewServiceTest extends AbstractTest {
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
 
         Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
-        assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
+        assertEquals(1, enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee).size());
         assertNull(cancellationRepository.findByEnrollment(enrollment));
         assertNotNull(chatroomRepository.findByEnrollment(enrollment));
 
@@ -155,7 +155,7 @@ class ReviewServiceTest extends AbstractTest {
         LecturePrice lecturePrice1 = lecturePriceRepository.findByLecture(lecture1).get(0);
 
         Enrollment enrollment = enrollmentService.createEnrollment(user, lecture1Id, lecturePrice1.getId());
-        assertEquals(1, enrollmentRepository.findByTutee(tutee).size());
+        assertEquals(1, enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee).size());
         assertNull(cancellationRepository.findByEnrollment(enrollment));
         assertNotNull(chatroomRepository.findByEnrollment(enrollment));
 

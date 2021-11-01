@@ -264,7 +264,7 @@ public class LoginService {
         }
 
         user.setGender(signUpOAuthDetailRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE);
-        user.setBirth(LocalDateTimeUtil.getStringToDate(signUpOAuthDetailRequest.getBirth()));
+        user.setBirthYear(signUpOAuthDetailRequest.getBirthYear());
         user.setPhoneNumber(signUpOAuthDetailRequest.getPhoneNumber());
         user.setEmail(signUpOAuthDetailRequest.getEmail());
         user.setNickname(signUpOAuthDetailRequest.getNickname());
@@ -285,7 +285,7 @@ public class LoginService {
                 bCryptPasswordEncoder.encode(signUpRequest.getPassword()),
                 signUpRequest.getName(),
                 signUpRequest.getGender(),
-                signUpRequest.getBirth(),
+                signUpRequest.getBirthYear(),
                 signUpRequest.getPhoneNumber(),
                 signUpRequest.getEmail(),
                 signUpRequest.getNickname(),

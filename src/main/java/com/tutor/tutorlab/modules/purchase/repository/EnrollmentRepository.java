@@ -15,21 +15,21 @@ import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
-
+// TODO - CHECK
     @Query(value = "select * from enrollment where enrollment_id = :enrollmentId", nativeQuery = true)
     Enrollment findAllById(Long enrollmentId);
 
-    List<Enrollment> findByTutee(Tutee tutee);
+    List<Enrollment> findByTuteeAndCanceledFalseAndClosedFalse(Tutee tutee);
     @Query(value = "select * from enrollment where tutee_id = :tuteeId", nativeQuery = true)
     List<Enrollment> findAllByTuteeId(Long tuteeId);
-    Page<Enrollment> findByTutee(Tutee tutee, Pageable pageable);
+    Page<Enrollment> findByTuteeAndCanceledFalseAndClosedFalse(Tutee tutee, Pageable pageable);
 
     @Query(value = "select * from enrollment where lecture_id = :lectureId", nativeQuery = true)
     List<Enrollment> findAllByLectureId(Long lectureId);
-    Page<Enrollment> findByLecture(Lecture lecture, Pageable pageable);
+    Page<Enrollment> findByLectureAndCanceledFalseAndClosedFalse(Lecture lecture, Pageable pageable);
 
-    Optional<Enrollment> findByLectureAndId(Lecture lecture, Long enrollmentId);
-    Optional<Enrollment> findByTuteeAndLecture(Tutee tutee, Lecture lecture);
+    Optional<Enrollment> findByLectureAndIdAndCanceledFalseAndClosedFalse(Lecture lecture, Long enrollmentId);
+    Optional<Enrollment> findByTuteeAndLectureAndCanceledFalseAndClosedFalse(Tutee tutee, Lecture lecture);
 
     @Query(value = "select * from enrollment where tutee_id = :tuteeId and lecture_id = :lectureId", nativeQuery = true)
     Optional<Enrollment> findAllByTuteeIdAndLectureId(Long tuteeId, Long lectureId);
@@ -49,6 +49,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     @Query(value = "select e from Enrollment e" +
             " join fetch e.lecture l" +
             " join fetch l.tutor t" +
-            " where t.id = :tutorId")
+            " where t.id = :tutorId and (e.closed = false and e.canceled = false)")
     List<Enrollment> findAllWithLectureTutorByTutorId(Long tutorId);
 }

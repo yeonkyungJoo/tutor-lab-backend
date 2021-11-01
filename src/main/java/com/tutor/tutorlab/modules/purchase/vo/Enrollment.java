@@ -11,7 +11,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
-@Where(clause = "closed = false and canceled = false")
+// @Where(clause = "closed = false and canceled = false")
 //@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "enrollment_id"))

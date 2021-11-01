@@ -16,11 +16,10 @@ public class UserUpdateRequest {
     @ApiModelProperty(value = "성별", example = "MALE", required = false)
     private String gender;
 
-    @ApiModelProperty(value = "생년월일", example = "2020-01-01", required = false)
-    @Size(min = 10, max = 10)
-    private String birth;
+    @ApiModelProperty(value = "출생년도", example = "1990", required = false)
+    private String birthYear;
 
-    @ApiModelProperty(value = "연락처", example = "010-1111-2222", required = false)
+    @ApiModelProperty(value = "연락처", example = "01011112222", required = false)
     private String phoneNumber;
 
     @ApiModelProperty(value = "이메일", example = "email@email.com", required = false)
@@ -39,9 +38,9 @@ public class UserUpdateRequest {
     private String image;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private UserUpdateRequest(String gender, @Size(min = 10, max = 10) String birth, String phoneNumber, @Email String email, String nickname, String bio, String zone, String image) {
+    private UserUpdateRequest(String gender, String birthYear, String phoneNumber, String email, String nickname, String bio, String zone, String image) {
         this.gender = gender;
-        this.birth = birth;
+        this.birthYear = birthYear;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.nickname = nickname;
@@ -50,10 +49,10 @@ public class UserUpdateRequest {
         this.image = image;
     }
 
-    public static UserUpdateRequest of(String gender, String birth, String phoneNumber, String email, String nickname, String bio, String zone, String image) {
+    public static UserUpdateRequest of(String gender, String birthYear, String phoneNumber, String email, String nickname, String bio, String zone, String image) {
         return UserUpdateRequest.builder()
                 .gender(gender)
-                .birth(birth)
+                .birthYear(birthYear)
                 .phoneNumber(phoneNumber)
                 .email(email)
                 .nickname(nickname)

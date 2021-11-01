@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller.response;
 
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
@@ -10,9 +11,10 @@ public class UserResponse {
 
     private String username;
     // private String password;
+    private RoleType role;
     private String name;
     private String gender;
-    private String birth;
+    private String birthYear;
     private String phoneNumber;
     private String email;
     private String nickname;
@@ -22,9 +24,10 @@ public class UserResponse {
 
     public UserResponse(User user) {
         this.username = user.getUsername();
+        this.role = user.getRole();
         this.name = user.getName();
         this.gender = user.getGender().toString();
-        this.birth = LocalDateTimeUtil.getDateToString(user.getBirth());
+        this.birthYear = user.getBirthYear();
         this.phoneNumber = user.getPhoneNumber();
         this.email = user.getEmail();
         this.nickname = user.getNickname();

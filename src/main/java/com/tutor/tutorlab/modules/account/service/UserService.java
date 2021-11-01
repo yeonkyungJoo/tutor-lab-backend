@@ -12,7 +12,6 @@ import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.notification.repository.NotificationRepository;
-import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,7 +61,7 @@ public class UserService extends AbstractService {
                 .orElseThrow(() -> new EntityNotFoundException(USER));
 
         user.setGender(userUpdateRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE);
-        user.setBirth(LocalDateTimeUtil.getStringToDate(userUpdateRequest.getBirth()));
+        user.setBirthYear(userUpdateRequest.getBirthYear());
         user.setPhoneNumber(userUpdateRequest.getPhoneNumber());
         user.setEmail(userUpdateRequest.getEmail());
         user.setNickname(userUpdateRequest.getNickname());

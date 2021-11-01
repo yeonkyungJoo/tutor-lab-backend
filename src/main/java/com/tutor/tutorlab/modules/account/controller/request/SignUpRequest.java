@@ -6,10 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,10 +27,12 @@ public class SignUpRequest {
 
     @ApiModelProperty(value = "비밀번호", example = "password", required = true)
     @NotBlank(message = "비밀번호를 입력해주세요.")
+    @Size(min = 6, max = 14)
     private String password;
 
     @ApiModelProperty(value = "비밀번호 확인", example = "password", required = true)
     @NotBlank(message = "비밀번호 확인을 입력해주세요.")
+    @Size(min = 6, max = 14)
     private String passwordConfirm;
 
     @ApiModelProperty(value = "이름", example = "sh", required = true)
@@ -43,11 +42,13 @@ public class SignUpRequest {
     @ApiModelProperty(value = "성별", example = "MALE", required = false)
     private String gender;
 
-    @ApiModelProperty(value = "생년월일", example = "2020-01-01", required = false)
-    @Size(min = 10, max = 10)
-    private String birth;
+//    @ApiModelProperty(value = "생년월일", example = "2020-01-01", required = false)
+//    @Size(min = 10, max = 10)
+//    private String birth;
+    @ApiModelProperty(value = "출생년도", example = "1990", required = false)
+    private String birthYear;
 
-    @ApiModelProperty(value = "연락처", example = "010-1111-2222", required = false)
+    @ApiModelProperty(value = "연락처", example = "01011112222", required = false)
     private String phoneNumber;
 
     @ApiModelProperty(value = "이메일", example = "sh@email.com", required = false)
@@ -68,13 +69,13 @@ public class SignUpRequest {
     private String image;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private SignUpRequest(@NotBlank(message = "이메일 형식의 아이디를 입력해주세요.") @Email String username, @NotBlank(message = "비밀번호를 입력해주세요.") String password, @NotBlank(message = "비밀번호 확인을 입력해주세요.") String passwordConfirm, @NotBlank(message = "이름을 입력해주세요.") String name, String gender, @Size(min = 10, max = 10) String birth, String phoneNumber, @Email String email, @NotBlank String nickname, String bio, @NotBlank String zone, String image) {
+    private SignUpRequest(String username, String password, String passwordConfirm, String name, String gender, String birthYear, String phoneNumber, String email, String nickname, String bio, String zone, String image) {
         this.username = username;
         this.password = password;
         this.passwordConfirm = passwordConfirm;
         this.name = name;
         this.gender = gender;
-        this.birth = birth;
+        this.birthYear = birthYear;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.nickname = nickname;
@@ -83,14 +84,14 @@ public class SignUpRequest {
         this.image = image;
     }
 
-    public static SignUpRequest of(String username, String password, String passwordConfirm, String name, String gender, String birth, String phoneNumber, String email, String nickname, String bio, String zone, String image) {
+    public static SignUpRequest of(String username, String password, String passwordConfirm, String name, String gender, String birthYear, String phoneNumber, String email, String nickname, String bio, String zone, String image) {
         return SignUpRequest.builder()
                 .username(username)
                 .password(password)
                 .passwordConfirm(passwordConfirm)
                 .name(name)
                 .gender(gender)
-                .birth(birth)
+                .birthYear(birthYear)
                 .phoneNumber(phoneNumber)
                 .email(email)
                 .nickname(nickname)

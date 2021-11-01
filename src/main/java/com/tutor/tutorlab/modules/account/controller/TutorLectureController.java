@@ -2,7 +2,7 @@ package com.tutor.tutorlab.modules.account.controller;
 
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.response.TuteeResponse;
-import com.tutor.tutorlab.modules.account.service.TutorService;
+import com.tutor.tutorlab.modules.account.service.TutorLectureService;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
@@ -27,7 +27,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class TutorLectureController {
 
-    private final TutorService tutorService;
+    private final TutorLectureService tutorLectureService;
     private final LectureService lectureService;
     private final ReviewService reviewService;
 
@@ -36,7 +36,7 @@ public class TutorLectureController {
     public ResponseEntity<?> getLectures(@CurrentUser User user,
                                          @RequestParam(defaultValue = "1") Integer page) {
 
-        Page<LectureResponse> lectures = tutorService.getLectureResponses(user, page);
+        Page<LectureResponse> lectures = tutorLectureService.getLectureResponses(user, page);
         return ResponseEntity.ok(lectures);
     }
 
@@ -108,7 +108,7 @@ public class TutorLectureController {
                                                 @PathVariable(name = "lecture_id") Long lectureId,
                                                 @RequestParam(defaultValue = "1") Integer page) {
 
-        Page<TuteeResponse> tutees = tutorService.getTuteeResponsesOfLecture(user, lectureId, page);
+        Page<TuteeResponse> tutees = tutorLectureService.getTuteeResponsesOfLecture(user, lectureId, page);
         return ResponseEntity.ok(tutees);
     }
 
@@ -118,7 +118,7 @@ public class TutorLectureController {
                                                      @PathVariable(name = "lecture_id") Long lectureId,
                                                      @RequestParam(defaultValue = "1") Integer page) {
 
-        Page<EnrollmentResponse> enrollments = tutorService.getEnrollmentResponsesOfLecture(user, lectureId, page);
+        Page<EnrollmentResponse> enrollments = tutorLectureService.getEnrollmentResponsesOfLecture(user, lectureId, page);
         return ResponseEntity.ok(enrollments);
     }
 

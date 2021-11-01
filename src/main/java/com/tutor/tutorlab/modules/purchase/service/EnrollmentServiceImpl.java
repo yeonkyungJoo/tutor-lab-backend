@@ -60,7 +60,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
 
-        return enrollmentRepository.findByTutee(tutee, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
+        return enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(Enrollment::getLecture);
     }
 
@@ -120,7 +120,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
+        Enrollment enrollment = enrollmentRepository.findByTuteeAndLectureAndCanceledFalseAndClosedFalse(tutee, lecture)
                 .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.ENROLLMENT));
 
         // TODO - 환불
@@ -160,7 +160,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        Enrollment enrollment = enrollmentRepository.findByTuteeAndLecture(tutee, lecture)
+        Enrollment enrollment = enrollmentRepository.findByTuteeAndLectureAndCanceledFalseAndClosedFalse(tutee, lecture)
                 .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.ENROLLMENT));
 
         enrollment.close();

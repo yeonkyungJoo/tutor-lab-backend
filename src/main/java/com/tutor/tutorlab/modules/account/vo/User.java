@@ -8,12 +8,10 @@ import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.*;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -37,7 +35,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private GenderType gender;
 
-    private LocalDate birth;
+    private String birthYear;
 
     private String phoneNumber;
     private String email;
@@ -76,7 +74,7 @@ public class User extends BaseEntity {
     // TODO - Notification과 양방향
 
     @Builder(access = AccessLevel.PRIVATE)
-    private User(String username, String password, String name, String gender, String birth, String phoneNumber, String email, String nickname, String bio, String zone, String image,
+    private User(String username, String password, String name, String gender, String birthYear, String phoneNumber, String email, String nickname, String bio, String zone, String image,
                 RoleType role, OAuthType provider, String providerId) {
         this.username = username;
         this.password = password;
@@ -86,7 +84,7 @@ public class User extends BaseEntity {
         } else {
             this.gender = null;
         }
-        this.birth = LocalDateTimeUtil.getStringToDate(birth);
+        this.birthYear = birthYear;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.nickname = nickname;
@@ -98,14 +96,14 @@ public class User extends BaseEntity {
         this.providerId = providerId;
     }
 
-    public static User of(String username, String password, String name, String gender, String birth, String phoneNumber, String email, String nickname, String bio, String zone, String image,
+    public static User of(String username, String password, String name, String gender, String birthYear, String phoneNumber, String email, String nickname, String bio, String zone, String image,
                                   RoleType role, OAuthType provider, String providerId) {
         return User.builder()
                 .username(username)
                 .password(password)
                 .name(name)
                 .gender(gender)
-                .birth(birth)
+                .birthYear(birthYear)
                 .phoneNumber(phoneNumber)
                 .email(email)
                 .nickname(nickname)
