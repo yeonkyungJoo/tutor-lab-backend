@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.account.controller;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.response.TuteeSimpleResponse;
 import com.tutor.tutorlab.modules.account.service.TutorLectureService;
+import com.tutor.tutorlab.modules.account.service.TutorTuteeService;
 import com.tutor.tutorlab.modules.account.vo.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,14 +18,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TutorTuteeController {
 
-    private final TutorLectureService tutorLectureService;
+    private final TutorTuteeService tutorTuteeService;
 
     // 튜티 전체, 강의 진행중인 튜티, 강의 종료된 튜티
     @ApiOperation("튜티 전체 조회 - 페이징")
     public ResponseEntity<?> getMyTutees(@CurrentUser User user,
                                          @RequestParam(name = "closed", required = false) Boolean closed,
                                          @RequestParam(name = "page", defaultValue = "1") Integer page) {
-        Page<TuteeSimpleResponse> tutees = tutorLectureService.getTuteeSimpleResponses(user, closed, page);
+        Page<TuteeSimpleResponse> tutees = tutorTuteeService.getTuteeSimpleResponses(user, closed, page);
         return ResponseEntity.ok(tutees);
     }
 
@@ -39,7 +40,7 @@ public class TutorTuteeController {
     @ApiOperation("튜티 리뷰 조회")
     @GetMapping("/{tutee_id}/reviews")
     public ResponseEntity<?> getReviewsOfMyTutee(@CurrentUser User user,
-                                        @PathVariable(name = "tutee_id") Long tuteeId) {
+                                                 @PathVariable(name = "tutee_id") Long tuteeId) {
         return null;
     }
 

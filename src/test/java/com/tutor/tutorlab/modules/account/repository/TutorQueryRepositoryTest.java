@@ -25,8 +25,9 @@ class TutorQueryRepositoryTest {
     @Test
     void findTuteesOfTutor() {
 
+        Boolean closed = true;
         Tutor tutor = tutorRepository.findById(1L).orElse(null);
-        Page<TuteeSimpleResponse> tuteeSimpleResponses = tutorQueryRepository.findTuteesOfTutor(tutor, PageRequest.of(0, 10, Sort.by("id").ascending()));
+        Page<TuteeSimpleResponse> tuteeSimpleResponses = tutorQueryRepository.findTuteesOfTutor(tutor, closed, PageRequest.of(0, 10, Sort.by("id").ascending()));
         tuteeSimpleResponses.stream().forEach(System.out::println);
     }
 }

@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.account.repository;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tutor.tutorlab.modules.account.controller.response.TuteeSimpleResponse;
 import com.tutor.tutorlab.modules.account.vo.QTutee;
@@ -32,7 +33,7 @@ public class TutorQueryRepository {
     private final QEnrollment enrollment = QEnrollment.enrollment;
     private final QLecture lecture = QLecture.lecture;
 
-    public Page<TuteeSimpleResponse> findTuteesOfTutor(Tutor tutor, Pageable pageable) {
+    public Page<TuteeSimpleResponse> findTuteesOfTutor(Tutor tutor, Boolean closed, Pageable pageable) {
 
         // TODO - CHECK
         // TODO - 서브쿼리 효율성
@@ -55,8 +56,17 @@ public class TutorQueryRepository {
                 .fetchResults();
         */
 
-        List<Long> lectureIds = jpaQueryFactory.select(lecture.id).from(lecture).where(lecture.tutor.eq(tutor)).fetch();
-        List<Long> tuteeIds = jpaQueryFactory.select(tutee.id).from(enrollment).where(enrollment.lecture.id.in(lectureIds)).fetch();
+        List<Long> lectureIds = jpaQueryFactory.select(lecture.id)
+                .from(lecture)
+                .where(lecture.tutor.eq(tutor))
+                .fetch();
+        List<Long> tuteeIds = jpaQueryFactory.select(tutee.id)
+                .from(enrollment)
+                .where(isClosed(closed),
+                        enrollment.canceled.isFalse(),
+                        enrollment.lecture.id.in(lectureIds))
+                .fetch();
+
         QueryResults<Tuple> tuples = jpaQueryFactory.select(tutee.id, tutee.user.id, tutee.user.name)
                 .from(tutee)
                 .innerJoin(tutee.user, user)
@@ -73,6 +83,13 @@ public class TutorQueryRepository {
                         .build())
                 .collect(Collectors.toList());
         return new PageImpl<>(tuteeSimpleResponses, pageable, tuples.getTotal());
+    }
+
+    private BooleanExpression isClosed(Boolean closed) {
+        if (closed == null) {
+            return null;
+        }
+        return enrollment.closed.isTrue();
     }
 
     /*
