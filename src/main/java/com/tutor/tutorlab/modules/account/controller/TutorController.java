@@ -36,6 +36,12 @@ public class TutorController {
         return ResponseEntity.ok(tutors);
     }
 
+    @ApiOperation("내 튜터 정보 조회")
+    @GetMapping("/my-info")
+    public ResponseEntity<?> getMyInfo(@CurrentUser User user) {
+        return ResponseEntity.ok(tutorService.getTutorResponse(user));
+    }
+
     @ApiOperation("튜터 조회")
     @GetMapping("/{tutor_id}")
     public ResponseEntity<?> getTutor(@PathVariable(name = "tutor_id") Long tutorId) {

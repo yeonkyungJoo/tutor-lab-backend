@@ -36,8 +36,6 @@ import static com.tutor.tutorlab.config.exception.EntityNotFoundException.Entity
 public class TutorLectureService extends AbstractService {
 
     private final TutorRepository tutorRepository;
-    private final TutorQueryRepository tutorQueryRepository;
-
     private final LectureRepository lectureRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ReviewRepository reviewRepository;
@@ -48,7 +46,7 @@ public class TutorLectureService extends AbstractService {
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
 
-        return lectureRepository.findByTutor(tutor, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
+        return lectureRepository.findByTutor(tutor, getPageRequest(page));
     }
 
     @Transactional(readOnly = true)
@@ -65,7 +63,7 @@ public class TutorLectureService extends AbstractService {
         Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        return enrollmentRepository.findByLectureAndCanceledFalseAndClosedFalse(lecture, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
+        return enrollmentRepository.findByLectureAndCanceledFalseAndClosedFalse(lecture, getPageRequest(page));
     }
 
     @Transactional(readOnly = true)
@@ -81,7 +79,7 @@ public class TutorLectureService extends AbstractService {
         Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
         // TODO - fetch join
-        return enrollmentRepository.findByLectureAndCanceledFalseAndClosedFalse(lecture, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
+        return enrollmentRepository.findByLectureAndCanceledFalseAndClosedFalse(lecture, getPageRequest(page))
                 .map(Enrollment::getTutee);
     }
 
@@ -115,18 +113,4 @@ public class TutorLectureService extends AbstractService {
         return reviewRepository.findByLecture(lecture, getPageRequest(page));
     }
 
-    public Page<TuteeSimpleResponse> getTuteeSimpleResponses(User user, Boolean closed, Integer page) {
-
-        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
-                .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
-
-
-
-        if (closed == null) {
-
-        } else {
-
-        }
-        return null;
-    }
 }
