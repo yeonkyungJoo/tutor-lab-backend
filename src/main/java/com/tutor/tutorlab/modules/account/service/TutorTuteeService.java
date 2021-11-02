@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.service;
 
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
+import com.tutor.tutorlab.modules.account.controller.response.TuteeLectureResponse;
 import com.tutor.tutorlab.modules.account.controller.response.TuteeSimpleResponse;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TutorQueryRepository;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class TutorTuteeService extends AbstractService {
@@ -23,7 +24,6 @@ public class TutorTuteeService extends AbstractService {
     private final TutorRepository tutorRepository;
     private final TutorQueryRepository tutorQueryRepository;
 
-    @Transactional(readOnly = true)
     public Page<TuteeSimpleResponse> getTuteeSimpleResponses(User user, Boolean closed, Integer page) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
@@ -32,4 +32,11 @@ public class TutorTuteeService extends AbstractService {
         return tutorQueryRepository.findTuteesOfTutor(tutor, closed, getPageRequest(page));
     }
 
+    public Page<TuteeLectureResponse> getTuteeLectureResponses(User user, Long tuteeId, Integer page) {
+
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
+
+        return tutorQueryRepository.findTuteeLecturesOfTutor(tutor, tuteeId, getPageRequest(page));
+    }
 }

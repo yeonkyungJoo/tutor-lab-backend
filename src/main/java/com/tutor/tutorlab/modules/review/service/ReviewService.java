@@ -205,4 +205,8 @@ public class ReviewService extends AbstractService {
         reviewRepository.delete(review);
     }
 
+    @Transactional(readOnly = true)
+    public ReviewResponse getReviewResponse(Long tuteeId, Long lectureId, Long reviewId) {
+        return new ReviewResponse(getReview(lectureId, reviewId));
+    }
 }

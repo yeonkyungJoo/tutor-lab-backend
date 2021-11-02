@@ -62,6 +62,15 @@ public class TutorService extends AbstractService {
         return tutorRepository.findById(tutorId).orElseThrow(() -> new EntityNotFoundException(TUTOR));
     }
 
+    @Transactional(readOnly = true)
+    public TutorResponse getTutorResponse(User user) {
+
+        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
+        return new TutorResponse(tutor);
+    }
+
+    @Transactional(readOnly = true)
     public TutorResponse getTutorResponse(Long tutorId) {
         return new TutorResponse(getTutor(tutorId));
     }
