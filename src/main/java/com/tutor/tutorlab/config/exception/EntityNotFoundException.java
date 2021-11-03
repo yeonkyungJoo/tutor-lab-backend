@@ -32,6 +32,7 @@ public class EntityNotFoundException extends GlobalException {
         LECTURE_PRICE("존재하지 않는 데이터입니다."),
         PICK("존재하지 않는 내역입니다."),
         ENROLLMENT("수강 내역이 존재하지 않습니다."),
+        CANCELLATION("취소 내역이 존재하지 않습니다."),
         REVIEW("존재하지 않는 리뷰입니다."),
         CHATROOM("존재하지 않는 채팅방입니다.");
 

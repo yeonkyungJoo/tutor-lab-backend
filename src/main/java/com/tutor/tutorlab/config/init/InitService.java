@@ -17,8 +17,10 @@ import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.notification.repository.NotificationRepository;
+import com.tutor.tutorlab.modules.purchase.controller.request.CancellationCreateRequest;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
+import com.tutor.tutorlab.modules.purchase.service.CancellationService;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
@@ -42,7 +44,7 @@ public class InitService {
     private final TutorService tutorService;
     private final LectureService lectureService;
     private final EnrollmentService enrollmentService;
-
+    private final CancellationService cancellationService;
     private final ReviewService reviewService;
 
     private final UserRepository userRepository;
@@ -126,7 +128,7 @@ public class InitService {
         // enrollmentService.close(user4, lecture1.getId(), enrollment1.getId());
         enrollmentService.close(user1, lecture1.getId());
         // 강의 취소
-        enrollmentService.cancel(user1, lecture2.getId());
+        cancellationService.cancel(user1, lecture2.getId(), CancellationCreateRequest.of("너무 어려워요"));
 
         // review
         Review parent1 = reviewService.createTuteeReview(user1, lecture1.getId(), getTuteeReviewCreateRequest(5, "좋아요"));

@@ -111,29 +111,6 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         return enrollment;
     }
 
-    @Override
-    public Cancellation cancel(User user, Long lectureId) {
-
-        Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
-                .orElseThrow(() -> new UnauthorizedException(TUTEE));
-
-        Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
-
-        Enrollment enrollment = enrollmentRepository.findByTuteeAndLectureAndCanceledFalseAndClosedFalse(tutee, lecture)
-                .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.ENROLLMENT));
-
-        // TODO - 환불
-
-        // TODO - Entity Listener 활용해 변경
-        Cancellation cancellation = cancellationRepository.save(Cancellation.of(enrollment));
-        enrollment.cancel();
-
-        chatService.deleteChatroom(enrollment);
-
-        return cancellation;
-    }
-
 //    @Override
 //    public void close(User user, Long lectureId, Long enrollmentId) {
 //

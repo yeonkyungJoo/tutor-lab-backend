@@ -21,14 +21,16 @@ public class Cancellation extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_CANCELLATION_ENROLLMENT_ID"))
     private Enrollment enrollment;
 
-    // private String reason;
+    private String reason;
+    private boolean approved = false;
 
-    private Cancellation(Enrollment enrollment) {
+    private Cancellation(Enrollment enrollment, String reason) {
         this.enrollment = enrollment;
+        this.reason = reason;
     }
 
-    public static Cancellation of(Enrollment enrollment) {
-        return new Cancellation(enrollment);
+    public static Cancellation of(Enrollment enrollment, String reason) {
+        return new Cancellation(enrollment, reason);
     }
 
 }

@@ -168,7 +168,7 @@ public class LectureServiceTest extends AbstractTest {
 
         Pick pick = pickService.createPick(tuteeUser, lectureId);
         Enrollment enrollment = enrollmentService.createEnrollment(tuteeUser, lectureId, lecturePriceId);
-        Cancellation cancellation = enrollmentService.cancel(tuteeUser, lectureId);
+        Cancellation cancellation = cancellationService.cancel(tuteeUser, lectureId, cancellationCreateRequest);
         reviewService.createTuteeReview(tuteeUser, lectureId, tuteeReviewCreateRequest);
 
         Review review = reviewRepository.findByEnrollment(enrollment);

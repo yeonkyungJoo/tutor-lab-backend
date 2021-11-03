@@ -162,7 +162,7 @@ class ReviewServiceTest extends AbstractTest {
         Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
         Long chatroomId = chatroom.getId();
 
-        enrollmentService.cancel(user, lecture1Id);
+        cancellationService.cancel(user, lecture1Id, cancellationCreateRequest);
         assertNotNull(cancellationRepository.findByEnrollment(enrollment));
 
         // When

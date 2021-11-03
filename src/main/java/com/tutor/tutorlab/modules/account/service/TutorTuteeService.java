@@ -32,11 +32,11 @@ public class TutorTuteeService extends AbstractService {
         return tutorQueryRepository.findTuteesOfTutor(tutor, closed, getPageRequest(page));
     }
 
-    public Page<TuteeLectureResponse> getTuteeLectureResponses(User user, Long tuteeId, Integer page) {
+    public Page<TuteeLectureResponse> getTuteeLectureResponses(User user, Boolean closed, Long tuteeId, Integer page) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
 
-        return tutorQueryRepository.findTuteeLecturesOfTutor(tutor, tuteeId, getPageRequest(page));
+        return tutorQueryRepository.findTuteeLecturesOfTutor(tutor, closed, tuteeId, getPageRequest(page));
     }
 }

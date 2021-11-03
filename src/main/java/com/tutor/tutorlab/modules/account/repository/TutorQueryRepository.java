@@ -14,7 +14,6 @@ import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.QLecture;
 import com.tutor.tutorlab.modules.lecture.vo.QLecturePrice;
-import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.purchase.vo.QEnrollment;
 import com.tutor.tutorlab.modules.review.vo.QReview;
 import lombok.RequiredArgsConstructor;
@@ -119,11 +118,11 @@ public class TutorQueryRepository {
         if (closed == null) {
             return null;
         }
-        return enrollment.closed.isTrue();
+        return closed ? enrollment.closed.isTrue() : enrollment.closed.isFalse();
     }
 
     // TODO - CHECK
-    public Page<TuteeLectureResponse> findTuteeLecturesOfTutor(Tutor tutor, Long tuteeId, PageRequest pageable) {
+    public Page<TuteeLectureResponse> findTuteeLecturesOfTutor(Tutor tutor, Boolean closed, Long tuteeId, PageRequest pageable) {
 
         /*
             SELECT * FROM enrollment e
@@ -141,17 +140,21 @@ public class TutorQueryRepository {
                 .leftJoin(review).on(enrollment.eq(review.enrollment))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .where(enrollment.tutee.id.eq(tuteeId),
+                        isClosed(closed),
+                        enrollment.canceled.isFalse(),
+                        lecture.tutor.eq(tutor))
                 .fetchResults();
-//
-//        tuples.getResults().stream().map(tuple -> {
-//            Lecture lecture = tuple.get(0, Lecture.class);
-//            LecturePrice lecturePrice = tuple.get(1, LecturePrice.class);
-//            Long reviewId = tuple.get(2, Long.class);
-//
-//
-//        });
-        System.out.println();
-        return null;
+
+        List<TuteeLectureResponse> tuteeLectureResponses = tuples.getResults().stream()
+                .map(tuple -> TuteeLectureResponse.builder()
+                        .tuteeId(tuteeId)
+                        .lecture(tuple.get(0, Lecture.class))
+                        .lecturePrice(tuple.get(1, LecturePrice.class))
+                        .reviewId(tuple.get(2, Long.class))
+                        .build()).collect(Collectors.toList());
+
+        return new PageImpl<>(tuteeLectureResponses, pageable, tuples.getTotal());
     }
 
 }

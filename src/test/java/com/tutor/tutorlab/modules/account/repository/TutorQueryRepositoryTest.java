@@ -31,13 +31,13 @@ class TutorQueryRepositoryTest {
         tuteeSimpleResponses.stream().forEach(System.out::println);
     }
 
-    @Test
-    void findTuteeLecturesOfTutor() {
-
-        Tutor tutor = tutorRepository.findById(1L).orElse(null);
-        tutorQueryRepository.findTuteeLecturesOfTutor(tutor, 1L, PageRequest.of(0, 10, Sort.by("id").ascending()));
-
-    }
+//    @Test
+//    void findTuteeLecturesOfTutor() {
+//
+//        Tutor tutor = tutorRepository.findById(1L).orElse(null);
+//        tutorQueryRepository.findTuteeLecturesOfTutor(tutor, 1L, PageRequest.of(0, 10, Sort.by("id").ascending()));
+//
+//    }
 
 
 }
