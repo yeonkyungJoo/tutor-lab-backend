@@ -6,7 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -102,7 +105,7 @@ public class SignUpRequest {
     }
 
     @AssertTrue
-    private boolean isPassword() {
-        return getPassword().equals(getPasswordConfirm());
+    private boolean isPasswordConfirm() {
+        return getPasswordConfirm().equals(getPassword());
     }
 }

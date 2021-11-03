@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.tutor.tutorlab.config.security.CurrentUser;
+import com.tutor.tutorlab.modules.account.controller.request.UserPasswordUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserQuitRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.UserResponse;
@@ -70,6 +71,14 @@ public class UserController {
     @GetMapping("/quit-reasons")
     public Map<Integer, String> getQuitReasons() {
         return UserQuitRequest.reasons;
+    }
+
+    @ApiOperation("비밀번호 변경")
+    @PutMapping("/my-password")
+    public ResponseEntity<?> changeUserPassword(@CurrentUser User user,
+                                                @RequestBody @Valid UserPasswordUpdateRequest userPasswordUpdateRequest) {
+        userService.updateUserPassword(user, userPasswordUpdateRequest);
+        return ResponseEntity.ok().build();
     }
 
 }
