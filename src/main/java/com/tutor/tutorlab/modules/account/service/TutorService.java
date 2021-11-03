@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.service;
 
+import com.tutor.tutorlab.config.exception.AlreadyExistException;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
@@ -22,8 +23,6 @@ import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.TUTOR;
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
 
 @Transactional
@@ -59,7 +57,7 @@ public class TutorService extends AbstractService {
     }
 
     private Tutor getTutor(Long tutorId) {
-        return tutorRepository.findById(tutorId).orElseThrow(() -> new EntityNotFoundException(TUTOR));
+        return tutorRepository.findById(tutorId).orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.TUTOR));
     }
 
     @Transactional(readOnly = true)
@@ -82,6 +80,9 @@ public class TutorService extends AbstractService {
             // TODO - throw
         }
         user = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException(USER));
+        if (user.getRole() == RoleType.TUTOR) {
+            throw new AlreadyExistException(AlreadyExistException.TUTOR);
+        }
         user.setRole(RoleType.TUTOR);
 
         Tutor tutor = Tutor.of(user);
@@ -168,7 +169,7 @@ public class TutorService extends AbstractService {
     private List<Career> getCareers(Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new EntityNotFoundException(TUTOR));
+                .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.TUTOR));
         return careerRepository.findByTutor(tutor);
     }
 
@@ -181,7 +182,7 @@ public class TutorService extends AbstractService {
     private List<Education> getEducations(Long tutorId) {
 
         Tutor tutor = tutorRepository.findById(tutorId)
-                .orElseThrow(() -> new EntityNotFoundException(TUTOR));
+                .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.TUTOR));
         return educationRepository.findByTutor(tutor);
     }
 

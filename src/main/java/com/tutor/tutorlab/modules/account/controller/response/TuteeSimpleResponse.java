@@ -14,7 +14,7 @@ public class TuteeSimpleResponse {
     // private List<Long> lectureIds;
 
     @Builder
-    public TuteeSimpleResponse(Long tuteeId, Long userId, String name) {
+    private TuteeSimpleResponse(Long tuteeId, Long userId, String name) {
         this.tuteeId = tuteeId;
         this.userId = userId;
         this.name = name;

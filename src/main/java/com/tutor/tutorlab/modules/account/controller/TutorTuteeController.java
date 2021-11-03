@@ -25,6 +25,7 @@ public class TutorTuteeController {
 
     // 튜티 전체, 강의 진행중인 튜티, 강의 종료된 튜티
     @ApiOperation("튜티 전체 조회 - 페이징")
+    @GetMapping
     public ResponseEntity<?> getMyTutees(@CurrentUser User user,
                                          @RequestParam(name = "closed", required = false) Boolean closed,
                                          @RequestParam(name = "page", defaultValue = "1") Integer page) {
@@ -36,9 +37,10 @@ public class TutorTuteeController {
     @ApiOperation("튜티-강의 조회 - 페이징")
     @GetMapping("/{tutee_id}")
     public ResponseEntity<?> getMyTutee(@CurrentUser User user,
+                                        @RequestParam(name = "closed", required = false) Boolean closed,
                                         @PathVariable(name = "tutee_id") Long tuteeId,
                                         @RequestParam(name = "page", defaultValue = "1") Integer page) {
-        Page<TuteeLectureResponse> tuteeLectures = tutorTuteeService.getTuteeLectureResponses(user, tuteeId, page);
+        Page<TuteeLectureResponse> tuteeLectures = tutorTuteeService.getTuteeLectureResponses(user, closed, tuteeId, page);
         return ResponseEntity.ok(tuteeLectures);
     }
 

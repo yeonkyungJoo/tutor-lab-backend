@@ -18,9 +18,11 @@ import com.tutor.tutorlab.modules.lecture.repository.LectureSubjectRepository;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.notification.repository.NotificationRepository;
 import com.tutor.tutorlab.modules.notification.service.NotificationService;
+import com.tutor.tutorlab.modules.purchase.controller.request.CancellationCreateRequest;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.repository.PickRepository;
+import com.tutor.tutorlab.modules.purchase.service.CancellationService;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.purchase.service.PickService;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
@@ -99,6 +101,8 @@ public abstract class AbstractTest {
     @Autowired
     protected EnrollmentRepository enrollmentRepository;
     @Autowired
+    protected CancellationService cancellationService;
+    @Autowired
     protected CancellationRepository cancellationRepository;
 
     @Autowired
@@ -147,6 +151,9 @@ public abstract class AbstractTest {
 
     protected final TutorReviewCreateRequest tutorReviewCreateRequest = getTutorReviewCreateRequest();
     protected final TutorReviewUpdateRequest tutorReviewUpdateRequest = getTutorReviewUpdateRequest();
+
+    // TODO - 수정
+    protected final CancellationCreateRequest cancellationCreateRequest = CancellationCreateRequest.of("너무 어려워요");
 
     protected Address getAddress(String state, String siGun, String gu, String dongMyunLi) {
         return Address.of(state, siGun, gu, dongMyunLi);

@@ -4,6 +4,8 @@ import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
+import com.tutor.tutorlab.modules.purchase.controller.request.CancellationCreateRequest;
+import com.tutor.tutorlab.modules.purchase.service.CancellationService;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
@@ -26,6 +28,7 @@ import javax.validation.Valid;
 public class TuteeLectureController {
 
     private final EnrollmentService enrollmentService;
+    private final CancellationService cancellationService;
     private final LectureService lectureService;
     private final ReviewService reviewService;
 
@@ -47,10 +50,11 @@ public class TuteeLectureController {
     }
 
     @ApiOperation("강의 수강 취소")
-    @DeleteMapping("/{lecture_id}")
+    @PostMapping("/{lecture_id}/cancellations")
     public ResponseEntity<?> cancel(@CurrentUser User user,
-                                    @PathVariable(name = "lecture_id") Long lectureId) {
-        enrollmentService.cancel(user, lectureId);
+                                    @PathVariable(name = "lecture_id") Long lectureId,
+                                    @RequestBody @Valid CancellationCreateRequest cancellationCreateRequest) {
+        cancellationService.cancel(user, lectureId, cancellationCreateRequest);
         return ResponseEntity.ok().build();
     }
 

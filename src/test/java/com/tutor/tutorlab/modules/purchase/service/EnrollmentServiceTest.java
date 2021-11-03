@@ -134,7 +134,7 @@ class EnrollmentServiceTest extends AbstractTest {
         Long chatroomId = chatroom.getId();
 
         // When
-        enrollmentService.cancel(user, lectureId);
+        cancellationService.cancel(user, lectureId, cancellationCreateRequest);
 
         // Then
         assertEquals(0, enrollmentRepository.findByTuteeAndCanceledFalseAndClosedFalse(tutee).size());
