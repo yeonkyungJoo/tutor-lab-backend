@@ -10,6 +10,7 @@ import com.tutor.tutorlab.modules.account.vo.QTutee;
 import com.tutor.tutorlab.modules.account.vo.QTutor;
 import com.tutor.tutorlab.modules.account.vo.QUser;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
+import com.tutor.tutorlab.modules.chat.vo.QChatroom;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.QLecture;
@@ -40,6 +41,7 @@ public class TutorQueryRepository {
     private final QLecture lecture = QLecture.lecture;
     private final QLecturePrice lecturePrice = QLecturePrice.lecturePrice;
 
+    private final QChatroom chatroom = QChatroom.chatroom;
     private final QReview review = QReview.review;
 
     /*
@@ -128,15 +130,17 @@ public class TutorQueryRepository {
             SELECT * FROM enrollment e
             INNER JOIN lecture_price lp ON e.lecture_price_id = lp.lecture_price_id
             INNER JOIN lecture l ON lp.lecture_id = l.lecture_id
+            LEFT OUTER JOIN chatroom c ON e.enrollment_id = c.enrollment_id
             LEFT OUTER JOIN review r ON r.enrollment_id = e.enrollment_id
             WHERE e.tutee_id = 2 AND e.closed = 0 AND e.canceled = 0 AND l.tutor_id = 1;
         */
 
         QueryResults<Tuple> tuples = jpaQueryFactory.select(
-                lecture, lecturePrice, review.id)
+                lecture, lecturePrice, review.id, chatroom.id)
                 .from(enrollment)
                 .innerJoin(enrollment.lecturePrice, lecturePrice)
                 .innerJoin(lecturePrice.lecture, lecture)
+                .leftJoin(chatroom).on(enrollment.eq(chatroom.enrollment))
                 .leftJoin(review).on(enrollment.eq(review.enrollment))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -152,6 +156,7 @@ public class TutorQueryRepository {
                         .lecture(tuple.get(0, Lecture.class))
                         .lecturePrice(tuple.get(1, LecturePrice.class))
                         .reviewId(tuple.get(2, Long.class))
+                        .chatroomId(tuple.get(3, Long.class))
                         .build()).collect(Collectors.toList());
 
         return new PageImpl<>(tuteeLectureResponses, pageable, tuples.getTotal());
