@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.tutor.tutorlab.config.security.CurrentUser;
+import com.tutor.tutorlab.modules.account.controller.request.UserImageUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserPasswordUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserQuitRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
@@ -51,11 +52,19 @@ public class UserController {
     }
 
     @ApiOperation("회원 정보 수정")
-    @PutMapping
+    @PutMapping("/my-info")
     public ResponseEntity<?> editUser(@CurrentUser User user,
                                       @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
 
         userService.updateUser(user, userUpdateRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation("프로필 이미지 수정")
+    @PutMapping("/my-info/image")
+    public ResponseEntity<?> changeImage(@CurrentUser User user,
+                                         @RequestBody @Valid UserImageUpdateRequest userImageUpdateRequest) {
+        userService.updateUserImage(user, userImageUpdateRequest);
         return ResponseEntity.ok().build();
     }
 

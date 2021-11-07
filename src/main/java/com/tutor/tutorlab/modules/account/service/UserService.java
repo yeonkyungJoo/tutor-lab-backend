@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.account.service;
 
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.InvalidInputException;
+import com.tutor.tutorlab.modules.account.controller.request.UserImageUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserPasswordUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserQuitRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
@@ -107,5 +108,14 @@ public class UserService extends AbstractService {
             throw new InvalidInputException("잘못된 비밀번호입니다.");
         }
         user.setPassword(bCryptPasswordEncoder.encode(userPasswordUpdateRequest.getNewPassword()));
+    }
+
+    @Transactional
+    public void updateUserImage(User user, UserImageUpdateRequest userImageUpdateRequest) {
+
+        user = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(USER));
+
+        user.setImage(userImageUpdateRequest.getImage());
     }
 }

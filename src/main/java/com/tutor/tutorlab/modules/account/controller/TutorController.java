@@ -60,9 +60,9 @@ public class TutorController {
     }
 
     @ApiOperation("튜터 정보 수정")
-    @PutMapping
+    @PutMapping("/my-info")
     public ResponseEntity<?> editTutor(@CurrentUser User user,
-                                    @Valid @RequestBody TutorUpdateRequest tutorUpdateRequest) {
+                                       @Valid @RequestBody TutorUpdateRequest tutorUpdateRequest) {
 
         tutorService.updateTutor(user, tutorUpdateRequest);
         return ResponseEntity.ok().build();

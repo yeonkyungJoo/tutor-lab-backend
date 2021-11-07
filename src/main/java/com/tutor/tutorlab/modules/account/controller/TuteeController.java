@@ -41,7 +41,7 @@ public class TuteeController {
     }
 
     @ApiOperation("튜티 정보 수정")
-    @PutMapping
+    @PutMapping("/my-info")
     public ResponseEntity<?> editTutee(@CurrentUser User user,
                                        @Valid @RequestBody TuteeUpdateRequest tuteeUpdateRequest) {
 
