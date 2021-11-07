@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class UserResponse {
 
+    private Long userId;
     private String username;
     // private String password;
     private RoleType role;
@@ -23,6 +24,7 @@ public class UserResponse {
     private String zone;
 
     public UserResponse(User user) {
+        this.userId = user.getId();
         this.username = user.getUsername();
         this.role = user.getRole();
         this.name = user.getName();
