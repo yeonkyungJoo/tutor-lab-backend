@@ -74,6 +74,8 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	implementation group: 'org.json', name: 'json', version: '20180813'
 }
 
 //querydsl 추가 시작
