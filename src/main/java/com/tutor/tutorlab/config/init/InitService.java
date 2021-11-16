@@ -133,7 +133,7 @@ public class InitService {
         
         // 강의 취소 요청
         Cancellation cancellation = cancellationService.cancel(user1, lecture2.getId(), CancellationCreateRequest.of("너무 어려워요"));
-        tutorCancellationService.approve(user4, cancellation.getId());
+        // tutorCancellationService.approve(user4, cancellation.getId());
         
         // review
         Review parent1 = reviewService.createTuteeReview(user1, lecture1.getId(), getTuteeReviewCreateRequest(5, "좋아요"));

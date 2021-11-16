@@ -23,6 +23,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -49,7 +50,7 @@ public class CancellationQueryRepository {
         INNER JOIN tutee t ON e.tutee_id = t.tutee_id
         INNER JOIN user u ON t.user_id = u.user_id
         */
-        QueryResults<Tuple> tuples = jpaQueryFactory.select(cancellation, lecture, lecturePrice, tutee.id, user.name)
+        QueryResults<Tuple> tuples = jpaQueryFactory.select(cancellation, lecture, lecturePrice, tutee.id, user.name, enrollment.id)
                 .from(cancellation)
                 .innerJoin(cancellation.enrollment, enrollment)
                 .innerJoin(enrollment.lecture, lecture)
@@ -61,9 +62,15 @@ public class CancellationQueryRepository {
                 .where(lecture.tutor.eq(tutor))
                 .fetchResults();
 
-/*        jpaQueryFactory.select(chatroom.id)
+        // TODO - CHECK
+        List<Long> enrollmentIds = tuples.getResults().stream().map(tuple -> tuple.get(5, Long.class)).collect(Collectors.toList());
+        QueryResults<Tuple> ids = jpaQueryFactory.select(chatroom.id, enrollment.id)
                 .from(chatroom)
-                .innerJoin(chatroom.enrollment, enrollment)*/
+                .innerJoin(chatroom.enrollment, enrollment)
+                .where(enrollment.id.in(enrollmentIds))
+                .fetchResults();
+        Map<Long, Long> map = ids.getResults().stream()
+                .collect(Collectors.toMap(tuple -> tuple.get(1, Long.class), tuple -> tuple.get(0, Long.class)));
 
         List<CancellationResponse> cancellationResponses = tuples.getResults().stream()
                 .map(tuple -> CancellationResponse.builder()
@@ -72,6 +79,7 @@ public class CancellationQueryRepository {
                         .lecturePrice(tuple.get(2, LecturePrice.class))
                         .tuteeId(tuple.get(3, Long.class))
                         .tuteeName(tuple.get(4, String.class))
+                        .chatroomId(map.get(tuple.get(5, Long.class)))
                         .build()).collect(Collectors.toList());
         return new PageImpl<>(cancellationResponses, pageable, tuples.getTotal());
     }
