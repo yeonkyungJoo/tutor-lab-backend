@@ -3,6 +3,7 @@ package com.tutor.tutorlab.config.init;
 import com.tutor.tutorlab.modules.account.enums.EducationLevelType;
 import com.tutor.tutorlab.modules.account.repository.*;
 import com.tutor.tutorlab.modules.account.service.LoginService;
+import com.tutor.tutorlab.modules.account.service.TutorCancellationService;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
@@ -22,6 +23,7 @@ import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.service.CancellationService;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
+import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
@@ -46,6 +48,7 @@ public class InitService {
     private final EnrollmentService enrollmentService;
     private final CancellationService cancellationService;
     private final ReviewService reviewService;
+    private final TutorCancellationService tutorCancellationService;
 
     private final UserRepository userRepository;
     private final TuteeRepository tuteeRepository;
@@ -127,9 +130,11 @@ public class InitService {
         // 강의 종료
         // enrollmentService.close(user4, lecture1.getId(), enrollment1.getId());
         enrollmentService.close(user1, lecture1.getId());
-        // 강의 취소
-        cancellationService.cancel(user1, lecture2.getId(), CancellationCreateRequest.of("너무 어려워요"));
-
+        
+        // 강의 취소 요청
+        Cancellation cancellation = cancellationService.cancel(user1, lecture2.getId(), CancellationCreateRequest.of("너무 어려워요"));
+        tutorCancellationService.approve(user4, cancellation.getId());
+        
         // review
         Review parent1 = reviewService.createTuteeReview(user1, lecture1.getId(), getTuteeReviewCreateRequest(5, "좋아요"));
         Review child1 = reviewService.createTutorReview(user4, lecture1.getId(), parent1.getId(), getTutorReviewCreateRequest("감사합니다!"));

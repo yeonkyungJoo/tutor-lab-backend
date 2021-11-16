@@ -49,7 +49,7 @@ public class TuteeLectureController {
         return ResponseEntity.ok(lecture);
     }
 
-    @ApiOperation("강의 수강 취소")
+    @ApiOperation("강의 수강 취소 요청")
     @PostMapping("/{lecture_id}/cancellations")
     public ResponseEntity<?> cancel(@CurrentUser User user,
                                     @PathVariable(name = "lecture_id") Long lectureId,

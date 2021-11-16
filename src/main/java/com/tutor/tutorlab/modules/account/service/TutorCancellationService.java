@@ -7,10 +7,12 @@ import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
+import com.tutor.tutorlab.modules.chat.service.ChatService;
 import com.tutor.tutorlab.modules.purchase.controller.response.CancellationResponse;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationQueryRepository;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
+import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,8 @@ public class TutorCancellationService extends AbstractService {
     private final CancellationQueryRepository cancellationQueryRepository;
     private final TutorRepository tutorRepository;
 
+    private final ChatService chatService;
+
     public Page<CancellationResponse> getCancellationResponses(User user, Integer page) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
@@ -46,6 +50,14 @@ public class TutorCancellationService extends AbstractService {
         Cancellation cancellation = cancellationRepository.findById(cancellationId)
                 .orElseThrow(() -> new EntityNotFoundException(CANCELLATION));
         cancellation.setApproved(true);
+
+        Enrollment enrollment = cancellation.getEnrollment();
+        enrollment.cancel();
+
+        chatService.deleteChatroom(enrollment);
+
+        // TODO - 환불
+
     }
 
 }

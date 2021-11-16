@@ -6,6 +6,6 @@ import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
 
 public interface CancellationService {
 
-    // 수강 취소
+    // 수강 취소 요청
     Cancellation cancel(User user, Long lectureId, CancellationCreateRequest cancellationCreateRequest);
 }

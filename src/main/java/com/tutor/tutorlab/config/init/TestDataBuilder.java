@@ -138,7 +138,7 @@ public class TestDataBuilder {
                 pertimeCost,
                 pertimeLecture,
                 totalTime,
-                pertimeCost * pertimeLecture
+                pertimeCost * pertimeLecture * totalTime
         );
     }
 

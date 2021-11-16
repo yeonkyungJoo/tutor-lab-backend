@@ -65,7 +65,7 @@ public class UserController {
     public ResponseEntity<?> changeImage(@CurrentUser User user,
                                          @RequestBody @Valid UserImageUpdateRequest userImageUpdateRequest) {
         userService.updateUserImage(user, userImageUpdateRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(user.getImage());
     }
 
     @ApiOperation("회원 탈퇴")

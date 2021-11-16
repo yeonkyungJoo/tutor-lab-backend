@@ -71,6 +71,8 @@ public class User extends BaseEntity {
     @Lob
     private String quitReason;
 
+    private LocalDateTime lastLoginAt;
+
     // TODO - Notification과 양방향
 
     @Builder(access = AccessLevel.PRIVATE)

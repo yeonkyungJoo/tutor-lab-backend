@@ -33,8 +33,8 @@ public class CancellationServiceImpl extends AbstractService implements Cancella
     private final TuteeRepository tuteeRepository;
 
     private final LectureRepository lectureRepository;
-    private final ChatService chatService;
 
+    // 환불 요청
     @Override
     public Cancellation cancel(User user, Long lectureId, CancellationCreateRequest cancellationCreateRequest) {
 
@@ -47,15 +47,8 @@ public class CancellationServiceImpl extends AbstractService implements Cancella
         Enrollment enrollment = enrollmentRepository.findByTuteeAndLectureAndCanceledFalseAndClosedFalse(tutee, lecture)
                 .orElseThrow(() -> new EntityNotFoundException(EntityNotFoundException.EntityType.ENROLLMENT));
 
-        // TODO - 환불
-
         // TODO - Entity Listener 활용해 변경
-        Cancellation cancellation = cancellationRepository.save(Cancellation.of(enrollment, cancellationCreateRequest.getReason()));
-        enrollment.cancel();
-
-        chatService.deleteChatroom(enrollment);
-
-        return cancellation;
+        return cancellationRepository.save(Cancellation.of(enrollment, cancellationCreateRequest.getReason()));
     }
 
 }

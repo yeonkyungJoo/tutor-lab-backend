@@ -59,7 +59,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             if (principal instanceof PrincipalDetails) {
 
                 PrincipalDetails principalDetails = (PrincipalDetails) principal;
-                if (principalDetails != null && principalDetails.getUser() != null) {
+                if (principalDetails.getUser() != null) {
                     return true;
                 }
             }

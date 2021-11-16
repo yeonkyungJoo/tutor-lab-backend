@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tutor.tutorlab.modules.account.vo.QTutee;
 import com.tutor.tutorlab.modules.account.vo.QUser;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
+import com.tutor.tutorlab.modules.chat.vo.QChatroom;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.lecture.vo.QLecture;
@@ -32,6 +33,7 @@ public class CancellationQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final QCancellation cancellation = QCancellation.cancellation;
     private final QEnrollment enrollment = QEnrollment.enrollment;
+    private final QChatroom chatroom = QChatroom.chatroom;
     private final QLecture lecture = QLecture.lecture;
     private final QLecturePrice lecturePrice = QLecturePrice.lecturePrice;
     private final QTutee tutee = QTutee.tutee;
@@ -58,6 +60,10 @@ public class CancellationQueryRepository {
                 .limit(pageable.getPageSize())
                 .where(lecture.tutor.eq(tutor))
                 .fetchResults();
+
+/*        jpaQueryFactory.select(chatroom.id)
+                .from(chatroom)
+                .innerJoin(chatroom.enrollment, enrollment)*/
 
         List<CancellationResponse> cancellationResponses = tuples.getResults().stream()
                 .map(tuple -> CancellationResponse.builder()

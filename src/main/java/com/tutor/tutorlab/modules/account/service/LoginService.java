@@ -28,7 +28,6 @@ import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.address.util.AddressUtils;
-import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -44,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -371,12 +371,20 @@ public class LoginService {
         Authentication authentication = authenticate(username, password);
         if (authentication != null) {
 
-            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof PrincipalDetails) {
 
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("username", username);
-            String jwtToken = jwtTokenManager.createToken(principalDetails.getUsername(), claims);
-            return jwtTokenManager.convertTokenToMap(jwtToken);
+                PrincipalDetails principalDetails = (PrincipalDetails) principal;
+
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("username", username);
+                String jwtToken = jwtTokenManager.createToken(principalDetails.getUsername(), claims);
+
+                // lastLoginAt
+                principalDetails.getUser().setLastLoginAt(LocalDateTime.now());
+
+                return jwtTokenManager.convertTokenToMap(jwtToken);
+            }
         }
 
         // TODO - CHECK : 예외 처리
