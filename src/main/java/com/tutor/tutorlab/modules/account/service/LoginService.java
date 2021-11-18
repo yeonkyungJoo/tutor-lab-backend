@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -59,6 +60,11 @@ import static com.tutor.tutorlab.config.exception.OAuthAuthenticationException.U
 @Transactional
 @RequiredArgsConstructor
 public class LoginService {
+
+    @Value("${server.ip}")
+    private String ip;
+    @Value("${server.port}")
+    private Integer port;
 
     private final UserRepository userRepository;
     private final TuteeRepository tuteeRepository;
@@ -300,7 +306,7 @@ public class LoginService {
 
         // TODO - 상수
         Map<String, Object> variables = new HashMap<>();
-        variables.put("host", "http://localhost:8080");
+        variables.put("host", String.format("http://%s:%d", ip, port));
         variables.put("link", "/verify-email?email=" + unverified.getUsername() + "&token=" + unverified.getEmailVerifyToken());
         variables.put("content", "Welcome! We recently received a request to create an account. To verify that you made this request, we're sending this confirmation email.");
 
@@ -407,7 +413,7 @@ public class LoginService {
         // 랜덤 비밀번호가 담긴 이메일 전송
         // TODO - 상수
         Map<String, Object> variables = new HashMap<>();
-        variables.put("host", "http://localhost:8080");
+        variables.put("host", String.format("http://{}:{}", ip, port));
         variables.put("password", randomPassword);
 
         String content = templateEngine.process("find-password", getContext(variables));
