@@ -129,8 +129,7 @@ public class ReviewService extends AbstractService {
         return getReviewsOfLecture(lectureId, page).map(ReviewResponse::new);
     }
 
-    // getReviewOfLecture
-    private Review getReview(Long lectureId, Long reviewId) {
+    private Review getReviewOfLecture(Long lectureId, Long reviewId) {
 
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
@@ -140,8 +139,8 @@ public class ReviewService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public ReviewResponse getReviewResponse(Long lectureId, Long reviewId) {
-        return new ReviewResponse(getReview(lectureId, reviewId));
+    public ReviewResponse getReviewResponseOfLecture(Long lectureId, Long reviewId) {
+        return new ReviewResponse(getReviewOfLecture(lectureId, reviewId));
     }
 
     public Review createTuteeReview(User user, Long lectureId, TuteeReviewCreateRequest tuteeReviewCreateRequest) {
@@ -206,7 +205,21 @@ public class ReviewService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public ReviewResponse getReviewResponse(Long tuteeId, Long lectureId, Long reviewId) {
-        return new ReviewResponse(getReview(lectureId, reviewId));
+    public ReviewResponse getReviewResponseOfLecture(Long tuteeId, Long lectureId, Long reviewId) {
+        return new ReviewResponse(getReviewOfLecture(lectureId, reviewId));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ReviewResponse> getReviewResponses(User user, Integer page) {
+
+        Page<Review> reviews = reviewRepository.findByUser(user, getPageRequest(page));
+        return reviews.map(ReviewResponse::new);
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewResponse getReviewResponse(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException(REVIEW));
+        return new ReviewResponse(review);
     }
 }

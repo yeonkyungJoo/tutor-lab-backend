@@ -50,7 +50,7 @@ public class TutorTuteeController {
                                                  @PathVariable(name = "tutee_id") Long tuteeId,
                                                  @PathVariable(name = "lecture_id") Long lectureId,
                                                  @PathVariable(name = "review_id") Long reviewId) {
-        ReviewResponse review = reviewService.getReviewResponse(tuteeId, lectureId, reviewId);
+        ReviewResponse review = reviewService.getReviewResponseOfLecture(tuteeId, lectureId, reviewId);
         return ResponseEntity.ok(review);
     }
 

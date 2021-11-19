@@ -84,7 +84,7 @@ public class LectureController {
     @GetMapping("/{lecture_id}/reviews/{review_id}")
     public ResponseEntity<?> getReviewOfLecture(@PathVariable(name = "lecture_id") Long lectureId,
                                                 @PathVariable(name = "review_id") Long reviewId) {
-        ReviewResponse review = reviewService.getReviewResponse(lectureId, reviewId);
+        ReviewResponse review = reviewService.getReviewResponseOfLecture(lectureId, reviewId);
         return ResponseEntity.ok(review);
     }
 

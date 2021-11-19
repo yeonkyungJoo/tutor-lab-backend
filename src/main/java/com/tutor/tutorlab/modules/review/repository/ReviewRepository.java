@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.review.repository;
 
+import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.vo.Review;
@@ -14,6 +15,8 @@ import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+
+    Page<Review> findByUser(User user, Pageable pageable);
 
     @Query(value = "select * from review where lecture_id = :lectureId", nativeQuery = true)
     List<Review> findAllByLectureId(Long lectureId);
