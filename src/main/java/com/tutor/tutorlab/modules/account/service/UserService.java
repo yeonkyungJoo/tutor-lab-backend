@@ -23,6 +23,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
 
 
@@ -117,5 +119,25 @@ public class UserService extends AbstractService {
                 .orElseThrow(() -> new EntityNotFoundException(USER));
 
         user.setImage(userImageUpdateRequest.getImage());
+    }
+
+    @Transactional
+    public void updateUserFcmToken(String username, String fcmToken) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(USER));
+
+        Optional<User> hasFcmToken = userRepository.findByFcmToken(fcmToken);
+        if (hasFcmToken.isPresent()) {
+            User tokenUser = hasFcmToken.get();
+            if (!tokenUser.getUsername().equals(username)) {
+
+                // 기존 fcmToken 삭제
+                tokenUser.setFcmToken(null);
+                user.setFcmToken(fcmToken);
+            }
+        } else {
+            user.setFcmToken(fcmToken);
+        }
     }
 }

@@ -22,9 +22,9 @@ public class AndroidPushNotificationsService {
     @Value("firebase.api.url")
     private String firebase_api_url;
 
-    private HttpEntity<String> getRequest() {
+    private HttpEntity<String> getRequest(String fcmToken, String title, String content) {
 
-        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson();
+        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson(fcmToken, title, content);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
@@ -32,7 +32,7 @@ public class AndroidPushNotificationsService {
     }
 
     @Async
-    public CompletableFuture<String> send() {
+    public CompletableFuture<String> send(String fcmToken, String title, String content) {
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -41,7 +41,7 @@ public class AndroidPushNotificationsService {
         interceptors.add(new HeaderRequestInterceptor(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE));
         restTemplate.setInterceptors(interceptors);
 
-        String firebaseResponse = restTemplate.postForObject(firebase_api_url, getRequest(), String.class);
+        String firebaseResponse = restTemplate.postForObject(firebase_api_url, getRequest(fcmToken, title, content), String.class);
         return CompletableFuture.completedFuture(firebaseResponse);
     }
 }

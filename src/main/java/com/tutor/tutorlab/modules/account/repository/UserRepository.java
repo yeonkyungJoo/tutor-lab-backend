@@ -29,4 +29,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "select * from user where name = :name", nativeQuery = true)
     User findAllByName(@Param("name") String name);
+
+    Optional<User> findByFcmToken(String fcmToken);
 }

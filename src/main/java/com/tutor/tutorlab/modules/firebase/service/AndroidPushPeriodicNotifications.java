@@ -10,23 +10,20 @@ import java.util.List;
 
 public class AndroidPushPeriodicNotifications {
 
-    public static String PeriodicNotificationJson() {
+    private static final String FCM_TOKENS = "registration_ids";
+    private static final String TITLE = "title";
+    private static final String BODY = "body";
+    private static final String NOTIFICATION = "notification";
 
-        // TODO - application.yml
-        String[] deviceTokens = {"ct6ijGhHR9mjHzgbfZNOn4:APA91bGh0LsW-pKKLTPTYv4OgNR5f9oMQgATNxHpEVmIUIC9-BdKgBNtCkvP94lAreNbrQFFQgwYArEBzlQ5nLWSz9IekuyrFIA1kWUz4ExLeDRZpbMpL8kclrudX01BNWv-SK5eUmDs"};
+    public static String PeriodicNotificationJson(String fcmToken, String title, String content) {
 
         JSONObject body = new JSONObject();
-
-        JSONArray array = new JSONArray();
-        for (String deviceToken : deviceTokens) {
-            array.put(deviceToken);
-        }
-        body.put("registration_ids", array);
+        body.put(FCM_TOKENS, new JSONArray(fcmToken));
 
         JSONObject notification = new JSONObject();
-        notification.put("title", "안녕하세요!");
-        notification.put("body", "자기 전 투두 계획 세워보세요~ ");
-        body.put("notification", notification);
+        notification.put(TITLE, title);
+        notification.put(BODY, content);
+        body.put(NOTIFICATION, notification);
 
         return body.toString();
     }
