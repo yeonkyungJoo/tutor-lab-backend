@@ -88,7 +88,6 @@ public class TutorLectureService extends AbstractService {
         return getTuteesOfLecture(user, lectureId, page).map(TuteeResponse::new);
     }
 
-
 //    @Transactional(readOnly = true)
 //    public Page<TuteeResponse> getTuteeResponsesOfLecture(User user, Long lectureId, Integer page) {
 //
@@ -101,16 +100,5 @@ public class TutorLectureService extends AbstractService {
 //        return enrollmentRepository.findByLecture(lecture, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
 //                .map(enrollment -> new TuteeResponse(enrollment.getTutee()));
 //    }
-
-    private Page<Review> getReviewsOfLecture(User user, Long lectureId, Integer page) {
-
-        Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
-                .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
-
-        Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
-                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
-
-        return reviewRepository.findByLecture(lecture, getPageRequest(page));
-    }
 
 }

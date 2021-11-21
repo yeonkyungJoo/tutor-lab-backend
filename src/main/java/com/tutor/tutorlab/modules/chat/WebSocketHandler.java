@@ -37,8 +37,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private static final String TYPE = "type";
     private static final String SESSION_ID = "sessionId";
     private static final String CHATROOM_ID = "chatroomId";
-    private static final String SENDER = "sender";
-    private static final String RECEIVER = "receiver";
+    private static final String SENDER_NICKNAME = "senderNickname";
+    private static final String RECEIVER_ID = "receiverId";
     private static final String MESSAGE = "message";
 
 
@@ -111,7 +111,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 wss.sendMessage(new TextMessage(object.toJSONString()));
             }
 
-            Long receiverId = (Long) object.get(RECEIVER);
+            Long receiverId = (Long) object.get(RECEIVER_ID);
             // TODO - CHECK : 웹소켓 세션 - 영속성 컨텍스트
             // TODO - CHECK : 효율성 체크
             if (sessionMap.size() != 2) {
@@ -122,7 +122,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     MessageType.MESSAGE,
                     chatroomId,
                     session.getId(),
-                    (String) object.get(SENDER),    // 발신인 (닉네임)
+                    (String) object.get(SENDER_NICKNAME),    // 발신인 (닉네임)
                     receiverId,                     // 수신인 (아이디)
                     (String) object.get(MESSAGE),
                     LocalDateTime.now(),

@@ -23,8 +23,6 @@ import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -115,34 +113,6 @@ public class ReviewService extends AbstractService {
         reviewRepository.delete(review);
     }
 
-    // 수강 강의별 리뷰 조회 : getReviewsOfLecture
-    private Page<Review> getReviewsOfLecture(Long lectureId, Integer page) {
-
-        Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
-        return reviewRepository.findByLecture(lecture, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
-        // return reviewQueryRepository.findReviewsWithUserByLecture(lecture, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()));
-    }
-
-    @Transactional(readOnly = true)
-    public Page<ReviewResponse> getReviewResponsesOfLecture(Long lectureId, Integer page) {
-        return getReviewsOfLecture(lectureId, page).map(ReviewResponse::new);
-    }
-
-    private Review getReviewOfLecture(Long lectureId, Long reviewId) {
-
-        Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
-
-        return reviewRepository.findByLectureAndId(lecture, reviewId)
-                .orElseThrow(() -> new EntityNotFoundException(REVIEW));
-    }
-
-    @Transactional(readOnly = true)
-    public ReviewResponse getReviewResponseOfLecture(Long lectureId, Long reviewId) {
-        return new ReviewResponse(getReviewOfLecture(lectureId, reviewId));
-    }
-
     public Review createTuteeReview(User user, Long lectureId, TuteeReviewCreateRequest tuteeReviewCreateRequest) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
@@ -205,21 +175,43 @@ public class ReviewService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public ReviewResponse getReviewResponseOfLecture(Long tuteeId, Long lectureId, Long reviewId) {
-        return new ReviewResponse(getReviewOfLecture(lectureId, reviewId));
+    public Page<ReviewResponse> getReviewResponsesOfLecture(Long lectureId, Integer page) {
+
+        Lecture lecture = lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
+        return reviewQueryRepository.findReviewsWithChildByLecture(lecture, getPageRequest(page));
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewResponse getReviewResponseOfLecture(Long lectureId, Long reviewId) {
+
+        Lecture lecture = lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
+
+        Review parent = reviewRepository.findByLectureAndId(lecture, reviewId)
+                .orElseThrow(() -> new EntityNotFoundException(REVIEW));
+
+        // TODO - Optional 체크
+        Optional<Review> child = reviewRepository.findByParent(parent);
+        return new ReviewResponse(parent, child.orElse(null));
     }
 
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getReviewResponses(User user, Integer page) {
 
-        Page<Review> reviews = reviewRepository.findByUser(user, getPageRequest(page));
-        return reviews.map(ReviewResponse::new);
+        // Page<Review> reviews = reviewRepository.findByUser(user, getPageRequest(page));
+        Page<ReviewResponse> reviews = reviewQueryRepository.findReviewsWithChildByUser(user, getPageRequest(page));
+        return reviews;
     }
 
     @Transactional(readOnly = true)
     public ReviewResponse getReviewResponse(Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
+
+        Review parent = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new EntityNotFoundException(REVIEW));
-        return new ReviewResponse(review);
+
+        // TODO - Optional 체크
+        Optional<Review> child = reviewRepository.findByParent(parent);
+        return new ReviewResponse(parent, child.orElse(null));
     }
 }

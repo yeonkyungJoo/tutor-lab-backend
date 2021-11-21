@@ -28,7 +28,7 @@ public class TuteeReviewController {
     }
 
     @ApiOperation("리뷰 조회")
-    @GetMapping("{/review_id}")
+    @GetMapping("/{review_id}")
     public ResponseEntity<?> getReview(@PathVariable(name = "review_id") Long reviewId) {
         ReviewResponse review = reviewService.getReviewResponse(reviewId);
         return ResponseEntity.ok(review);
