@@ -19,7 +19,7 @@ import java.util.List;
 // https://www.baeldung.com/spring-boot-swagger-jwt
 // https://www.programcreek.com/java-api-examples/?api=springfox.documentation.builders.ParameterBuilder
 @Configuration
-@EnableSwagger2
+// @EnableSwagger2
 public class SwaggerConfig {
 
     @Bean
