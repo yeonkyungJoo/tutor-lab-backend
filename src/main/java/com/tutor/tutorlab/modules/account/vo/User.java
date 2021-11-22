@@ -64,6 +64,7 @@ public class User extends BaseEntity {
     private String emailVerifyToken;
     private LocalDateTime emailVerifiedAt;
 
+    @Lob
     private String fcmToken;
 
     private boolean deleted = false;
