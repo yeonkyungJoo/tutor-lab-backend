@@ -12,6 +12,7 @@ public class ReviewResponse {
         this.score = parent.getScore();
         this.content = parent.getContent();
         this.username = parent.getUser().getUsername();
+        this.userNickname = parent.getUser().getNickname();
         this.createdAt = LocalDateTimeUtil.getDateTimeToString(parent.getCreatedAt());
         this.child = new ChildReviewResponse(child);
     }
@@ -20,6 +21,7 @@ public class ReviewResponse {
     private Integer score;
     private String content;
     private String username;
+    private String userNickname;
     private String createdAt;
     private ChildReviewResponse child;
 
@@ -29,6 +31,7 @@ public class ReviewResponse {
         private Long reviewId;
         private String content;
         private String username;
+        private String userNickname;
         private String createdAt;
 
         public ChildReviewResponse(Review review) {
@@ -36,6 +39,7 @@ public class ReviewResponse {
                 this.reviewId = review.getId();
                 this.content = review.getContent();
                 this.username = review.getUser().getUsername();
+                this.userNickname = review.getUser().getNickname();
                 this.createdAt = LocalDateTimeUtil.getDateTimeToString(review.getCreatedAt());
             }
         }

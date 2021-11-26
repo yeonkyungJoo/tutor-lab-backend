@@ -5,6 +5,7 @@ import com.tutor.tutorlab.modules.subject.controller.response.LearningKindRespon
 import com.tutor.tutorlab.modules.subject.controller.response.SubjectResponse;
 import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,18 +20,21 @@ public class SubjectServiceImpl implements SubjectService {
 
     private final SubjectRepository subjectRepository;
 
+    @Cacheable("learningKinds")
     @Override
     public List<LearningKindResponse> getLearningKindResponses() {
         return subjectRepository.findLearningKinds().stream()
                 .map(LearningKindResponse::new).collect(toList());
     }
 
+    @Cacheable("subjects")
     @Override
     public List<SubjectResponse> getSubjectResponses() {
         return subjectRepository.findAll().stream()
                 .map(SubjectResponse::new).collect(toList());
     }
 
+    @Cacheable("subjectsByLearningKind")
     @Override
     public List<SubjectResponse> getSubjectResponses(Long learningKindId) {
         return subjectRepository.findAllByLearningKindId(learningKindId).stream()

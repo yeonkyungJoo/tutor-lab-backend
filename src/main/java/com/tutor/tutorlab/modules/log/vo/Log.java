@@ -15,6 +15,7 @@ public class Log {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
+    // TODO - sessionId를 왜 저장해야하는가
     private String sessionId;
     private String osType;
     private String accessPath;
@@ -26,25 +27,27 @@ public class Log {
     private String loginAt;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Log(String loginAt, String osType, String accessPath, String ip, String lastAccessAt, Long userId, String username) {
-        this.loginAt = loginAt;
+    public Log(String sessionId, String osType, String accessPath, String ip, String lastAccessAt, Long userId, String username, String loginAt) {
+        this.sessionId = sessionId;
         this.osType = osType;
         this.accessPath = accessPath;
         this.ip = ip;
         this.lastAccessAt = lastAccessAt;
         this.userId = userId;
         this.username = username;
+        this.loginAt = loginAt;
     }
 
-    public static Log of(String loginAt, String osType, String accessPath, String ip, String lastAccessAt, Long userId, String username) {
+    public static Log of(String sessionId, String osType, String accessPath, String ip, String lastAccessAt, Long userId, String username, String loginAt) {
         return Log.builder()
-                .loginAt(loginAt)
+                .sessionId(sessionId)
                 .osType(osType)
                 .accessPath(accessPath)
                 .ip(ip)
                 .lastAccessAt(lastAccessAt)
                 .userId(userId)
                 .username(username)
+                .loginAt(loginAt)
                 .build();
     }
 }

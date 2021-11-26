@@ -9,7 +9,7 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 @Repository
-public interface MessageRepository extends MongoRepository<Message, Long> {
+public interface MessageRepository extends MongoRepository<Message, String> {
 
     List<Message> findAllByChatroomId(Long chatroomId);
     Message findFirstByChatroomIdOrderByIdDesc(Long chatroomId);

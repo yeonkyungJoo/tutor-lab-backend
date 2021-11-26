@@ -64,7 +64,7 @@ public class LectureCreateRequest {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class LectureSubjectCreateRequest {
 
-        @NotBlank(message = "강의 종류를 선택해주세요.")
+        @NotNull(message = "강의 종류를 선택해주세요.")
         private Long learningKindId;
 
         @NotBlank(message = "강의 종류를 선택해주세요.")
