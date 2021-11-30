@@ -171,6 +171,12 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
         Lecture lecture = lectureRepository.findByTutorAndId(tutor, lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
+        // 등록된 적 있는 강의면 수정 불가
+        if (enrollmentRepository.countAllByLectureId(lectureId) > 0) {
+            // TODO - 예외 처리
+            throw new RuntimeException("등록된 강의는 수정이 불가합니다.");
+        }
+
         lecture.getLecturePrices().clear();
         lecture.getLectureSubjects().clear();
 

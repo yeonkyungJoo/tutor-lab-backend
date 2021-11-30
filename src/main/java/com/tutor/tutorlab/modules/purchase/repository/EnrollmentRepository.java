@@ -26,6 +26,9 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
     @Query(value = "select * from enrollment where lecture_id = :lectureId", nativeQuery = true)
     List<Enrollment> findAllByLectureId(Long lectureId);
+    @Query(value = "select count(*) from enrollment where lecture_id = :lectureId", nativeQuery = true)
+    Integer countAllByLectureId(Long lectureId);
+
     Page<Enrollment> findByLectureAndCanceledFalseAndClosedFalse(Lecture lecture, Pageable pageable);
 
     Optional<Enrollment> findByLectureAndIdAndCanceledFalseAndClosedFalse(Lecture lecture, Long enrollmentId);
