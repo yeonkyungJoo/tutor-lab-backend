@@ -44,6 +44,9 @@ public class Chatroom extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_CHATROOM_TUTEE_ID"))
     private Tutee tutee;
 
+    private int accusedCount = 0;
+    private boolean isClosed = false;
+
     @Builder(access = AccessLevel.PRIVATE)
     private Chatroom(Enrollment enrollment, Tutor tutor, Tutee tutee) {
         this.enrollment = enrollment;
@@ -57,6 +60,17 @@ public class Chatroom extends BaseEntity {
                 .tutor(tutor)
                 .tutee(tutee)
                 .build();
+    }
+
+    public void close() {
+        setClosed(true);
+    }
+
+    public void accused() {
+        this.accusedCount++;
+        if (this.accusedCount == 5) {
+            close();
+        }
     }
 
 }

@@ -4,6 +4,8 @@ import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
+import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.service.UserService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.CHATROOM;
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
 import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTEE;
 import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
 
@@ -35,9 +38,13 @@ import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
 @Service
 public class ChatroomService extends AbstractService {
 
+    private final ChatService chatService;
+    private final UserService userService;
+
     private final ChatroomRepository chatroomRepository;
     private final TuteeRepository tuteeRepository;
     private final TutorRepository tutorRepository;
+    private final UserRepository userRepository;
 
     private final MongoTemplate mongoTemplate;
     private final MessageRepository messageRepository;
@@ -114,4 +121,57 @@ public class ChatroomService extends AbstractService {
         checkAllMessages(user, chatroomId);
         return messageRepository.findAllByChatroomId(chatroomId);
     }
+
+    private void accuseChatroom(Long chatroomId) {
+
+        Chatroom chatroom = chatroomRepository.findById(chatroomId)
+                .orElseThrow(() -> new EntityNotFoundException(CHATROOM));
+        accuseChatroom(chatroom);
+    }
+
+    private void accuseChatroom(Chatroom chatroom) {
+
+        chatroom.accused();
+        if (chatroom.isClosed()) {
+            // TODO
+            // chatService.deleteChatroom(chatroomId);
+        }
+    }
+
+    private void accuseUser(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(USER));
+        accuseUser(user);
+    }
+
+    private void accuseUser(User user) {
+
+        user.accused();
+        if (user.isDeleted()) {
+            // TODO - 로그아웃
+            // userService.deleteUser(user);
+        }
+    }
+
+    // TODO - 신고하기
+    @Transactional
+    public void accuse(User user, Long chatroomId) {
+
+        Chatroom chatroom = chatroomRepository.findById(chatroomId)
+                .orElseThrow(() -> new EntityNotFoundException(CHATROOM));
+
+        User tuteeUser = chatroom.getTutee().getUser();
+        User tutorUser = chatroom.getTutor().getUser();
+
+        // TODO - TEST
+        if (user.equals(tuteeUser)) {
+            accuseUser(tutorUser);
+        } else if (user.equals(tutorUser)) {
+            accuseUser(tuteeUser);
+        }
+
+        accuseChatroom(chatroom);
+    }
+
 }

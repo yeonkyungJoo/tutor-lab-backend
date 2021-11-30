@@ -25,10 +25,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "select * from user where username = :username and email_verified = false", nativeQuery = true)
     Optional<User> findUnverifiedUserByUsername(@Param("username") String username);
 
-    User findByName(String name);
-
-    @Query(value = "select * from user where name = :name", nativeQuery = true)
-    User findAllByName(@Param("name") String name);
+//    User findByName(String name);
+//
+//    @Query(value = "select * from user where name = :name", nativeQuery = true)
+//    User findAllByName(@Param("name") String name);
 
     Optional<User> findByFcmToken(String fcmToken);
 }

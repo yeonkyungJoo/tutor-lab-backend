@@ -65,4 +65,7 @@ public class ChatService {
         WebSocketHandler.chatroomMap.remove(sessionMap);
     }
 
+    public void deleteChatroom(Long chatroomId) {
+
+    }
 }

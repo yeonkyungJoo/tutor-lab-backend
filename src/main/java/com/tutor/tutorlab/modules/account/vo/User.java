@@ -74,6 +74,8 @@ public class User extends BaseEntity {
 
     private LocalDateTime lastLoginAt;
 
+    private int accusedCount = 0;
+
     // TODO - Notification과 양방향
 
     @Builder(access = AccessLevel.PRIVATE)
@@ -136,6 +138,14 @@ public class User extends BaseEntity {
         }
         setEmailVerified(true);
         setEmailVerifiedAt(LocalDateTime.now());
+    }
+
+    public void accused() {
+        this.accusedCount++;
+        if (this.accusedCount == 5) {
+            // TODO - 즉시 로그아웃
+            quit();
+        }
     }
 
 }

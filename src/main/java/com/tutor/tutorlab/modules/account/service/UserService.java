@@ -100,6 +100,12 @@ public class UserService extends AbstractService {
         SecurityContextHolder.getContext().setAuthentication(null);     // 로그아웃
     }
 
+    // deleteAccusedUser
+    @Transactional
+    public void deleteUser(User user) {
+
+    }
+
     @Transactional
     public void updateUserPassword(User user, UserPasswordUpdateRequest userPasswordUpdateRequest) {
 
