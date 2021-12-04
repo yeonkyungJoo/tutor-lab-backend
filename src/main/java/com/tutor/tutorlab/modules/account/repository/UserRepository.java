@@ -22,6 +22,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByProviderAndProviderId(OAuthType provider, String providerId);
 
+    @Query(value = "select * from user where username = :username and deleted = false", nativeQuery = true)
+    Optional<User> findUndeletedUserByUsername(@Param("username") String username);
+
     @Query(value = "select * from user where username = :username and email_verified = false", nativeQuery = true)
     Optional<User> findUnverifiedUserByUsername(@Param("username") String username);
 
