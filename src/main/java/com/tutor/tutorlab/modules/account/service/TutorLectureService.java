@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.LECTURE;
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.TUTOR;
 
 @Transactional
 @Service
@@ -40,19 +41,35 @@ public class TutorLectureService extends AbstractService {
     private final EnrollmentRepository enrollmentRepository;
     private final ReviewRepository reviewRepository;
 
-    @Transactional(readOnly = true)
-    public Page<Lecture> getLectures(User user, Integer page) {
+    private Page<Lecture> getLectures(User user, Integer page) {
 
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
 
-        return lectureRepository.findByTutor(tutor, getPageRequest(page));
+        return getLectures(tutor, page);
     }
 
     @Transactional(readOnly = true)
     public Page<LectureResponse> getLectureResponses(User user, Integer page) {
         // return getLectures(user, page).map(lectureMapstructUtil::getLectureResponse);
         return getLectures(user, page).map(LectureResponse::new);
+    }
+
+    private Page<Lecture> getLectures(Long tutorId, Integer page) {
+
+        Tutor tutor = tutorRepository.findById(tutorId)
+                .orElseThrow(() -> new EntityNotFoundException(TUTOR));
+
+        return getLectures(tutor, page);
+    }
+
+    private Page<Lecture> getLectures(Tutor tutor, Integer page) {
+        return lectureRepository.findByTutor(tutor, getPageRequest(page));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LectureResponse> getLectureResponses(Long tutorId, Integer page) {
+        return getLectures(tutorId, page).map(LectureResponse::new);
     }
 
     private Page<Enrollment> getEnrollmentsOfLecture(User user, Long lectureId, Integer page) {

@@ -6,8 +6,10 @@ import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.CareerResponse;
 import com.tutor.tutorlab.modules.account.controller.response.EducationResponse;
 import com.tutor.tutorlab.modules.account.controller.response.TutorResponse;
+import com.tutor.tutorlab.modules.account.service.TutorLectureService;
 import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import java.util.List;
 public class TutorController {
 
     private final TutorService tutorService;
+    private final TutorLectureService tutorLectureService;
 
     // TODO - 검색
     @ApiOperation("튜터 전체 조회 - 페이징")
@@ -90,6 +93,15 @@ public class TutorController {
 
         List<EducationResponse> educations = tutorService.getEducationResponses(tutorId);
         return ResponseEntity.ok(educations);
+    }
+
+    @ApiOperation("튜터의 강의 리스트")
+    @GetMapping("/{tutor_id}/lectures")
+    public ResponseEntity<?> getLectures(@PathVariable(name = "tutor_id") Long tutorId,
+                                         @RequestParam(defaultValue = "1") Integer page) {
+
+        Page<LectureResponse> lectures = tutorLectureService.getLectureResponses(tutorId, page);
+        return ResponseEntity.ok(lectures);
     }
 
 }
