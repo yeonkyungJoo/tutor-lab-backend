@@ -37,7 +37,7 @@ public class LectureSearchRepository {
     private final QTutor tutor = QTutor.tutor;
     private final QUser user = QUser.user;
 
-    // TODO - CHECK : Lecture에 주소 정보를 넣는 게 더 좋은가?
+    // TODO - CHECK : Lecture에 주소 정보를 넣는 게 더 좋은가? - 튜터 주소 변경 가능성 존재
     private List<Lecture> findLecturesByZone(Address zone) {
 
         if (zone == null) {
@@ -132,7 +132,7 @@ public class LectureSearchRepository {
                     .orderBy(lecture.id.asc())
                     .fetchResults();
 
-        } else if(zone == null && request != null) {
+        } else if(zone == null) {
 
             lectures = jpaQueryFactory.selectFrom(lecture)
                     .innerJoin(lecture.tutor, tutor)
@@ -141,11 +141,15 @@ public class LectureSearchRepository {
                     .fetchJoin()
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
-                    .where(eqTitle(request.getTitle()))
+                    .where(eqTitle(request.getTitle()),
+                            eqSubjects(request.getSubjects()),
+                            eqSystemType(request.getSystemType()),
+                            eqIsGroup(request.getIsGroup()),
+                            eqDifficultyType(request.getDifficultyTypes()))
                     .orderBy(lecture.id.asc())
                     .fetchResults();
 
-        } else if (zone != null && request == null) {
+        } else if (request == null) {
 
             lectures = jpaQueryFactory.selectFrom(lecture)
                     .innerJoin(lecture.tutor, tutor)
@@ -170,7 +174,11 @@ public class LectureSearchRepository {
                     .limit(pageable.getPageSize())
                     .where(eqState(zone.getState()),
                             eqSiGunGu(zone.getSiGunGu()),
-                            eqTitle(request.getTitle()))
+                            eqTitle(request.getTitle()),
+                            eqSubjects(request.getSubjects()),
+                            eqSystemType(request.getSystemType()),
+                            eqIsGroup(request.getIsGroup()),
+                            eqDifficultyType(request.getDifficultyTypes()))
                     .orderBy(lecture.id.asc())
                     .fetchResults();
         }
@@ -178,6 +186,7 @@ public class LectureSearchRepository {
         return new PageImpl<>(lectures.getResults(), pageable, lectures.getTotal());
     }
 
+    // TODO - 제네릭 사용해서 util로 변경
     private BooleanExpression eqTitle(String title) {
         if (StringUtils.isBlank(title)) {
             return null;
@@ -185,18 +194,18 @@ public class LectureSearchRepository {
         return lecture.title.eq(title);
     }
 
-    private BooleanExpression eqDifficulty(List<DifficultyType> difficulty) {
-        if (CollectionUtils.isEmpty(difficulty)) {
+    private BooleanExpression eqSubjects(List<String> subjects) {
+        if (CollectionUtils.isEmpty(subjects)) {
             return null;
         }
-        return lecture.difficultyType.in(difficulty);
+        return lecture.lectureSubjects.any().krSubject.in(subjects);
     }
 
-    private BooleanExpression eqSystemTypes(List<SystemType> systemTypes) {
-        if (CollectionUtils.isEmpty(systemTypes)) {
+    private BooleanExpression eqSystemType(SystemType systemType) {
+        if (Objects.isNull(systemType)) {
             return null;
         }
-        return lecture.systemTypes.any().in(systemTypes);
+        return lecture.systemTypes.contains(systemType);
     }
 
     private BooleanExpression eqIsGroup(Boolean isGroup) {
@@ -206,10 +215,11 @@ public class LectureSearchRepository {
         return lecture.lecturePrices.any().isGroup.eq(isGroup);
     }
 
-    private BooleanExpression eqSubjects(List<String> subjects) {
-        if (CollectionUtils.isEmpty(subjects)) {
+    private BooleanExpression eqDifficultyType(List<DifficultyType> difficultyTypes) {
+        if (CollectionUtils.isEmpty(difficultyTypes)) {
             return null;
         }
-        return lecture.lectureSubjects.any().krSubject.in(subjects);
+        return lecture.difficultyType.in(difficultyTypes);
     }
+
 }

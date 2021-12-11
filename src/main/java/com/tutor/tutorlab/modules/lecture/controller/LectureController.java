@@ -31,7 +31,7 @@ public class LectureController {
     private final ReviewService reviewService;
 
     // TODO - CHECK : @ModelAttribute
-    @ApiOperation("강의 목록 조회 - 위치별(튜터 주소 기준), 강의명 검색")
+    @ApiOperation("강의 목록 조회 - 위치별(튜터 주소 기준), 강의명, 개발언어, 온/오프라인, 개인/그룹, 레벨 필터")
     @GetMapping
     public ResponseEntity<?> getLectures(@RequestParam(name = "zone", required = false) String zone,
                                          @Valid LectureListRequest lectureListRequest,
