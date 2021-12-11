@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-class TuteeControllerTest extends AbstractTest {
+class TuteeControllerIntegrationTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;

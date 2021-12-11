@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class UserServiceTest extends AbstractTest {
+class UserServiceIntegrationTest extends AbstractTest {
 
 //    @Test
 //    void getUsers() {

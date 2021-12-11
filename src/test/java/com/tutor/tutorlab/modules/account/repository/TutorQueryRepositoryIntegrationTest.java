@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class TutorQueryRepositoryTest {
+class TutorQueryRepositoryIntegrationTest {
 
     @Autowired
     TutorRepository tutorRepository;

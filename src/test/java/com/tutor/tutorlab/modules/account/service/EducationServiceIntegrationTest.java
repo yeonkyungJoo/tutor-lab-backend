@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-class EducationServiceTest extends AbstractTest {
+class EducationServiceIntegrationTest extends AbstractTest {
 
     @WithAccount(NAME)
     @Test

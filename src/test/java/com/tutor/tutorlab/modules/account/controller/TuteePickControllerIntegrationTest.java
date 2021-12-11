@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-class TuteePickControllerTest extends AbstractTest {
+class TuteePickControllerIntegrationTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;

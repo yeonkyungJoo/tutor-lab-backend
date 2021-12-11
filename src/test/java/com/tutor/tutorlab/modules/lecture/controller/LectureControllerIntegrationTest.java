@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-class LectureControllerTest extends AbstractTest {
+class LectureControllerIntegrationTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;

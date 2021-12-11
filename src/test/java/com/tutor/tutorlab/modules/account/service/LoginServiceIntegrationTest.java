@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class LoginServiceTest extends AbstractTest {
+class LoginServiceIntegrationTest extends AbstractTest {
 
     @Autowired
     JwtTokenManager jwtTokenManager;

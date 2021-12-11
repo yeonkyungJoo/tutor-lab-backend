@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-public class AddressControllerTest extends AbstractTest {
+public class AddressControllerIntegrationTest extends AbstractTest {
 
     private final String BASE_URL = "/addresses";
 

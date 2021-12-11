@@ -1,7 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -9,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @MockMvcTest
-class TuteeLectureControllerTest {
+class TutorLectureControllerIntegrationTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -21,17 +20,7 @@ class TuteeLectureControllerTest {
 //    @Test
 //    void getLecture() {
 //    }
-
-    @BeforeEach
-    void init() {
-
-
-    }
-
-    @Test
-    void cancel() {
-    }
-
+//
 //    @Test
 //    void getReviewsOfLecture() {
 //    }
@@ -50,5 +39,17 @@ class TuteeLectureControllerTest {
 
     @Test
     void deleteReview() {
+    }
+
+//    @Test
+//    void getTuteesOfLecture() {
+//    }
+//
+//    @Test
+//    void getEnrollmentsOfLecture() {
+//    }
+
+    @Test
+    void close() {
     }
 }

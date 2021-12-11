@@ -1,22 +1,16 @@
 package com.tutor.tutorlab.modules.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
-import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.configuration.AbstractTest;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
+import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
-import com.tutor.tutorlab.modules.account.repository.EducationRepository;
-import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.service.EducationService;
-import com.tutor.tutorlab.modules.account.service.LoginService;
-import com.tutor.tutorlab.modules.account.service.TutorService;
-import com.tutor.tutorlab.modules.account.vo.Education;
+import com.tutor.tutorlab.modules.account.vo.Career;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -34,29 +28,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @MockMvcTest
-class EducationControllerTest extends AbstractTest {
+class CareerControllerIntegrationTest extends AbstractTest {
 
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
 
-
-//    @Test
-//    void getEducation() {
-//    }
-
-    @WithAccount(NAME)
     @Test
-    void Education_등록() throws Exception {
+    @WithAccount(NAME)
+    void newCareer() throws Exception {
 
         // Given
         User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
         // When
-        mockMvc.perform(post("/educations")
-                .content(objectMapper.writeValueAsString(educationCreateRequest))
+        mockMvc.perform(post("/careers")
+                .content(objectMapper.writeValueAsString(careerCreateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated());
@@ -64,18 +53,18 @@ class EducationControllerTest extends AbstractTest {
         // Then
         user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
-        Assertions.assertEquals(1, educationRepository.findByTutor(tutor).size());
 
-        Education createdEducation = educationRepository.findByTutor(tutor).get(0);
+        Assertions.assertEquals(1, careerRepository.findByTutor(tutor).size());
+        Career createdCareer = careerRepository.findByTutor(tutor).get(0);
         assertAll(
-                () -> assertEquals(educationCreateRequest.getSchoolName(), createdEducation.getSchoolName()),
-                () -> assertEquals(educationCreateRequest.getMajor(), createdEducation.getMajor())
+                () -> assertEquals(careerCreateRequest.getCompanyName(), createdCareer.getCompanyName())
         );
     }
 
-    @WithAccount(NAME)
     @Test
-    void Education_등록_withInvalidInput() throws Exception {
+    @DisplayName("Career 등록 - Invalid Input")
+    @WithAccount(NAME)
+    void newCareer_withInvalidInput() throws Exception {
 
 //        // Given
 //        User user = userRepository.findByUsername(USERNAME).orElse(null);
@@ -84,8 +73,8 @@ class EducationControllerTest extends AbstractTest {
 //        // When
 //        // Then - Invalid Input
 //
-//        mockMvc.perform(post("/educations")
-//                .content(objectMapper.writeValueAsString(educationCreateRequest))
+//        mockMvc.perform(post("/careers")
+//                .content(objectMapper.writeValueAsString(careerCreateRequest))
 //                .contentType(MediaType.APPLICATION_JSON))
 //                .andDo(print())
 //                .andExpect(jsonPath("$.message").value("Invalid Input"))
@@ -93,7 +82,8 @@ class EducationControllerTest extends AbstractTest {
     }
 
     @Test
-    void Education_등록_withoutAuthenticatedUser() throws Exception {
+    @DisplayName("Career 등록 - 인증된 사용자 X")
+    public void newCareer_withoutAuthenticatedUser() throws Exception {
 
         // Given
         User user = loginService.signUp(signUpRequest);
@@ -104,8 +94,8 @@ class EducationControllerTest extends AbstractTest {
 
         // When
         // Then
-        mockMvc.perform(post("/educations")
-                .content(objectMapper.writeValueAsString(educationCreateRequest))
+        mockMvc.perform(post("/careers")
+                .content(objectMapper.writeValueAsString(careerCreateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.getCode()));
@@ -113,7 +103,8 @@ class EducationControllerTest extends AbstractTest {
 
     @WithAccount(NAME)
     @Test
-    void Education_등록_notTutor() throws Exception {
+    @DisplayName("Career 등록 - 튜터가 아닌 경우")
+    public void newCareer_notTutor() throws Exception {
 
         // Given
         User user = userRepository.findByUsername(USERNAME).orElse(null);
@@ -121,27 +112,28 @@ class EducationControllerTest extends AbstractTest {
 
         // When
         // Then
-        mockMvc.perform(post("/educations")
-                .content(objectMapper.writeValueAsString(educationCreateRequest))
+        mockMvc.perform(post("/careers")
+                .content(objectMapper.writeValueAsString(careerCreateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.getCode()));
+        // .andExpect(jsonPath("$.message").value("해당 사용자는 " + RoleType.TUTOR.getName() + "가 아닙니다."));
     }
 
     @WithAccount(NAME)
     @Test
-    void Education_수정() throws Exception {
+    void Career_수정() throws Exception {
 
         // Given
         User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
-        // When
-        Education education = educationService.createEducation(user, educationCreateRequest);
-        Long educationId = education.getId();
+        Career career = careerService.createCareer(user, careerCreateRequest);
+        Long careerId = career.getId();
 
-        mockMvc.perform(put("/educations/" + educationId)
-                .content(objectMapper.writeValueAsString(educationUpdateRequest))
+        // When
+        mockMvc.perform(put("/careers/" + careerId)
+                .content(objectMapper.writeValueAsString(careerUpdateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -149,38 +141,38 @@ class EducationControllerTest extends AbstractTest {
         // Then
         user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
-        Assertions.assertEquals(1, educationRepository.findByTutor(tutor).size());
 
-        Education updatedEducation = educationRepository.findByTutor(tutor).get(0);
+        List<Career> careers = careerRepository.findByTutor(tutor);
+        assertEquals(1, careers.size());
+
+        Career updatedCareer = careers.get(0);
         assertAll(
-                () -> assertEquals(educationUpdateRequest.getSchoolName(), updatedEducation.getSchoolName()),
-                () -> assertEquals(educationUpdateRequest.getMajor(), updatedEducation.getMajor())
+                () -> assertEquals(careerUpdateRequest.getCompanyName(), updatedCareer.getCompanyName())
         );
     }
 
     @WithAccount(NAME)
     @Test
-    void Education_삭제() throws Exception {
+    void Career_삭제() throws Exception {
 
         // Given
         User user = userRepository.findByUsername(USERNAME).orElse(null);
         tutorService.createTutor(user, tutorSignUpRequest);
 
-        // When
-        Education education = educationService.createEducation(user, educationCreateRequest);
-        Long educationId = education.getId();
+        Career career = careerService.createCareer(user, careerCreateRequest);
+        Long careerId = career.getId();
 
         // When
-        mockMvc.perform(delete("/educations/" + educationId))
+        mockMvc.perform(delete("/careers/" + careerId))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         // Then
         user = userRepository.findByUsername(USERNAME).orElse(null);
         Tutor tutor = tutorRepository.findByUser(user);
+        List<Career> careers = careerRepository.findByTutor(tutor);
+        assertEquals(0, careers.size());
 
-        List<Education> educations = educationRepository.findByTutor(tutor);
-        assertEquals(0, educations.size());
-        assertFalse(educationRepository.findById(educationId).isPresent());
+        assertFalse(careerRepository.findById(careerId).isPresent());
     }
 }

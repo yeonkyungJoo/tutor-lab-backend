@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // @Transactional
 @SpringBootTest
-class InquiryServiceTest extends AbstractTest {
+class InquiryServiceIntegrationTest extends AbstractTest {
 
     @Autowired
     InquiryService inquiryService;

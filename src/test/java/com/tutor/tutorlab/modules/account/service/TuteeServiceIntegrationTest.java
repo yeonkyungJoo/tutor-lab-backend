@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class TuteeServiceTest extends AbstractTest {
+class TuteeServiceIntegrationTest extends AbstractTest {
 
     @WithAccount(NAME)
     @Test
