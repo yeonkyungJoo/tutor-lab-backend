@@ -20,21 +20,21 @@ public class SubjectServiceImpl implements SubjectService {
 
     private final SubjectRepository subjectRepository;
 
-    @Cacheable("learningKinds")
+    // @Cacheable("learningKinds")
     @Override
     public List<LearningKindResponse> getLearningKindResponses() {
         return subjectRepository.findLearningKinds().stream()
                 .map(LearningKindResponse::new).collect(toList());
     }
 
-    @Cacheable("subjects")
+    // @Cacheable("subjects")
     @Override
     public List<SubjectResponse> getSubjectResponses() {
         return subjectRepository.findAll().stream()
                 .map(SubjectResponse::new).collect(toList());
     }
 
-    @Cacheable("subjectsByLearningKind")
+    // @Cacheable("subjectsByLearningKind")
     @Override
     public List<SubjectResponse> getSubjectResponses(Long learningKindId) {
         return subjectRepository.findAllByLearningKindId(learningKindId).stream()
