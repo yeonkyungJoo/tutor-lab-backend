@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class ReviewServiceTest extends AbstractTest {
+class ReviewServiceIntegrationTest extends AbstractTest {
 
     private User tutorUser;
     private Tutor tutor;

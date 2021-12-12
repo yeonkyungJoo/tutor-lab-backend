@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class NotificationServiceTest extends AbstractTest {
+class NotificationServiceIntegrationTest extends AbstractTest {
 
     private Lecture lecture;
     private User tuteeUser;

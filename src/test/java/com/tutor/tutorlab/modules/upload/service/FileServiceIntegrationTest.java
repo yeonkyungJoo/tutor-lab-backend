@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
 @SpringBootTest
-public class FileServiceTest {
+public class FileServiceIntegrationTest {
 
     @Autowired
     private FileService fileService;

@@ -20,7 +20,7 @@ public class TuteePickController {
     private final PickService pickService;
 
     @GetMapping
-    public ResponseEntity getPicks(@CurrentUser User user,
+    public ResponseEntity<?> getPicks(@CurrentUser User user,
                                    @RequestParam(defaultValue = "1") Integer page) {
         Page<PickResponse> picks = pickService.getPickResponses(user, page);
         return ResponseEntity.ok(picks);

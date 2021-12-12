@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import java.util.List;
 
 @SpringBootTest
-class MessageRepositoryTest {
+class MessageRepositoryIntegrationTest {
 
     @Autowired
     MessageRepository messageRepository;

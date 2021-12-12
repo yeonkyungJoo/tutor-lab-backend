@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
-class LectureQueryRepositoryTest {
+class LectureQueryRepositoryIntegrationTest {
 
     @Autowired
     LectureQueryRepository lectureQueryRepository;

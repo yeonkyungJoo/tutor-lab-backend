@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class EnrollmentServiceTest extends AbstractTest {
+class EnrollmentServiceIntegrationTest extends AbstractTest {
 
     private Tutor tutor;
     private Lecture lecture;

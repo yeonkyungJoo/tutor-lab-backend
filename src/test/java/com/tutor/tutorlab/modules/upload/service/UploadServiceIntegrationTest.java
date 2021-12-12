@@ -14,7 +14,7 @@ import org.springframework.util.FileCopyUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class UploadServiceTest {
+public class UploadServiceIntegrationTest {
 
     @Autowired
     private UploadService uploadService;

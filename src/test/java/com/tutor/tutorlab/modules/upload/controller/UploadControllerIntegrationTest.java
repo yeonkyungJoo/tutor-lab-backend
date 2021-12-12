@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // @Transactional
 @MockMvcTest
-public class UploadControllerTest {
+public class UploadControllerIntegrationTest {
 // TODO - 테스트
     private final String BASE_URL = "/uploads";
 

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-public class LectureServiceTest extends AbstractTest {
+public class LectureServiceIntegrationTest extends AbstractTest {
 
     @WithAccount(NAME)
     @Test

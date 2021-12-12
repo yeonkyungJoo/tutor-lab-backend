@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class MessageServiceTest {
+class MessageServiceIntegrationTest {
 
     @Autowired
     MessageService messageService;

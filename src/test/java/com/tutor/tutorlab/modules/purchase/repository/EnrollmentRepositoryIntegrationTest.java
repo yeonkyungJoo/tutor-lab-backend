@@ -10,15 +10,15 @@ import java.util.List;
 
 @Transactional
 @SpringBootTest
-class EnrollmentRepositoryTest {
+class EnrollmentRepositoryIntegrationTest {
 
     @Autowired
     EnrollmentRepository enrollmentRepository;
 
     // 기존 데이터로 테스트
-    @Test
-    void findAllWithLectureTutor() {
-        List<Enrollment> enrollments = enrollmentRepository.findAllWithLectureTutorByTutorId(1L);
-        System.out.println(enrollments.size());
-    }
+//    @Test
+//    void findAllWithLectureTutor() {
+//        List<Enrollment> enrollments = enrollmentRepository.findAllWithLectureTutorByTutorId(1L);
+//        System.out.println(enrollments.size());
+//    }
 }

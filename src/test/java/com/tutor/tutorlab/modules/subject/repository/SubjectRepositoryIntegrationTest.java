@@ -13,7 +13,7 @@ import java.util.List;
 
 @Transactional
 @SpringBootTest
-class SubjectRepositoryTest {
+class SubjectRepositoryIntegrationTest {
 
     @Autowired
     SubjectRepository subjectRepository;

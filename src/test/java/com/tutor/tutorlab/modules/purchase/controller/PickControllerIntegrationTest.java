@@ -1,6 +1,7 @@
-package com.tutor.tutorlab.modules.purchase.service;
+package com.tutor.tutorlab.modules.purchase.controller;
 
 import com.tutor.tutorlab.configuration.AbstractTest;
+import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
 import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
@@ -21,16 +22,25 @@ import com.tutor.tutorlab.modules.purchase.vo.Pick;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
-@SpringBootTest
-class PickServiceTest extends AbstractTest {
+@MockMvcTest
+class PickControllerIntegrationTest extends AbstractTest {
+
+    @Autowired
+    MockMvc mockMvc;
 
     private User tutorUser;
     private Tutor tutor;
@@ -38,10 +48,6 @@ class PickServiceTest extends AbstractTest {
     private Long lecture1Id;
     private Lecture lecture2;
     private Long lecture2Id;
-
-//    @Test
-//    void getPicks() {
-//    }
 
     @BeforeEach
     void init() {
@@ -75,7 +81,7 @@ class PickServiceTest extends AbstractTest {
 
     @WithAccount(NAME)
     @Test
-    void createPick() {
+    void addPick() throws Exception {
 
         // Given
         User user = userRepository.findByUsername(USERNAME).orElse(null);
@@ -83,54 +89,18 @@ class PickServiceTest extends AbstractTest {
         assertNotNull(user);
 
         // When
-        Long pickId = pickService.createPick(user, lecture1Id).getId();
+        mockMvc.perform(post("/lectures/{lecture_id}/picks", lecture1Id))
+                .andDo(print())
+                .andExpect(status().isCreated());
 
         // Then
-        Pick pick = pickRepository.findById(pickId).orElse(null);
+        List<Pick> picks = pickRepository.findByTutee(tutee);
+        assertEquals(1, picks.size());
+        Pick pick = picks.get(0);
         assertAll(
                 () -> assertNotNull(pick),
                 () -> assertEquals(tutee, pick.getTutee()),
                 () -> assertEquals(lecture1, pick.getLecture())
         );
-    }
-
-    @WithAccount(NAME)
-    @Test
-    void deletePick() {
-
-        // Given
-        User user = userRepository.findByUsername(USERNAME).orElse(null);
-        Tutee tutee = tuteeRepository.findByUser(user);
-        assertNotNull(user);
-
-        Long pickId = pickService.createPick(user, lecture1Id).getId();
-
-        // When
-        pickService.deletePick(user, pickId);
-
-        // Then
-        Pick pick = pickRepository.findById(pickId).orElse(null);
-        assertNull(pick);
-        assertTrue(pickRepository.findByTutee(tutee).isEmpty());
-    }
-
-    @WithAccount(NAME)
-    @Test
-    void deleteAllPicks() {
-
-        // Given
-        User user = userRepository.findByUsername(USERNAME).orElse(null);
-        Tutee tutee = tuteeRepository.findByUser(user);
-        assertNotNull(user);
-
-        Long pick1Id = pickService.createPick(user, lecture1Id).getId();
-        Long pick2Id = pickService.createPick(user, lecture2Id).getId();
-        assertEquals(2, pickRepository.findByTutee(tutee).size());
-
-        // When
-        pickService.deleteAllPicks(user);
-
-        // Then
-        assertTrue(pickRepository.findByTutee(tutee).isEmpty());
     }
 }
