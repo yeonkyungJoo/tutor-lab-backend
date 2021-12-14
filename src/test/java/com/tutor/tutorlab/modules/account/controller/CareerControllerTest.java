@@ -1,41 +1,35 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
-import com.tutor.tutorlab.config.security.PrincipalDetailsService;
-import com.tutor.tutorlab.config.security.jwt.JwtRequestFilter;
-import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
+import com.tutor.tutorlab.configuration.AbstractTest;
+import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.CareerResponse;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.CareerService;
+import com.tutor.tutorlab.modules.account.vo.Career;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.CAREER;
+import static com.tutor.tutorlab.configuration.AbstractTest.*;
 import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,6 +44,10 @@ class CareerControllerTest {
     CareerController careerController;
 
     private MockMvc mockMvc;
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    private Career career = Mockito.mock(Career.class);
+    private CareerResponse careerResponse;
 
     @BeforeEach
     void setup() {
@@ -63,14 +61,14 @@ class CareerControllerTest {
     void getCareer() throws Exception {
 
         // given
-        when(careerService.getCareerResponse(any(User.class), anyLong()))
-                .thenAnswer(new Answer<CareerResponse>() {
-                    @Override
-                    public CareerResponse answer(InvocationOnMock invocation) throws Throwable {
-                        return null;
-                    }
-                });
+        careerResponse = new CareerResponse(career);
+        careerResponse.setJob("engineer");
+        careerResponse.setCompanyName("google");
+        careerResponse.setOthers(null);
+        careerResponse.setLicense(null);
 
+        when(careerService.getCareerResponse(any(User.class), anyLong()))
+                .thenReturn(careerResponse);
         // when
         // then
         mockMvc.perform(get(BASE_URL + "/{career_id}", 1L))
@@ -108,9 +106,44 @@ class CareerControllerTest {
     }
 
     @Test
+    void _newCareer() throws Exception {
+
+        // given
+        when(careerService.createCareer(any(User.class), any(CareerCreateRequest.class)))
+                .thenReturn(career);
+        // when
+        // then
+        CareerCreateRequest createRequest = getCareerCreateRequest();
+        mockMvc.perform(post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createRequest)))
+                .andDo(print())
+                .andExpect(status().isCreated());
+    }
+
+    @DisplayName("UnauthorizedException 발생")
+    @Test
+    void newCareer_withUnauthorizedException() throws Exception {
+
+        // given
+        when(careerService.createCareer(any(User.class), any(CareerCreateRequest.class)))
+                .thenThrow(new UnauthorizedException(TUTOR));
+        // when
+        // then
+        CareerCreateRequest createRequest = getCareerCreateRequest();
+        mockMvc.perform(post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(createRequest)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void newCareer() {
 
         // given
+        CareerCreateRequest createRequest = getCareerCreateRequest();
+
         // when
         // then
     }
