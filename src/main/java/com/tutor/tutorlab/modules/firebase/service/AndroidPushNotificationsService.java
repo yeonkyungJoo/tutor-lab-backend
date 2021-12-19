@@ -17,9 +17,9 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class AndroidPushNotificationsService {
 
-    @Value("firebase.server.key")
+    @Value("${firebase.server.key}")
     private String firebase_server_key;
-    @Value("firebase.api.url")
+    @Value("${firebase.api.url}")
     private String firebase_api_url;
 
     private HttpEntity<String> getRequest(String fcmToken, String title, String content) {

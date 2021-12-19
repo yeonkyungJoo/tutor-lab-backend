@@ -4,12 +4,15 @@ import com.tutor.tutorlab.config.exception.AlreadyExistException;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
+import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
+import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.chat.service.ChatService;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
+import com.tutor.tutorlab.modules.firebase.service.AndroidPushNotificationsService;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
@@ -53,6 +56,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     private final ChatService chatService;
     private final ReviewRepository reviewRepository;
 
+    private final AndroidPushNotificationsService androidPushNotificationsService;
     private final NotificationService notificationService;
 
     private Page<Lecture> getLecturesOfTutee(User user, Integer page) {
@@ -103,11 +107,13 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         tutee.addEnrollment(enrollment);
         lecture.addEnrollment(enrollment);
 
+        Tutor tutor = lecture.getTutor();
+        User tutorUser = tutor.getUser();
         // 수강 시 채팅방 자동 생성
-        chatService.createChatroom(lecture.getTutor(), tutee, enrollment);
+        chatService.createChatroom(tutor, tutee, enrollment);
         // 강의 등록 시 튜터에게 알림 전송
-        notificationService.createNotification(lecture.getTutor().getUser(), NotificationType.ENROLLMENT);
-
+        notificationService.createNotification(tutorUser, NotificationType.ENROLLMENT);
+        androidPushNotificationsService.send(tutorUser.getFcmToken(), "강의 등록", String.format("%s님이 %s 강의를 등록했습니다", user.getNickname(), lecture.getTitle()));
         return enrollment;
     }
 

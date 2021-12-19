@@ -18,7 +18,10 @@ public class AndroidPushPeriodicNotifications {
     public static String PeriodicNotificationJson(String fcmToken, String title, String content) {
 
         JSONObject body = new JSONObject();
-        body.put(FCM_TOKENS, new JSONArray(fcmToken));
+
+        JSONArray array = new JSONArray();
+        array.put(fcmToken);
+        body.put(FCM_TOKENS, array);
 
         JSONObject notification = new JSONObject();
         notification.put(TITLE, title);

@@ -1,11 +1,14 @@
 package com.tutor.tutorlab.modules.chat;
 
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
+import com.tutor.tutorlab.modules.account.repository.UserRepository;
+import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.chat.enums.MessageType;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.chat.service.MessageService;
 import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.chat.vo.Message;
+import com.tutor.tutorlab.modules.firebase.service.AndroidPushNotificationsService;
 import com.tutor.tutorlab.modules.notification.enums.NotificationType;
 import com.tutor.tutorlab.modules.notification.service.NotificationService;
 import com.tutor.tutorlab.utils.JsonUtil;
@@ -21,12 +24,10 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.CHATROOM;
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,6 +49,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private final MessageService messageService;
     private final NotificationService notificationService;
+    private final UserRepository userRepository;
+    private final AndroidPushNotificationsService androidPushNotificationsService;
 
     @PostConstruct
     private void init() {
@@ -97,9 +100,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         if (object.get(CHATROOM_ID) != null) {
 //            {
-//                "chatroomId": 38,
-//                "sender": "user2",
-//                "receiver": 43,
+//                "chatroomId": 42,
+//                "senderNickname": "user1",
+//                "receiverId": 60,
 //                "message": "hello"
 //            }
             Long chatroomId = (Long) object.get(CHATROOM_ID);
@@ -112,24 +115,27 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
 
             Long receiverId = (Long) object.get(RECEIVER_ID);
+            User receiver = userRepository.findById(receiverId)
+                    .orElseThrow(() -> new EntityNotFoundException(USER));
             // TODO - CHECK : 웹소켓 세션 - 영속성 컨텍스트
             // TODO - CHECK : 효율성 체크
             if (sessionMap.size() != 2) {
                 notificationService.createNotification(receiverId, NotificationType.CHAT);
             }
-
+            String sender = (String) object.get(SENDER_NICKNAME);
+            String messageText = (String) object.get(MESSAGE);
             Message msg = Message.of(
                     MessageType.MESSAGE,
                     chatroomId,
                     session.getId(),
-                    (String) object.get(SENDER_NICKNAME),    // 발신인 (닉네임)
+                    sender,                         // 발신인 (닉네임)
                     receiverId,                     // 수신인 (아이디)
-                    (String) object.get(MESSAGE),
+                    messageText,
                     LocalDateTime.now(),
-                    sessionMap.size() == 2 ? true : false
+                    sessionMap.size() == 2
             );
             messageService.saveMessage(msg);
-
+            androidPushNotificationsService.send(receiver.getFcmToken(), sender + "님으로부터 채팅이 도착했습니다", messageText);
         }
     }
 

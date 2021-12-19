@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Api(tags = {"PushNotificationController"})
 @RequiredArgsConstructor
@@ -27,16 +28,19 @@ public class PushNotificationController {
     private final AndroidPushNotificationsService androidPushNotificationsService;
     private final UserService userService;
 
+    @ApiIgnore
     @GetMapping(value = "/send")
     public ResponseEntity<?> send() throws ExecutionException, InterruptedException {
 
-//        CompletableFuture<String> pushNotification = androidPushNotificationsService.send(fcmToken, title, content);
-//        CompletableFuture.allOf(pushNotification).join();
-//
-//        return ResponseEntity.ok(pushNotification.get());
-        return null;
+        CompletableFuture<String> pushNotification
+                = androidPushNotificationsService.send("fcmToken", "title", "content");
+        CompletableFuture.allOf(pushNotification).join();
+
+        return ResponseEntity.ok(pushNotification.get());
     }
 
+    // 콜백
+    @ApiIgnore
     @GetMapping("/set-fcmToken")
     public ResponseEntity<?> setFcmToken(@RequestParam(name = "username") String username,
                                          @RequestParam(name = "fcmToken") String fcmToken) {

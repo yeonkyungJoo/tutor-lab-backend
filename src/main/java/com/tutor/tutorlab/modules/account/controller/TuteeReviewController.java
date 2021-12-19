@@ -19,6 +19,7 @@ public class TuteeReviewController {
 
     private final ReviewService reviewService;
 
+    // TODO - 강의 추가
     @ApiOperation("작성한 리뷰 조회 - 페이징")
     @GetMapping
     public ResponseEntity<?> getReviews(@CurrentUser User user,

@@ -109,6 +109,12 @@ public class TuteeLectureController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation("리뷰 작성하지 않은 강의 리스트 - 페이징")
+    @GetMapping("/unreviewed")
+    public ResponseEntity<?> getUnreviewedLectures(@CurrentUser User user) {
+        return null;
+    }
+
     @ApiOperation("강의 종료")
     @PutMapping("/{lecture_id}")
     public ResponseEntity<?> close(@CurrentUser User user,
