@@ -74,6 +74,21 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         return getLecturesOfTutee(user, page).map(LectureResponse::new);
     }
 
+    // getUnreviewedLecturesOfTutee
+    private Page<Lecture> getLecturesOfTutee(User user, Boolean reviewed, Integer page) {
+
+        if (reviewed == null) {
+            return getLecturesOfTutee(user, page);
+        }
+
+        // SELECT * FROM enrollment e
+        // WHERE EXISTS (SELECT enrollment_id, lecture_id FROM review r WHERE e.enrollment_id = r.enrollment_id AND e.lecture_id = r.lecture_id)
+        Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
+                .orElseThrow(() -> new UnauthorizedException(TUTEE));
+
+        return null;
+    }
+
     @Override
     public Enrollment createEnrollment(User user, Long lectureId, Long lecturePriceId) {
 
