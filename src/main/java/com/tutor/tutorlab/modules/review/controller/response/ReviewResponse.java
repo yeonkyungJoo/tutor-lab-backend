@@ -26,7 +26,7 @@ public class ReviewResponse {
     private ChildReviewResponse child;
 
     @Data
-    private class ChildReviewResponse {
+    private static class ChildReviewResponse {
 
         private Long reviewId;
         private String content;

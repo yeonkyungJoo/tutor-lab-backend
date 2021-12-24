@@ -18,6 +18,7 @@ import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateReq
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
 import com.tutor.tutorlab.modules.review.controller.response.ReviewResponse;
+import com.tutor.tutorlab.modules.review.controller.response.ReviewWithSimpleLectureResponse;
 import com.tutor.tutorlab.modules.review.repository.ReviewQueryRepository;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
@@ -197,11 +198,8 @@ public class ReviewService extends AbstractService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ReviewResponse> getReviewResponses(User user, Integer page) {
-
-        // Page<Review> reviews = reviewRepository.findByUser(user, getPageRequest(page));
-        Page<ReviewResponse> reviews = reviewQueryRepository.findReviewsWithChildByUser(user, getPageRequest(page));
-        return reviews;
+    public Page<ReviewWithSimpleLectureResponse> getReviewWithSimpleLectureResponses(User user, Integer page) {
+        return reviewQueryRepository.findReviewsWithChildAndSimpleLectureByUser(user, getPageRequest(page));
     }
 
     @Transactional(readOnly = true)

@@ -10,7 +10,9 @@ import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.repository.dto.LectureReviewQueryDto;
 import com.tutor.tutorlab.modules.lecture.repository.dto.LectureTutorQueryDto;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.lecture.vo.QLecture;
 import com.tutor.tutorlab.modules.review.controller.response.ReviewResponse;
+import com.tutor.tutorlab.modules.review.controller.response.ReviewWithSimpleLectureResponse;
 import com.tutor.tutorlab.modules.review.vo.QReview;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.Data;
@@ -35,6 +37,8 @@ public class ReviewQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final QReview review = QReview.review;
     private final QUser user = QUser.user;
+
+    private final QLecture lecture = QLecture.lecture;
 
     private final EntityManager em;
 
@@ -88,9 +92,31 @@ public class ReviewQueryRepository {
     }
 
     // TODO - with User
-    public Page<ReviewResponse> findReviewsWithChildByUser(User user, Pageable pageable) {
+//    public Page<ReviewResponse> findReviewsWithChildByUser(User user, Pageable pageable) {
+//
+//        QueryResults<Review> parents = jpaQueryFactory.selectFrom(review)
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .where(eqUser(user), review.parent.isNull())
+//                .fetchResults();
+//
+//        List<Long> parentIds = parents.getResults().stream().map(BaseEntity::getId).collect(Collectors.toList());
+//        List<Review> children = em.createQuery("select r from Review r where r.parent is not null and r.parent.id in :parentIds", Review.class)
+//                .setParameter("parentIds", parentIds).getResultList();
+//
+//        Map<Long, Review> map = children.stream()
+//                .collect(Collectors.toMap(child -> child.getParent().getId(), child -> child));
+//        List<ReviewResponse> results = parents.getResults().stream()
+//                .map(parent -> new ReviewResponse(parent, map.get(parent.getId()))).collect(Collectors.toList());
+//
+//        return new PageImpl<>(results, pageable, parents.getTotal());
+//    }
+
+    public Page<ReviewWithSimpleLectureResponse> findReviewsWithChildAndSimpleLectureByUser(User user, Pageable pageable) {
 
         QueryResults<Review> parents = jpaQueryFactory.selectFrom(review)
+                .innerJoin(review.lecture, lecture)
+                .fetchJoin()
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .where(eqUser(user), review.parent.isNull())
@@ -102,8 +128,8 @@ public class ReviewQueryRepository {
 
         Map<Long, Review> map = children.stream()
                 .collect(Collectors.toMap(child -> child.getParent().getId(), child -> child));
-        List<ReviewResponse> results = parents.getResults().stream()
-                .map(parent -> new ReviewResponse(parent, map.get(parent.getId()))).collect(Collectors.toList());
+        List<ReviewWithSimpleLectureResponse> results = parents.getResults().stream()
+                .map(parent -> new ReviewWithSimpleLectureResponse(parent, map.get(parent.getId()))).collect(Collectors.toList());
 
         return new PageImpl<>(results, pageable, parents.getTotal());
     }

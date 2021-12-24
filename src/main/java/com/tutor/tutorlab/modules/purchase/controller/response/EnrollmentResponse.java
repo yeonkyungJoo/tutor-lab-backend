@@ -11,6 +11,7 @@ public class EnrollmentResponse {
     private boolean closed;
 
     // TODO - 쿼리
+    // TODO : CHECK - Lecture가 이미 영속성 컨텍스트에 존재
     public EnrollmentResponse(Enrollment enrollment) {
         this.tutee = enrollment.getTutee().getUser().getUsername();
         this.lectureTitle = enrollment.getLecture().getTitle();

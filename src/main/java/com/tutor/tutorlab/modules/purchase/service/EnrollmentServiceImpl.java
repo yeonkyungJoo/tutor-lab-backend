@@ -4,7 +4,6 @@ import com.tutor.tutorlab.config.exception.AlreadyExistException;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -20,15 +19,17 @@ import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.notification.enums.NotificationType;
 import com.tutor.tutorlab.modules.notification.service.NotificationService;
+import com.tutor.tutorlab.modules.purchase.controller.response.EnrollmentWithSimpleLectureResponse;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
+import com.tutor.tutorlab.modules.purchase.repository.EnrollmentQueryRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
-import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,7 @@ import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTEE;
 public class EnrollmentServiceImpl extends AbstractService implements EnrollmentService {
 
     private final EnrollmentRepository enrollmentRepository;
+    private final EnrollmentQueryRepository enrollmentQueryRepository;
     private final CancellationRepository cancellationRepository;
     private final TuteeRepository tuteeRepository;
 
@@ -75,18 +77,14 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
     }
 
     // getUnreviewedLecturesOfTutee
-    private Page<Lecture> getLecturesOfTutee(User user, Boolean reviewed, Integer page) {
+    @Transactional(readOnly = true)
+    @Override
+    public Page<EnrollmentWithSimpleLectureResponse> getEnrollmentWithSimpleLectureResponses(User user, boolean reviewed, Integer page) {
 
-        if (reviewed == null) {
-            return getLecturesOfTutee(user, page);
-        }
-
-        // SELECT * FROM enrollment e
-        // WHERE EXISTS (SELECT enrollment_id, lecture_id FROM review r WHERE e.enrollment_id = r.enrollment_id AND e.lecture_id = r.lecture_id)
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
 
-        return null;
+        return enrollmentQueryRepository.findEnrollments(tutee, reviewed, Pageable.ofSize(page));
     }
 
     @Override
