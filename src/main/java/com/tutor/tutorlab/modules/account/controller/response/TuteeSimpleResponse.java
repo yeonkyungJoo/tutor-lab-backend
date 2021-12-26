@@ -2,9 +2,11 @@ package com.tutor.tutorlab.modules.account.controller.response;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
+@ToString
 @Data
 public class TuteeSimpleResponse {
 

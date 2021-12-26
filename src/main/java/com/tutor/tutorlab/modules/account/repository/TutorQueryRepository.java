@@ -124,7 +124,7 @@ public class TutorQueryRepository {
     }
 
     // TODO - CHECK
-    public Page<TuteeLectureResponse> findTuteeLecturesOfTutor(Tutor tutor, Boolean closed, Long tuteeId, PageRequest pageable) {
+    public Page<TuteeLectureResponse> findTuteeLecturesOfTutor(Tutor tutor, Boolean closed, Long tuteeId, Pageable pageable) {
 
         /*
             SELECT * FROM enrollment e

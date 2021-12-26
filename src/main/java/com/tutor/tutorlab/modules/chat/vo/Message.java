@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import java.time.LocalDateTime;
 
+@ToString
 @Document(collection = "messages")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter

@@ -150,14 +150,6 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
         // TODO 유효성 -> 해당 유저의 강의 갯수 제한?
 
         Lecture lecture = buildLecture(lectureCreateRequest, tutor);
-        for (LectureCreateRequest.LecturePriceCreateRequest lecturePriceRequest : lectureCreateRequest.getLecturePrices()) {
-            lecture.addPrice(buildLecturePrice(lecturePriceRequest));
-        }
-
-        for (LectureCreateRequest.LectureSubjectCreateRequest subjectRequest : lectureCreateRequest.getSubjects()) {
-            lecture.addSubject(buildLectureSubject(subjectRequest));
-        }
-
         return lectureRepository.save(lecture);
     }
 
@@ -288,7 +280,8 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     }
 
     private Lecture buildLecture(LectureCreateRequest lectureCreateRequest, Tutor tutor) {
-        return Lecture.of(
+
+        Lecture lecture = Lecture.of(
                 tutor,
                 lectureCreateRequest.getTitle(),
                 lectureCreateRequest.getSubTitle(),
@@ -298,5 +291,15 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
                 lectureCreateRequest.getSystems(),
                 lectureCreateRequest.getThumbnailUrl()
         );
+
+        for (LectureCreateRequest.LecturePriceCreateRequest lecturePriceRequest : lectureCreateRequest.getLecturePrices()) {
+            lecture.addPrice(buildLecturePrice(lecturePriceRequest));
+        }
+
+        for (LectureCreateRequest.LectureSubjectCreateRequest subjectRequest : lectureCreateRequest.getSubjects()) {
+            lecture.addSubject(buildLectureSubject(subjectRequest));
+        }
+
+        return lecture;
     }
 }

@@ -13,7 +13,4 @@ public interface CareerRepository extends JpaRepository<Career, Long> {
 
     Optional<Career> findByTutorAndId(Tutor tutor, Long careerId);
     List<Career> findByTutor(Tutor tutor);
-
-    @Transactional
-    void deleteByTutor(Tutor tutor);
 }
