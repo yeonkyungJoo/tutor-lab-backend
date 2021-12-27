@@ -9,6 +9,7 @@ import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 @Transactional
 @SpringBootTest
 class LoginServiceIntegrationTest extends AbstractTest {
@@ -194,7 +196,7 @@ class LoginServiceIntegrationTest extends AbstractTest {
         assertThrows(BadCredentialsException.class, () -> loginService.login(loginRequest));
     }
 
-    @Test
-    void findPassword() {
-    }
+//    @Test
+//    void findPassword() {
+//    }
 }

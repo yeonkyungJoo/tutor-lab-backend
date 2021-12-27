@@ -25,13 +25,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 class LectureQueryRepositoryTest {
 
     private LectureQueryRepository lectureQueryRepository;
-
-    private List<LectureCreateRequest> lectureCreateRequests;
     private Tutor tutor;
 
     @Autowired
@@ -44,84 +44,15 @@ class LectureQueryRepositoryTest {
     LectureRepository lectureRepository;
 
     @BeforeEach
-    void setup() {
+    void init() {
 
+        assertNotNull(em);
         lectureQueryRepository = new LectureQueryRepository(em);
-
-        LectureCreateRequest lectureCreateRequest1 = LectureCreateRequest.of(
-                "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
-                "제목1",
-                "소제목1",
-                "소개1",
-                DifficultyType.BASIC,
-                "<p>본문1</p>",
-                Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE),
-                Arrays.asList(LectureCreateRequest.LecturePriceCreateRequest.of(
-                        false, null, 1000L, 1, 10, 10000L
-                )),
-                Arrays.asList(LectureCreateRequest.LectureSubjectCreateRequest.of(
-                        LearningKindType.IT, "자바")
-                )
-        );
-
-        LectureCreateRequest lectureCreateRequest2 = LectureCreateRequest.of(
-                "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
-                "제목2",
-                "소제목2",
-                "소개2",
-                DifficultyType.BEGINNER,
-                "<p>본문2</p>",
-                Arrays.asList(SystemType.ONLINE),
-                Arrays.asList(LectureCreateRequest.LecturePriceCreateRequest.of(
-                        true, 5, 1000L, 2, 10, 20000L
-                )),
-                Arrays.asList(LectureCreateRequest.LectureSubjectCreateRequest.of(
-                        LearningKindType.IT, "파이썬")
-                )
-        );
-
-        LectureCreateRequest lectureCreateRequest3 = LectureCreateRequest.of(
-                "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
-                "제목3",
-                "소제목3",
-                "소개3",
-                DifficultyType.INTERMEDIATE,
-                "<p>본문3</p>",
-                Arrays.asList(SystemType.OFFLINE),
-                Arrays.asList(LectureCreateRequest.LecturePriceCreateRequest.of(
-                        true, 10, 1000L, 3, 10, 30000L
-                )),
-                Arrays.asList(LectureCreateRequest.LectureSubjectCreateRequest.of(
-                        LearningKindType.IT, "자바")
-                )
-        );
-
-        LectureCreateRequest lectureCreateRequest4 = LectureCreateRequest.of(
-                "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
-                "제목4",
-                "소제목4",
-                "소개4",
-                DifficultyType.ADVANCED,
-                "<p>본문4</p>",
-                Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE),
-                Arrays.asList(LectureCreateRequest.LecturePriceCreateRequest.of(
-                        false, null, 1000L, 4, 10, 40000L
-                )),
-                Arrays.asList(LectureCreateRequest.LectureSubjectCreateRequest.of(
-                        LearningKindType.IT, "파이썬")
-                )
-        );
-
-        lectureCreateRequests.addAll(Arrays.asList(lectureCreateRequest1, lectureCreateRequest2, lectureCreateRequest3, lectureCreateRequest4));
 
         User user = userRepository.findAll().stream()
                 .filter(u -> u.getRole().equals(RoleType.TUTOR)).findFirst()
                 .orElseThrow(RuntimeException::new);
         tutor = tutorRepository.findByUser(user);
-
-        for (LectureCreateRequest lectureCreateRequest : lectureCreateRequests) {
-            lectureRepository.save(buildLecture(lectureCreateRequest, tutor));
-        }
     }
 
     private Lecture buildLecture(LectureCreateRequest lectureCreateRequest, Tutor tutor) {

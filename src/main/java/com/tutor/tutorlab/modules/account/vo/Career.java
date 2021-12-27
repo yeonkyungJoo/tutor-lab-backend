@@ -46,7 +46,11 @@ public class Career extends BaseEntity {
     }
 
     public void delete() {
-        this.tutor.getCareers().remove(this);
+
+        if (this.tutor != null) {
+            this.tutor.getCareers().remove(this);
+            this.tutor = null;
+        }
     }
 
 }

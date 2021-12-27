@@ -155,6 +155,72 @@ public abstract class AbstractTest {
     // TODO - 수정
     protected final CancellationCreateRequest cancellationCreateRequest = CancellationCreateRequest.of("너무 어려워요");
 
+
+//    LectureCreateRequest lectureCreateRequest1 = LectureCreateRequest.of(
+//            "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
+//            "제목1",
+//            "소제목1",
+//            "소개1",
+//            DifficultyType.BASIC,
+//            "<p>본문1</p>",
+//            Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE),
+//            Arrays.asList(LectureCreateRequest.LecturePriceCreateRequest.of(
+//                    false, null, 1000L, 1, 10, 10000L
+//            )),
+//            Arrays.asList(LectureCreateRequest.LectureSubjectCreateRequest.of(
+//                    LearningKindType.IT, "자바")
+//            )
+//    );
+//
+//    LectureCreateRequest lectureCreateRequest2 = LectureCreateRequest.of(
+//            "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
+//            "제목2",
+//            "소제목2",
+//            "소개2",
+//            DifficultyType.BEGINNER,
+//            "<p>본문2</p>",
+//            Arrays.asList(SystemType.ONLINE),
+//            Arrays.asList(LectureCreateRequest.LecturePriceCreateRequest.of(
+//                    true, 5, 1000L, 2, 10, 20000L
+//            )),
+//            Arrays.asList(LectureCreateRequest.LectureSubjectCreateRequest.of(
+//                    LearningKindType.IT, "파이썬")
+//            )
+//    );
+//
+//    LectureCreateRequest lectureCreateRequest3 = LectureCreateRequest.of(
+//            "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
+//            "제목3",
+//            "소제목3",
+//            "소개3",
+//            DifficultyType.INTERMEDIATE,
+//            "<p>본문3</p>",
+//            Arrays.asList(SystemType.OFFLINE),
+//            Arrays.asList(LectureCreateRequest.LecturePriceCreateRequest.of(
+//                    true, 10, 1000L, 3, 10, 30000L
+//            )),
+//            Arrays.asList(LectureCreateRequest.LectureSubjectCreateRequest.of(
+//                    LearningKindType.IT, "자바")
+//            )
+//    );
+//
+//    LectureCreateRequest lectureCreateRequest4 = LectureCreateRequest.of(
+//            "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
+//            "제목4",
+//            "소제목4",
+//            "소개4",
+//            DifficultyType.ADVANCED,
+//            "<p>본문4</p>",
+//            Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE),
+//            Arrays.asList(LectureCreateRequest.LecturePriceCreateRequest.of(
+//                    false, null, 1000L, 4, 10, 40000L
+//            )),
+//            Arrays.asList(LectureCreateRequest.LectureSubjectCreateRequest.of(
+//                    LearningKindType.IT, "파이썬")
+//            )
+//    );
+
+
     protected Address getAddress(String state, String siGun, String gu, String dongMyunLi) {
         return Address.of(state, siGun, gu, dongMyunLi);
     }
