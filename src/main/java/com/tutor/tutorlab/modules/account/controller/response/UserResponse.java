@@ -28,7 +28,7 @@ public class UserResponse {
         this.username = user.getUsername();
         this.role = user.getRole();
         this.name = user.getName();
-        this.gender = user.getGender().toString();
+        this.gender = user.getGender() != null ? user.getGender().toString() : null;
         this.birthYear = user.getBirthYear();
         this.phoneNumber = user.getPhoneNumber();
         this.email = user.getEmail();

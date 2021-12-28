@@ -13,6 +13,7 @@ import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -26,6 +27,9 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.context.IContext;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -42,11 +46,12 @@ class LoginServiceTest {
     TuteeRepository tuteeRepository;
 
     @Mock
-    AuthenticationManager authenticationManager;
-    @Mock
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Mock
     JwtTokenManager jwtTokenManager;
+    @Mock
+    AuthenticationManager authenticationManager;
 
     @Spy
     EmailService emailService;
@@ -191,28 +196,96 @@ class LoginServiceTest {
 
     @Test
     void verifyEmail() {
-        // email, token
+        // email(username), token
 
         // given
-        String username = "user1@email.com";
+        String email = "user1@email.com";
+        String token = "token";
+
+        User user = User.of(email, null, null, null, null, null,
+                email, null, null, null, null, null, null, null);
+        user.setEmailVerifyToken(token);
+        assert !user.isEmailVerified();
+        when(userRepository.findUnverifiedUserByUsername(email)).thenReturn(Optional.of(user));
+
         // when
+        loginService.verifyEmail(email, token);
+
         // then
+        assertTrue(user.isEmailVerified());
     }
 
+    @DisplayName("존재하지 않는 사용자")
     @Test
-    void login() {
-        // username, password
+    void verifyEmail_notExistUser() {
+
         // given
+        String email = "user1@email.com";
+        String token = "token";
+        when(userRepository.findUnverifiedUserByUsername(email)).thenReturn(Optional.empty());
+
         // when
         // then
+        assertThrows(RuntimeException.class,
+                () -> loginService.verifyEmail(email, token));
+
     }
+
+    @DisplayName("이미 인증된 사용자")
+    @Test
+    void verifyEmail_alreadyVerifiedUser() {
+
+        // given
+        String email = "user1@email.com";
+        String token = "token";
+
+        User user = User.of(email, null, null, null, null, null,
+                email, null, null, null, null, null, null, null);
+        user.setEmailVerifyToken(token);
+        user.setEmailVerified(true);
+        when(userRepository.findUnverifiedUserByUsername(email)).thenReturn(Optional.of(user));
+
+        // when
+        // then
+        assertThrows(RuntimeException.class,
+                () -> loginService.verifyEmail(email, token)
+        );
+
+    }
+
 
     @Test
     void findPassword() {
         // 랜덤 비밀번호 생성 후 메일로 전송
+        // username
 
         // given
+        String username = "user1@email.com";
+        String password = "password";
+        String randomPassword = "randomPassword";
+        User user = User.of(username, password, null, null, null, null,
+                null, null, null, null, null, null, null, null);
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
+        when(bCryptPasswordEncoder.encode(anyString())).thenReturn(randomPassword);
         // when
+        loginService.findPassword(username);
+
         // then
+        // 1. 랜덤 비밀번호 생성 - passwordEncoder
+        verify(bCryptPasswordEncoder, atLeastOnce()).encode(anyString());
+        // 2. user에 set
+        // 3. 메일로 전송
+        verify(emailService, atLeastOnce()).send(any(EmailMessage.class));
     }
+
+    // TODO - 로그인 테스트
+//    @Test
+//    void login() {
+//        // username, password
+//
+//        // given
+//
+//        // when
+//        // then
+//    }
 }
