@@ -3,6 +3,7 @@ package com.tutor.tutorlab.config;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -18,6 +19,7 @@ import java.util.List;
 
 // https://www.baeldung.com/spring-boot-swagger-jwt
 // https://www.programcreek.com/java-api-examples/?api=springfox.documentation.builders.ParameterBuilder
+@Profile("dev")
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {

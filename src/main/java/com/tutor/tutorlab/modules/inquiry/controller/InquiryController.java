@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.inquiry.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
@@ -25,10 +27,18 @@ public class InquiryController {
 
     @ApiOperation("Inquiry 등록")
     @PostMapping
-    public ResponseEntity newInquiry(@CurrentUser User user,
-                                     @Valid @RequestBody InquiryCreateRequest inquiryCreateRequest) {
+    public ResponseEntity<?> newInquiry(@CurrentUser User user,
+                                        @Valid @RequestBody InquiryCreateRequest inquiryCreateRequest) {
         inquiryService.createInquiry(user, inquiryCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    // TODO - TEST : 예외 처리
+    @ApiIgnore
+    @PostMapping("/test-producer")
+    public ResponseEntity<?> test(@RequestBody InquiryCreateRequest inquiryCreateRequest) throws JsonProcessingException {
+        inquiryService.test(inquiryCreateRequest);
+        return ResponseEntity.ok().build();
     }
 
 }

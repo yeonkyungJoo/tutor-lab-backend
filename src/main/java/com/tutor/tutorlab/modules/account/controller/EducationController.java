@@ -36,7 +36,7 @@ public class EducationController {
 
     @ApiOperation("Education 등록")
     @PostMapping
-    public ResponseEntity newEducation(@CurrentUser User user,
+    public ResponseEntity<?> newEducation(@CurrentUser User user,
                                        @Valid @RequestBody EducationCreateRequest educationCreateRequest) {
         educationService.createEducation(user, educationCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -44,7 +44,7 @@ public class EducationController {
 
     @ApiOperation("Education 수정")
     @PutMapping("/{education_id}")
-    public ResponseEntity editEducation(@CurrentUser User user,
+    public ResponseEntity<?> editEducation(@CurrentUser User user,
                                         @PathVariable(name = "education_id") Long educationId,
                                         @Valid @RequestBody EducationUpdateRequest educationUpdateRequest) {
         educationService.updateEducation(user, educationId, educationUpdateRequest);
@@ -53,7 +53,7 @@ public class EducationController {
 
     @ApiOperation("Education 삭제")
     @DeleteMapping("/{education_id}")
-    public ResponseEntity deleteEducation(@CurrentUser User user,
+    public ResponseEntity<?> deleteEducation(@CurrentUser User user,
                                           @PathVariable(name = "education_id") Long educationId) {
         educationService.deleteEducation(user, educationId);
         return ResponseEntity.ok().build();

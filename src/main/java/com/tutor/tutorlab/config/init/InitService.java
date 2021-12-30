@@ -31,6 +31,7 @@ import com.tutor.tutorlab.modules.review.vo.Review;
 import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
 import com.tutor.tutorlab.modules.subject.vo.Subject;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ import javax.annotation.PostConstruct;
 
 import static com.tutor.tutorlab.config.init.TestDataBuilder.*;
 
+@Profile("dev")
 @Component
 @RequiredArgsConstructor
 public class InitService {

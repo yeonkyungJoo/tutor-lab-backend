@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.5.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+	id "org.flywaydb.flyway" version "7.15.0"
 	id 'java'
 }
 
@@ -27,6 +28,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'com.auth0:java-jwt:3.17.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	// https://spring.io/guides/gs/messaging-rabbitmq/
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
 	// compileOnly 'org.projectlombok:lombok'
 	implementation 'org.projectlombok:lombok'
@@ -76,8 +79,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 	implementation group: 'org.json', name: 'json', version: '20180813'
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+	// implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.12.3'
 
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	// https://flywaydb.org/documentation/usage/gradle/
+	// implementation "org.flywaydb:flyway-core:8.3.0"
 }
 
 //querydsl 추가 시작
@@ -100,6 +107,14 @@ compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
 }
 //querydsl 추가 끝
+
+flyway {
+	// driver = 'com.mysql.cj.jdbc.Driver'
+	url = 'jdbc:mysql://127.0.0.1:3306/tutorlab?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul'
+	user = 'root'
+	password = '1234'
+	sqlMigrationSuffixes = ['.sql']
+}
 
 test {
 	useJUnitPlatform()
