@@ -31,18 +31,18 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
     Page<Enrollment> findByLectureAndCanceledFalseAndClosedFalse(Lecture lecture, Pageable pageable);
 
-    Optional<Enrollment> findByLectureAndIdAndCanceledFalseAndClosedFalse(Lecture lecture, Long enrollmentId);
+    // Optional<Enrollment> findByLectureAndIdAndCanceledFalseAndClosedFalse(Lecture lecture, Long enrollmentId);
     Optional<Enrollment> findByTuteeAndLectureAndCanceledFalseAndClosedFalse(Tutee tutee, Lecture lecture);
 
     @Query(value = "select * from enrollment where tutee_id = :tuteeId and lecture_id = :lectureId", nativeQuery = true)
     Optional<Enrollment> findAllByTuteeIdAndLectureId(Long tuteeId, Long lectureId);
 
-    @Transactional(readOnly = false)
+    @Transactional
     @Modifying
     @Query(value = "delete from enrollment", nativeQuery = true)
     void deleteAllEnrollments();
 
-    @Transactional(readOnly = false)
+    @Transactional
     @Modifying
     @Query(value = "delete from enrollment where enrollment_id = :enrollmentId", nativeQuery = true)
     void deleteEnrollmentById(Long enrollmentId);
