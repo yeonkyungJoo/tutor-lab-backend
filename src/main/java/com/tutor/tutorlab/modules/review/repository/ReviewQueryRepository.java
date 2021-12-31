@@ -37,7 +37,6 @@ public class ReviewQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final QReview review = QReview.review;
     private final QUser user = QUser.user;
-
     private final QLecture lecture = QLecture.lecture;
 
     private final EntityManager em;

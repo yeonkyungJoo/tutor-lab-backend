@@ -43,16 +43,16 @@ class SubjectRepositoryTest {
     }
 
     @Test
-    void getSubjects() {
-        List<Subject> subjects = subjectRepository.findAll();
-        subjects.stream().forEach(
-                subject -> System.out.println(subject)
-        );
-    }
+    void findAllByLearningKindId() {
 
-    @Test
-    void getSubjectsByLearningKind() {
-        List<Subject> subjects = subjectRepository.findAllByLearningKindId(1L);
+        // given
+        LearningKind learningKind = subjectRepository.findLearningKinds().stream().findFirst()
+                .orElseThrow(RuntimeException::new);
+        Long learningKindId = learningKind.getLearningKindId();
+
+        // when
+        // then
+        List<Subject> subjects = subjectRepository.findAllByLearningKindId(learningKindId);
         subjects.stream().forEach(
                 subject -> System.out.println(subject)
         );
