@@ -1,5 +1,9 @@
 package com.tutor.tutorlab.modules.account.vo;
 
+import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
@@ -53,6 +57,64 @@ public class Tutor extends BaseEntity {
     public void addEducation(Education education) {
         education.setTutor(this);
         this.educations.add(education);
+    }
+
+    // TODO - CareerCreateRequest == CareerUpdateRequest
+    public void addCareers(List<CareerCreateRequest> careerCreateRequests) {
+        careerCreateRequests.forEach(careerCreateRequest -> {
+            Career career = Career.of(
+                    this,
+                    careerCreateRequest.getJob(),
+                    careerCreateRequest.getCompanyName(),
+                    careerCreateRequest.getOthers(),
+                    careerCreateRequest.getLicense()
+            );
+            this.addCareer(career);
+        });
+    }
+
+    // TODO - EducationCreateRequest == EducationUpdateRequest
+    public void addEducations(List<EducationCreateRequest> educationCreateRequests) {
+        educationCreateRequests.forEach(educationCreateRequest -> {
+            Education education = Education.of(
+                    this,
+                    educationCreateRequest.getEducationLevel(),
+                    educationCreateRequest.getSchoolName(),
+                    educationCreateRequest.getMajor(),
+                    educationCreateRequest.getOthers()
+            );
+            this.addEducation(education);
+        });
+    }
+
+    public void updateCareers(List<CareerUpdateRequest> careerUpdateRequests) {
+        // this.careers.forEach(Career::delete);
+        this.careers.clear();
+        careerUpdateRequests.forEach(careerUpdateRequest -> {
+            Career career = Career.of(
+                    this,
+                    careerUpdateRequest.getJob(),
+                    careerUpdateRequest.getCompanyName(),
+                    careerUpdateRequest.getOthers(),
+                    careerUpdateRequest.getLicense()
+            );
+            this.addCareer(career);
+        });
+    }
+
+    public void updateEducations(List<EducationUpdateRequest> educationUpdateRequests) {
+        // this.educations.forEach(Education::delete);
+        this.educations.clear();
+        educationUpdateRequests.forEach(educationUpdateRequest -> {
+            Education education = Education.of(
+                    this,
+                    educationUpdateRequest.getEducationLevel(),
+                    educationUpdateRequest.getSchoolName(),
+                    educationUpdateRequest.getMajor(),
+                    educationUpdateRequest.getOthers()
+            );
+            this.addEducation(education);
+        });
     }
 
     public void quit() {

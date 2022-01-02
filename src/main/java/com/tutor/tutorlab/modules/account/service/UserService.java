@@ -25,7 +25,6 @@ import java.util.Optional;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
 
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -90,10 +89,10 @@ public class UserService extends AbstractService {
     }
 
     // deleteAccusedUser
-    @Transactional
-    public void deleteUser(User user) {
-
-    }
+//    @Transactional
+//    public void deleteUser(User user) {
+//
+//    }
 
     @Transactional
     public void updateUserPassword(User user, UserPasswordUpdateRequest userPasswordUpdateRequest) {

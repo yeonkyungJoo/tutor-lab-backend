@@ -1,10 +1,7 @@
 package com.tutor.tutorlab.modules.account.service;
 
 import com.tutor.tutorlab.config.exception.AlreadyExistException;
-import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
-import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.*;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
@@ -12,11 +9,16 @@ import com.tutor.tutorlab.modules.account.vo.Career;
 import com.tutor.tutorlab.modules.account.vo.Education;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
+import com.tutor.tutorlab.modules.lecture.service.LectureService;
+import com.tutor.tutorlab.modules.purchase.controller.response.EnrollmentResponse;
+import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 
@@ -39,6 +41,13 @@ class TutorServiceTest {
     @Mock
     TutorRepository tutorRepository;
 
+    @Spy
+    EnrollmentRepository enrollmentRepository;
+    @Spy
+    LectureRepository lectureRepository;
+    @Spy
+    LectureService lectureService;
+
     @Test
     void createTutor_alreadyTutor() {
 
@@ -56,6 +65,7 @@ class TutorServiceTest {
 
     @Test
     void createTutor() {
+        // user, tutorSignUpRequest
 
         // given
         String email = "user@email.com";
@@ -83,24 +93,46 @@ class TutorServiceTest {
         verify(tutorRepository).save(any(Tutor.class));
     }
 
+    // TODO - 도메인 로직 테스트
     @Test
     void updateTutor() {
+        // user, tutorUpdateRequest
 
         // given
         User user = Mockito.mock(User.class);
         Tutor tutor = Mockito.mock(Tutor.class);
-        when(tutorRepository.findByUser(user))
-                .thenReturn(tutor);
+        when(tutorRepository.findByUser(user)).thenReturn(tutor);
+
         // when
-        tutorService.updateTutor(user, any(TutorUpdateRequest.class));
+        CareerUpdateRequest careerUpdateRequest = Mockito.mock(CareerUpdateRequest.class);
+        EducationUpdateRequest educationUpdateRequest = Mockito.mock(EducationUpdateRequest.class);
+        TutorUpdateRequest tutorUpdateRequest = TutorUpdateRequest.of(
+                Arrays.asList(careerUpdateRequest),
+                Arrays.asList(educationUpdateRequest)
+        );
+        tutorService.updateTutor(user, tutorUpdateRequest);
+
         // then
+        verify(tutor).updateCareers(tutorUpdateRequest.getCareers());
+        verify(tutor).updateEducations(tutorUpdateRequest.getEducations());
+
     }
 
     @Test
     void deleteTutor() {
+        // user
 
         // given
+        User user = Mockito.mock(User.class);
+        Tutor tutor = Mockito.mock(Tutor.class);
+        when(tutorRepository.findByUser(user)).thenReturn(tutor);
+
+        // TODO - 수강 중인 강의 확인 및 삭제 TEST
         // when
+        tutorService.deleteTutor(user);
+
         // then
+        verify(tutor).quit();
+        verify(tutorRepository).delete(tutor);
     }
 }

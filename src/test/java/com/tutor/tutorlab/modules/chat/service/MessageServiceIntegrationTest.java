@@ -22,11 +22,11 @@ class MessageServiceIntegrationTest {
     MessageRepository messageRepository;
 
     @Test
-    void getMessages() {
-    }
-
-    @Test
     void saveMessage() {
+
+        // given
+        // when
+        // then
         Message message = Message.of(
                 MessageType.MESSAGE,
                 1L,

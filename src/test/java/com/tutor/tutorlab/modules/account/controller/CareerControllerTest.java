@@ -142,8 +142,6 @@ class CareerControllerTest {
     void newCareer() {
 
         // given
-        CareerCreateRequest createRequest = getCareerCreateRequest();
-
         // when
         // then
     }

@@ -84,33 +84,13 @@ public class TutorService extends AbstractService {
         if (user.getRole() == RoleType.TUTOR) {
             throw new AlreadyExistException(AlreadyExistException.TUTOR);
         }
-
         user.setRole(RoleType.TUTOR);
 
         Tutor tutor = Tutor.of(user);
-        tutorSignUpRequest.getCareers().forEach(careerCreateRequest -> {
-            Career career = Career.of(
-                    tutor,
-                    careerCreateRequest.getJob(),
-                    careerCreateRequest.getCompanyName(),
-                    careerCreateRequest.getOthers(),
-                    careerCreateRequest.getLicense()
-            );
-            tutor.addCareer(career);
-        });
-
-        tutorSignUpRequest.getEducations().forEach(educationCreateRequest -> {
-            Education education = Education.of(
-                    tutor,
-                    educationCreateRequest.getEducationLevel(),
-                    educationCreateRequest.getSchoolName(),
-                    educationCreateRequest.getMajor(),
-                    educationCreateRequest.getOthers()
-            );
-            tutor.addEducation(education);
-        });
-
+        tutor.addCareers(tutorSignUpRequest.getCareers());
+        tutor.addEducations(tutorSignUpRequest.getEducations());
         tutorRepository.save(tutor);
+
         return tutor;
     }
 
@@ -120,30 +100,8 @@ public class TutorService extends AbstractService {
         Tutor tutor = Optional.ofNullable(tutorRepository.findByUser(user))
             .orElseThrow(() -> new UnauthorizedException(RoleType.TUTOR));
 
-        tutor.getCareers().clear();
-        tutor.getEducations().clear();
-
-        tutorUpdateRequest.getCareers().forEach(careerUpdateRequest -> {
-            Career career = Career.of(
-                    tutor,
-                    careerUpdateRequest.getJob(),
-                    careerUpdateRequest.getCompanyName(),
-                    careerUpdateRequest.getOthers(),
-                    careerUpdateRequest.getLicense()
-            );
-            tutor.addCareer(career);
-        });
-
-        tutorUpdateRequest.getEducations().forEach(educationUpdateRequest -> {
-            Education education = Education.of(
-                    tutor,
-                    educationUpdateRequest.getEducationLevel(),
-                    educationUpdateRequest.getSchoolName(),
-                    educationUpdateRequest.getMajor(),
-                    educationUpdateRequest.getOthers()
-            );
-            tutor.addEducation(education);
-        });
+        tutor.updateCareers(tutorUpdateRequest.getCareers());
+        tutor.updateEducations(tutorUpdateRequest.getEducations());
     }
 
     // TODO - CHECK
