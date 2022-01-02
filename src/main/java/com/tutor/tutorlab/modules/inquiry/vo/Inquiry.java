@@ -10,7 +10,8 @@ import javax.persistence.*;
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "inquiry_id"))
-@Getter @Setter
+@Getter
+//@Setter
 @Entity
 public class Inquiry extends BaseEntity {
 

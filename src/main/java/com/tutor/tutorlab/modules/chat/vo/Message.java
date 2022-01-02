@@ -13,9 +13,10 @@ import javax.persistence.GenerationType;
 import java.time.LocalDateTime;
 
 @ToString
-@Document(collection = "messages")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter @Setter
+@Getter
+//@Setter
+@Document(collection = "messages")
 public class Message {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -56,5 +57,9 @@ public class Message {
                 .sentAt(sentAt)
                 .checked(checked)
                 .build();
+    }
+
+    public void check() {
+        this.checked = true;
     }
 }

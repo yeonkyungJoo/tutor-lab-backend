@@ -49,7 +49,7 @@ public class TutorCancellationService extends AbstractService {
 
         Cancellation cancellation = cancellationRepository.findById(cancellationId)
                 .orElseThrow(() -> new EntityNotFoundException(CANCELLATION));
-        cancellation.setApproved(true);
+        cancellation.approve();
 
         Enrollment enrollment = cancellation.getEnrollment();
         enrollment.cancel();

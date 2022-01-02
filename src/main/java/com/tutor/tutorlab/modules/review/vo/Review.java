@@ -4,6 +4,8 @@ import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
+import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
+import com.tutor.tutorlab.modules.review.controller.request.TutorReviewUpdateRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,7 +20,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "review_id"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter @Setter
+@Getter @Setter(AccessLevel.PRIVATE)
 @Entity
 public class Review extends BaseEntity {
 
@@ -90,5 +92,14 @@ public class Review extends BaseEntity {
 
     public void delete() {
         this.children.clear();
+    }
+
+    public void updateTutorReview(TutorReviewUpdateRequest tutorReviewUpdateRequest) {
+        setContent(tutorReviewUpdateRequest.getContent());
+    }
+
+    public void updateTuteeReview(TuteeReviewUpdateRequest tuteeReviewUpdateRequest) {
+        setScore(tuteeReviewUpdateRequest.getScore());
+        setContent(tuteeReviewUpdateRequest.getContent());
     }
 }

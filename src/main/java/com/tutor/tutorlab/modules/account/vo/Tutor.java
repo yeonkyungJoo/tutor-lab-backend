@@ -12,7 +12,8 @@ import java.util.List;
 //@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "tutor_id"))
-@Getter @Setter
+@Getter
+//@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Tutor extends BaseEntity {

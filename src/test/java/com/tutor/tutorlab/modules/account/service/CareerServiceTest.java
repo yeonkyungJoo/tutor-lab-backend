@@ -147,13 +147,13 @@ class CareerServiceTest {
         careerService.updateCareer(user,1L, careerUpdateRequest);
 
         // then
-        verify(career, atMost(0)).setTutor(tutor);
-        verify(career, atLeastOnce()).setJob(careerUpdateRequest.getJob());
-        verify(career, atLeastOnce()).setCompanyName(careerUpdateRequest.getCompanyName());
-        verify(career, atLeastOnce()).setOthers(careerUpdateRequest.getOthers());
-        verify(career, atLeastOnce()).setLicense(careerUpdateRequest.getLicense());
+        verify(career).update(careerUpdateRequest);
+//        verify(career, atMost(0)).setTutor(tutor);
+//        verify(career, atLeastOnce()).setJob(careerUpdateRequest.getJob());
+//        verify(career, atLeastOnce()).setCompanyName(careerUpdateRequest.getCompanyName());
+//        verify(career, atLeastOnce()).setOthers(careerUpdateRequest.getOthers());
+//        verify(career, atLeastOnce()).setLicense(careerUpdateRequest.getLicense());
     }
-
 
     @Test
     void deleteCareer() {

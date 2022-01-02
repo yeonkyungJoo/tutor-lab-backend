@@ -21,13 +21,11 @@ import com.tutor.tutorlab.mail.EmailService;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
 import com.tutor.tutorlab.modules.account.controller.request.SignUpRequest;
-import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -44,7 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -269,14 +266,7 @@ public class LoginService {
             throw new AlreadyExistException(NICKNAME);
         }
 
-        user.setGender(signUpOAuthDetailRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE);
-        user.setBirthYear(signUpOAuthDetailRequest.getBirthYear());
-        user.setPhoneNumber(signUpOAuthDetailRequest.getPhoneNumber());
-        user.setEmail(signUpOAuthDetailRequest.getEmail());
-        user.setNickname(signUpOAuthDetailRequest.getNickname());
-        user.setBio(signUpOAuthDetailRequest.getBio());
-        user.setZone(AddressUtils.convertStringToEmbeddableAddress(signUpOAuthDetailRequest.getZone()));
-        user.setImage(signUpOAuthDetailRequest.getImage());
+        user.updateOAuthDetail(signUpOAuthDetailRequest);
     }
 
     public User signUp(SignUpRequest signUpRequest) {
@@ -387,8 +377,7 @@ public class LoginService {
                 String jwtToken = jwtTokenManager.createToken(principalDetails.getUsername(), claims);
 
                 // lastLoginAt
-                principalDetails.getUser().setLastLoginAt(LocalDateTime.now());
-
+                principalDetails.getUser().login();
                 return jwtTokenManager.convertTokenToMap(jwtToken);
             }
         }
@@ -408,7 +397,7 @@ public class LoginService {
 
         // 랜덤 비밀번호로 변경
         String randomPassword = generateRandomPassword(10);
-        user.setPassword(bCryptPasswordEncoder.encode(randomPassword));
+        user.updatePassword(bCryptPasswordEncoder.encode(randomPassword));
 
         // 랜덤 비밀번호가 담긴 이메일 전송
         // TODO - 상수

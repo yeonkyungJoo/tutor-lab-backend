@@ -35,7 +35,7 @@ public class IsolationTestService {
         System.out.println(userRepository.findAll());
 
         User user = userRepository.findById(id).get();
-        user.setNickname("yk2");
+        // user.setNickname("yk2");
         // JPA 트랜잭션에서 다시 업데이트하면? → lock이 발생해서 MYSQL 트랜잭션을 기다린다.
         // ① 이 때 MYSQL 트랜잭션이 commit을 하면? : NAME, NICKNAME 둘 다 UPDATE
         // ② rollback을 해도 둘 다 UPDATE

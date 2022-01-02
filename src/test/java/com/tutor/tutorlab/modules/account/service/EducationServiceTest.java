@@ -104,7 +104,6 @@ class EducationServiceTest {
 
     @Test
     void updateEducation() {
-
         // user, educationId, educationUpdateRequest
 
         // given
@@ -123,7 +122,8 @@ class EducationServiceTest {
         educationService.updateEducation(user, 1L, educationUpdateRequest);
 
         // then
-        verify(education, atLeastOnce()).setEducationLevel(educationUpdateRequest.getEducationLevel());
+        verify(education).update(educationUpdateRequest);
+        // verify(education, atLeastOnce()).setEducationLevel(educationUpdateRequest.getEducationLevel());
     }
 
     @Test

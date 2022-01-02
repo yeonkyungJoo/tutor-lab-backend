@@ -24,7 +24,6 @@ import com.tutor.tutorlab.modules.purchase.repository.PickRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
 import com.tutor.tutorlab.modules.review.vo.Review;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -197,13 +196,7 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
             lecture.addSubject(lectureSubject);
         }
 
-        lecture.setThumbnail(lectureUpdateRequest.getThumbnailUrl());
-        lecture.setTitle(lectureUpdateRequest.getTitle());
-        lecture.setSubTitle(lectureUpdateRequest.getSubTitle());
-        lecture.setIntroduce(lectureUpdateRequest.getIntroduce());
-        lecture.setContent(lectureUpdateRequest.getContent());
-        lecture.setDifficultyType(lectureUpdateRequest.getDifficulty());
-        lecture.setSystemTypes(lectureUpdateRequest.getSystems());
+        lecture.update(lectureUpdateRequest);
 
         /*
         Hibernate: select user0_.user_id as user_id1_17_, user0_.created_at as created_2_17_, user0_.updated_at as updated_3_17_, user0_.bio as bio4_17_, user0_.deleted as deleted5_17_, user0_.deleted_at as deleted_6_17_, user0_.email as email7_17_, user0_.email_verified as email_ve8_17_, user0_.email_verified_at as email_ve9_17_, user0_.email_verify_token as email_v10_17_, user0_.gender as gender11_17_, user0_.image as image12_17_, user0_.name as name13_17_, user0_.nickname as nicknam14_17_, user0_.password as passwor15_17_, user0_.phone_number as phone_n16_17_, user0_.provider as provide17_17_, user0_.provider_id as provide18_17_, user0_.role as role19_17_, user0_.username as usernam20_17_, user0_.zone as zone21_17_ from user user0_ where user0_.username=?

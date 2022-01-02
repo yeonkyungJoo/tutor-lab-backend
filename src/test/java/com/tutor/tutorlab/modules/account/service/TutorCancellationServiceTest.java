@@ -4,16 +4,21 @@ import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
+import com.tutor.tutorlab.modules.chat.service.ChatService;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationQueryRepository;
 import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
+import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.Optional;
@@ -34,6 +39,12 @@ class TutorCancellationServiceTest {
     CancellationRepository cancellationRepository;
     @Mock
     CancellationQueryRepository cancellationQueryRepository;
+
+    @Mock
+    ChatroomRepository chatroomRepository;
+    @Mock
+    @SpyBean
+    ChatService chatService;
 
     @DisplayName("튜터가 아닌 경우")
     @Test
@@ -92,15 +103,18 @@ class TutorCancellationServiceTest {
         Tutor tutor = Tutor.of(user);
         when(tutorRepository.findByUser(user)).thenReturn(tutor);
 
-        Cancellation cancellation = Mockito.mock(Cancellation.class);
+        Enrollment enrollment = Mockito.mock(Enrollment.class);
+        Cancellation cancellation = Cancellation.of(enrollment, "reason");
         when(cancellationRepository.findById(1L)).thenReturn(Optional.of(cancellation));
 
         // when
         tutorCancellationService.approve(user, 1L);
 
         // then
-        // enrollment에
-
+        verify(enrollment).cancel();
+        // 채팅방 삭제
+        verify(chatService).deleteChatroom(any(Enrollment.class));
+        // verify(chatroomRepository).deleteByEnrollment(any(Enrollment.class));
 
         // TODO - 환불
     }

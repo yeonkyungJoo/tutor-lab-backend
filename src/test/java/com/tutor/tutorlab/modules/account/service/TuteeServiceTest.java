@@ -87,7 +87,8 @@ class TuteeServiceTest {
         TuteeUpdateRequest tuteeUpdateRequest = TuteeUpdateRequest.of("subjects");
         tuteeService.updateTutee(user, tuteeUpdateRequest);
         // then
-        verify(tutee, atLeastOnce()).setSubjects(anyString());
+        verify(tutee).update(tuteeUpdateRequest);
+        // verify(tutee, atLeastOnce()).setSubjects(anyString());
     }
 
     // TODO - 순서 고려

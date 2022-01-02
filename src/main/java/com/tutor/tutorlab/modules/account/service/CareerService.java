@@ -65,10 +65,7 @@ public class CareerService {
         Career career = careerRepository.findByTutorAndId(tutor, careerId)
                 .orElseThrow(() -> new EntityNotFoundException(CAREER));
 
-        career.setJob(careerUpdateRequest.getJob());
-        career.setCompanyName(careerUpdateRequest.getCompanyName());
-        career.setOthers(careerUpdateRequest.getOthers());
-        career.setLicense(careerUpdateRequest.getLicense());
+        career.update(careerUpdateRequest);
     }
 
     public void deleteCareer(User user, Long careerId) {

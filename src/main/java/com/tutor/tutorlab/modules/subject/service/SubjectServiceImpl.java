@@ -1,11 +1,9 @@
 package com.tutor.tutorlab.modules.subject.service;
 
-import com.tutor.tutorlab.modules.lecture.embeddable.LearningKind;
 import com.tutor.tutorlab.modules.subject.controller.response.LearningKindResponse;
 import com.tutor.tutorlab.modules.subject.controller.response.SubjectResponse;
 import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

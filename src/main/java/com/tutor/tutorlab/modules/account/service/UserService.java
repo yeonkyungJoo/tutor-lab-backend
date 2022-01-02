@@ -7,11 +7,9 @@ import com.tutor.tutorlab.modules.account.controller.request.UserPasswordUpdateR
 import com.tutor.tutorlab.modules.account.controller.request.UserQuitRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.UserResponse;
-import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -63,15 +61,7 @@ public class UserService extends AbstractService {
 
         user = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(USER));
-
-        user.setGender(userUpdateRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE);
-        user.setBirthYear(userUpdateRequest.getBirthYear());
-        user.setPhoneNumber(userUpdateRequest.getPhoneNumber());
-        user.setEmail(userUpdateRequest.getEmail());
-        user.setNickname(userUpdateRequest.getNickname());
-        user.setBio(userUpdateRequest.getBio());
-        user.setZone(AddressUtils.convertStringToEmbeddableAddress(userUpdateRequest.getZone()));
-        user.setImage(userUpdateRequest.getImage());
+        user.update(userUpdateRequest);
     }
 
     // TODO - Admin인 경우
@@ -89,14 +79,13 @@ public class UserService extends AbstractService {
         // notification 삭제
         notificationRepository.deleteByUser(user);
 
-        user.setQuitReason(userQuitRequest.getReason());
         // TODO - check : GrantedAuthority
         if (user.getRole() == RoleType.TUTOR) {
             tutorService.deleteTutor(user);
         }
         tuteeService.deleteTutee(user);
 
-        user.quit();
+        user.quit(userQuitRequest.getReason());
         SecurityContextHolder.getContext().setAuthentication(null);     // 로그아웃
     }
 
@@ -115,7 +104,7 @@ public class UserService extends AbstractService {
         if (!bCryptPasswordEncoder.matches(userPasswordUpdateRequest.getPassword(), user.getPassword())) {
             throw new InvalidInputException("잘못된 비밀번호입니다.");
         }
-        user.setPassword(bCryptPasswordEncoder.encode(userPasswordUpdateRequest.getNewPassword()));
+        user.updatePassword(bCryptPasswordEncoder.encode(userPasswordUpdateRequest.getNewPassword()));
     }
 
     @Transactional
@@ -123,8 +112,7 @@ public class UserService extends AbstractService {
 
         user = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(USER));
-
-        user.setImage(userImageUpdateRequest.getImage());
+        user.updateImage(userImageUpdateRequest.getImage());
     }
 
     @Transactional
@@ -137,13 +125,12 @@ public class UserService extends AbstractService {
         if (hasFcmToken.isPresent()) {
             User tokenUser = hasFcmToken.get();
             if (!tokenUser.getUsername().equals(username)) {
-
                 // 기존 fcmToken 삭제
-                tokenUser.setFcmToken(null);
-                user.setFcmToken(fcmToken);
+                tokenUser.updateFcmToken(null);
+                user.updateFcmToken(fcmToken);
             }
         } else {
-            user.setFcmToken(fcmToken);
+            user.updateFcmToken(fcmToken);
         }
     }
 }

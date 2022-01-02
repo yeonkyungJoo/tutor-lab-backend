@@ -7,9 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Document(collection = "logs")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter @Setter
+@Getter //@Setter
+@Document(collection = "logs")
 public class Log {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)

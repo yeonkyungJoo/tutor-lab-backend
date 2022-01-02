@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.vo;
 
+import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.purchase.vo.Pick;
@@ -18,7 +19,8 @@ import static com.tutor.tutorlab.utils.CommonUtil.COMMA;
 @ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "tutee_id"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter @Setter
+@Getter
+// @Setter
 @Entity
 public class Tutee extends BaseEntity {
 
@@ -53,6 +55,10 @@ public class Tutee extends BaseEntity {
     public void addPick(Pick pick) {
         this.picks.add(pick);
         pick.setTutee(this);
+    }
+
+    public void update(TuteeUpdateRequest tuteeUpdateRequest) {
+        this.subjects = tuteeUpdateRequest.getSubjects();
     }
 
 //    public void quit() {

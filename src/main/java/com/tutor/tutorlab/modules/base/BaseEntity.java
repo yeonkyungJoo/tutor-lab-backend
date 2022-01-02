@@ -2,13 +2,12 @@ package com.tutor.tutorlab.modules.base;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
+//@Setter
 @EqualsAndHashCode(of = "id")
 @MappedSuperclass
 public abstract class BaseEntity {
@@ -21,6 +20,10 @@ public abstract class BaseEntity {
     protected LocalDateTime createdAt = LocalDateTime.now();
     @Column(insertable = false)
     protected LocalDateTime updatedAt;
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     @PreUpdate
     public void preUpdate() {

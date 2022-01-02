@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.lecture.vo;
 
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.base.BaseEntity;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
@@ -16,7 +17,8 @@ import static lombok.AccessLevel.PROTECTED;
 
 //@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Getter @Setter
+@Getter
+//@Setter
 @NoArgsConstructor(access = PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "lecture_id"))
 @Entity
@@ -109,6 +111,16 @@ public class Lecture extends BaseEntity {
                 .systemTypes(systemTypes)
                 .thumbnail(thumbnail)
                 .build();
+    }
+
+    public void update(LectureUpdateRequest lectureUpdateRequest) {
+        this.thumbnail = lectureUpdateRequest.getThumbnailUrl();
+        this.title = lectureUpdateRequest.getTitle();
+        this.subTitle = lectureUpdateRequest.getSubTitle();
+        this.introduce = lectureUpdateRequest.getIntroduce();
+        this.content = lectureUpdateRequest.getContent();
+        this.difficultyType = lectureUpdateRequest.getDifficulty();
+        this.systemTypes = lectureUpdateRequest.getSystems();
     }
 
 }

@@ -12,7 +12,9 @@ import static lombok.AccessLevel.PROTECTED;
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(name = "address")
+@Table(name = "address"
+        //, indexes = @Index(name = "IDX_ADDRESS", columnList = "state, siGun, gu, dongMyunLi")
+)
 public class Address {
 
     @Id

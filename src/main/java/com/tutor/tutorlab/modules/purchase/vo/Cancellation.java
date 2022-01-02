@@ -9,7 +9,7 @@ import javax.persistence.*;
 @ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "cancellation_id"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter @Setter
+@Getter //@Setter
 @Entity
 public class Cancellation extends BaseEntity {
 
@@ -33,4 +33,7 @@ public class Cancellation extends BaseEntity {
         return new Cancellation(enrollment, reason);
     }
 
+    public void approve() {
+        this.approved = true;
+    }
 }

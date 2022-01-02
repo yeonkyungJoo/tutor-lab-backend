@@ -11,7 +11,8 @@ import javax.persistence.*;
 @ToString(callSuper = true)
 //@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter @Setter
+@Getter
+@Setter(AccessLevel.PRIVATE)
 @AttributeOverride(name = "id", column = @Column(name = "chatroom_id"))
 @Entity
 public class Chatroom extends BaseEntity {

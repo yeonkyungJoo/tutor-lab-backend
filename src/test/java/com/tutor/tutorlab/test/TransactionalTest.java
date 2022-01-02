@@ -106,7 +106,7 @@ public class TransactionalTest {
         );
         userRepository.save(user);
 
-        user.setNickname("nickname");
+        // user.setNickname("nickname");
 
         System.out.println(">>> 1 : " + userRepository.findById(6L).get());
         userRepository.flush();

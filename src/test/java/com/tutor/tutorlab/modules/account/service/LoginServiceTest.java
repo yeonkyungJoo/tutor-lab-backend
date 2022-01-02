@@ -200,16 +200,15 @@ class LoginServiceTest {
 
         // given
         String email = "user1@email.com";
-        String token = "token";
 
         User user = User.of(email, null, null, null, null, null,
                 email, null, null, null, null, null, null, null);
-        user.setEmailVerifyToken(token);
+        user.generateEmailVerifyToken();
         assert !user.isEmailVerified();
         when(userRepository.findUnverifiedUserByUsername(email)).thenReturn(Optional.of(user));
 
         // when
-        loginService.verifyEmail(email, token);
+        loginService.verifyEmail(email, user.getEmailVerifyToken());
 
         // then
         assertTrue(user.isEmailVerified());
@@ -237,18 +236,18 @@ class LoginServiceTest {
 
         // given
         String email = "user1@email.com";
-        String token = "token";
 
         User user = User.of(email, null, null, null, null, null,
                 email, null, null, null, null, null, null, null);
-        user.setEmailVerifyToken(token);
-        user.setEmailVerified(true);
+        user.generateEmailVerifyToken();
+
+        user.verifyEmail();
         when(userRepository.findUnverifiedUserByUsername(email)).thenReturn(Optional.of(user));
 
         // when
         // then
         assertThrows(RuntimeException.class,
-                () -> loginService.verifyEmail(email, token)
+                () -> loginService.verifyEmail(email, user.getEmailVerifyToken())
         );
 
     }

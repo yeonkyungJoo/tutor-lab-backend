@@ -8,6 +8,7 @@ import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,17 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Disabled
 @Transactional
 @SpringBootTest
 class TutorServiceIntegrationTest extends AbstractTest {
-
-//    @Test
-//    void getTutors() {
-//    }
-//
-//    @Test
-//    void getTutor() {
-//    }
 
     @WithAccount(NAME)
     @Test
@@ -82,29 +76,4 @@ class TutorServiceIntegrationTest extends AbstractTest {
         Assertions.assertNull(tutor);
     }
 
-/*
-    @Test
-    void getCareers() {
-    }
-
-    @Test
-    void getEducations() {
-    }
-
-    @Test
-    void getLectures() {
-    }
-
-    @Test
-    void getEnrollmentsOfLecture() {
-    }
-
-    @Test
-    void getTuteesOfLecture() {
-    }
-
-    @Test
-    void getReviewsOfLecture() {
-    }
-*/
 }

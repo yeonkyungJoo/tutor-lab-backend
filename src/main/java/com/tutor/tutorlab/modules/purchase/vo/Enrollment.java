@@ -2,12 +2,9 @@ package com.tutor.tutorlab.modules.purchase.vo;
 
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.base.BaseEntity;
-import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
-import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.*;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -16,7 +13,7 @@ import javax.persistence.*;
 @ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "enrollment_id"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter @Setter
+@Getter //@Setter
 @Entity
 public class Enrollment extends BaseEntity {
 
@@ -48,7 +45,6 @@ public class Enrollment extends BaseEntity {
     private LecturePrice lecturePrice;
 
     private boolean closed = false;
-
     private boolean canceled = false;
 
     // TODO - CHECK : 양방향 VS 단방향
@@ -72,11 +68,19 @@ public class Enrollment extends BaseEntity {
     }
 
     public void close() {
-        setClosed(true);
+        this.closed = true;
     }
 
     public void cancel() {
-        setCanceled(true);
+        this.canceled = true;
+    }
+
+    public void setTutee(Tutee tutee) {
+        this.tutee = tutee;
+    }
+
+    public void setLecture(Lecture lecture) {
+        this.lecture = lecture;
     }
 
 //    @PreRemove

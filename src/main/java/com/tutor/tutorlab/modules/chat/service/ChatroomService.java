@@ -75,7 +75,7 @@ public class ChatroomService extends AbstractService {
         List<Message> uncheckedMessages = mongoTemplate.find(Query.query(Criteria.where("chatroomId").is(chatroomId)
                 .and("checked").is(false).and("receiverId").is(user.getId())), Message.class);
         uncheckedMessages.forEach(message -> {
-            message.setChecked(true);
+            message.check();
             messageRepository.save(message);
         });
     }

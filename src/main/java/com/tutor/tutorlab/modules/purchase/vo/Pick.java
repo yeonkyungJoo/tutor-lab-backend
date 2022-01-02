@@ -11,7 +11,7 @@ import javax.persistence.*;
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "pick_id"))
-@Getter @Setter
+@Getter //@Setter
 @Entity
 public class Pick extends BaseEntity {
 
@@ -47,5 +47,9 @@ public class Pick extends BaseEntity {
 
     public void delete() {
         this.tutee.getPicks().remove(this);
+    }
+
+    public void setTutee(Tutee tutee) {
+        this.tutee = tutee;
     }
 }

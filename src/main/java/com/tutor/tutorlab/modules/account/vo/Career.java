@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.vo;
 
+import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
 
@@ -8,7 +9,8 @@ import javax.persistence.*;
 //@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "career_id"))
-@Getter @Setter
+@Getter
+// @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Career extends BaseEntity {
@@ -45,8 +47,18 @@ public class Career extends BaseEntity {
                 .build();
     }
 
-    public void delete() {
+    public void update(CareerUpdateRequest careerUpdateRequest) {
+        this.job = careerUpdateRequest.getJob();
+        this.companyName = careerUpdateRequest.getCompanyName();
+        this.others = careerUpdateRequest.getOthers();
+        this.license = careerUpdateRequest.getLicense();
+    }
 
+    public void setTutor(Tutor tutor) {
+        this.tutor = tutor;
+    }
+
+    public void delete() {
         if (this.tutor != null) {
             this.tutor.getCareers().remove(this);
             this.tutor = null;

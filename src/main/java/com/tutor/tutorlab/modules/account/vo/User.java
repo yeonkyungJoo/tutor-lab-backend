@@ -1,12 +1,13 @@
 package com.tutor.tutorlab.modules.account.vo;
 
 import com.tutor.tutorlab.config.security.oauth.provider.OAuthType;
+import com.tutor.tutorlab.modules.account.controller.request.SignUpOAuthDetailRequest;
+import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.address.embeddable.Address;
 import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.modules.base.BaseEntity;
-import com.tutor.tutorlab.utils.LocalDateTimeUtil;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Where;
@@ -18,9 +19,12 @@ import java.util.UUID;
 @Where(clause = "deleted = false and email_verified = true")
 @ToString(callSuper = true)
 //@EqualsAndHashCode(callSuper = true)
-@Getter @Setter
+@Getter
+//@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AttributeOverride(name = "id", column = @Column(name = "user_id"))
+//@Table(indexes = {@Index(name = "IDX_USERNAME", columnList = "username", unique = true),
+//        @Index(name = "IDX_NICKNAME", columnList = "nickname", unique = true)})
 @Entity
 public class User extends BaseEntity {
 
@@ -64,6 +68,7 @@ public class User extends BaseEntity {
     private String emailVerifyToken;
     private LocalDateTime emailVerifiedAt;
 
+    // UNIQUE
     @Lob
     private String fcmToken;
 
@@ -121,9 +126,15 @@ public class User extends BaseEntity {
                 .build();
     }
 
-    public void quit() {
-        setDeleted(true);
-        setDeletedAt(LocalDateTime.now());
+    public void login() {
+        this.lastLoginAt = LocalDateTime.now();
+    }
+
+    public void quit(String quitReason) {
+        this.quitReason = quitReason;
+
+        this.deleted = true;
+        this.deletedAt = LocalDateTime.now();
     }
 
     // TODO - CHECK : pre or post
@@ -136,16 +147,58 @@ public class User extends BaseEntity {
         if (isEmailVerified()) {
             throw new RuntimeException("이미 인증된 사용자입니다.");
         }
-        setEmailVerified(true);
-        setEmailVerifiedAt(LocalDateTime.now());
+        this.emailVerified = true;
+        this.emailVerifiedAt = LocalDateTime.now();
     }
 
     public void accused() {
         this.accusedCount++;
         if (this.accusedCount == 5) {
             // TODO - 즉시 로그아웃
-            quit();
+            // TODO - quitReason;
+            quit(null);
         }
+    }
+
+    public void updateImage(String image) {
+        this.image = image;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    // TODO - update와 동일
+    public void updateOAuthDetail(SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
+        // TODO - converter
+        this.gender = signUpOAuthDetailRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE;
+        this.birthYear = signUpOAuthDetailRequest.getBirthYear();
+        this.phoneNumber = signUpOAuthDetailRequest.getPhoneNumber();
+        this.email = signUpOAuthDetailRequest.getEmail();
+        this.nickname = signUpOAuthDetailRequest.getNickname();
+        this.bio = signUpOAuthDetailRequest.getBio();
+        this.zone = AddressUtils.convertStringToEmbeddableAddress(signUpOAuthDetailRequest.getZone());
+        this.image = signUpOAuthDetailRequest.getImage();
+    }
+
+    public void update(UserUpdateRequest userUpdateRequest) {
+        // TODO - converter
+        this.gender = userUpdateRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE;
+        this.birthYear = userUpdateRequest.getBirthYear();
+        this.phoneNumber = userUpdateRequest.getPhoneNumber();
+        this.email = userUpdateRequest.getEmail();
+        this.nickname = userUpdateRequest.getNickname();
+        this.bio = userUpdateRequest.getBio();
+        this.zone = AddressUtils.convertStringToEmbeddableAddress(userUpdateRequest.getZone());
+        this.image = userUpdateRequest.getImage();
+    }
+
+    public void setRole(RoleType role) {
+        this.role = role;
+    }
+
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
 }

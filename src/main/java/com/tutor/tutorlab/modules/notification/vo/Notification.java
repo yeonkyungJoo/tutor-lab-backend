@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 //@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter @Setter
+@Getter //@Setter
 @AttributeOverride(name = "id", column = @Column(name = "notification_id"))
 @Entity
 public class Notification extends BaseEntity {
@@ -33,8 +33,8 @@ public class Notification extends BaseEntity {
 
     public void check() {
         if (!checked) {
-            setChecked(true);
-            setCheckedAt(LocalDateTime.now());
+            this.checked = true;
+            this.checkedAt = LocalDateTime.now();
         }
     }
 

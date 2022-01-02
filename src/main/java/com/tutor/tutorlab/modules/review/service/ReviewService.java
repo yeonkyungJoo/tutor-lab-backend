@@ -89,7 +89,7 @@ public class ReviewService extends AbstractService {
         Review review = reviewRepository.findByParentAndId(parent, reviewId)
                 .orElseThrow(() -> new EntityNotFoundException(REVIEW));
 
-        review.setContent(tutorReviewUpdateRequest.getContent());
+        review.updateTutorReview(tutorReviewUpdateRequest);
     }
 
     public void deleteTutorReview(User user, Long lectureId, Long parentId, Long reviewId) {
@@ -152,8 +152,7 @@ public class ReviewService extends AbstractService {
         Review review = reviewRepository.findByEnrollmentAndId(enrollment, reviewId)
                 .orElseThrow(() -> new EntityNotFoundException(REVIEW));
 
-        review.setContent(tuteeReviewUpdateRequest.getContent());
-        review.setScore(tuteeReviewUpdateRequest.getScore());
+        review.updateTuteeReview(tuteeReviewUpdateRequest);
     }
 
     public void deleteTuteeReview(User user, Long lectureId, Long reviewId) {

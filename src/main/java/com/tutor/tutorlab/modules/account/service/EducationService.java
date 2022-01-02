@@ -66,10 +66,7 @@ public class EducationService {
         Education education = educationRepository.findByTutorAndId(tutor, educationId)
                 .orElseThrow(() -> new EntityNotFoundException(EDUCATION));
 
-        education.setEducationLevel(educationUpdateRequest.getEducationLevel());
-        education.setSchoolName(educationUpdateRequest.getSchoolName());
-        education.setMajor(educationUpdateRequest.getMajor());
-        education.setOthers(educationUpdateRequest.getOthers());
+        education.update(educationUpdateRequest);
     }
 
     public void deleteEducation(User user, Long educationId) {

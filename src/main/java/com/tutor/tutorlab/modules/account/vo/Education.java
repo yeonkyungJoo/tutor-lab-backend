@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.vo;
 
+import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
 import com.tutor.tutorlab.modules.account.enums.EducationLevelType;
 import com.tutor.tutorlab.modules.base.BaseEntity;
 import lombok.*;
@@ -10,7 +11,8 @@ import java.time.LocalDate;
 @ToString(callSuper = true)
 //@EqualsAndHashCode(callSuper = true)
 @AttributeOverride(name = "id", column = @Column(name = "education_id"))
-@Getter @Setter
+@Getter
+//@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Education extends BaseEntity {
@@ -48,8 +50,18 @@ public class Education extends BaseEntity {
                 .build();
     }
 
-    public void delete() {
+    public void update(EducationUpdateRequest educationUpdateRequest) {
+        this.educationLevel = educationUpdateRequest.getEducationLevel();
+        this.schoolName = educationUpdateRequest.getSchoolName();
+        this.major = educationUpdateRequest.getMajor();
+        this.others = educationUpdateRequest.getOthers();
+    }
 
+    public void setTutor(Tutor tutor) {
+        this.tutor = tutor;
+    }
+
+    public void delete() {
         if (this.tutor != null) {
             this.tutor.getEducations().remove(this);
             this.tutor = null;

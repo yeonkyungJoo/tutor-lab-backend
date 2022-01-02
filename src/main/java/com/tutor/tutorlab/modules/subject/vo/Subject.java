@@ -9,10 +9,12 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
-@Getter @Setter
+@Getter //@Setter
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor(access = PROTECTED)
-@Table(name = "subject")
+@Table(name = "subject"
+        //, indexes = @Index(name = "IDX_SUBJECT", columnList = "learningKindId, learningKind, krSubject", unique = true)
+)
 @Entity
 public class Subject {
 
