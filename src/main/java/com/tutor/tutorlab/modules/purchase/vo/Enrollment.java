@@ -87,4 +87,17 @@ public class Enrollment extends BaseEntity {
     public void delete() {
         this.tutee.getEnrollments().remove(this);
     }
+
+    public static Enrollment buildEnrollment(Tutee tutee, Lecture lecture, LecturePrice lecturePrice) {
+
+        Enrollment enrollment = Enrollment.of(
+                tutee,
+                lecture,
+                lecturePrice
+        );
+        tutee.addEnrollment(enrollment);
+        lecture.addEnrollment(enrollment);
+
+        return enrollment;
+    }
 }

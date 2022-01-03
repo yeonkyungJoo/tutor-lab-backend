@@ -6,7 +6,6 @@ import com.tutor.tutorlab.modules.account.controller.request.UserPasswordUpdateR
 import com.tutor.tutorlab.modules.account.controller.request.UserQuitRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.UserResponse;
-import com.tutor.tutorlab.modules.account.enums.GenderType;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -17,14 +16,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

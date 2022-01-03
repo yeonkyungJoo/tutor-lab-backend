@@ -110,15 +110,8 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         // TODO - 구매 중복 X 체크 (UNIQUE)
 
         // 성공 시
-        Enrollment enrollment = Enrollment.of(
-                tutee,
-                lecture,
-                lecturePrice
-        );
         // TODO - CHECK
-        enrollment = enrollmentRepository.save(enrollment);
-        tutee.addEnrollment(enrollment);
-        lecture.addEnrollment(enrollment);
+        Enrollment enrollment = enrollmentRepository.save(Enrollment.buildEnrollment(tutee, lecture, lecturePrice));
 
         Tutor tutor = lecture.getTutor();
         User tutorUser = tutor.getUser();

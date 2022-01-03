@@ -72,8 +72,15 @@ public class NotificationServiceTest {
         // user, notificationId
 
         // given
+        Notification notification = Mockito.mock(Notification.class);
+        when(notificationRepository.findByUserAndId(any(User.class), any(Long.class)))
+                .thenReturn(Optional.of(notification));
 
         // when
+        User user = Mockito.mock(User.class);
+        notificationService.deleteNotification(user, 1L);
+
         // then
+        verify(notificationRepository).delete(any(Notification.class));
     }
 }
