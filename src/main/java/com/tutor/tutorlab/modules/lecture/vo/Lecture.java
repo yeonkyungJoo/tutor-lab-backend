@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.lecture.vo;
 
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.base.BaseEntity;
+import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
@@ -114,6 +115,33 @@ public class Lecture extends BaseEntity {
     }
 
     public void update(LectureUpdateRequest lectureUpdateRequest) {
+
+        this.getLecturePrices().clear();
+        this.getLectureSubjects().clear();
+
+        for (LectureUpdateRequest.LecturePriceUpdateRequest lecturePriceUpdateRequest : lectureUpdateRequest.getLecturePrices()) {
+            LecturePrice lecturePrice = LecturePrice.of(
+                    this,
+                    lecturePriceUpdateRequest.getIsGroup(),
+                    lecturePriceUpdateRequest.getGroupNumber(),
+                    lecturePriceUpdateRequest.getTotalTime(),
+                    lecturePriceUpdateRequest.getPertimeLecture(),
+                    lecturePriceUpdateRequest.getPertimeCost(),
+                    lecturePriceUpdateRequest.getTotalCost()
+            );
+            this.addPrice(lecturePrice);
+        }
+
+        for (LectureUpdateRequest.LectureSubjectUpdateRequest lectureSubjectUpdateRequest : lectureUpdateRequest.getSubjects()) {
+            LectureSubject lectureSubject = LectureSubject.of(
+                    this,
+                    lectureSubjectUpdateRequest.getLearningKindId(),
+                    lectureSubjectUpdateRequest.getLearningKind(),
+                    lectureSubjectUpdateRequest.getKrSubject()
+            );
+            this.addSubject(lectureSubject);
+        }
+
         this.thumbnail = lectureUpdateRequest.getThumbnailUrl();
         this.title = lectureUpdateRequest.getTitle();
         this.subTitle = lectureUpdateRequest.getSubTitle();
@@ -121,6 +149,51 @@ public class Lecture extends BaseEntity {
         this.content = lectureUpdateRequest.getContent();
         this.difficultyType = lectureUpdateRequest.getDifficulty();
         this.systemTypes = lectureUpdateRequest.getSystems();
+    }
+
+    private static LectureSubject buildLectureSubject(LectureCreateRequest.LectureSubjectCreateRequest lectureSubjectCreateRequest) {
+        return LectureSubject.of(
+                null,
+                lectureSubjectCreateRequest.getLearningKindId(),
+                lectureSubjectCreateRequest.getLearningKind(),
+                lectureSubjectCreateRequest.getKrSubject()
+        );
+    }
+
+    private static LecturePrice buildLecturePrice(LectureCreateRequest.LecturePriceCreateRequest lecturePriceCreateRequest) {
+        return LecturePrice.of(
+                null,
+                lecturePriceCreateRequest.getIsGroup(),
+                lecturePriceCreateRequest.getGroupNumber(),
+                lecturePriceCreateRequest.getTotalTime(),
+                lecturePriceCreateRequest.getPertimeLecture(),
+                lecturePriceCreateRequest.getPertimeCost(),
+                lecturePriceCreateRequest.getTotalCost()
+        );
+    }
+
+    public static Lecture buildLecture(LectureCreateRequest lectureCreateRequest, Tutor tutor) {
+
+        Lecture lecture = Lecture.of(
+                tutor,
+                lectureCreateRequest.getTitle(),
+                lectureCreateRequest.getSubTitle(),
+                lectureCreateRequest.getIntroduce(),
+                lectureCreateRequest.getContent(),
+                lectureCreateRequest.getDifficulty(),
+                lectureCreateRequest.getSystems(),
+                lectureCreateRequest.getThumbnailUrl()
+        );
+
+        for (LectureCreateRequest.LecturePriceCreateRequest lecturePriceRequest : lectureCreateRequest.getLecturePrices()) {
+            lecture.addPrice(buildLecturePrice(lecturePriceRequest));
+        }
+
+        for (LectureCreateRequest.LectureSubjectCreateRequest subjectRequest : lectureCreateRequest.getSubjects()) {
+            lecture.addSubject(buildLectureSubject(subjectRequest));
+        }
+
+        return lecture;
     }
 
 }

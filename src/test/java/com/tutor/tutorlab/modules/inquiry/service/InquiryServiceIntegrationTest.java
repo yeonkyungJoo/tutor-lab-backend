@@ -8,12 +8,14 @@ import com.tutor.tutorlab.modules.inquiry.controller.request.InquiryCreateReques
 import com.tutor.tutorlab.modules.inquiry.enums.InquiryType;
 import com.tutor.tutorlab.modules.inquiry.repository.InquiryRepository;
 import com.tutor.tutorlab.modules.inquiry.vo.Inquiry;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 // @Transactional
 @SpringBootTest
 class InquiryServiceIntegrationTest extends AbstractTest {

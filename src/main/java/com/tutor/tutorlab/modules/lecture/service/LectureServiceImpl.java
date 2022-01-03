@@ -148,7 +148,7 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
 
         // TODO 유효성 -> 해당 유저의 강의 갯수 제한?
 
-        Lecture lecture = buildLecture(lectureCreateRequest, tutor);
+        Lecture lecture = Lecture.buildLecture(lectureCreateRequest, tutor);
         return lectureRepository.save(lecture);
     }
 
@@ -166,34 +166,6 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
         if (enrollmentRepository.countAllByLectureId(lectureId) > 0) {
             // TODO - 예외 처리
             throw new RuntimeException("등록된 강의는 수정이 불가합니다.");
-        }
-
-        lecture.getLecturePrices().clear();
-        lecture.getLectureSubjects().clear();
-
-        for (LectureUpdateRequest.LecturePriceUpdateRequest lecturePriceUpdateRequest : lectureUpdateRequest.getLecturePrices()) {
-
-            LecturePrice lecturePrice = LecturePrice.of(
-                    lecture,
-                    lecturePriceUpdateRequest.getIsGroup(),
-                    lecturePriceUpdateRequest.getGroupNumber(),
-                    lecturePriceUpdateRequest.getTotalTime(),
-                    lecturePriceUpdateRequest.getPertimeLecture(),
-                    lecturePriceUpdateRequest.getPertimeCost(),
-                    lecturePriceUpdateRequest.getTotalCost()
-            );
-            lecture.addPrice(lecturePrice);
-        }
-
-        for (LectureUpdateRequest.LectureSubjectUpdateRequest lectureSubjectUpdateRequest : lectureUpdateRequest.getSubjects()) {
-
-            LectureSubject lectureSubject = LectureSubject.of(
-                    lecture,
-                    lectureSubjectUpdateRequest.getLearningKindId(),
-                    lectureSubjectUpdateRequest.getLearningKind(),
-                    lectureSubjectUpdateRequest.getKrSubject()
-            );
-            lecture.addSubject(lectureSubject);
         }
 
         lecture.update(lectureUpdateRequest);
@@ -220,8 +192,6 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     @Override
     public void deleteLecture(Lecture lecture) {
 
-        // pick
-        pickRepository.deleteByLecture(lecture);
         enrollmentRepository.findAllByLectureId(lecture.getId()).forEach(enrollment -> {
             // TODO - 수강중인 강의가 있는지 확인 필요
             if (!enrollment.isClosed() && !enrollment.isCanceled()) {
@@ -229,6 +199,9 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
             }
             enrollmentService.deleteEnrollment(enrollment);
         });
+
+        // pick
+        pickRepository.deleteByLecture(lecture);
 
         // TODO - CHECK : vs delete(lecture);
         // lecture_price
@@ -251,48 +224,4 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
         deleteLecture(lecture);
     }
 
-    private LectureSubject buildLectureSubject(LectureCreateRequest.LectureSubjectCreateRequest lectureSubjectCreateRequest) {
-        return LectureSubject.of(
-                null,
-                lectureSubjectCreateRequest.getLearningKindId(),
-                lectureSubjectCreateRequest.getLearningKind(),
-                lectureSubjectCreateRequest.getKrSubject()
-        );
-    }
-
-    private LecturePrice buildLecturePrice(LectureCreateRequest.LecturePriceCreateRequest lecturePriceCreateRequest) {
-        return LecturePrice.of(
-                null,
-                lecturePriceCreateRequest.getIsGroup(),
-                lecturePriceCreateRequest.getGroupNumber(),
-                lecturePriceCreateRequest.getTotalTime(),
-                lecturePriceCreateRequest.getPertimeLecture(),
-                lecturePriceCreateRequest.getPertimeCost(),
-                lecturePriceCreateRequest.getTotalCost()
-        );
-    }
-
-    private Lecture buildLecture(LectureCreateRequest lectureCreateRequest, Tutor tutor) {
-
-        Lecture lecture = Lecture.of(
-                tutor,
-                lectureCreateRequest.getTitle(),
-                lectureCreateRequest.getSubTitle(),
-                lectureCreateRequest.getIntroduce(),
-                lectureCreateRequest.getContent(),
-                lectureCreateRequest.getDifficulty(),
-                lectureCreateRequest.getSystems(),
-                lectureCreateRequest.getThumbnailUrl()
-        );
-
-        for (LectureCreateRequest.LecturePriceCreateRequest lecturePriceRequest : lectureCreateRequest.getLecturePrices()) {
-            lecture.addPrice(buildLecturePrice(lecturePriceRequest));
-        }
-
-        for (LectureCreateRequest.LectureSubjectCreateRequest subjectRequest : lectureCreateRequest.getSubjects()) {
-            lecture.addSubject(buildLectureSubject(subjectRequest));
-        }
-
-        return lecture;
-    }
 }

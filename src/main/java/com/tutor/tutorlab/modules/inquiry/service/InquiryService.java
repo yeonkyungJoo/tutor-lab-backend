@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.inquiry.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.messageQueue.Producer;
 import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -11,6 +12,8 @@ import com.tutor.tutorlab.modules.inquiry.vo.Inquiry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
 
 @Transactional
 @RequiredArgsConstructor
@@ -26,6 +29,9 @@ public class InquiryService {
     static final String ROUTING_KEY = "CREATE_INQUIRY_QUEUE";
 
     public Inquiry createInquiry(User user, InquiryCreateRequest inquiryCreateRequest) {
+
+        user = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(USER));
 
         Inquiry inquiry = Inquiry.of(user,
                 inquiryCreateRequest.getInquiryType(),

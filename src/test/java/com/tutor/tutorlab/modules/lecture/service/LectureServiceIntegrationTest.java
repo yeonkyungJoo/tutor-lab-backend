@@ -19,6 +19,7 @@ import com.tutor.tutorlab.modules.purchase.vo.Pick;
 import com.tutor.tutorlab.modules.review.vo.Review;
 import com.tutor.tutorlab.modules.subject.vo.Subject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +32,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 @Transactional
 @SpringBootTest
 public class LectureServiceIntegrationTest extends AbstractTest {
