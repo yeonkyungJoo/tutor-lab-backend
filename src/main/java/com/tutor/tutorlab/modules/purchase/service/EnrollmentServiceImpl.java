@@ -10,7 +10,6 @@ import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
 import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
 import com.tutor.tutorlab.modules.chat.service.ChatService;
-import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.firebase.service.AndroidPushNotificationsService;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
@@ -25,7 +24,6 @@ import com.tutor.tutorlab.modules.purchase.repository.EnrollmentQueryRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
-import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -164,16 +162,17 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         // TODO - Optional 사용법
         // 이미 취소/종료된 강의인 경우
         // chatService.deleteChatroom(enrollment);
-        Chatroom chatroom = chatroomRepository.findByEnrollment(enrollment).orElse(null);
-        if (chatroom != null) {
-            chatroomRepository.deleteByEnrollment(enrollment);
-        }
+        // chatroomRepository.deleteByEnrollment(enrollment);
+        chatroomRepository.findByEnrollment(enrollment).ifPresent(
+                chatroom -> chatroomRepository.delete(chatroom)
+        );
 
-        Review review = reviewRepository.findByEnrollment(enrollment);
-        if (review != null) {
-            review.delete();
-            reviewRepository.delete(review);
-        }
+        Optional.ofNullable(reviewRepository.findByEnrollment(enrollment)).ifPresent(
+                review -> {
+                    review.delete();
+                    reviewRepository.delete(review);
+                }
+        );
 
         cancellationRepository.deleteByEnrollment(enrollment);
 

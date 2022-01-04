@@ -4,12 +4,18 @@ import com.tutor.tutorlab.config.exception.AlreadyExistException;
 import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.chat.repository.ChatroomRepository;
+import com.tutor.tutorlab.modules.chat.service.ChatService;
+import com.tutor.tutorlab.modules.chat.vo.Chatroom;
 import com.tutor.tutorlab.modules.lecture.repository.LecturePriceRepository;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
+import com.tutor.tutorlab.modules.purchase.repository.CancellationRepository;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
+import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
+import com.tutor.tutorlab.modules.review.vo.Review;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +46,16 @@ class EnrollmentServiceTest {
     LectureRepository lectureRepository;
     @Mock
     LecturePriceRepository lecturePriceRepository;
+
+    @Mock
+    ChatService chatService;
+    @Mock
+    ChatroomRepository chatroomRepository;
+    @Mock
+    ReviewRepository reviewRepository;
+
+    @Mock
+    CancellationRepository cancellationRepository;
 
     //@Test
     void createEnrollment() {
@@ -103,17 +119,79 @@ class EnrollmentServiceTest {
 
     @Test
     void close() {
+        // user, lectureId
 
         // given
+        Tutee tutee = Mockito.mock(Tutee.class);
+        when(tuteeRepository.findByUser(any(User.class))).thenReturn(tutee);
+
+        Lecture lecture = Mockito.mock(Lecture.class);
+        when(lectureRepository.findById(anyLong())).thenReturn(Optional.of(lecture));
+
+        Enrollment enrollment = Mockito.mock(Enrollment.class);
+        when(enrollmentRepository.findByTuteeAndLectureAndCanceledFalseAndClosedFalse(any(Tutee.class), any(Lecture.class)))
+                .thenReturn(Optional.of(enrollment));
+
         // when
+        User user = Mockito.mock(User.class);
+        enrollmentService.close(user, 1L);
+
         // then
+        verify(enrollment).close();
+        // 채팅방 삭제
+        verify(chatService).deleteChatroom(enrollment);
+
+    }
+
+    // user가 직접 enrollment를 삭제하는 것은 불가
+    // 취소나 종료만 가능
+    @Test
+    void deleteEnrollment_noChatroom_and_noReview() {
+
+        // given
+        Enrollment enrollment = Mockito.mock(Enrollment.class);
+        when(enrollment.getId()).thenReturn(1L);
+        when(chatroomRepository.findByEnrollment(enrollment))
+                .thenReturn(Optional.empty());
+        when(reviewRepository.findByEnrollment(enrollment)).thenReturn(null);
+
+        // when
+        enrollmentService.deleteEnrollment(enrollment);
+
+        // then
+        // 취소 내역 삭제
+        verify(cancellationRepository).deleteByEnrollment(enrollment);
+        verify(enrollment).delete();
+        // enrollment 전체에서 확인
+        // verify(enrollmentRepository).delete(enrollment);
+        verify(enrollmentRepository).deleteEnrollmentById(1L);
     }
 
     @Test
-    void deleteEnrollment() {
+    void deleteEnrollment_withChatroom_and_withReview() {
 
         // given
+        Enrollment enrollment = Mockito.mock(Enrollment.class);
+        when(enrollment.getId()).thenReturn(1L);
+
+        Chatroom chatroom = Mockito.mock(Chatroom.class);
+        when(chatroomRepository.findByEnrollment(enrollment))
+                .thenReturn(Optional.of(chatroom));
+        Review review = Mockito.mock(Review.class);
+        when(reviewRepository.findByEnrollment(enrollment)).thenReturn(review);
+
         // when
+        enrollmentService.deleteEnrollment(enrollment);
+
         // then
+        verify(chatroomRepository).delete(chatroom);
+
+        verify(review).delete();
+        verify(reviewRepository).delete(review);
+
+        verify(cancellationRepository).deleteByEnrollment(enrollment);
+        verify(enrollment).delete();
+
+        verify(enrollmentRepository).deleteEnrollmentById(1L);
     }
 }

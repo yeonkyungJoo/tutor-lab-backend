@@ -52,4 +52,11 @@ public class Pick extends BaseEntity {
     public void setTutee(Tutee tutee) {
         this.tutee = tutee;
     }
+
+    // TODO - CHECK
+    public static Pick buildPick(Tutee tutee, Lecture lecture) {
+        Pick pick = Pick.of(tutee, lecture);
+        tutee.addPick(pick);
+        return pick;
+    }
 }

@@ -56,10 +56,7 @@ public class PickServiceImpl extends AbstractService implements PickService {
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
-        Pick pick = Pick.of(tutee, lecture);
-        // TODO - CHECK
-        tutee.addPick(pick);
-        return pickRepository.save(pick);
+        return pickRepository.save(Pick.buildPick(tutee, lecture));
     }
 
     @Override

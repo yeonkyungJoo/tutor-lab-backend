@@ -59,17 +59,7 @@ public class ReviewService extends AbstractService {
         Review parent = reviewRepository.findByLectureAndId(lecture, parentId)
                 .orElseThrow(() -> new EntityNotFoundException(REVIEW));
 
-        Review review = Review.of(
-                null,
-                tutorReviewCreateRequest.getContent(),
-                user,
-                null,
-                lecture,
-                parent
-        );
-        // TODO - CHECK : id check
-        parent.addChild(review);
-        return reviewRepository.save(review);
+        return reviewRepository.save(Review.buildTutorReview(user, lecture, parent, tutorReviewCreateRequest));
     }
 
     public void updateTutorReview(User user, Long lectureId, Long parentId, Long reviewId, TutorReviewUpdateRequest tutorReviewUpdateRequest) {
@@ -107,8 +97,6 @@ public class ReviewService extends AbstractService {
         Review review = reviewRepository.findByParentAndId(parent, reviewId)
                 .orElseThrow(() -> new EntityNotFoundException(REVIEW));
 
-        // TODO - CHECK : mappedBy된 리스트 값
-        parent.getChildren().remove(review);
         review.delete();
         // TODO - delete 시에 id로 먼저 조회
         reviewRepository.delete(review);
@@ -126,15 +114,7 @@ public class ReviewService extends AbstractService {
         Enrollment enrollment = enrollmentRepository.findAllByTuteeIdAndLectureId(tutee.getId(), lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(ENROLLMENT));
 
-        Review review = Review.of(
-                tuteeReviewCreateRequest.getScore(),
-                tuteeReviewCreateRequest.getContent(),
-                user,
-                enrollment,
-                lecture,
-                null
-        );
-        return reviewRepository.save(review);
+        return reviewRepository.save(Review.buildTuteeReview(user, lecture, enrollment, tuteeReviewCreateRequest));
     }
 
     public void updateTuteeReview(User user, Long lectureId, Long reviewId, TuteeReviewUpdateRequest tuteeReviewUpdateRequest) {
@@ -142,8 +122,8 @@ public class ReviewService extends AbstractService {
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
 
-        Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
+//        Lecture lecture = lectureRepository.findById(lectureId)
+//                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
         // 종료/취소된 강의 리뷰 가능
         Enrollment enrollment = enrollmentRepository.findAllByTuteeIdAndLectureId(tutee.getId(), lectureId)
@@ -160,8 +140,8 @@ public class ReviewService extends AbstractService {
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
                 .orElseThrow(() -> new UnauthorizedException(TUTEE));
 
-        Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
+//        Lecture lecture = lectureRepository.findById(lectureId)
+//                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
 
         // 종료/취소된 강의 리뷰 가능
         Enrollment enrollment = enrollmentRepository.findAllByTuteeIdAndLectureId(tutee.getId(), lectureId)
