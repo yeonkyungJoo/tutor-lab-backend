@@ -225,7 +225,7 @@ public abstract class AbstractTest {
         return Address.of(state, siGun, gu, dongMyunLi);
     }
 
-    private UserUpdateRequest getUserUpdateRequest(String email, String nickname) {
+    public static UserUpdateRequest getUserUpdateRequest(String email, String nickname) {
         return UserUpdateRequest.of(
                 "FEMALE",
                 null,
@@ -252,11 +252,11 @@ public abstract class AbstractTest {
         );
     }
 
-    private TuteeUpdateRequest getTuteeUpdateRequest() {
+    public static TuteeUpdateRequest getTuteeUpdateRequest() {
         return TuteeUpdateRequest.of("java,spring");
     }
 
-    private SignUpOAuthDetailRequest getSignUpOAuthDetailRequest(String nickname) {
+    public static SignUpOAuthDetailRequest getSignUpOAuthDetailRequest(String nickname) {
         return SignUpOAuthDetailRequest.of(
                 "FEMALE",
                 null,
@@ -279,7 +279,7 @@ public abstract class AbstractTest {
         return userInfo;
     }
 
-    protected SignUpRequest getSignUpRequest(String name, String nickname) {
+    public static SignUpRequest getSignUpRequest(String name, String nickname) {
         return SignUpRequest.of(
                 name + "@email.com",
                 "password",
@@ -386,23 +386,23 @@ public abstract class AbstractTest {
         );
     }
 
-    private TuteeReviewCreateRequest getTuteeReviewCreateRequest() {
+    public static TuteeReviewCreateRequest getTuteeReviewCreateRequest() {
         return TuteeReviewCreateRequest.of(
                 5, "좋아요"
         );
     }
 
-    private TuteeReviewUpdateRequest getTuteeReviewUpdateRequest() {
+    public static TuteeReviewUpdateRequest getTuteeReviewUpdateRequest() {
         return TuteeReviewUpdateRequest.of(
                 3, "별로에요"
         );
     }
 
-    private TutorReviewCreateRequest getTutorReviewCreateRequest() {
+    public static TutorReviewCreateRequest getTutorReviewCreateRequest() {
         return TutorReviewCreateRequest.of("감사합니다");
     }
 
-    private TutorReviewUpdateRequest getTutorReviewUpdateRequest() {
+    public static TutorReviewUpdateRequest getTutorReviewUpdateRequest() {
         return TutorReviewUpdateRequest.of("리뷰 감사합니다");
     }
 }
