@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.account.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
 import com.tutor.tutorlab.config.interceptor.AuthInterceptor;
+import com.tutor.tutorlab.config.security.jwt.JwtRequestFilter;
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.TuteeResponse;
@@ -43,6 +44,8 @@ class TuteeControllerTest {
     TuteeController tuteeController;
     @InjectMocks
     AuthInterceptor authInterceptor;
+    @InjectMocks
+    JwtRequestFilter jwtRequestFilter;
 
     MockMvc mockMvc;
     ObjectMapper objectMapper = new ObjectMapper();
@@ -50,6 +53,7 @@ class TuteeControllerTest {
     @BeforeEach
     void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(tuteeController)
+                .addFilter(jwtRequestFilter)
                 .addInterceptors(authInterceptor)
                 .setControllerAdvice(RestControllerExceptionAdvice.class)
                 .build();
@@ -89,10 +93,11 @@ class TuteeControllerTest {
     }
 
     @Test
-    @WithMockUser
+    // @WithMockUser
     void editTutee() throws Exception {
 
         // given
+        assertNotNull(jwtRequestFilter);
         doNothing()
                 .when(tuteeService).updateTutee(any(User.class), any(TuteeUpdateRequest.class));
         // when
