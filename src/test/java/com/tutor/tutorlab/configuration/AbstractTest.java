@@ -153,8 +153,11 @@ public abstract class AbstractTest {
     protected final TutorReviewUpdateRequest tutorReviewUpdateRequest = getTutorReviewUpdateRequest();
 
     // TODO - 수정
-    protected final CancellationCreateRequest cancellationCreateRequest = CancellationCreateRequest.of("너무 어려워요");
+    protected final CancellationCreateRequest cancellationCreateRequest = getCancellationCreateRequest();
 
+    public static CancellationCreateRequest getCancellationCreateRequest() {
+        return CancellationCreateRequest.of("너무 어려워요");
+    }
 
 //    LectureCreateRequest lectureCreateRequest1 = LectureCreateRequest.of(
 //            "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
