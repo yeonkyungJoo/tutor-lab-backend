@@ -1,0 +1,117 @@
+package com.tutor.tutorlab.modules.subject.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
+import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.chat.vo.Message;
+import com.tutor.tutorlab.modules.lecture.embeddable.LearningKind;
+import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
+import com.tutor.tutorlab.modules.purchase.controller.EnrollmentController;
+import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
+import com.tutor.tutorlab.modules.subject.controller.response.LearningKindResponse;
+import com.tutor.tutorlab.modules.subject.controller.response.SubjectResponse;
+import com.tutor.tutorlab.modules.subject.service.SubjectService;
+import com.tutor.tutorlab.modules.subject.vo.Subject;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ExtendWith(MockitoExtension.class)
+class SubjectControllerTest {
+
+    private final String BASE_URL = "/subjects";
+
+    @InjectMocks
+    SubjectController subjectController;
+    @Mock
+    SubjectService subjectService;
+
+    MockMvc mockMvc;
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    private LearningKind learningKind1;
+    private LearningKind learningKind2;
+    private Subject subject1;
+    private Subject subject2;
+
+    @BeforeEach
+    void setup() {
+
+        mockMvc = MockMvcBuilders.standaloneSetup(subjectController)
+                .setControllerAdvice(RestControllerExceptionAdvice.class)
+                .build();
+
+        learningKind1 = LearningKind.of(LearningKindType.IT);
+        learningKind2 = LearningKind.of(LearningKindType.LANGUAGE);
+        subject1 = Subject.of(learningKind1, "자바");
+        subject2 = Subject.of(learningKind2, "중국어");
+    }
+
+    @Test
+    void getLearningKinds() throws Exception {
+
+        // given
+        LearningKindResponse response1 = new LearningKindResponse(learningKind1);
+        LearningKindResponse response2 = new LearningKindResponse(learningKind2);
+
+        List<LearningKindResponse> learningKinds = Arrays.asList(response1, response2);
+        doReturn(learningKinds)
+                .when(subjectService).getLearningKindResponses();
+        // when
+        // then
+        mockMvc.perform(get(BASE_URL + "/learningKinds"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(learningKinds)));
+    }
+
+    @Test
+    void getSubjects() throws Exception {
+
+        // given
+        SubjectResponse response1 = new SubjectResponse(subject1);
+        SubjectResponse response2 = new SubjectResponse(subject2);
+        List<SubjectResponse> subjects = Arrays.asList(response1, response2);
+        doReturn(subjects)
+                .when(subjectService).getSubjectResponses();
+        // when
+        // then
+        mockMvc.perform(get(BASE_URL + "/subjects"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(subjects)));
+    }
+
+    @Test
+    void _getSubjects() throws Exception {
+
+        // given
+        SubjectResponse response1 = new SubjectResponse(subject1);
+        List<SubjectResponse> subjects = Arrays.asList(response1);
+        doReturn(subjects)
+                .when(subjectService).getSubjectResponses(1L);
+        // when
+        // then
+        mockMvc.perform(get(BASE_URL + "/subjects/{learning_kind_id}", 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(subjects)));
+    }
+}

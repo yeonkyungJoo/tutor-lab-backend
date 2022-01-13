@@ -241,14 +241,14 @@ public abstract class AbstractTest {
         );
     }
 
-    private TutorUpdateRequest getTutorUpdateRequest() {
+    public static TutorUpdateRequest getTutorUpdateRequest() {
         return TutorUpdateRequest.of(
                 Arrays.asList(getCareerUpdateRequest()),
                 Arrays.asList(getEducationUpdateRequest())
         );
     }
 
-    private TutorSignUpRequest getTutorSignUpRequest() {
+    public static TutorSignUpRequest getTutorSignUpRequest() {
         return TutorSignUpRequest.of(
                 Arrays.asList(getCareerCreateRequest()),
                 Arrays.asList(getEducationCreateRequest())
@@ -308,7 +308,7 @@ public abstract class AbstractTest {
         );
     }
 
-    private CareerUpdateRequest getCareerUpdateRequest() {
+    public static CareerUpdateRequest getCareerUpdateRequest() {
         return CareerUpdateRequest.of(
                 "engineer",
                 "tutorlab2",
@@ -326,7 +326,7 @@ public abstract class AbstractTest {
         );
     }
 
-    private EducationUpdateRequest getEducationUpdateRequest() {
+    public static EducationUpdateRequest getEducationUpdateRequest() {
         return EducationUpdateRequest.of(
                 EducationLevelType.UNIVERSITY,
                 "school",

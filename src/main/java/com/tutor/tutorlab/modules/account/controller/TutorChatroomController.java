@@ -35,7 +35,7 @@ public class TutorChatroomController {
     @ApiOperation("채팅방 개별 조회")
     @GetMapping("/{chatroom_id}")
     public ResponseEntity<?> getMessagesOfChatroom(@CurrentUser User user,
-                                                @PathVariable(name = "chatroom_id") Long chatroomId) {
+                                                   @PathVariable(name = "chatroom_id") Long chatroomId) {
 
         List<Message> messages = chatroomService.getMessagesOfTutorChatroom(user, chatroomId);
         return ResponseEntity.ok(messages);
