@@ -3,11 +3,16 @@ package com.tutor.tutorlab.modules.lecture.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
 import com.tutor.tutorlab.configuration.AbstractTest;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
+import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
+import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
+import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.review.controller.response.ReviewResponse;
@@ -54,11 +59,48 @@ class LectureControllerTest {
     MockMvc mockMvc;
     ObjectMapper objectMapper = new ObjectMapper();
 
+    private User user;
+    private Tutor tutor;
+    private Lecture lecture1;
+    private Lecture lecture2;
+
     @BeforeEach
     void setup() {
+
         mockMvc = MockMvcBuilders.standaloneSetup(lectureController)
                 .setControllerAdvice(RestControllerExceptionAdvice.class)
                 .build();
+
+        user = User.of(
+                "user@email.com",
+                "password",
+                null, null, null, null,
+                "user@email.com", "user", null,
+                "서울특별시 강남구 청담동", null, RoleType.TUTOR, null, null);
+        // System.out.println(AddressUtils.convertStringToEmbeddableAddress("서울특별시 강남구 청담동"));
+        tutor = Tutor.of(user);
+
+        lecture1 = Lecture.of(
+                tutor,
+                "title1",
+                "subTitle1",
+                "introduce1",
+                "content1",
+                DifficultyType.ADVANCED,
+                Arrays.asList(SystemType.OFFLINE, SystemType.ONLINE),
+                "thumbnail1"
+        );
+
+        lecture2 = Lecture.of(
+                tutor,
+                "title2",
+                "subTitle2",
+                "introduce2",
+                "content2",
+                DifficultyType.BEGINNER,
+                Arrays.asList(SystemType.ONLINE),
+                "thumbnail2"
+        );
     }
 
     // TODO - CHECK / 파라미터 테스트
@@ -89,21 +131,26 @@ class LectureControllerTest {
 
         // given
         Page<LectureResponse> lectures =
-                new PageImpl<>(Arrays.asList(Mockito.mock(LectureResponse.class), Mockito.mock(LectureResponse.class)), Pageable.ofSize(20), 2);
+                new PageImpl<>(Arrays.asList(new LectureResponse(lecture1), new LectureResponse(lecture2)), Pageable.ofSize(20), 2);
+
+//        LectureListRequest lectureListRequest =
+//                LectureListRequest.of(null, Arrays.asList("java"), SystemType.ONLINE, true, Arrays.asList(DifficultyType.ADVANCED, DifficultyType.BEGINNER));
         doReturn(lectures)
-                .when(lectureService).getLectureResponses(null, any(LectureListRequest.class), anyInt());
+                .when(lectureService).getLectureResponses(any(), any(LectureListRequest.class), anyInt());
         // when
         // then
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("title", "자바");
+        params.add("title", "title1");
+        params.add("subjects", "java,python");
+        params.add("systemType", "OFFLINE");
         params.add("isGroup", "true");
+        params.add("difficultyTypes", "BASIC,ADVANCED");
         params.add("page", "1");
         mockMvc.perform(get(BASE_URL)
                 .params(params))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(lectures)));
-
     }
 
     @Test

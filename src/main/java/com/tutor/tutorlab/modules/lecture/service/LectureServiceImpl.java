@@ -77,6 +77,7 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     @Override
     public Page<LectureResponse> getLectureResponses(String zone, LectureListRequest lectureListRequest, Integer page) {
 
+        System.out.println(lectureListRequest);
         Page<LectureResponse> lectures = lectureSearchRepository.findLecturesByZoneAndSearch(
                 AddressUtils.convertStringToEmbeddableAddress(zone), lectureListRequest, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(LectureResponse::new);

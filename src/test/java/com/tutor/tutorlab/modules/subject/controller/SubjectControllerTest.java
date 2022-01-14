@@ -36,8 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class SubjectControllerTest {
 
-    private final String BASE_URL = "/subjects";
-
     @InjectMocks
     SubjectController subjectController;
     @Mock
@@ -76,7 +74,7 @@ class SubjectControllerTest {
                 .when(subjectService).getLearningKindResponses();
         // when
         // then
-        mockMvc.perform(get(BASE_URL + "/learningKinds"))
+        mockMvc.perform(get("/learningKinds"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(learningKinds)));
@@ -93,7 +91,7 @@ class SubjectControllerTest {
                 .when(subjectService).getSubjectResponses();
         // when
         // then
-        mockMvc.perform(get(BASE_URL + "/subjects"))
+        mockMvc.perform(get("/subjects"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(subjects)));
@@ -109,7 +107,7 @@ class SubjectControllerTest {
                 .when(subjectService).getSubjectResponses(1L);
         // when
         // then
-        mockMvc.perform(get(BASE_URL + "/subjects/{learning_kind_id}", 1L))
+        mockMvc.perform(get("/subjects/{learning_kind_id}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(subjects)));
