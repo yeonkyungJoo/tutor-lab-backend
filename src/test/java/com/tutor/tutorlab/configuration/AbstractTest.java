@@ -153,8 +153,11 @@ public abstract class AbstractTest {
     protected final TutorReviewUpdateRequest tutorReviewUpdateRequest = getTutorReviewUpdateRequest();
 
     // TODO - 수정
-    protected final CancellationCreateRequest cancellationCreateRequest = CancellationCreateRequest.of("너무 어려워요");
+    protected final CancellationCreateRequest cancellationCreateRequest = getCancellationCreateRequest();
 
+    public static CancellationCreateRequest getCancellationCreateRequest() {
+        return CancellationCreateRequest.of("너무 어려워요");
+    }
 
 //    LectureCreateRequest lectureCreateRequest1 = LectureCreateRequest.of(
 //            "https://tutorlab.s3.ap-northeast-2.amazonaws.com/2bb34d85-dfa5-4b0e-bc1d-094537af475c",
@@ -225,7 +228,7 @@ public abstract class AbstractTest {
         return Address.of(state, siGun, gu, dongMyunLi);
     }
 
-    private UserUpdateRequest getUserUpdateRequest(String email, String nickname) {
+    public static UserUpdateRequest getUserUpdateRequest(String email, String nickname) {
         return UserUpdateRequest.of(
                 "FEMALE",
                 null,
@@ -238,25 +241,25 @@ public abstract class AbstractTest {
         );
     }
 
-    private TutorUpdateRequest getTutorUpdateRequest() {
+    public static TutorUpdateRequest getTutorUpdateRequest() {
         return TutorUpdateRequest.of(
                 Arrays.asList(getCareerUpdateRequest()),
                 Arrays.asList(getEducationUpdateRequest())
         );
     }
 
-    private TutorSignUpRequest getTutorSignUpRequest() {
+    public static TutorSignUpRequest getTutorSignUpRequest() {
         return TutorSignUpRequest.of(
                 Arrays.asList(getCareerCreateRequest()),
                 Arrays.asList(getEducationCreateRequest())
         );
     }
 
-    private TuteeUpdateRequest getTuteeUpdateRequest() {
+    public static TuteeUpdateRequest getTuteeUpdateRequest() {
         return TuteeUpdateRequest.of("java,spring");
     }
 
-    private SignUpOAuthDetailRequest getSignUpOAuthDetailRequest(String nickname) {
+    public static SignUpOAuthDetailRequest getSignUpOAuthDetailRequest(String nickname) {
         return SignUpOAuthDetailRequest.of(
                 "FEMALE",
                 null,
@@ -279,7 +282,7 @@ public abstract class AbstractTest {
         return userInfo;
     }
 
-    protected SignUpRequest getSignUpRequest(String name, String nickname) {
+    public static SignUpRequest getSignUpRequest(String name, String nickname) {
         return SignUpRequest.of(
                 name + "@email.com",
                 "password",
@@ -386,23 +389,23 @@ public abstract class AbstractTest {
         );
     }
 
-    private TuteeReviewCreateRequest getTuteeReviewCreateRequest() {
+    public static TuteeReviewCreateRequest getTuteeReviewCreateRequest() {
         return TuteeReviewCreateRequest.of(
                 5, "좋아요"
         );
     }
 
-    private TuteeReviewUpdateRequest getTuteeReviewUpdateRequest() {
+    public static TuteeReviewUpdateRequest getTuteeReviewUpdateRequest() {
         return TuteeReviewUpdateRequest.of(
                 3, "별로에요"
         );
     }
 
-    private TutorReviewCreateRequest getTutorReviewCreateRequest() {
+    public static TutorReviewCreateRequest getTutorReviewCreateRequest() {
         return TutorReviewCreateRequest.of("감사합니다");
     }
 
-    private TutorReviewUpdateRequest getTutorReviewUpdateRequest() {
+    public static TutorReviewUpdateRequest getTutorReviewUpdateRequest() {
         return TutorReviewUpdateRequest.of("리뷰 감사합니다");
     }
 }

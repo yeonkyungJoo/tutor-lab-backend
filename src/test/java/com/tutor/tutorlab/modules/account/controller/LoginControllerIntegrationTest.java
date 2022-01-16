@@ -17,6 +17,7 @@ import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.service.LoginService;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled
 @Transactional
 @MockMvcTest
 class LoginControllerIntegrationTest extends AbstractTest {
@@ -52,8 +54,8 @@ class LoginControllerIntegrationTest extends AbstractTest {
 
     // TODO - OAuth 테스트
     // @Test
-    void oauth() {
-    }
+//    void oauth() {
+//    }
 
     @Test
     void signUp() throws Exception {

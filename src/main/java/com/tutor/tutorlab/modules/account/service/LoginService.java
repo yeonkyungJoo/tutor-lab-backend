@@ -317,7 +317,8 @@ public class LoginService {
             Tutee tutee = Tutee.of(user);
             return tuteeRepository.save(tutee);
         }
-        return null;
+        throw new RuntimeException("인증 실패");
+        // return null;
     }
 
     private Context getContext(Map<String, Object> variables) {

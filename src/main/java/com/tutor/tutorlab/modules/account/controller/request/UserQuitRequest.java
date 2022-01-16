@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.account.controller.request;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +32,21 @@ public class UserQuitRequest {
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private UserQuitRequest(Integer reasonId, String reason, String password) {
+        this.reasonId = reasonId;
+        this.reason = reason;
+        this.password = password;
+    }
+
+    public static UserQuitRequest of(Integer reasonId, String reason, String password) {
+        return UserQuitRequest.builder()
+                .reasonId(reasonId)
+                .reason(reason)
+                .password(password)
+                .build();
+    }
 
     @AssertTrue(message = "이유를 입력해주세요.")
     private boolean hasReason() {

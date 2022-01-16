@@ -23,6 +23,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
@@ -70,7 +71,9 @@ public class LoginController {
                             + "NNG0ZvRBJlxlE5DbApJR" + "&redirect_uri=" + URLEncoder.encode("http://localhost:8080/oauth/naver/callback", "UTF-8") + "&state=" + state;
                     break;
                 default:
-                    break;
+                    // TODO - 예외 처리
+                    throw new RuntimeException("지원하지 않는 형식입니다.");
+                    // break;
             }
 
             if (StringUtils.hasLength(url)) {

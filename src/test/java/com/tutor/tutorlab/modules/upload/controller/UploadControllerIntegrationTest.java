@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.upload.controller;
 
 import com.tutor.tutorlab.configuration.annotation.MockMvcTest;
 import com.tutor.tutorlab.modules.upload.controller.request.UploadImageRequest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled
 // @Transactional
 @MockMvcTest
 public class UploadControllerIntegrationTest {
