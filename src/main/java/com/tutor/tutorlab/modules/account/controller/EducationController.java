@@ -29,7 +29,7 @@ public class EducationController {
     @ApiOperation("Education 조회")
     @GetMapping("/{education_id}")
     public ResponseEntity<?> getEducation(@CurrentUser User user,
-                                       @PathVariable(name = "education_id") Long educationId) {
+                                          @PathVariable(name = "education_id") Long educationId) {
         EducationResponse education = educationService.getEducationResponse(user, educationId);
         return ResponseEntity.ok(education);
     }
@@ -37,7 +37,7 @@ public class EducationController {
     @ApiOperation("Education 등록")
     @PostMapping
     public ResponseEntity<?> newEducation(@CurrentUser User user,
-                                       @Valid @RequestBody EducationCreateRequest educationCreateRequest) {
+                                          @Valid @RequestBody EducationCreateRequest educationCreateRequest) {
         educationService.createEducation(user, educationCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

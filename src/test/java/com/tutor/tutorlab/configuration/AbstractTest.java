@@ -305,7 +305,7 @@ public abstract class AbstractTest {
         );
     }
 
-    private CareerUpdateRequest getCareerUpdateRequest() {
+    public static CareerUpdateRequest getCareerUpdateRequest() {
         return CareerUpdateRequest.of(
                 "engineer",
                 "tutorlab2",
@@ -323,7 +323,7 @@ public abstract class AbstractTest {
         );
     }
 
-    private EducationUpdateRequest getEducationUpdateRequest() {
+    public static EducationUpdateRequest getEducationUpdateRequest() {
         return EducationUpdateRequest.of(
                 EducationLevelType.UNIVERSITY,
                 "school",

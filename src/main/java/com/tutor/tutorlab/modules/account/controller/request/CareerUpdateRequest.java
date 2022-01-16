@@ -10,16 +10,16 @@ import lombok.NoArgsConstructor;
 @Data
 public class CareerUpdateRequest {
 
-    @ApiModelProperty(value = "직업", example = "engineer", required = false)
+    @ApiModelProperty(value = "직업", example = "engineer")
     private String job;
 
-    @ApiModelProperty(value = "직장명", example = "tutorlab", required = false)
+    @ApiModelProperty(value = "직장명", example = "tutorlab")
     private String companyName;
 
-    @ApiModelProperty(value = "그 외 경력", example = "", required = false)
+    @ApiModelProperty(value = "그 외 경력", example = "")
     private String others;
 
-    @ApiModelProperty(value = "자격증", example = "", required = false)
+    @ApiModelProperty(value = "자격증", example = "")
     private String license;
 
     @Builder(access = AccessLevel.PRIVATE)

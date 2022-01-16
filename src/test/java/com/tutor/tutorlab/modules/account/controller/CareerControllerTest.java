@@ -1,11 +1,13 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
-import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.controller.request.CareerCreateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.CareerResponse;
 import com.tutor.tutorlab.modules.account.service.CareerService;
 import com.tutor.tutorlab.modules.account.vo.Career;
@@ -23,13 +25,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.CAREER;
-import static com.tutor.tutorlab.configuration.AbstractTest.*;
+import static com.tutor.tutorlab.configuration.AbstractTest.getCareerCreateRequest;
+import static com.tutor.tutorlab.configuration.AbstractTest.getCareerUpdateRequest;
 import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTOR;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,13 +46,17 @@ class CareerControllerTest {
     CareerController careerController;
 
     private MockMvc mockMvc;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
 
     private Career career = Mockito.mock(Career.class);
     private CareerResponse careerResponse;
 
     @BeforeEach
     void setup() {
+
+        objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
         mockMvc = MockMvcBuilders.standaloneSetup(careerController)
                 .setControllerAdvice(RestControllerExceptionAdvice.class).build();
     }
@@ -106,7 +112,7 @@ class CareerControllerTest {
     }
 
     @Test
-    void _newCareer() throws Exception {
+    void newCareer() throws Exception {
 
         // given
         when(careerService.createCareer(any(User.class), any(CareerCreateRequest.class)))
@@ -139,26 +145,62 @@ class CareerControllerTest {
     }
 
     @Test
-    void newCareer() {
+    void editCareer() throws Exception {
 
         // given
+        doNothing().when(careerService)
+                .updateCareer(any(User.class), anyLong(), any(CareerUpdateRequest.class));
+
         // when
         // then
+        CareerUpdateRequest updateRequest = getCareerUpdateRequest();
+        // CareerUpdateRequest updateRequest = Mockito.mock(CareerUpdateRequest.class);
+        mockMvc.perform(put(BASE_URL + "/{career_id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void editCareer() {
+    void editCareer_throwUnauthorizedException() throws Exception {
 
         // given
+        doThrow(new UnauthorizedException(TUTOR))
+                .when(careerService).updateCareer(any(User.class), anyLong(), any(CareerUpdateRequest.class));
         // when
         // then
+        CareerUpdateRequest updateRequest = getCareerUpdateRequest();
+        mockMvc.perform(put(BASE_URL + "/{career_id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void deleteCareer() {
+    void deleteCareer() throws Exception {
 
         // given
+        doNothing()
+                .when(careerService).deleteCareer(any(User.class), anyLong());
         // when
         // then
+        mockMvc.perform(delete(BASE_URL + "/{career_id}", 1L))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteCareer_throwEntityNotFoundException() throws Exception {
+
+        // given
+        doThrow(new EntityNotFoundException(CAREER))
+                .when(careerService).deleteCareer(any(User.class), anyLong());
+        // when
+        // then
+        mockMvc.perform(delete(BASE_URL + "/{career_id}", 1L))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }
