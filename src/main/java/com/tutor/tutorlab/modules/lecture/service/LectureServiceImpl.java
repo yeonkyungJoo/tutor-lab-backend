@@ -17,8 +17,6 @@ import com.tutor.tutorlab.modules.lecture.repository.LectureSearchRepository;
 import com.tutor.tutorlab.modules.lecture.repository.dto.LectureReviewQueryDto;
 import com.tutor.tutorlab.modules.lecture.repository.dto.LectureTutorQueryDto;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
-import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
-import com.tutor.tutorlab.modules.lecture.vo.LectureSubject;
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.repository.PickRepository;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;

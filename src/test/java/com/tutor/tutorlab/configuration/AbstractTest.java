@@ -343,7 +343,7 @@ public abstract class AbstractTest {
 
     public static LectureCreateRequest.LecturePriceCreateRequest getLecturePriceCreateRequest() {
         return LectureCreateRequest.LecturePriceCreateRequest.of(
-                true, null, 1000L, 3, 10, 3000L
+                true, 3, 1000L, 3, 10, 3000L
         );
     }
 

@@ -2,13 +2,18 @@ package com.tutor.tutorlab.modules.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
+import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.modules.account.controller.response.TuteeLectureResponse;
 import com.tutor.tutorlab.modules.account.controller.response.TuteeSimpleResponse;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.service.TutorLectureService;
 import com.tutor.tutorlab.modules.account.service.TutorTuteeService;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
+import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
+import com.tutor.tutorlab.modules.purchase.controller.response.EnrolledLectureResponse;
 import com.tutor.tutorlab.modules.review.controller.response.ReviewResponse;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
 import com.tutor.tutorlab.modules.review.vo.Review;
@@ -22,6 +27,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -30,6 +38,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -61,10 +70,26 @@ class TutorTuteeControllerTest {
     void getMyTutees() throws Exception {
 
         // given
-        Page<TuteeSimpleResponse> tutees =
-                new PageImpl<>(Arrays.asList(Mockito.mock(TuteeSimpleResponse.class), Mockito.mock(TuteeSimpleResponse.class)), Pageable.ofSize(20), 2);
+        User user = User.of(
+                "user@email.com",
+                "password",
+                "user", null, null, null, "user@email.com",
+                "user", null, null, null, RoleType.TUTEE,
+                null, null
+        );
+        PrincipalDetails principal = new PrincipalDetails(user);
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities()));
+
+        // tuteeId, userId, name
+        TuteeSimpleResponse tuteeSimpleResponse = TuteeSimpleResponse.builder()
+                .tuteeId(1L)
+                .userId(1L)
+                .name("user")
+                .build();
+        Page<TuteeSimpleResponse> tutees = new PageImpl<>(Arrays.asList(tuteeSimpleResponse), Pageable.ofSize(20), 1);
         doReturn(tutees)
-                .when(tutorTuteeService).getTuteeSimpleResponses(any(User.class), false, 1);
+                .when(tutorTuteeService).getTuteeSimpleResponses(user, false, 1);
         // when
         // then
         mockMvc.perform(get(BASE_URL, 1))
@@ -78,8 +103,15 @@ class TutorTuteeControllerTest {
     void getMyTutee() throws Exception {
 
         // given
+        TuteeLectureResponse tuteeLectureResponse = TuteeLectureResponse.builder()
+                .tuteeId(1L)
+                .lecture(Mockito.mock(Lecture.class))
+                .lecturePrice(Mockito.mock(LecturePrice.class))
+                .reviewId(1L)
+                .chatroomId(1L)
+                .build();
         Page<TuteeLectureResponse> tuteeLectures =
-                new PageImpl<>(Arrays.asList(Mockito.mock(TuteeLectureResponse.class), Mockito.mock(TuteeLectureResponse.class)), Pageable.ofSize(20), 2);
+                new PageImpl<>(Arrays.asList(tuteeLectureResponse), Pageable.ofSize(20), 2);
         doReturn(tuteeLectures)
                 .when(tutorTuteeService).getTuteeLectureResponses(any(User.class), anyBoolean(), anyLong(), anyInt());
         // when
@@ -97,6 +129,7 @@ class TutorTuteeControllerTest {
 
         // given
         Review review = Mockito.mock(Review.class);
+        when(review.getUser()).thenReturn(Mockito.mock(User.class));
         ReviewResponse response = new ReviewResponse(review, null);
         doReturn(response)
                 .when(reviewService).getReviewResponseOfLecture(1L, 1L);

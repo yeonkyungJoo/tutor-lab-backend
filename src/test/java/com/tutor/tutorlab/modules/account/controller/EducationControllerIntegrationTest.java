@@ -6,13 +6,6 @@ import com.tutor.tutorlab.configuration.auth.WithAccount;
 import com.tutor.tutorlab.config.response.ErrorCode;
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
-import com.tutor.tutorlab.modules.account.repository.EducationRepository;
-import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.TutorRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
-import com.tutor.tutorlab.modules.account.service.EducationService;
-import com.tutor.tutorlab.modules.account.service.LoginService;
-import com.tutor.tutorlab.modules.account.service.TutorService;
 import com.tutor.tutorlab.modules.account.vo.Education;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -24,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

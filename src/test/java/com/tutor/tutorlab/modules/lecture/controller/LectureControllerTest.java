@@ -6,7 +6,6 @@ import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
-import com.tutor.tutorlab.modules.address.util.AddressUtils;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureUpdateRequest;
@@ -17,13 +16,11 @@ import com.tutor.tutorlab.modules.lecture.service.LectureService;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.review.controller.response.ReviewResponse;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
-import com.tutor.tutorlab.modules.review.vo.Review;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -109,15 +106,18 @@ class LectureControllerTest {
 
         // given
         Page<LectureResponse> lectures =
-                new PageImpl<>(Arrays.asList(Mockito.mock(LectureResponse.class), Mockito.mock(LectureResponse.class)), Pageable.ofSize(20), 2);
+                new PageImpl<>(Arrays.asList(new LectureResponse(lecture1), new LectureResponse(lecture2)), Pageable.ofSize(20), 2);
         doReturn(lectures)
-                .when(lectureService).getLectureResponses("서울특별시 광진구 중곡동", any(LectureListRequest.class), anyInt());
+                .when(lectureService).getLectureResponses(anyString(), any(LectureListRequest.class), anyInt());
         // when
         // then
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("zone", "서울특별시 광진구 중곡동");
-        params.add("title", "자바");
+        params.add("zone", "서울특별시 강남구 청담동");
+        params.add("title", "title1");
+        params.add("subjects", "java,python");
+        params.add("systemType", "OFFLINE");
         params.add("isGroup", "true");
+        params.add("difficultyTypes", "BASIC,ADVANCED");
         params.add("page", "1");
         mockMvc.perform(get(BASE_URL)
                 .params(params))
@@ -134,7 +134,9 @@ class LectureControllerTest {
                 new PageImpl<>(Arrays.asList(new LectureResponse(lecture1), new LectureResponse(lecture2)), Pageable.ofSize(20), 2);
 
 //        LectureListRequest lectureListRequest =
-//                LectureListRequest.of(null, Arrays.asList("java"), SystemType.ONLINE, true, Arrays.asList(DifficultyType.ADVANCED, DifficultyType.BEGINNER));
+//                LectureListRequest.of("title1", Arrays.asList("java", "python"), SystemType.OFFLINE, true, Arrays.asList(DifficultyType.BASIC, DifficultyType.ADVANCED));
+//        doReturn(lectures)
+//                .when(lectureService).getLectureResponses(null, lectureListRequest, 1);
         doReturn(lectures)
                 .when(lectureService).getLectureResponses(any(), any(LectureListRequest.class), anyInt());
         // when
@@ -157,8 +159,7 @@ class LectureControllerTest {
     void getLecture() throws Exception {
 
         // given
-        Lecture lecture = Mockito.mock(Lecture.class);
-        LectureResponse response = new LectureResponse(lecture);
+        LectureResponse response = new LectureResponse(lecture1);
         doReturn(response)
                 .when(lectureService).getLectureResponse(1L);
 
@@ -175,7 +176,7 @@ class LectureControllerTest {
     void newLecture() throws Exception {
 
         // given
-        doNothing()
+        doReturn(lecture1)
                 .when(lectureService).createLecture(any(User.class), any(LectureCreateRequest.class));
 
         // when
@@ -198,7 +199,7 @@ class LectureControllerTest {
         // when
         // then
         LectureUpdateRequest lectureUpdateRequest = AbstractTest.getLectureUpdateRequest();
-        mockMvc.perform(put(BASE_URL + "{lecture_id}", 1L)
+        mockMvc.perform(put(BASE_URL + "/{lecture_id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(lectureUpdateRequest)))
                 .andDo(print())
@@ -214,7 +215,7 @@ class LectureControllerTest {
 
         // when
         // then
-        mockMvc.perform(delete(BASE_URL + "{lecture_id}", 1L))
+        mockMvc.perform(delete(BASE_URL + "/{lecture_id}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -224,8 +225,7 @@ class LectureControllerTest {
     void getReviewsOfLecture() throws Exception {
 
         // given
-        Page<ReviewResponse> reviews =
-                new PageImpl<>(Arrays.asList(Mockito.mock(ReviewResponse.class), Mockito.mock(ReviewResponse.class)), Pageable.ofSize(20), 2);
+        Page<ReviewResponse> reviews = Page.empty();
         doReturn(reviews)
                 .when(reviewService).getReviewResponsesOfLecture(anyLong(), anyInt());
         // when
@@ -236,20 +236,4 @@ class LectureControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(reviews)));
     }
 
-    @Test
-    void getReviewOfLecture() throws Exception {
-
-        // given
-        Review parent = Mockito.mock(Review.class);
-        Review child = Mockito.mock(Review.class);
-        ReviewResponse response = new ReviewResponse(parent, child);
-        doReturn(response)
-                .when(reviewService).getReviewResponseOfLecture(anyLong(), anyLong());
-        // when
-        // then
-        mockMvc.perform(get(BASE_URL + "/{lecture_id}/reviews/{review_id}", 1L, 1L))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(response)));
-    }
 }

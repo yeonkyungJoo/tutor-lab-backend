@@ -6,7 +6,6 @@ import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.base.AbstractService;
-import com.tutor.tutorlab.modules.chat.service.ChatService;
 import com.tutor.tutorlab.modules.lecture.repository.LectureRepository;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.controller.request.CancellationCreateRequest;

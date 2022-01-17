@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.*;
-import static com.tutor.tutorlab.modules.account.enums.RoleType.TUTEE;
 
 @Transactional
 @RequiredArgsConstructor
@@ -105,7 +104,7 @@ public class ReviewService extends AbstractService {
     public Review createTuteeReview(User user, Long lectureId, TuteeReviewCreateRequest tuteeReviewCreateRequest) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
-                .orElseThrow(() -> new UnauthorizedException(TUTEE));
+                .orElseThrow(() -> new UnauthorizedException(RoleType.TUTEE));
 
         Lecture lecture = lectureRepository.findById(lectureId)
                 .orElseThrow(() -> new EntityNotFoundException(LECTURE));
@@ -120,7 +119,7 @@ public class ReviewService extends AbstractService {
     public void updateTuteeReview(User user, Long lectureId, Long reviewId, TuteeReviewUpdateRequest tuteeReviewUpdateRequest) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
-                .orElseThrow(() -> new UnauthorizedException(TUTEE));
+                .orElseThrow(() -> new UnauthorizedException(RoleType.TUTEE));
 
 //        Lecture lecture = lectureRepository.findById(lectureId)
 //                .orElseThrow(() -> new EntityNotFoundException(LECTURE));
@@ -138,7 +137,7 @@ public class ReviewService extends AbstractService {
     public void deleteTuteeReview(User user, Long lectureId, Long reviewId) {
 
         Tutee tutee = Optional.ofNullable(tuteeRepository.findByUser(user))
-                .orElseThrow(() -> new UnauthorizedException(TUTEE));
+                .orElseThrow(() -> new UnauthorizedException(RoleType.TUTEE));
 
 //        Lecture lecture = lectureRepository.findById(lectureId)
 //                .orElseThrow(() -> new EntityNotFoundException(LECTURE));

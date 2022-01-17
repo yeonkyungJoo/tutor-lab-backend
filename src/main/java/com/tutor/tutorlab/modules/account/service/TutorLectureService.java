@@ -3,9 +3,7 @@ package com.tutor.tutorlab.modules.account.service;
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.modules.account.controller.response.TuteeResponse;
-import com.tutor.tutorlab.modules.account.controller.response.TuteeSimpleResponse;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
-import com.tutor.tutorlab.modules.account.repository.TutorQueryRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
@@ -18,11 +16,8 @@ import com.tutor.tutorlab.modules.purchase.controller.response.EnrollmentRespons
 import com.tutor.tutorlab.modules.purchase.repository.EnrollmentRepository;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.repository.ReviewRepository;
-import com.tutor.tutorlab.modules.review.vo.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

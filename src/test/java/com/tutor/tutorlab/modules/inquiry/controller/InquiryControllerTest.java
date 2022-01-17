@@ -6,12 +6,14 @@ import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.inquiry.controller.request.InquiryCreateRequest;
 import com.tutor.tutorlab.modules.inquiry.enums.InquiryType;
 import com.tutor.tutorlab.modules.inquiry.service.InquiryService;
+import com.tutor.tutorlab.modules.inquiry.vo.Inquiry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,7 +50,7 @@ class InquiryControllerTest {
     void newInquiry() throws Exception {
 
         // given
-        doNothing()
+        doReturn(Mockito.mock(Inquiry.class))
                 .when(inquiryService).createInquiry(any(User.class), any(InquiryCreateRequest.class));
         // when
         // then
@@ -66,7 +69,7 @@ class InquiryControllerTest {
     void test() throws Exception {
 
         // given
-        doNothing()
+        doReturn(Mockito.mock(Inquiry.class))
                 .when(inquiryService).test(any(InquiryCreateRequest.class));
         // when
         // then

@@ -55,6 +55,10 @@ public class UserService extends AbstractService {
         return new UserResponse(getUser(userId));
     }
 
+    public UserResponse getUserResponse(User user) {
+        return getUserResponse(user.getId());
+    }
+
     @Transactional
     public void updateUser(User user, UserUpdateRequest userUpdateRequest) {
 

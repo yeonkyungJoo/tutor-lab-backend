@@ -5,8 +5,6 @@ import com.tutor.tutorlab.config.security.jwt.JwtTokenManager;
 import com.tutor.tutorlab.config.security.oauth.provider.google.GoogleInfo;
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
-import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
-import com.tutor.tutorlab.modules.account.repository.UserRepository;
 import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.Disabled;

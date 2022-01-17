@@ -48,7 +48,7 @@ public class UserController {
     @ApiOperation("내정보 조회")
     @GetMapping("/my-info")
     public ResponseEntity<?> getMyInfo(@CurrentUser User user) {
-        return ResponseEntity.ok(userService.getUserResponse(user.getId()));
+        return ResponseEntity.ok(userService.getUserResponse(user));
     }
 
     @ApiOperation("회원 정보 수정")
