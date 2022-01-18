@@ -84,7 +84,6 @@ class LoginControllerTest {
     void oauthCallback() throws Exception {
 
         // given
-        // do
         // when
         // then
     }
@@ -93,7 +92,6 @@ class LoginControllerTest {
     void oauthCallback_returnNull() throws Exception {
 
         // given
-        // do
         // when
         // then
     }

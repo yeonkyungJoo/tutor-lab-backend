@@ -2,8 +2,12 @@ package com.tutor.tutorlab.modules.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
+import com.tutor.tutorlab.config.security.PrincipalDetails;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
+import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.purchase.controller.response.EnrollmentWithSimpleLectureResponse;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentServiceImpl;
 import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
@@ -21,15 +25,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -76,10 +81,9 @@ class TuteeReviewControllerTest {
     void getReview() throws Exception {
 
         // given
-        Review parent = Mockito.mock(Review.class);
+        Review parent = Review.of(5, "content", mock(User.class), mock(Enrollment.class), mock(Lecture.class), null);
         ReviewResponse review = new ReviewResponse(parent, null);
-        doReturn(review)
-                .when(reviewService).getReviewResponse(anyLong());
+        doReturn(review).when(reviewService).getReviewResponse(anyLong());
         // when
         // then
         mockMvc.perform(get(BASE_URL + "/{review_id}", 1L))
@@ -93,14 +97,28 @@ class TuteeReviewControllerTest {
     void getUnreviewedLecturesOfTutee() throws Exception {
 
         // given
-        Enrollment enrollment = Mockito.mock(Enrollment.class);
-        Lecture lecture = Mockito.mock(Lecture.class);
-        when(enrollment.getLecture()).thenReturn(lecture);
+        User user = User.of(
+                "user@email.com",
+                "password",
+                "user", null, null, null, "user@email.com",
+                "user", null, null, null, RoleType.TUTEE,
+                null, null
+        );
+        PrincipalDetails principal = new PrincipalDetails(user);
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities()));
+
+        Tutee tutee = mock(Tutee.class);
+        when(tutee.getUser()).thenReturn(mock(User.class));
+        Enrollment enrollment = Enrollment.of(
+                tutee,
+                mock(Lecture.class),
+                mock(LecturePrice.class)
+        );
         Page<EnrollmentWithSimpleLectureResponse> lectures =
                 new PageImpl<>(Arrays.asList(new EnrollmentWithSimpleLectureResponse(enrollment)), Pageable.ofSize(20), 1);
-
         doReturn(lectures)
-                .when(enrollmentService).getEnrollmentWithSimpleLectureResponses(Mockito.mock(User.class), false, 1);
+                .when(enrollmentService).getEnrollmentWithSimpleLectureResponses(user, false, 1);
         // when
         // then
         mockMvc.perform(get(BASE_URL + "/unreviewed", 1))

@@ -11,6 +11,7 @@ import com.tutor.tutorlab.modules.account.controller.request.CareerUpdateRequest
 import com.tutor.tutorlab.modules.account.controller.response.CareerResponse;
 import com.tutor.tutorlab.modules.account.service.CareerService;
 import com.tutor.tutorlab.modules.account.vo.Career;
+import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +49,11 @@ class CareerControllerTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
-    private Career career = Mockito.mock(Career.class);
+    private Career career = Career.of(mock(Tutor.class),
+            "engineer",
+            "google",
+            null,
+            null);
     private CareerResponse careerResponse;
 
     @BeforeEach
@@ -61,20 +66,12 @@ class CareerControllerTest {
                 .setControllerAdvice(RestControllerExceptionAdvice.class).build();
     }
 
-    // TODO - 인증되지 않은 사용자
-
     @Test
     void getCareer() throws Exception {
 
         // given
         careerResponse = new CareerResponse(career);
-        careerResponse.setJob("engineer");
-        careerResponse.setCompanyName("google");
-        careerResponse.setOthers(null);
-        careerResponse.setLicense(null);
-
-        when(careerService.getCareerResponse(any(User.class), anyLong()))
-                .thenReturn(careerResponse);
+        when(careerService.getCareerResponse(any(User.class), anyLong())).thenReturn(careerResponse);
         // when
         // then
         mockMvc.perform(get(BASE_URL + "/{career_id}", 1L))

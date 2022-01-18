@@ -4,14 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
+import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
+import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
+import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
+import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import com.tutor.tutorlab.modules.purchase.controller.request.CancellationCreateRequest;
 import com.tutor.tutorlab.modules.purchase.service.CancellationService;
 import com.tutor.tutorlab.modules.purchase.service.CancellationServiceImpl;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentService;
 import com.tutor.tutorlab.modules.purchase.service.EnrollmentServiceImpl;
+import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
+import com.tutor.tutorlab.modules.purchase.vo.Enrollment;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewCreateRequest;
 import com.tutor.tutorlab.modules.review.controller.request.TuteeReviewUpdateRequest;
 import com.tutor.tutorlab.modules.review.controller.response.ReviewResponse;
@@ -29,6 +35,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -70,26 +78,39 @@ class TuteeLectureControllerTest {
     void getLecture() throws Exception {
 
         // given
-        when(lectureService.getLectureResponse(anyLong()))
-                .thenReturn(Mockito.mock(LectureResponse.class));
+        Tutor tutor = Tutor.of(mock(User.class));
+        Lecture lecture = Lecture.of(
+                tutor,
+                "title",
+                "subTitle",
+                "introduce",
+                "content",
+                DifficultyType.ADVANCED,
+                Arrays.asList(SystemType.ONLINE, SystemType.OFFLINE),
+                "thumbnail"
+        );
+        LectureResponse lectureResponse = new LectureResponse(lecture);
+        when(lectureService.getLectureResponse(1L)).thenReturn(lectureResponse);
+
         // when
         // then
         mockMvc.perform(get(BASE_URL + "/{lecture_id}", 1L))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(lectureResponse)));
     }
 
     @Test
     void cancel() throws Exception {
 
         // given
-        doNothing()
+        doReturn(mock(Cancellation.class))
                 .when(cancellationService).cancel(any(User.class), anyLong(), any(CancellationCreateRequest.class));
 
         // when
         // then
         CancellationCreateRequest cancellationCreateRequest = CancellationCreateRequest.of("감사합니다!");
-        mockMvc.perform(get(BASE_URL + "/{lecture_id}/cancellations", 1L)
+        mockMvc.perform(post(BASE_URL + "/{lecture_id}/cancellations", 1L)
                 .content(objectMapper.writeValueAsString(cancellationCreateRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -100,8 +121,10 @@ class TuteeLectureControllerTest {
     void getReviewOfLecture() throws Exception {
 
         // given
-        Review parent = Mockito.mock(Review.class);
-        Review child = Mockito.mock(Review.class);
+        Review parent = Review.of(5, "content", mock(User.class), mock(Enrollment.class), mock(Lecture.class), null);
+        Review child = Review.of(
+                null, "content_", mock(User.class), null, mock(Lecture.class), parent
+        );
         ReviewResponse response = new ReviewResponse(parent, child);
         doReturn(response)
                 .when(reviewService).getReviewResponseOfLecture(anyLong(), anyLong());
@@ -117,12 +140,12 @@ class TuteeLectureControllerTest {
     void newReview() throws Exception {
 
         // given
-        doNothing()
+        doReturn(mock(Review.class))
                 .when(reviewService).createTuteeReview(any(User.class), anyLong(), any(TuteeReviewCreateRequest.class));
 
         // when
         // then
-        TuteeReviewCreateRequest tuteeReviewCreateRequest = mock(TuteeReviewCreateRequest.class);
+        TuteeReviewCreateRequest tuteeReviewCreateRequest = AbstractTest.getTuteeReviewCreateRequest();
         mockMvc.perform(post(BASE_URL + "/{lecture_id}/reviews", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tuteeReviewCreateRequest)))
@@ -139,7 +162,7 @@ class TuteeLectureControllerTest {
 
         // when
         // then
-        TuteeReviewUpdateRequest tuteeReviewUpdateRequest = mock(TuteeReviewUpdateRequest.class);
+        TuteeReviewUpdateRequest tuteeReviewUpdateRequest = AbstractTest.getTuteeReviewUpdateRequest();
         mockMvc.perform(put(BASE_URL + "/{lecture_id}/reviews/{review_id}", 1L, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tuteeReviewUpdateRequest)))

@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
 import com.tutor.tutorlab.modules.account.service.TutorCancellationService;
 import com.tutor.tutorlab.modules.account.vo.User;
+import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.lecture.vo.LecturePrice;
 import com.tutor.tutorlab.modules.purchase.controller.response.CancellationResponse;
+import com.tutor.tutorlab.modules.purchase.vo.Cancellation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,9 +25,9 @@ import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class TutorCancellationControllerTest {
 
-    private final static String BASE_URL = "/tutees/my-cancellations";
+    private final static String BASE_URL = "/tutors/my-cancellations";
 
     @InjectMocks
     TutorCancellationController tutorCancellationController;
@@ -53,10 +56,17 @@ class TutorCancellationControllerTest {
     void getMyCancellations() throws Exception {
 
         // given
-        Page<CancellationResponse> cancellations =
-                new PageImpl<>(Arrays.asList(Mockito.mock(CancellationResponse.class)), Pageable.ofSize(20), 1);
+        CancellationResponse cancellationResponse = CancellationResponse.builder()
+                .cancellation(mock(Cancellation.class))
+                .lecture(mock(Lecture.class))
+                .lecturePrice(mock(LecturePrice.class))
+                .tuteeId(1L)
+                .tuteeName("user")
+                .chatroomId(1L)
+                .build();
+        Page<CancellationResponse> cancellations = new PageImpl<>(Arrays.asList(cancellationResponse), Pageable.ofSize(20), 1);
         doReturn(cancellations)
-                .when(tutorCancellationService).getCancellationResponses(any(User.class), 1);
+                .when(tutorCancellationService).getCancellationResponses(any(User.class), anyInt());
         // when
         // then
         mockMvc.perform(get(BASE_URL, 1))
@@ -73,7 +83,7 @@ class TutorCancellationControllerTest {
                 .when(tutorCancellationService).approve(any(User.class), anyLong());
         // when
         // then
-        mockMvc.perform(get(BASE_URL + "/{cancellation_id}", 1L))
+        mockMvc.perform(put(BASE_URL + "/{cancellation_id}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
+import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.EducationResponse;
 import com.tutor.tutorlab.modules.account.service.EducationService;
 import com.tutor.tutorlab.modules.account.vo.Education;
@@ -19,19 +20,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.JsonbHttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static com.tutor.tutorlab.configuration.AbstractTest.getEducationCreateRequest;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -82,15 +78,14 @@ class EducationControllerTest {
 
         // given
         Education education = Mockito.mock(Education.class);
-        when(educationService.createEducation(any(User.class), any(EducationCreateRequest.class)))
-                .thenReturn(education);
+        when(educationService.createEducation(any(User.class), any(EducationCreateRequest.class))).thenReturn(education);
 
         // when
         // then
         EducationCreateRequest educationCreateRequest = getEducationCreateRequest();
         mockMvc.perform(post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .contentType(objectMapper.writeValueAsString(educationCreateRequest)))
+                .content(objectMapper.writeValueAsString(educationCreateRequest)))
                 .andDo(print())
                 .andExpect(status().isCreated());
     }
@@ -99,15 +94,29 @@ class EducationControllerTest {
     void editEducation() throws Exception {
 
         // given
+        doNothing()
+                .when(educationService).updateEducation(any(User.class), anyLong(), any(EducationUpdateRequest.class));
+
         // when
         // then
+        EducationUpdateRequest educationUpdateRequest = AbstractTest.getEducationUpdateRequest();
+        mockMvc.perform(put(BASE_URL + "/{education_id}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(educationUpdateRequest)))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
     void deleteEducation() throws Exception {
 
         // given
+        doNothing()
+                .when(educationService).deleteEducation(any(User.class), anyLong());
         // when
         // then
+        mockMvc.perform(delete(BASE_URL + "/{education_id}", 1L))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }

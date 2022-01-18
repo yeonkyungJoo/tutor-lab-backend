@@ -74,9 +74,10 @@ class TutorLectureControllerTest {
 
         // given
         Lecture lecture = mock(Lecture.class);
-        when(lecture.getTutor()).thenReturn(mock(Tutor.class));
+        Tutor tutor = mock(Tutor.class);
+        when(tutor.getUser()).thenReturn(mock(User.class));
+        when(lecture.getTutor()).thenReturn(tutor);
         LectureResponse lectureResponse = new LectureResponse(lecture);
-
         Page<LectureResponse> lectures = new PageImpl<>(Arrays.asList(lectureResponse), Pageable.ofSize(20), 1);
         doReturn(lectures)
                 .when(tutorLectureService).getLectureResponses(any(User.class), anyInt());
@@ -103,19 +104,19 @@ class TutorLectureControllerTest {
         mockMvc.perform(get(BASE_URL + "/{lecture_id}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.thumbnail").exists())
-                .andExpect(jsonPath("$.title").exists())
-                .andExpect(jsonPath("$.subTitle").exists())
-                .andExpect(jsonPath("$.introduce").exists())
-                .andExpect(jsonPath("$.content").exists())
-                .andExpect(jsonPath("$.difficultyType").exists())
-                .andExpect(jsonPath("$.systemTypes").exists())
-                .andExpect(jsonPath("$.lecturePrices").exists())
-                .andExpect(jsonPath("$.lectureSubjects").exists())
-                .andExpect(jsonPath("$.reviewCount").exists())
-                .andExpect(jsonPath("$.scoreAverage").exists())
-                .andExpect(jsonPath("$.lectureTutor").exists())
+                .andExpect(jsonPath("$.id").hasJsonPath())
+                .andExpect(jsonPath("$.thumbnail").hasJsonPath())
+                .andExpect(jsonPath("$.title").hasJsonPath())
+                .andExpect(jsonPath("$.subTitle").hasJsonPath())
+                .andExpect(jsonPath("$.introduce").hasJsonPath())
+                .andExpect(jsonPath("$.content").hasJsonPath())
+                .andExpect(jsonPath("$.difficultyType").hasJsonPath())
+                .andExpect(jsonPath("$.systemTypes").hasJsonPath())
+                .andExpect(jsonPath("$.lecturePrices").hasJsonPath())
+                .andExpect(jsonPath("$.lectureSubjects").hasJsonPath())
+                .andExpect(jsonPath("$.reviewCount").hasJsonPath())
+                .andExpect(jsonPath("$.scoreAverage").hasJsonPath())
+                .andExpect(jsonPath("$.lectureTutor").hasJsonPath())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
@@ -126,9 +127,13 @@ class TutorLectureControllerTest {
         Review parent1 = mock(Review.class);
         when(parent1.getUser()).thenReturn(mock(User.class));
         ReviewResponse reviewResponse1 = new ReviewResponse(parent1, null);
+
         Review parent2 = mock(Review.class);
         when(parent2.getUser()).thenReturn(mock(User.class));
-        ReviewResponse reviewResponse2 = new ReviewResponse(parent2, mock(Review.class));
+        Review child = mock(Review.class);
+        when(child.getUser()).thenReturn(mock(User.class));
+        ReviewResponse reviewResponse2 = new ReviewResponse(parent2, child);
+
         Page<ReviewResponse> reviews =
                 new PageImpl<>(Arrays.asList(reviewResponse1, reviewResponse2), Pageable.ofSize(20), 2);
         doReturn(reviews)
@@ -155,18 +160,18 @@ class TutorLectureControllerTest {
         mockMvc.perform(get(BASE_URL + "/{lecture_id}/reviews/{review_id}", 1L, 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.reviewId").exists())
-                .andExpect(jsonPath("$.score").exists())
-                .andExpect(jsonPath("$.content").exists())
-                .andExpect(jsonPath("$.username").exists())
-                .andExpect(jsonPath("$.userNickname").exists())
-                .andExpect(jsonPath("$.createdAt").exists())
-                .andExpect(jsonPath("$.child").exists())
-                .andExpect(jsonPath("$.child.reviewId").exists())
-                .andExpect(jsonPath("$.child.content").exists())
-                .andExpect(jsonPath("$.child.username").exists())
-                .andExpect(jsonPath("$.child.userNickname").exists())
-                .andExpect(jsonPath("$.child.createdAt").exists())
+                .andExpect(jsonPath("$.reviewId").hasJsonPath())
+                .andExpect(jsonPath("$.score").hasJsonPath())
+                .andExpect(jsonPath("$.content").hasJsonPath())
+                .andExpect(jsonPath("$.username").hasJsonPath())
+                .andExpect(jsonPath("$.userNickname").hasJsonPath())
+                .andExpect(jsonPath("$.createdAt").hasJsonPath())
+                .andExpect(jsonPath("$.child").hasJsonPath())
+                .andExpect(jsonPath("$.child.reviewId").hasJsonPath())
+                .andExpect(jsonPath("$.child.content").hasJsonPath())
+                .andExpect(jsonPath("$.child.username").hasJsonPath())
+                .andExpect(jsonPath("$.child.userNickname").hasJsonPath())
+                .andExpect(jsonPath("$.child.createdAt").hasJsonPath())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
@@ -177,6 +182,7 @@ class TutorLectureControllerTest {
         Review parent = mock(Review.class);
         when(parent.getUser()).thenReturn(mock(User.class));
         Review child = mock(Review.class);
+        when(child.getUser()).thenReturn(mock(User.class));
         ReviewResponse response = new ReviewResponse(parent, child);
         doReturn(response)
                 .when(reviewService).getReviewResponseOfLecture(1L, 1L);
@@ -185,18 +191,18 @@ class TutorLectureControllerTest {
         mockMvc.perform(get(BASE_URL + "/{lecture_id}/reviews/{review_id}", 1L, 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.reviewId").exists())
-                .andExpect(jsonPath("$.score").exists())
-                .andExpect(jsonPath("$.content").exists())
-                .andExpect(jsonPath("$.username").exists())
-                .andExpect(jsonPath("$.userNickname").exists())
-                .andExpect(jsonPath("$.createdAt").exists())
-                .andExpect(jsonPath("$.child").exists())
-                .andExpect(jsonPath("$.child.reviewId").exists())
-                .andExpect(jsonPath("$.child.content").exists())
-                .andExpect(jsonPath("$.child.username").exists())
-                .andExpect(jsonPath("$.child.userNickname").exists())
-                .andExpect(jsonPath("$.child.createdAt").exists())
+                .andExpect(jsonPath("$.reviewId").hasJsonPath())
+                .andExpect(jsonPath("$.score").hasJsonPath())
+                .andExpect(jsonPath("$.content").hasJsonPath())
+                .andExpect(jsonPath("$.username").hasJsonPath())
+                .andExpect(jsonPath("$.userNickname").hasJsonPath())
+                .andExpect(jsonPath("$.createdAt").hasJsonPath())
+                .andExpect(jsonPath("$.child").hasJsonPath())
+                .andExpect(jsonPath("$.child.reviewId").hasJsonPath())
+                .andExpect(jsonPath("$.child.content").hasJsonPath())
+                .andExpect(jsonPath("$.child.username").hasJsonPath())
+                .andExpect(jsonPath("$.child.userNickname").hasJsonPath())
+                .andExpect(jsonPath("$.child.createdAt").hasJsonPath())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
@@ -303,7 +309,9 @@ class TutorLectureControllerTest {
         context.setAuthentication(new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities()));
 
         Enrollment enrollment = mock(Enrollment.class);
-        when(enrollment.getTutee().getUser()).thenReturn(mock(User.class));
+        Tutee tutee = mock(Tutee.class);
+        when(tutee.getUser()).thenReturn(mock(User.class));
+        when(enrollment.getTutee()).thenReturn(tutee);
         when(enrollment.getLecture()).thenReturn(mock(Lecture.class));
         EnrollmentResponse enrollmentResponse = new EnrollmentResponse(enrollment);
         Page<EnrollmentResponse> enrollments = new PageImpl<>(Arrays.asList(enrollmentResponse), Pageable.ofSize(20), 1);

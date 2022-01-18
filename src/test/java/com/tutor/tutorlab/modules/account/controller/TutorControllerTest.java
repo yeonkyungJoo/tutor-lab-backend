@@ -2,17 +2,23 @@ package com.tutor.tutorlab.modules.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
+import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.CareerResponse;
 import com.tutor.tutorlab.modules.account.controller.response.EducationResponse;
 import com.tutor.tutorlab.modules.account.controller.response.TutorResponse;
+import com.tutor.tutorlab.modules.account.enums.EducationLevelType;
+import com.tutor.tutorlab.modules.account.enums.RoleType;
 import com.tutor.tutorlab.modules.account.service.TutorLectureService;
 import com.tutor.tutorlab.modules.account.service.TutorService;
+import com.tutor.tutorlab.modules.account.vo.Career;
+import com.tutor.tutorlab.modules.account.vo.Education;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
+import com.tutor.tutorlab.modules.lecture.vo.Lecture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +30,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -31,8 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -63,10 +71,12 @@ class TutorControllerTest {
     void getTutors() throws Exception {
 
         // given
-        Page<TutorResponse> tutors =
-                new PageImpl<>(Arrays.asList(Mockito.mock(TutorResponse.class), Mockito.mock(TutorResponse.class)), Pageable.ofSize(20), 2);
-        doReturn(tutors)
-                .when(tutorService).getTutorResponses(1);
+        Tutor tutor1 = mock(Tutor.class);
+        when(tutor1.getUser()).thenReturn(mock(User.class));
+        Tutor tutor2 = mock(Tutor.class);
+        when(tutor2.getUser()).thenReturn(mock(User.class));
+        Page<TutorResponse> tutors = new PageImpl<>(Arrays.asList(new TutorResponse(tutor1), new TutorResponse(tutor2)), Pageable.ofSize(20), 2);
+        doReturn(tutors).when(tutorService).getTutorResponses(1);
         // when
         // then
         mockMvc.perform(get(BASE_URL, 1))
@@ -75,18 +85,28 @@ class TutorControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(tutors)));
     }
 
-    // TODO - @CurrentUser 테스트
     @Test
     void getMyInfo() throws Exception {
 
         // given
-        Tutor tutor = Mockito.mock(Tutor.class);
+        User user = User.of(
+                "user@email.com",
+                "password",
+                "user", null, null, null, "user@email.com",
+                "user", null, null, null, RoleType.TUTEE,
+                null, null
+        );
+        PrincipalDetails principal = new PrincipalDetails(user);
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities()));
+
+        Tutor tutor = mock(Tutor.class);
+        when(tutor.getUser()).thenReturn(user);
         TutorResponse tutorResponse = new TutorResponse(tutor);
-        doReturn(tutorResponse)
-                .when(tutorService).getTutorResponse(any(User.class));
+        doReturn(tutorResponse).when(tutorService).getTutorResponse(user);
         // when
         // then
-        mockMvc.perform(get(BASE_URL, 1))
+        mockMvc.perform(get(BASE_URL + "/my-info"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(tutorResponse)));
@@ -96,10 +116,10 @@ class TutorControllerTest {
     void getTutor() throws Exception {
 
         // given
-        Tutor tutor = Mockito.mock(Tutor.class);
+        Tutor tutor = mock(Tutor.class);
+        when(tutor.getUser()).thenReturn(mock(User.class));
         TutorResponse tutorResponse = new TutorResponse(tutor);
-        doReturn(tutorResponse)
-                .when(tutorService).getTutorResponse(1L);
+        doReturn(tutorResponse).when(tutorService).getTutorResponse(1L);
         // when
         // then
         mockMvc.perform(get(BASE_URL + "/{tutor_id}", 1L))
@@ -112,7 +132,7 @@ class TutorControllerTest {
     void newTutor() throws Exception {
 
         // given
-        doNothing()
+        doReturn(mock(Tutor.class))
                 .when(tutorService).createTutor(any(User.class), any(TutorSignUpRequest.class));
         // when
         // then
@@ -157,18 +177,32 @@ class TutorControllerTest {
     void getCareers() throws Exception {
 
         // given
-        List<CareerResponse> careers = Arrays.asList(Mockito.mock(CareerResponse.class), Mockito.mock(CareerResponse.class));
-        doReturn(careers)
-                .when(tutorService).getCareerResponses(1L);
+        Career career1 = Career.of(
+                mock(Tutor.class),
+                "job1",
+                "company1",
+                "others1",
+                "license1"
+        );
+        Career career2 = Career.of(
+                mock(Tutor.class),
+                "job2",
+                "company2",
+                "others2",
+                "license2"
+        );
+        List<CareerResponse> careers = Arrays.asList(new CareerResponse(career1), new CareerResponse(career2));
+        doReturn(careers).when(tutorService).getCareerResponses(1L);
+
         // when
         // then
         mockMvc.perform(get(BASE_URL + "/{tutor_id}/careers", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.job").exists())
-                .andExpect(jsonPath("$.companyName").exists())
-                .andExpect(jsonPath("$.others").exists())
-                .andExpect(jsonPath("$.license").exists())
+                .andExpect(jsonPath("$..job").exists())
+                .andExpect(jsonPath("$..companyName").exists())
+                .andExpect(jsonPath("$..others").exists())
+                .andExpect(jsonPath("$..license").exists())
                 .andExpect(content().json(objectMapper.writeValueAsString(careers)));
     }
 
@@ -177,19 +211,26 @@ class TutorControllerTest {
     void getEducations() throws Exception {
 
         // given
-        List<EducationResponse> educations
-                = Arrays.asList(Mockito.mock(EducationResponse.class), Mockito.mock(EducationResponse.class));
-        doReturn(educations)
-                .when(tutorService).getEducationResponses(1L);
+        Education education = Education.of(
+                mock(Tutor.class),
+                EducationLevelType.UNIVERSITY,
+                "school",
+                "major",
+                null
+        );
+        List<EducationResponse> educations = Arrays.asList(new EducationResponse(education));
+        doReturn(educations).when(tutorService).getEducationResponses(1L);
+
         // when
         // then
         mockMvc.perform(get(BASE_URL + "/{tutor_id}/educations", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.educationLevel").exists())
-                .andExpect(jsonPath("$.schoolName").exists())
-                .andExpect(jsonPath("$.major").exists())
-                .andExpect(jsonPath("$.others").exists())
+                .andExpect(jsonPath("$..educationLevel").exists())
+                .andExpect(jsonPath("$..schoolName").exists())
+                .andExpect(jsonPath("$..major").exists())
+                // null 체크
+                .andExpect(jsonPath("$..others").exists())
                 .andExpect(content().json(objectMapper.writeValueAsString(educations)));
     }
 
@@ -197,8 +238,15 @@ class TutorControllerTest {
     void getLectures() throws Exception {
 
         // given
-        Page<LectureResponse> lectures =
-                new PageImpl<>(Arrays.asList(Mockito.mock(LectureResponse.class), Mockito.mock(LectureResponse.class)), Pageable.ofSize(20), 2);
+        Tutor tutor = mock(Tutor.class);
+        User user = mock(User.class);
+        when(tutor.getUser()).thenReturn(user);
+
+        Lecture lecture1 = mock(Lecture.class);
+        when(lecture1.getTutor()).thenReturn(tutor);
+        Lecture lecture2 = mock(Lecture.class);
+        when(lecture2.getTutor()).thenReturn(tutor);
+        Page<LectureResponse> lectures = new PageImpl<>(Arrays.asList(new LectureResponse(lecture1), new LectureResponse(lecture2)), Pageable.ofSize(20), 2);
         doReturn(lectures)
                 .when(tutorLectureService).getLectureResponses(1L, 1);
         // when

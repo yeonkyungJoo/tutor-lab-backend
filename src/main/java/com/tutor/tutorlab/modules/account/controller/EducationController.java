@@ -45,8 +45,8 @@ public class EducationController {
     @ApiOperation("Education 수정")
     @PutMapping("/{education_id}")
     public ResponseEntity<?> editEducation(@CurrentUser User user,
-                                        @PathVariable(name = "education_id") Long educationId,
-                                        @Valid @RequestBody EducationUpdateRequest educationUpdateRequest) {
+                                           @PathVariable(name = "education_id") Long educationId,
+                                           @Valid @RequestBody EducationUpdateRequest educationUpdateRequest) {
         educationService.updateEducation(user, educationId, educationUpdateRequest);
         return ResponseEntity.ok().build();
     }
@@ -54,7 +54,7 @@ public class EducationController {
     @ApiOperation("Education 삭제")
     @DeleteMapping("/{education_id}")
     public ResponseEntity<?> deleteEducation(@CurrentUser User user,
-                                          @PathVariable(name = "education_id") Long educationId) {
+                                             @PathVariable(name = "education_id") Long educationId) {
         educationService.deleteEducation(user, educationId);
         return ResponseEntity.ok().build();
     }
