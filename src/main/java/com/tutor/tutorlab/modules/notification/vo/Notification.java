@@ -28,6 +28,7 @@ public class Notification extends BaseEntity {
 
     private String content;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean checked = false;    // 확인 여부
     private LocalDateTime checkedAt;
 

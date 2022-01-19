@@ -33,12 +33,12 @@ public class InquiryController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    // TODO - TEST : 예외 처리
-    @ApiIgnore
-    @PostMapping("/test-producer")
-    public ResponseEntity<?> test(@RequestBody InquiryCreateRequest inquiryCreateRequest) throws JsonProcessingException {
-        inquiryService.test(inquiryCreateRequest);
-        return ResponseEntity.ok().build();
-    }
+//    // TODO - TEST : 예외 처리
+//    @ApiIgnore
+//    @PostMapping("/test-producer")
+//    public ResponseEntity<?> test(@RequestBody InquiryCreateRequest inquiryCreateRequest) throws JsonProcessingException {
+//        inquiryService.test(inquiryCreateRequest);
+//        return ResponseEntity.ok().build();
+//    }
 
 }

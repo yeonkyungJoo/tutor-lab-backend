@@ -176,20 +176,4 @@ public class LectureServiceTest {
         );
     }
 
-    // TODO - TEST
-    @Test
-    void getLectureResponse() {
-
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    void getLectureResponses() {
-
-        // given
-        // when
-        // then
-    }
 }

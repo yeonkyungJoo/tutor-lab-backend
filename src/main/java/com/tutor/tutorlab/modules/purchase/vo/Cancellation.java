@@ -22,6 +22,8 @@ public class Cancellation extends BaseEntity {
     private Enrollment enrollment;
 
     private String reason;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean approved = false;
 
     private Cancellation(Enrollment enrollment, String reason) {

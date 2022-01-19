@@ -64,6 +64,7 @@ public class User extends BaseEntity {
     private OAuthType provider;
     private String providerId;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean emailVerified = false;
     private String emailVerifyToken;
     private LocalDateTime emailVerifiedAt;
@@ -72,6 +73,7 @@ public class User extends BaseEntity {
     @Lob
     private String fcmToken;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean deleted = false;
     private LocalDateTime deletedAt;
     @Lob

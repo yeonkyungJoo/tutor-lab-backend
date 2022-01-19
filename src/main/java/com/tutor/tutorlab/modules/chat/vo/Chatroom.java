@@ -46,7 +46,9 @@ public class Chatroom extends BaseEntity {
     private Tutee tutee;
 
     private int accusedCount = 0;
-    private boolean isClosed = false;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean closed = false;
 
     @Builder(access = AccessLevel.PRIVATE)
     private Chatroom(Enrollment enrollment, Tutor tutor, Tutee tutee) {

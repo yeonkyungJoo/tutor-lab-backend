@@ -80,30 +80,6 @@ class LoginControllerTest {
                 .andExpect(status().is5xxServerError());
     }
 
-    @Test
-    void oauthCallback() throws Exception {
-
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    void oauthCallback_returnNull() throws Exception {
-
-        // given
-        // when
-        // then
-    }
-
-    @Test
-    void _oauth() throws Exception {
-
-        // given
-        // when
-        // then
-    }
-
     @DisplayName("OAuth 회원가입 추가 정보 입력")
     @Test
     void signUpOAuthDetail() throws Exception {
@@ -323,7 +299,8 @@ class LoginControllerTest {
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_PLAIN))
+                .andExpect(content().contentType("text/plain;charset=ISO-8859-1"))
+                //.andExpect(content().contentType(MediaType.TEXT_PLAIN))
                 .andExpect(content().string("abcd"));
     }
 
@@ -340,5 +317,30 @@ class LoginControllerTest {
                 .param("username", username))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+
+    @Test
+    void oauthCallback() throws Exception {
+
+        // given
+        // when
+        // then
+    }
+
+    @Test
+    void oauthCallback_returnNull() throws Exception {
+
+        // given
+        // when
+        // then
+    }
+
+    @Test
+    void _oauth() throws Exception {
+
+        // given
+        // when
+        // then
     }
 }

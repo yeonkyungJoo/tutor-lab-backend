@@ -44,7 +44,9 @@ public class Enrollment extends BaseEntity {
             foreignKey = @ForeignKey(name = "FK_ENROLLMENT_LECTURE_PRICE_ID"))
     private LecturePrice lecturePrice;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean closed = false;
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean canceled = false;
 
     // TODO - CHECK : 양방향 VS 단방향
