@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.lecture.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
@@ -20,6 +21,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static com.tutor.tutorlab.config.response.Response.created;
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"LectureController"})
 @RequiredArgsConstructor
@@ -52,7 +56,7 @@ public class LectureController {
     public ResponseEntity<?> newLecture(@CurrentUser User user,
                                         @RequestBody @Validated(LectureCreateRequest.Order.class) LectureCreateRequest lectureCreateRequest) {
         lectureService.createLecture(user, lectureCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return created();
     }
 
     @ApiOperation("강의 수정")
@@ -61,7 +65,7 @@ public class LectureController {
                                          @PathVariable(name = "lecture_id") Long lectureId,
                                          @RequestBody @Valid LectureUpdateRequest lectureUpdateRequest) {
         lectureService.updateLecture(user, lectureId, lectureUpdateRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("강의 삭제")
@@ -69,7 +73,7 @@ public class LectureController {
     public ResponseEntity<?> deleteLecture(@CurrentUser User user,
                                            @PathVariable(name = "lecture_id") Long lectureId) {
         lectureService.deleteLecture(user, lectureId);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("강의별 리뷰 리스트 - 페이징")

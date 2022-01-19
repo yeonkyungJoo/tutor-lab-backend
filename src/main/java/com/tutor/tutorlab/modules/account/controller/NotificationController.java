@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.response.NotificationResponse;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"NotificationController"})
 @RequestMapping("/users/my-notifications")
@@ -35,7 +38,7 @@ public class NotificationController {
     public ResponseEntity<?> getNotification(@CurrentUser User user,
                                              @PathVariable(name = "notification_id") Long notificationId) {
         notificationService.check(user, notificationId);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("알림 삭제")
@@ -43,7 +46,7 @@ public class NotificationController {
     public ResponseEntity<?> deleteNotification(@CurrentUser User user,
                                                 @PathVariable(name = "notification_id") Long notificationId) {
         notificationService.deleteNotification(user, notificationId);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     // TODO - 알림 전체 삭제 / 선택 삭제
@@ -52,6 +55,6 @@ public class NotificationController {
     public ResponseEntity<?> deleteNotifications(@CurrentUser User user,
                                                  @RequestParam(value = "notification_ids") List<Long> notificationIds) {
         notificationService.deleteNotifications(user, notificationIds);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 }

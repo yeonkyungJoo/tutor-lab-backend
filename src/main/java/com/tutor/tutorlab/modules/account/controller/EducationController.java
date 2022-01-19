@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.EducationUpdateRequest;
@@ -17,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static com.tutor.tutorlab.config.response.Response.created;
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"EducationController"})
 @RequestMapping("/educations")
@@ -39,7 +43,7 @@ public class EducationController {
     public ResponseEntity<?> newEducation(@CurrentUser User user,
                                           @Valid @RequestBody EducationCreateRequest educationCreateRequest) {
         educationService.createEducation(user, educationCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return created();
     }
 
     @ApiOperation("Education 수정")
@@ -48,7 +52,7 @@ public class EducationController {
                                            @PathVariable(name = "education_id") Long educationId,
                                            @Valid @RequestBody EducationUpdateRequest educationUpdateRequest) {
         educationService.updateEducation(user, educationId, educationUpdateRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("Education 삭제")
@@ -56,7 +60,7 @@ public class EducationController {
     public ResponseEntity<?> deleteEducation(@CurrentUser User user,
                                              @PathVariable(name = "education_id") Long educationId) {
         educationService.deleteEducation(user, educationId);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.TutorSignUpRequest;
 import com.tutor.tutorlab.modules.account.controller.request.TutorUpdateRequest;
@@ -20,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static com.tutor.tutorlab.config.response.Response.created;
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"TutorController"})
 @RequestMapping("/tutors")
@@ -59,7 +63,7 @@ public class TutorController {
                                       @Valid @RequestBody TutorSignUpRequest tutorSignUpRequest) {
 
         tutorService.createTutor(user, tutorSignUpRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return created();
     }
 
     @ApiOperation("튜터 정보 수정")
@@ -68,7 +72,7 @@ public class TutorController {
                                        @Valid @RequestBody TutorUpdateRequest tutorUpdateRequest) {
 
         tutorService.updateTutor(user, tutorUpdateRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("튜터 탈퇴")
@@ -76,7 +80,7 @@ public class TutorController {
     public ResponseEntity<?> quitTutor(@CurrentUser User user) {
 
         tutorService.deleteTutor(user);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("튜터의 Career 리스트")

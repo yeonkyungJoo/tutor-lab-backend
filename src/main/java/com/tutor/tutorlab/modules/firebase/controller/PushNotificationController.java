@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.firebase.controller;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.modules.account.service.UserService;
 import com.tutor.tutorlab.modules.firebase.service.AndroidPushNotificationsService;
 import com.tutor.tutorlab.modules.firebase.service.AndroidPushPeriodicNotifications;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
+
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"PushNotificationController"})
 @RequiredArgsConstructor
@@ -46,6 +49,6 @@ public class PushNotificationController {
                                          @RequestParam(name = "fcmToken") String fcmToken) {
         // System.out.println("fcmToken = " + fcmToken);
         userService.updateUserFcmToken(username, fcmToken);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 }

@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.purchase.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.purchase.service.PickService;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.tutor.tutorlab.config.response.Response.created;
 
 @Api(tags = {"PickController"})
 @RestController
@@ -25,7 +28,7 @@ public class PickController {
     public ResponseEntity<?> addPick(@CurrentUser User user,
                                      @PathVariable(name = "lecture_id") Long lectureId) {
         pickService.createPick(user, lectureId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return created();
     }
 
 }

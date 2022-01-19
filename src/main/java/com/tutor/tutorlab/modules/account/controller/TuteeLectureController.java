@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
@@ -20,6 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static com.tutor.tutorlab.config.response.Response.created;
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"TuteeLectureController"})
 @RequestMapping("/tutees/my-lectures")
@@ -55,7 +59,7 @@ public class TuteeLectureController {
                                     @PathVariable(name = "lecture_id") Long lectureId,
                                     @RequestBody @Valid CancellationCreateRequest cancellationCreateRequest) {
         cancellationService.cancel(user, lectureId, cancellationCreateRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     // TODO - CHECK : user가 필요한가?
@@ -85,7 +89,7 @@ public class TuteeLectureController {
                                        @RequestBody @Valid TuteeReviewCreateRequest tuteeReviewCreateRequest) {
 
         reviewService.createTuteeReview(user, lectureId, tuteeReviewCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return created();
     }
 
     @ApiOperation("튜티 리뷰 수정")
@@ -96,7 +100,7 @@ public class TuteeLectureController {
                                         @RequestBody @Valid TuteeReviewUpdateRequest tuteeReviewUpdateRequest) {
 
         reviewService.updateTuteeReview(user, lectureId, reviewId, tuteeReviewUpdateRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("튜티 리뷰 삭제")
@@ -106,7 +110,7 @@ public class TuteeLectureController {
                                           @PathVariable(name = "review_id") Long reviewId) {
 
         reviewService.deleteTuteeReview(user, lectureId, reviewId);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
 //    @ApiOperation("리뷰 작성하지 않은 강의 리스트 - 페이징")
@@ -120,6 +124,6 @@ public class TuteeLectureController {
     public ResponseEntity<?> close(@CurrentUser User user,
                                    @PathVariable(name = "lecture_id") Long lectureId) {
         enrollmentService.close(user, lectureId);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 }

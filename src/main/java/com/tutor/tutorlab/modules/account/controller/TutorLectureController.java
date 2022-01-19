@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.response.TuteeResponse;
 import com.tutor.tutorlab.modules.account.service.TutorLectureService;
@@ -20,6 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static com.tutor.tutorlab.config.response.Response.created;
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"TutorLectureController"})
 @RequestMapping("/tutors/my-lectures")
@@ -76,7 +80,7 @@ public class TutorLectureController {
                                        @RequestBody @Valid TutorReviewCreateRequest tutorReviewCreateRequest) {
 
         reviewService.createTutorReview(user, lectureId, parentId, tutorReviewCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return created();
     }
 
     @ApiOperation("튜터 리뷰 수정")
@@ -88,7 +92,7 @@ public class TutorLectureController {
                                         @RequestBody @Valid TutorReviewUpdateRequest tutorReviewUpdateRequest) {
 
         reviewService.updateTutorReview(user, lectureId, parentId, reviewId, tutorReviewUpdateRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("튜터 리뷰 삭제")
@@ -99,7 +103,7 @@ public class TutorLectureController {
                                           @PathVariable(name = "review_id") Long reviewId) {
 
         reviewService.deleteTutorReview(user, lectureId, parentId, reviewId);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("등록 강의별 튜티 조회 - 페이징")

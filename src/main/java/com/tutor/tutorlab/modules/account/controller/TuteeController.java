@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.TuteeUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.response.TuteeResponse;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"TuteeController"})
 @RequestMapping("/tutees")
@@ -50,7 +53,7 @@ public class TuteeController {
         // .antMatchers(HttpMethod.PUT, "/**").authenticated()
 
         tuteeService.updateTutee(user, tuteeUpdateRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
 //    @ApiOperation("튜티 탈퇴")

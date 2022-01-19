@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.service.TutorCancellationService;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"TutorCancellationController"})
 @RequestMapping("/tutors/my-cancellations")
@@ -32,7 +35,7 @@ public class TutorCancellationController {
     public ResponseEntity<?> approveCancellation(@CurrentUser User user,
                                                  @PathVariable(name = "cancellation_id") Long cancellationId) {
         tutorCancellationService.approve(user, cancellationId);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
 

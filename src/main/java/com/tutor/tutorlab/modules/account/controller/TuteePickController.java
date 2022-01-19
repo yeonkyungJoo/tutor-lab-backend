@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.purchase.controller.response.PickResponse;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"TuteePickController"})
 @RequestMapping("/tutees/my-picks")
@@ -30,13 +33,13 @@ public class TuteePickController {
     public ResponseEntity<?> subtractPick(@CurrentUser User user,
                                           @PathVariable(name = "pick_id") Long pickId) {
         pickService.deletePick(user, pickId);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @DeleteMapping
     public ResponseEntity<?> clear(@CurrentUser User user) {
 
         pickService.deleteAllPicks(user);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 }

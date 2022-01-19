@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.config.security.oauth.provider.AuthorizeResult;
 import com.tutor.tutorlab.modules.account.controller.request.LoginRequest;
@@ -29,6 +30,9 @@ import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.util.Map;
+
+import static com.tutor.tutorlab.config.response.Response.created;
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Validated
 @Slf4j
@@ -111,7 +115,7 @@ public class LoginController {
                                                @Valid @RequestBody SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
 
         loginService.signUpOAuthDetail(user, signUpOAuthDetailRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("일반 회원가입 - 기본 튜티로 가입")
@@ -119,7 +123,7 @@ public class LoginController {
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
 
         loginService.signUp(signUpRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return created();
     }
 
     @ApiOperation("아이디 중복체크")
@@ -143,7 +147,7 @@ public class LoginController {
 
         log.info("email : {}, token : {}", email, token);
         loginService.verifyEmail(email, token);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("일반 로그인")
@@ -166,7 +170,7 @@ public class LoginController {
     public ResponseEntity<?> findPassword(@RequestParam(name = "username") String username) {
 
         loginService.findPassword(username);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
 }

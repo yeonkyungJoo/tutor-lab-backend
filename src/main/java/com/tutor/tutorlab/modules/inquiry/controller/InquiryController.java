@@ -1,6 +1,7 @@
 package com.tutor.tutorlab.modules.inquiry.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.EducationCreateRequest;
 import com.tutor.tutorlab.modules.account.vo.User;
@@ -18,6 +19,8 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
+import static com.tutor.tutorlab.config.response.Response.created;
+
 @RequestMapping("/users/my-inquiry")
 @RequiredArgsConstructor
 @RestController
@@ -30,7 +33,7 @@ public class InquiryController {
     public ResponseEntity<?> newInquiry(@CurrentUser User user,
                                         @Valid @RequestBody InquiryCreateRequest inquiryCreateRequest) {
         inquiryService.createInquiry(user, inquiryCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return created();
     }
 
 //    // TODO - TEST : 예외 처리

@@ -1,5 +1,6 @@
 package com.tutor.tutorlab.modules.account.controller;
 
+import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
 import com.tutor.tutorlab.modules.account.controller.request.UserImageUpdateRequest;
 import com.tutor.tutorlab.modules.account.controller.request.UserPasswordUpdateRequest;
@@ -19,6 +20,8 @@ import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"UserController"})
 @RequestMapping("/users")
@@ -57,7 +60,7 @@ public class UserController {
                                       @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
 
         userService.updateUser(user, userUpdateRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @ApiOperation("프로필 이미지 수정")
@@ -74,7 +77,7 @@ public class UserController {
                                       @RequestBody @Valid UserQuitRequest userQuitRequest) {
 
         userService.deleteUser(user, userQuitRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
     @GetMapping("/quit-reasons")
@@ -87,7 +90,7 @@ public class UserController {
     public ResponseEntity<?> changeUserPassword(@CurrentUser User user,
                                                 @RequestBody @Valid UserPasswordUpdateRequest userPasswordUpdateRequest) {
         userService.updateUserPassword(user, userPasswordUpdateRequest);
-        return ResponseEntity.ok().build();
+        return ok();
     }
 
 }
