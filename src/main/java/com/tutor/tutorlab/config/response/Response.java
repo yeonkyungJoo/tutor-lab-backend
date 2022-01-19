@@ -3,7 +3,7 @@ package com.tutor.tutorlab.config.response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class Response<T> {
+public class Response {
 
     private static final ResponseEntity<?> OK = ResponseEntity.ok().build();
     private static final ResponseEntity<?> CREATED = ResponseEntity.status(HttpStatus.CREATED).build();
