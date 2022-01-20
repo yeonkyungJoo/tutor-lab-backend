@@ -90,7 +90,7 @@ class TuteeLectureControllerTest {
                 "thumbnail"
         );
         LectureResponse lectureResponse = new LectureResponse(lecture);
-        when(lectureService.getLectureResponse(1L)).thenReturn(lectureResponse);
+        when(lectureService.getLectureResponse(any(User.class), anyLong())).thenReturn(lectureResponse);
 
         // when
         // then

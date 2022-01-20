@@ -33,6 +33,8 @@ public class LectureResponse {
 
     private LectureTutorResponse lectureTutor;
 
+    private boolean picked = false;
+
 
     public LectureResponse(Lecture lecture) {
         this.id = lecture.getId();

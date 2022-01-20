@@ -47,9 +47,9 @@ public class TutorLectureController {
     // TODO - CHECK : user
     @ApiOperation("등록 강의 개별 조회")
     @GetMapping("/{lecture_id}")
-    public ResponseEntity<?> getLecture(@PathVariable(name = "lecture_id") Long lectureId) {
+    public ResponseEntity<?> getLecture(@CurrentUser User user, @PathVariable(name = "lecture_id") Long lectureId) {
 
-        LectureResponse lecture = lectureService.getLectureResponse(lectureId);
+        LectureResponse lecture = lectureService.getLectureResponse(user, lectureId);
         // lectureMapstructUtil.getLectureResponse(lecture);
         return ResponseEntity.ok(lecture);
     }

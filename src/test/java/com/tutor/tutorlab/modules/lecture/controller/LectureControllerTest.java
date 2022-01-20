@@ -2,8 +2,10 @@ package com.tutor.tutorlab.modules.lecture.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
+import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.account.enums.RoleType;
+import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
@@ -13,7 +15,9 @@ import com.tutor.tutorlab.modules.lecture.controller.response.LectureResponse;
 import com.tutor.tutorlab.modules.lecture.enums.DifficultyType;
 import com.tutor.tutorlab.modules.lecture.enums.SystemType;
 import com.tutor.tutorlab.modules.lecture.service.LectureService;
+import com.tutor.tutorlab.modules.lecture.service.LectureServiceImpl;
 import com.tutor.tutorlab.modules.lecture.vo.Lecture;
+import com.tutor.tutorlab.modules.purchase.repository.PickRepository;
 import com.tutor.tutorlab.modules.review.controller.response.ReviewResponse;
 import com.tutor.tutorlab.modules.review.service.ReviewService;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +30,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
@@ -34,8 +41,8 @@ import org.springframework.util.MultiValueMap;
 import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.securityContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -49,9 +56,12 @@ class LectureControllerTest {
     @InjectMocks
     LectureController lectureController;
     @Mock
-    LectureService lectureService;
+    LectureServiceImpl lectureService;
     @Mock
     ReviewService reviewService;
+
+    @Mock
+    PickRepository pickRepository;
 
     MockMvc mockMvc;
     ObjectMapper objectMapper = new ObjectMapper();
@@ -108,11 +118,11 @@ class LectureControllerTest {
         Page<LectureResponse> lectures =
                 new PageImpl<>(Arrays.asList(new LectureResponse(lecture1), new LectureResponse(lecture2)), Pageable.ofSize(20), 2);
         doReturn(lectures)
-                .when(lectureService).getLectureResponses(anyString(), any(LectureListRequest.class), anyInt());
+                .when(lectureService).getLectureResponses(any(User.class), anyString(), any(LectureListRequest.class), anyInt());
         // when
         // then
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("zone", "서울특별시 강남구 청담동");
+        params.add("_zone", "서울특별시 강남구 청담동");
         params.add("title", "title1");
         params.add("subjects", "java,python");
         params.add("systemType", "OFFLINE");
@@ -127,33 +137,65 @@ class LectureControllerTest {
     }
 
     @Test
-    void getLectures_with_noZone() throws Exception {
+    void getLectures_authenticated() throws Exception {
 
         // given
         Page<LectureResponse> lectures =
                 new PageImpl<>(Arrays.asList(new LectureResponse(lecture1), new LectureResponse(lecture2)), Pageable.ofSize(20), 2);
-
-//        LectureListRequest lectureListRequest =
-//                LectureListRequest.of("title1", Arrays.asList("java", "python"), SystemType.OFFLINE, true, Arrays.asList(DifficultyType.BASIC, DifficultyType.ADVANCED));
-//        doReturn(lectures)
-//                .when(lectureService).getLectureResponses(null, lectureListRequest, 1);
+        //doCallRealMethod()
         doReturn(lectures)
-                .when(lectureService).getLectureResponses(any(), any(LectureListRequest.class), anyInt());
+                .when(lectureService).getLectureResponses(any(), anyString(), any(LectureListRequest.class), anyInt());
         // when
         // then
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("_zone", "서울특별시 강남구 청담동");
         params.add("title", "title1");
         params.add("subjects", "java,python");
         params.add("systemType", "OFFLINE");
         params.add("isGroup", "true");
         params.add("difficultyTypes", "BASIC,ADVANCED");
         params.add("page", "1");
-        mockMvc.perform(get(BASE_URL)
+
+        PrincipalDetails principal = new PrincipalDetails(user);
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities()));
+        mockMvc.perform(get(BASE_URL).with(securityContext(securityContext))
                 .params(params))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(lectures)));
+
+        // verify(pickRepository).findByTuteeAndLectureId(any(Tutee.class), anyLong());
     }
+
+//    @Test
+//    void getLectures_with_noZone() throws Exception {
+//
+//        // given
+//        Page<LectureResponse> lectures =
+//                new PageImpl<>(Arrays.asList(new LectureResponse(lecture1), new LectureResponse(lecture2)), Pageable.ofSize(20), 2);
+//
+////        LectureListRequest lectureListRequest =
+////                LectureListRequest.of("title1", Arrays.asList("java", "python"), SystemType.OFFLINE, true, Arrays.asList(DifficultyType.BASIC, DifficultyType.ADVANCED));
+////        doReturn(lectures)
+////                .when(lectureService).getLectureResponses(null, lectureListRequest, 1);
+//        doReturn(lectures)
+//                .when(lectureService).getLectureResponses(any(), any(LectureListRequest.class), anyInt());
+//        // when
+//        // then
+//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+//        params.add("title", "title1");
+//        params.add("subjects", "java,python");
+//        params.add("systemType", "OFFLINE");
+//        params.add("isGroup", "true");
+//        params.add("difficultyTypes", "BASIC,ADVANCED");
+//        params.add("page", "1");
+//        mockMvc.perform(get(BASE_URL)
+//                .params(params))
+//                .andDo(print())
+//                .andExpect(status().isOk())
+//                .andExpect(content().json(objectMapper.writeValueAsString(lectures)));
+//    }
 
     @Test
     void getLecture() throws Exception {
@@ -161,7 +203,7 @@ class LectureControllerTest {
         // given
         LectureResponse response = new LectureResponse(lecture1);
         doReturn(response)
-                .when(lectureService).getLectureResponse(1L);
+                .when(lectureService).getLectureResponse(any(User.class), anyLong());
 
         // when
         // then

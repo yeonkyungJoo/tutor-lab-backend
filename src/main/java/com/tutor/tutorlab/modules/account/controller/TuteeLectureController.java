@@ -48,8 +48,8 @@ public class TuteeLectureController {
     // TODO - CHECK : user
     @ApiOperation("수강 강의 개별 조회")
     @GetMapping("/{lecture_id}")
-    public ResponseEntity<?> getLecture(@PathVariable(name = "lecture_id") Long lectureId) {
-        LectureResponse lecture = lectureService.getLectureResponse(lectureId);
+    public ResponseEntity<?> getLecture(@CurrentUser User user, @PathVariable(name = "lecture_id") Long lectureId) {
+        LectureResponse lecture = lectureService.getLectureResponse(user, lectureId);
         return ResponseEntity.ok(lecture);
     }
 

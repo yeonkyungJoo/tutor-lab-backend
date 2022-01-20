@@ -2,7 +2,9 @@ package com.tutor.tutorlab.modules.lecture.service;
 
 import com.tutor.tutorlab.config.exception.EntityNotFoundException;
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
+import com.tutor.tutorlab.modules.account.repository.TuteeRepository;
 import com.tutor.tutorlab.modules.account.repository.TutorRepository;
+import com.tutor.tutorlab.modules.account.vo.Tutee;
 import com.tutor.tutorlab.modules.account.vo.Tutor;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.address.util.AddressUtils;
@@ -47,6 +49,7 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     private final LectureSearchRepository lectureSearchRepository;
     private final LectureQueryRepository lectureQueryRepository;
 
+    private final TuteeRepository tuteeRepository;
     private final TutorRepository tutorRepository;
     private final PickRepository pickRepository;
     private final EnrollmentService enrollmentService;
@@ -59,13 +62,15 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     }
 
     @Override
-    public LectureResponse getLectureResponse(Long lectureId) {
+    public LectureResponse getLectureResponse(User user, Long lectureId) {
 
         Lecture lecture = getLecture(lectureId);
         LectureResponse lectureResponse = new LectureResponse(lecture);
         // TODO - 쿼리
         setLectureReview(lectureResponse);
         setLectureTutor(lectureResponse);
+        // 로그인한 경우 - 좋아요 여부 표시
+        setPicked(user, lectureId, lectureResponse);
 
         return lectureResponse;
     }
@@ -73,9 +78,9 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
     // TODO - CHECK : mapstruct vs 생성자
     // return lectureMapstructUtil.getLectureResponse(getLecture(lectureId));
     @Override
-    public Page<LectureResponse> getLectureResponses(String zone, LectureListRequest lectureListRequest, Integer page) {
+    public Page<LectureResponse> getLectureResponses(User user, String zone, LectureListRequest lectureListRequest, Integer page) {
 
-        System.out.println(lectureListRequest);
+        // System.out.println(lectureListRequest);
         Page<LectureResponse> lectures = lectureSearchRepository.findLecturesByZoneAndSearch(
                 AddressUtils.convertStringToEmbeddableAddress(zone), lectureListRequest, PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").ascending()))
                 .map(LectureResponse::new);
@@ -106,6 +111,8 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
                 lectureTutorResponse.setReviewCount(0);
             }
 
+            // 로그인한 경우 - 좋아요 여부 표시
+            setPicked(user, lectureResponse.getId(), lectureResponse);
         });
 
 //        lectures.forEach(lectureResponse -> {
@@ -114,6 +121,20 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
 //        });
 
         return lectures;
+    }
+
+    private void setPicked(User user, Long lectureId, LectureResponse lectureResponse) {
+
+        if (user == null) {
+            return;
+        }
+
+        // TODO - flatMap
+        Optional.of(tuteeRepository.findByUser(user)).ifPresent(tutee -> {
+            pickRepository.findByTuteeAndLectureId(tutee, lectureId)
+                    // consumer
+                    .ifPresent(pick -> lectureResponse.setPicked(true));
+        });
     }
 
     private void setLectureReview(LectureResponse lectureResponse) {

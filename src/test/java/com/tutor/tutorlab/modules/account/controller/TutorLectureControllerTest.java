@@ -98,7 +98,8 @@ class TutorLectureControllerTest {
         when(tutor.getUser()).thenReturn(mock(User.class));
         when(lecture.getTutor()).thenReturn(tutor);
         LectureResponse response = new LectureResponse(lecture);
-        doReturn(response).when(lectureService).getLectureResponse(1L);
+        doReturn(response)
+                .when(lectureService).getLectureResponse(any(User.class), anyLong());
         // when
         // then
         mockMvc.perform(get(BASE_URL + "/{lecture_id}", 1L))
@@ -117,6 +118,8 @@ class TutorLectureControllerTest {
                 .andExpect(jsonPath("$.reviewCount").hasJsonPath())
                 .andExpect(jsonPath("$.scoreAverage").hasJsonPath())
                 .andExpect(jsonPath("$.lectureTutor").hasJsonPath())
+                // 좋아요 여부 추가
+                .andExpect(jsonPath("$.picked").hasJsonPath())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 

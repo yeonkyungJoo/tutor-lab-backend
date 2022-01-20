@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LectureListRequest {
 
+    // private String zone;
+
     private String title;
     private List<String> subjects;      // 언어   / length == 0일 때 전체
     private SystemType systemType;   // 수업방식 : 온라인, 오프라인 / null일 때 전체

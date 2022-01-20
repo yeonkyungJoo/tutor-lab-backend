@@ -242,7 +242,7 @@ public class LectureServiceIntegrationTest extends AbstractTest {
         // When
         // Then
         // TODO - LectureListRequest 추가해서 테스트
-        Page<LectureResponse> lectureResponses = lectureService.getLectureResponses("서울특별시 강남구", null, 1);
+        Page<LectureResponse> lectureResponses = lectureService.getLectureResponses(user, "서울특별시 강남구", null, 1);
         assertEquals(1, lectureResponses.getTotalElements());
 
         lectureResponses.stream().forEach(lectureResponse -> {
@@ -251,8 +251,10 @@ public class LectureServiceIntegrationTest extends AbstractTest {
                     () -> assertEquals(1, lectureResponse.getLecturePrices().size()),
                     () -> assertNotNull(lectureResponse.getLectureTutor()),
                     () -> assertEquals(1, lectureResponse.getLectureTutor().getLectureCount()),
-                    () -> assertEquals(0, lectureResponse.getLectureTutor().getReviewCount())
                     // TODO - 리뷰 확인
+                    () -> assertEquals(0, lectureResponse.getLectureTutor().getReviewCount()),
+
+                    () -> assertFalse(lectureResponse.isPicked())
             );
         });
     }

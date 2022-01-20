@@ -2,6 +2,7 @@ package com.tutor.tutorlab.config.interceptor;
 
 import com.tutor.tutorlab.config.exception.UnauthorizedException;
 import com.tutor.tutorlab.config.security.CurrentUser;
+import com.tutor.tutorlab.config.security.Nullable;
 import com.tutor.tutorlab.config.security.PrincipalDetails;
 import com.tutor.tutorlab.modules.account.vo.User;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,9 @@ public class AuthInterceptor implements HandlerInterceptor {
                     if (existCurrentUser()) {
                         return true;
                     } else {
-                        throw new UnauthorizedException();
+                        if (!parameter.isAnnotationPresent(Nullable.class)) {
+                            throw new UnauthorizedException();
+                        }
                     }
                 }
             }

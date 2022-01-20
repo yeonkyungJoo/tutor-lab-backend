@@ -2,6 +2,7 @@ package com.tutor.tutorlab.modules.lecture.controller;
 
 import com.tutor.tutorlab.config.response.Response;
 import com.tutor.tutorlab.config.security.CurrentUser;
+import com.tutor.tutorlab.config.security.Nullable;
 import com.tutor.tutorlab.modules.account.vo.User;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureCreateRequest;
 import com.tutor.tutorlab.modules.lecture.controller.request.LectureListRequest;
@@ -34,20 +35,22 @@ public class LectureController {
     private final LectureService lectureService;
     private final ReviewService reviewService;
 
+    // Field error in object 'user' on field 'zone' - User의 zone과 중복
     // TODO - CHECK : @ModelAttribute
     @ApiOperation("강의 목록 조회 - 위치별(튜터 주소 기준), 강의명, 개발언어, 온/오프라인, 개인/그룹, 레벨 필터")
     @GetMapping
-    public ResponseEntity<?> getLectures(@RequestParam(name = "zone", required = false) String zone,
+    public ResponseEntity<?> getLectures(@CurrentUser @Nullable User user,
+                                         @RequestParam(name = "_zone", required = false) String zone,
                                          @Valid LectureListRequest lectureListRequest,
                                          @RequestParam(defaultValue = "1") Integer page) {
-        Page<LectureResponse> lectures = lectureService.getLectureResponses(zone, lectureListRequest, page);
+        Page<LectureResponse> lectures = lectureService.getLectureResponses(user, zone, lectureListRequest, page);
         return ResponseEntity.ok(lectures);
     }
 
     @ApiOperation("강의 개별 조회")
     @GetMapping(value = "/{lecture_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getLecture(@PathVariable(name = "lecture_id") Long lectureId) {
-        LectureResponse lecture = lectureService.getLectureResponse(lectureId);
+    public ResponseEntity<?> getLecture(@CurrentUser @Nullable User user, @PathVariable(name = "lecture_id") Long lectureId) {
+        LectureResponse lecture = lectureService.getLectureResponse(user, lectureId);
         return ResponseEntity.ok(lecture);
     }
 

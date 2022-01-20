@@ -19,6 +19,8 @@ public interface PickRepository extends JpaRepository<Pick, Long> {
     Page<Pick> findByTutee(Tutee tutee, Pageable pageable);
 
     Optional<Pick> findByTuteeAndId(Tutee tutee, Long pickId);
+    @Query(value = "select p from Pick p where p.tutee = :tutee and p.lecture.id = :lectureId")
+    Optional<Pick> findByTuteeAndLectureId(Tutee tutee, Long lectureId);
 
     @Transactional
     void deleteByTutee(Tutee tutee);
@@ -26,6 +28,6 @@ public interface PickRepository extends JpaRepository<Pick, Long> {
     @Transactional
     void deleteByLecture(Lecture lecture);
 
-    @Query(value = "select * from pick where lecture_id = :lectureId", nativeQuery = true)
+    @Query(value = "select p from Pick p where p.lecture.id = :lectureId")
     List<Pick> findByLectureId(Long lectureId);
 }
