@@ -1,35 +1,41 @@
 package com.tutor.tutorlab.configuration;
 
+import com.tutor.tutorlab.config.controllerAdvice.RestControllerExceptionAdvice;
+import com.tutor.tutorlab.modules.account.controller.UserController;
+import com.tutor.tutorlab.test.controller.TestController;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ResponseTest extends AbstractTest {
+@ExtendWith(MockitoExtension.class)
+public class ResponseTest {
 
-    @Autowired
+    @InjectMocks
+    TestController testController;
+
     MockMvc mockMvc;
 
-    @Test
-    public void restResponseTest() throws Exception {
-        mockMvc.perform(get("/tests/rest"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").exists())
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.result").exists())
-                .andExpect(jsonPath("$.responseTime").exists());
+    @BeforeEach
+    void setup() {
+        mockMvc = MockMvcBuilders.standaloneSetup(testController)
+                .setControllerAdvice(RestControllerExceptionAdvice.class)
+                .build();
     }
 
     @Test
     public void errorResponseTest() throws Exception {
-        mockMvc.perform(get("/tests/error"))
+        mockMvc.perform(get("/tests/exception"))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.code").exists())
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.errorDetails").exists())

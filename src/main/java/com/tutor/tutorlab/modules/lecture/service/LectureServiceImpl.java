@@ -130,7 +130,7 @@ public class LectureServiceImpl extends AbstractService implements LectureServic
         }
 
         // TODO - flatMap
-        Optional.of(tuteeRepository.findByUser(user)).ifPresent(tutee -> {
+        Optional.ofNullable(tuteeRepository.findByUser(user)).ifPresent(tutee -> {
             pickRepository.findByTuteeAndLectureId(tutee, lectureId)
                     // consumer
                     .ifPresent(pick -> lectureResponse.setPicked(true));

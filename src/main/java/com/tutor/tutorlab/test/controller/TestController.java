@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @GetMapping("/exception")
-    public ResponseEntity<?> getErrorTest() throws Exception {
+    public ResponseEntity<?> getErrorTest() throws RuntimeException {
         boolean errorFlag = true;
         if (Boolean.TRUE.equals(errorFlag)) {
-            throw new Exception();
+            throw new RuntimeException();
         }
         return ResponseEntity.internalServerError().build();
     }

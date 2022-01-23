@@ -114,12 +114,13 @@ class UserServiceTest {
 
         // given
         User user = Mockito.mock(User.class);
+        when(user.getPassword()).thenReturn("password_");
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(bCryptPasswordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
         // when
         // then
-        UserQuitRequest userQuitRequest = Mockito.mock(UserQuitRequest.class);
+        UserQuitRequest userQuitRequest = UserQuitRequest.of(1, null, "password");
         assertThrows(InvalidInputException.class,
                 () -> userService.deleteUser(user, userQuitRequest));
     }

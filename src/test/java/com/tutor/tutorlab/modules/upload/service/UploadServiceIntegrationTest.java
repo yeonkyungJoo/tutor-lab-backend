@@ -3,6 +3,7 @@ package com.tutor.tutorlab.modules.upload.service;
 import com.tutor.tutorlab.modules.upload.controller.UploadController;
 import com.tutor.tutorlab.modules.upload.enums.FileType;
 import com.tutor.tutorlab.modules.upload.controller.response.UploadResponse;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +14,7 @@ import org.springframework.util.FileCopyUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled
 @SpringBootTest
 public class UploadServiceIntegrationTest {
 
