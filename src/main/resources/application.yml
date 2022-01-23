@@ -1,64 +1,7 @@
-server:
-  port: 8080
-  servlet:
-    context-path: /
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
-
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/tutorlab?serverTimezone=Asia/Seoul
-    username: root
-    password: 1234
-
-  jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    hibernate:
-      ddl-auto: update
-      naming:
-        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-      # physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-      use-new-id-generator-mappings: false
-    show-sql: true
-    properties:
-      hibernate:
-        format-sql: true
-        default_batch_fetch_size: 1000
-  data:
-    mongodb:
-      url: mongodb://localhost:27017/tutorlab
-#      host: localhost
-#      port: 27017
-#      database: tutorlab
-
-security:
-  oauth2:
-    google:
-      client-id: googleId
-      client-secret: googleSecret
-    kakao:
-      client-id: kakaoId
-    naver:
-      client-id: naverId
-      client-secret: naverSecret
+  profiles:
+    active: prod
+    include: auth
 
 
-jwt:
-  secret: secret
-  token-validity-in-seconds: 86400
 
-cloud:
-  aws:
-    credentials:
-      accessKey: accessKey
-      secretKey: secretKey
-    s3:
-      bucket: tutorlab
-    region:
-      static: static
-    stack:
-      auto: false
