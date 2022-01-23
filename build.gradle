@@ -16,6 +16,10 @@ configurations {
 	}
 }
 
+jar {
+	enabled = false
+}
+
 repositories {
 	mavenCentral()
 }
@@ -107,14 +111,6 @@ compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
 }
 //querydsl 추가 끝
-
-flyway {
-	// driver = 'com.mysql.cj.jdbc.Driver'
-	url = 'jdbc:mysql://127.0.0.1:3306/tutorlab?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul'
-	user = 'root'
-	password = '1234'
-	sqlMigrationSuffixes = ['.sql']
-}
 
 test {
 	useJUnitPlatform()
