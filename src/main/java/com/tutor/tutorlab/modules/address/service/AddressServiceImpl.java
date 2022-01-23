@@ -8,10 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -32,14 +32,12 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public List<Map<String, String>> getStatesMap() {
 
-        List<Map<String, String>> states = new ArrayList<>();
-        getStates().forEach(state -> {
+        return getStates().stream().map(state -> {
             Map<String, String> map = new HashMap<>();
             map.put(LABEL, state);
             map.put(VALUE, state);
-            states.add(map);
-        });
-        return states;
+            return map;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -56,8 +54,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public List<Map<String, String>> getSigunGusMap(String state) {
 
-        List<Map<String, String>> siGunGus = new ArrayList<>();
-        getSiGunGuResponses(state).forEach(siGunGu -> {
+        return getSiGunGuResponses(state).stream().map(siGunGu -> {
             Map<String, String> map = new HashMap<>();
             if (siGunGu.getGu().length() > 0 && siGunGu.getSiGun().length() > 0) {
                 map.put(LABEL, siGunGu.getSiGun() + " " + siGunGu.getGu());
@@ -69,9 +66,8 @@ public class AddressServiceImpl implements AddressService {
                 map.put(LABEL, siGunGu.getGu());
                 map.put(VALUE, siGunGu.getGu());
             }
-            siGunGus.add(map);
-        });
-        return siGunGus;
+            return map;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -82,14 +78,12 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public List<Map<String, String>> getDongsMap(String state, String siGunGu) {
 
-        List<Map<String, String>> dongs = new ArrayList<>();
-        getDongs(state, siGunGu).forEach(dong -> {
+        return getDongs(state, siGunGu).stream().map(dong -> {
             Map<String, String> map = new HashMap<>();
             map.put(LABEL, dong);
             map.put(VALUE, dong);
-            dongs.add(map);
-        });
-        return dongs;
+            return map;
+        }).collect(Collectors.toList());
     }
 
 }

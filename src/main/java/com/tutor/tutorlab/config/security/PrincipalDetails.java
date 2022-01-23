@@ -28,14 +28,6 @@ public class PrincipalDetails implements UserDetails {
                 // return user.getRole().name();
             }
         });
-/*        user.getRoleList().forEach(role -> {
-            authorities.add(new GrantedAuthority() {
-                @Override
-                public String getAuthority() {
-                    return role;
-                }
-            });
-        });*/
         return authorities;
     }
 
