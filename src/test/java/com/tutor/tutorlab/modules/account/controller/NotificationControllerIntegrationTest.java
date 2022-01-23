@@ -125,7 +125,7 @@ class NotificationControllerIntegrationTest extends AbstractTest {
                 .andExpect(status().isOk());
 
         // Then
-        assertTrue(notificationRepository.findById(notificationId).isEmpty());
+        assertFalse(notificationRepository.findById(notificationId).isPresent());
     }
 
     @WithAccount(NAME)

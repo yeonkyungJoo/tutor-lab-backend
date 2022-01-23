@@ -124,8 +124,8 @@ class TuteePickControllerIntegrationTest extends AbstractTest {
                 .andExpect(status().isOk());
 
         // Then
-        assertTrue(pickRepository.findById(pick1Id).isEmpty());
-        assertTrue(pickRepository.findById(pick2Id).isEmpty());
+        assertFalse(pickRepository.findById(pick1Id).isPresent());
+        assertFalse(pickRepository.findById(pick2Id).isPresent());
         assertTrue(pickRepository.findByTutee(tutee).isEmpty());
     }
 }

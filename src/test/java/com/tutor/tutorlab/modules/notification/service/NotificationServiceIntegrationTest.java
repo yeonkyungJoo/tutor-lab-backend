@@ -100,7 +100,7 @@ class NotificationServiceIntegrationTest extends AbstractTest {
         notificationService.deleteNotification(user, notificationId);
 
         // Then
-        assertTrue(notificationRepository.findById(notificationId).isEmpty());
+        assertFalse(notificationRepository.findById(notificationId).isPresent());
     }
 
     @WithAccount(NAME)
