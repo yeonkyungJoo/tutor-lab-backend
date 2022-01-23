@@ -25,6 +25,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.CHATROOM;
 import static com.tutor.tutorlab.config.exception.EntityNotFoundException.EntityType.USER;
@@ -56,6 +57,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private void init() {
 
         List<Chatroom> chatrooms = chatroomRepository.findAll();
+        // TODO - CHECK : forEach & static
         chatrooms.stream().forEach(chatroom -> {
             chatroomMap.put(chatroom.getId(), new HashMap<>());
         });
