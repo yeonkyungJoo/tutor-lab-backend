@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class InquiryControllerTest {
 
-    private final static String BASE_URL = "/users/my-inquiry";
+    private final static String BASE_URL = "/api/users/my-inquiry";
 
     @InjectMocks
     InquiryController inquiryController;

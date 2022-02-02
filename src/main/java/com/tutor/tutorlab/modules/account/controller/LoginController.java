@@ -110,7 +110,7 @@ public class LoginController {
     }
 
     @ApiOperation("OAuth 회원가입 추가 정보 입력")
-    @PostMapping("/sign-up/oauth/detail")
+    @PostMapping("/api/sign-up/oauth/detail")
     public ResponseEntity<?> signUpOAuthDetail(@CurrentUser User user,
                                                @Valid @RequestBody SignUpOAuthDetailRequest signUpOAuthDetailRequest) {
 
@@ -119,7 +119,7 @@ public class LoginController {
     }
 
     @ApiOperation("일반 회원가입 - 기본 튜티로 가입")
-    @PostMapping("/sign-up")
+    @PostMapping("/api/sign-up")
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
 
         loginService.signUp(signUpRequest);
@@ -127,13 +127,13 @@ public class LoginController {
     }
 
     @ApiOperation("아이디 중복체크")
-    @GetMapping("/check-username")
+    @GetMapping("/api/check-username")
     public boolean checkUsername(@RequestParam String username) {
         return loginService.checkUsernameDuplication(username);
     }
 
     @ApiOperation("닉네임 중복체크")
-    @GetMapping("/check-nickname")
+    @GetMapping("/api/check-nickname")
     public boolean checkNickname(@RequestParam String nickname) {
         return loginService.checkNicknameDuplication(nickname);
     }
@@ -141,7 +141,7 @@ public class LoginController {
     // 계정 인증
     // TODO - CHECK : GET vs POST
     @ApiIgnore
-    @GetMapping("/verify-email")
+    @GetMapping("/api/verify-email")
     public ResponseEntity<?> verifyEmail(@RequestParam(name = "email") String email,
                                          @RequestParam(name = "token") String token) {
 
@@ -151,7 +151,7 @@ public class LoginController {
     }
 
     @ApiOperation("일반 로그인")
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
 
         Map<String, String> result = loginService.login(loginRequest);
@@ -166,7 +166,7 @@ public class LoginController {
     }
 
     @ApiOperation("비밀번호 찾기")
-    @GetMapping("/find-password")
+    @GetMapping("/api/find-password")
     public ResponseEntity<?> findPassword(@RequestParam(name = "username") String username) {
 
         loginService.findPassword(username);

@@ -29,23 +29,23 @@ public class UploadServiceImpl implements UploadService {
     @Override
     public UploadResponse uploadImage(String dir, MultipartFile file) {
 
-        try {
-
-            String uuid = UUID.randomUUID().toString();
-
-            String key = uuid;
-            if (!StringUtils.isBlank(dir)) {
-                key = dir + "/" + uuid;
-            }
-            awss3Client.putObject(amazonS3Properties.getBucket(), key, file.getBytes(), file.getContentType());
-
-            FileRequest fileRequest = FileRequest.of(uuid, file.getOriginalFilename(), file.getContentType(), FileType.LECTURE_IMAGE, file.getSize());
-            FileResponse fileResponse = fileService.createFile(fileRequest);
-            return new UploadResponse(fileResponse, amazonS3Properties.getS3UploadUrl(key));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//
+//            String uuid = UUID.randomUUID().toString();
+//
+//            String key = uuid;
+//            if (!StringUtils.isBlank(dir)) {
+//                key = dir + "/" + uuid;
+//            }
+//            awss3Client.putObject(amazonS3Properties.getBucket(), key, file.getBytes(), file.getContentType());
+//
+//            FileRequest fileRequest = FileRequest.of(uuid, file.getOriginalFilename(), file.getContentType(), FileType.LECTURE_IMAGE, file.getSize());
+//            FileResponse fileResponse = fileService.createFile(fileRequest);
+//            return new UploadResponse(fileResponse, amazonS3Properties.getS3UploadUrl(key));
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 }

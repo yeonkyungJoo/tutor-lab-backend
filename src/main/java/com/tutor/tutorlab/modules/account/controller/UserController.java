@@ -24,7 +24,7 @@ import java.util.Map;
 import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"UserController"})
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RestController
 @RequiredArgsConstructor
 public class UserController {

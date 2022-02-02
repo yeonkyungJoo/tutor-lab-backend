@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class CareerControllerTest {
 
-    private final static String BASE_URL = "/careers";
+    private final static String BASE_URL = "/api/careers";
 
     @Mock
     CareerService careerService;

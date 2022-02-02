@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"TutorCancellationController"})
-@RequestMapping("/tutors/my-cancellations")
+@RequestMapping("/api/tutors/my-cancellations")
 @RestController
 @RequiredArgsConstructor
 public class TutorCancellationController {

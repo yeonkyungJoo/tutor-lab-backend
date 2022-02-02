@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class EducationControllerTest {
 
-    private final static String BASE_URL = "/educations";
+    private final static String BASE_URL = "/api/educations";
 
     MockMvc mockMvc;
     ObjectMapper objectMapper;

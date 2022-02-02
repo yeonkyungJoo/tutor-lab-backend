@@ -24,7 +24,7 @@ public class PickController {
 
     @ApiOperation("좋아요")
     //@ApiOperation("장바구니 추가")
-    @PostMapping("/lectures/{lecture_id}/picks")
+    @PostMapping("/api/lectures/{lecture_id}/picks")
     public ResponseEntity<?> addPick(@CurrentUser User user,
                                      @PathVariable(name = "lecture_id") Long lectureId) {
         pickService.createPick(user, lectureId);

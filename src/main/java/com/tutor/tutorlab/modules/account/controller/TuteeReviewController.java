@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = {"TuteeReviewController"})
-@RequestMapping("/tutees/my-reviews")
+@RequestMapping("/api/tutees/my-reviews")
 @RestController
 @RequiredArgsConstructor
 public class TuteeReviewController {

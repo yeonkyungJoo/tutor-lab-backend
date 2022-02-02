@@ -44,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class TutorChatroomControllerTest {
 
-    private final static String BASE_URL = "/tutors/my-chatrooms";
+    private final static String BASE_URL = "/api/tutors/my-chatrooms";
 
     @InjectMocks
     TutorChatroomController tutorChatroomController;

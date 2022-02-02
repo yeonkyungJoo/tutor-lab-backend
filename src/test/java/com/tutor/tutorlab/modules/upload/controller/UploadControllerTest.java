@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class UploadControllerTest {
 
-    private final String BASE_URL = "/uploads";
+    private final String BASE_URL = "/api/uploads";
 
     @InjectMocks
     UploadController uploadController;

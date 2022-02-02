@@ -50,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class TuteeLectureControllerTest {
 
-    private final static String BASE_URL = "/tutees/my-lectures";
+    private final static String BASE_URL = "/api/tutees/my-lectures";
 
     @InjectMocks
     TuteeLectureController tuteeLectureController;

@@ -29,7 +29,7 @@ import static com.tutor.tutorlab.config.response.Response.ok;
 @Api(tags = {"LectureController"})
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/lectures")
+@RequestMapping("/api/lectures")
 public class LectureController {
 
     private final LectureService lectureService;

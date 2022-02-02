@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @Api(tags = {"UploadController"})
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/uploads")
+@RequestMapping("/api/uploads")
 public class UploadController {
 
     // TODO - application.yml

@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
-    private final static String BASE_URL = "/users";
+    private final static String BASE_URL = "/api/users";
 
     @InjectMocks
     UserController userController;

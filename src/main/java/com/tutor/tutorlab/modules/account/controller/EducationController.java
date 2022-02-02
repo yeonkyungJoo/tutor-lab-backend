@@ -23,7 +23,7 @@ import static com.tutor.tutorlab.config.response.Response.created;
 import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"EducationController"})
-@RequestMapping("/educations")
+@RequestMapping("/api/educations")
 @RequiredArgsConstructor
 @RestController
 public class EducationController {

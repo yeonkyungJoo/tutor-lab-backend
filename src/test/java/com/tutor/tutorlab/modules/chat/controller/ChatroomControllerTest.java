@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class ChatroomControllerTest {
 
-    private final static String BASE_URL = "/chat/rooms";
+    private final static String BASE_URL = "/api/chat/rooms";
 
     @InjectMocks
     ChatroomController chatroomController;

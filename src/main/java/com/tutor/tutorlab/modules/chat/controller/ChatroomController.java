@@ -18,7 +18,7 @@ import static com.tutor.tutorlab.config.response.Response.ok;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/chat/rooms")
+@RequestMapping("/api/chat/rooms")
 public class ChatroomController {
 
     private final ChatroomService chatroomService;

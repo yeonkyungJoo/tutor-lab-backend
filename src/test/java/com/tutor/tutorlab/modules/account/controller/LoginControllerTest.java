@@ -90,7 +90,7 @@ class LoginControllerTest {
         // when
         // then
         SignUpOAuthDetailRequest request = AbstractTest.getSignUpOAuthDetailRequest("user");
-        mockMvc.perform(post("/sign-up/oauth/detail")
+        mockMvc.perform(post("/api/sign-up/oauth/detail")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
@@ -107,7 +107,7 @@ class LoginControllerTest {
         // then
         SignUpOAuthDetailRequest request = AbstractTest.getSignUpOAuthDetailRequest("user");
         request.setEmail("user");
-        mockMvc.perform(post("/sign-up/oauth/detail")
+        mockMvc.perform(post("/api/sign-up/oauth/detail")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
@@ -124,7 +124,7 @@ class LoginControllerTest {
         // when
         // then
         SignUpRequest request = AbstractTest.getSignUpRequest("user", "user");
-        mockMvc.perform(post("/sign-up")
+        mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
@@ -140,7 +140,7 @@ class LoginControllerTest {
         // when
         // then
         SignUpRequest request = AbstractTest.getSignUpRequest("user", "user");
-        mockMvc.perform(post("/sign-up")
+        mockMvc.perform(post("/api/sign-up")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
@@ -156,7 +156,7 @@ class LoginControllerTest {
                 .when(loginService).checkUsernameDuplication(username);
         // when
         // then
-        MvcResult result = mockMvc.perform(get("/check-username").param("username", username))
+        MvcResult result = mockMvc.perform(get("/api/check-username").param("username", username))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -173,7 +173,7 @@ class LoginControllerTest {
                 .when(loginService).checkUsernameDuplication(anyString());
         // when
         // then
-        mockMvc.perform(get("/check-username")
+        mockMvc.perform(get("/api/check-username")
                 .param("username", ""))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
@@ -185,7 +185,7 @@ class LoginControllerTest {
         // given
         // when
         // then
-        mockMvc.perform(get("/check-username"))
+        mockMvc.perform(get("/api/check-username"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
@@ -199,7 +199,7 @@ class LoginControllerTest {
                 .when(loginService).checkNicknameDuplication(nickname);
         // when
         // then
-        MvcResult result = mockMvc.perform(get("/check-nickname").param("nickname", nickname))
+        MvcResult result = mockMvc.perform(get("/api/check-nickname").param("nickname", nickname))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -219,7 +219,7 @@ class LoginControllerTest {
                 .when(loginService).verifyEmail(email, token);
         // when
         // then
-        MvcResult result = mockMvc.perform(get("/verify-email")
+        MvcResult result = mockMvc.perform(get("/api/verify-email")
                 .param("email", email)
                 .param("token", token))
                 .andDo(print())
@@ -257,7 +257,7 @@ class LoginControllerTest {
                 .when(loginService).verifyEmail(email, token);
         // when
         // then
-        mockMvc.perform(get("/verify-email")
+        mockMvc.perform(get("/api/verify-email")
                 .param("email", email)
                 .param("token", token))
                 .andDo(print())
@@ -274,7 +274,7 @@ class LoginControllerTest {
                 .when(loginService).verifyEmail(email, token);
         // when
         // then
-        mockMvc.perform(get("/verify-email")
+        mockMvc.perform(get("/api/verify-email")
                 .param("email", email)
                 .param("token", token))
                 .andDo(print())
@@ -294,7 +294,7 @@ class LoginControllerTest {
 
         // when
         // then
-        mockMvc.perform(post("/login")
+        mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 .andDo(print())
@@ -313,7 +313,7 @@ class LoginControllerTest {
                 .when(loginService).findPassword(username);
         // when
         // then
-        mockMvc.perform(get("/find-password")
+        mockMvc.perform(get("/api/find-password")
                 .param("username", username))
                 .andDo(print())
                 .andExpect(status().isOk());

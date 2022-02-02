@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Api(tags = {"TutorChatroomController"})
-@RequestMapping("/tutors/my-chatrooms")
+@RequestMapping("/api/tutors/my-chatrooms")
 @RestController
 @RequiredArgsConstructor
 public class TutorChatroomController {

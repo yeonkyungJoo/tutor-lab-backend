@@ -6,6 +6,7 @@ import com.tutor.tutorlab.modules.lecture.enums.LearningKindType;
 import com.tutor.tutorlab.modules.subject.repository.SubjectRepository;
 import com.tutor.tutorlab.modules.subject.vo.Subject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -15,6 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled
 @Transactional
 @MockMvcTest
 class SubjectControllerIntegrationTest {

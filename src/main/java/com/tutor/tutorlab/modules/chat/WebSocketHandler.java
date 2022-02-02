@@ -137,7 +137,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     sessionMap.size() == 2
             );
             messageService.saveMessage(msg);
-            androidPushNotificationsService.send(receiver.getFcmToken(), sender + "님으로부터 채팅이 도착했습니다", messageText);
+            // androidPushNotificationsService.send(receiver.getFcmToken(), sender + "님으로부터 채팅이 도착했습니다", messageText);
         }
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"NotificationController"})
-@RequestMapping("/users/my-notifications")
+@RequestMapping("/api/users/my-notifications")
 @RestController
 @RequiredArgsConstructor
 public class NotificationController {

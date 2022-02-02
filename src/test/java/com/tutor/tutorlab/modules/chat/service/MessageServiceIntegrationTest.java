@@ -4,6 +4,7 @@ import com.tutor.tutorlab.modules.chat.enums.MessageType;
 import com.tutor.tutorlab.modules.chat.repository.MessageRepository;
 import com.tutor.tutorlab.modules.chat.vo.Message;
 import com.tutor.tutorlab.utils.LocalDateTimeUtil;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 @SpringBootTest
 class MessageServiceIntegrationTest {
 

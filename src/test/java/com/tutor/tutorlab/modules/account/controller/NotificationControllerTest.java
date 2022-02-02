@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class NotificationControllerTest {
 
-    private final static String BASE_URL = "/users/my-notifications";
+    private final static String BASE_URL = "/api/users/my-notifications";
 
     @Mock
     NotificationService notificationService;

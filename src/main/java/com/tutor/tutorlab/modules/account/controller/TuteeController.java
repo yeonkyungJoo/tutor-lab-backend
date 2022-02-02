@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"TuteeController"})
-@RequestMapping("/tutees")
+@RequestMapping("/api/tutees")
 @RestController
 @RequiredArgsConstructor
 public class TuteeController {

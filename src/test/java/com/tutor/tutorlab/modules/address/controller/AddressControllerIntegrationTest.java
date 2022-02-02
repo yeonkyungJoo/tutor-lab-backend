@@ -5,6 +5,7 @@ import com.tutor.tutorlab.configuration.AbstractTest;
 import com.tutor.tutorlab.modules.address.repository.AddressRepository;
 import com.tutor.tutorlab.modules.address.vo.Address;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled
 @Transactional
 @MockMvcTest
 public class AddressControllerIntegrationTest extends AbstractTest {

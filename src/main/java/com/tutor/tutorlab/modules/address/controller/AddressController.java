@@ -19,7 +19,7 @@ import java.util.Map;
 @Api(tags = {"AddressController"})
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/addresses")
+@RequestMapping("/api/addresses")
 public class AddressController {
 
     private final AddressService addressService;

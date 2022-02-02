@@ -21,10 +21,11 @@ public class FileServiceIntegrationTest {
 
     private final String uuid = UUID.randomUUID().toString();
 
-    @Test
-    void 파일등록() {
-        FileRequest fileRequest = FileRequest.of(uuid, "test.jpg", "image/jpg", FileType.LECTURE_IMAGE, 2424L);
-        FileResponse createdFile = fileService.createFile(fileRequest);
-        assertEquals(fileService.getFile(uuid), createdFile);
-    }
+    // TODO
+//    @Test
+//    void 파일등록() {
+//        FileRequest fileRequest = FileRequest.of(uuid, "test.jpg", "image/jpg", FileType.LECTURE_IMAGE, 2424L);
+//        FileResponse createdFile = fileService.createFile(fileRequest);
+//        assertEquals(fileService.getFile(uuid), createdFile);
+//    }
 }

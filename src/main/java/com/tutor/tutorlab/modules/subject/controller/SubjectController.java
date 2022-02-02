@@ -20,19 +20,19 @@ public class SubjectController {
 
     private final SubjectService subjectService;
 
-    @GetMapping(value = "/learningKinds", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/learningKinds", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getLearningKinds() {
         List<LearningKindResponse> learningKinds = subjectService.getLearningKindResponses();
         return ResponseEntity.ok(learningKinds);
     }
 
-    @GetMapping(value = "/subjects", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/subjects", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSubjects() {
         List<SubjectResponse> subjects = subjectService.getSubjectResponses();
         return ResponseEntity.ok(subjects);
     }
 
-    @GetMapping(value = "/subjects/{learning_kind_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/subjects/{learning_kind_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSubjects(@PathVariable(name = "learning_kind_id") Long learningKindId) {
         List<SubjectResponse> subjects = subjectService.getSubjectResponses(learningKindId);
         return ResponseEntity.ok(subjects);

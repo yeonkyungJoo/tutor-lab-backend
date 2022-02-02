@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.tutor.tutorlab.config.response.Response.ok;
 
 @Api(tags = {"TuteePickController"})
-@RequestMapping("/tutees/my-picks")
+@RequestMapping("/api/tutees/my-picks")
 @RestController
 @RequiredArgsConstructor
 public class TuteePickController {

@@ -74,7 +74,7 @@ class SubjectControllerTest {
                 .when(subjectService).getLearningKindResponses();
         // when
         // then
-        mockMvc.perform(get("/learningKinds"))
+        mockMvc.perform(get("/api/learningKinds"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(learningKinds)));
@@ -91,7 +91,7 @@ class SubjectControllerTest {
                 .when(subjectService).getSubjectResponses();
         // when
         // then
-        mockMvc.perform(get("/subjects"))
+        mockMvc.perform(get("/api/subjects"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(subjects)));
@@ -107,7 +107,7 @@ class SubjectControllerTest {
                 .when(subjectService).getSubjectResponses(1L);
         // when
         // then
-        mockMvc.perform(get("/subjects/{learning_kind_id}", 1L))
+        mockMvc.perform(get("/api/subjects/{learning_kind_id}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(subjects)));

@@ -117,7 +117,7 @@ public class EnrollmentServiceImpl extends AbstractService implements Enrollment
         chatService.createChatroom(tutor, tutee, enrollment);
         // 강의 등록 시 튜터에게 알림 전송
         notificationService.createNotification(tutorUser, NotificationType.ENROLLMENT);
-        androidPushNotificationsService.send(tutorUser.getFcmToken(), "강의 등록", String.format("%s님이 %s 강의를 등록했습니다", user.getNickname(), lecture.getTitle()));
+        // androidPushNotificationsService.send(tutorUser.getFcmToken(), "강의 등록", String.format("%s님이 %s 강의를 등록했습니다", user.getNickname(), lecture.getTitle()));
         return enrollment;
     }
 
