@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `address` (
   `si_gun` varchar(50) DEFAULT NULL,
   `state` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `cancellation` (
   PRIMARY KEY (`cancellation_id`),
   KEY `FK_CANCELLATION_ENROLLMENT_ID` (`enrollment_id`),
   CONSTRAINT `FK_CANCELLATION_ENROLLMENT_ID` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollment` (`enrollment_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `career` (
   PRIMARY KEY (`career_id`),
   KEY `FK_CAREER_TUTOR_ID` (`tutor_id`),
   CONSTRAINT `FK_CAREER_TUTOR_ID` FOREIGN KEY (`tutor_id`) REFERENCES `tutor` (`tutor_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `chatroom` (
   CONSTRAINT `FK_CHATROOM_ENROLLMENT_ID` FOREIGN KEY (`enrollment_id`) REFERENCES `enrollment` (`enrollment_id`),
   CONSTRAINT `FK_CHATROOM_TUTEE_ID` FOREIGN KEY (`tutee_id`) REFERENCES `tutee` (`tutee_id`),
   CONSTRAINT `FK_CHATROOM_TUTOR_ID` FOREIGN KEY (`tutor_id`) REFERENCES `tutor` (`tutor_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `education` (
   PRIMARY KEY (`education_id`),
   KEY `FK_EDUCATION_TUTOR_ID` (`tutor_id`),
   CONSTRAINT `FK_EDUCATION_TUTOR_ID` FOREIGN KEY (`tutor_id`) REFERENCES `tutor` (`tutor_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `enrollment` (
   CONSTRAINT `FK_ENROLLMENT_LECTURE_ID` FOREIGN KEY (`lecture_id`) REFERENCES `lecture` (`lecture_id`),
   CONSTRAINT `FK_ENROLLMENT_LECTURE_PRICE_ID` FOREIGN KEY (`lecture_price_id`) REFERENCES `lecture_price` (`lecture_price_id`),
   CONSTRAINT `FK_ENROLLMENT_TUTEE_ID` FOREIGN KEY (`tutee_id`) REFERENCES `tutee` (`tutee_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `inquiry` (
   PRIMARY KEY (`inquiry_id`),
   KEY `FK_INQUIRY_USER_ID` (`user_id`),
   CONSTRAINT `FK_INQUIRY_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `lecture` (
   PRIMARY KEY (`lecture_id`),
   KEY `FK_LECTURE_TUTOR_ID` (`tutor_id`),
   CONSTRAINT `FK_LECTURE_TUTOR_ID` FOREIGN KEY (`tutor_id`) REFERENCES `tutor` (`tutor_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -173,7 +173,7 @@ CREATE TABLE IF NOT EXISTS `lecture_price` (
   PRIMARY KEY (`lecture_price_id`),
   KEY `FK_LECTURE_PRICE_LECTURE_ID` (`lecture_id`),
   CONSTRAINT `FK_LECTURE_PRICE_LECTURE_ID` FOREIGN KEY (`lecture_id`) REFERENCES `lecture` (`lecture_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS `lecture_subject` (
   PRIMARY KEY (`lecture_subject_id`),
   KEY `FK_LECTURE_SUBJECT_LECTURE_ID` (`lecture_id`),
   CONSTRAINT `FK_LECTURE_SUBJECT_LECTURE_ID` FOREIGN KEY (`lecture_id`) REFERENCES `lecture` (`lecture_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS `lecture_system_type` (
   `system_types` varchar(255) DEFAULT NULL,
   KEY `FK_LECTURE_SYSTEM_TYPE_LECTURE_ID` (`lecture_id`),
   CONSTRAINT `FK_LECTURE_SYSTEM_TYPE_LECTURE_ID` FOREIGN KEY (`lecture_id`) REFERENCES `lecture` (`lecture_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -219,7 +219,7 @@ CREATE TABLE IF NOT EXISTS `notification` (
   PRIMARY KEY (`notification_id`),
   KEY `FK_NOTIFICATION_USER_ID` (`user_id`),
   CONSTRAINT `FK_NOTIFICATION_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -236,7 +236,7 @@ CREATE TABLE IF NOT EXISTS `pick` (
   KEY `FK_PICK_TUTEE_ID` (`tutee_id`),
   CONSTRAINT `FK_PICK_LECTURE_ID` FOREIGN KEY (`lecture_id`) REFERENCES `lecture` (`lecture_id`),
   CONSTRAINT `FK_PICK_TUTEE_ID` FOREIGN KEY (`tutee_id`) REFERENCES `tutee` (`tutee_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS `review` (
   CONSTRAINT `FK_REVIEW_LECTURE_ID` FOREIGN KEY (`lecture_id`) REFERENCES `lecture` (`lecture_id`),
   CONSTRAINT `FK_REVIEW_PARENT_ID` FOREIGN KEY (`parent_id`) REFERENCES `review` (`review_id`),
   CONSTRAINT `FK_REVIEW_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -273,7 +273,7 @@ CREATE TABLE IF NOT EXISTS `subject` (
   `learning_kind` varchar(255) DEFAULT NULL,
   `learning_kind_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -288,7 +288,7 @@ CREATE TABLE IF NOT EXISTS `tutee` (
   PRIMARY KEY (`tutee_id`),
   KEY `FK_TUTEE_USER_ID` (`user_id`),
   CONSTRAINT `FK_TUTEE_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -302,7 +302,7 @@ CREATE TABLE IF NOT EXISTS `tutor` (
   PRIMARY KEY (`tutor_id`),
   KEY `FK_TUTOR_USER_ID` (`user_id`),
   CONSTRAINT `FK_TUTOR_USER_ID` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -319,7 +319,7 @@ CREATE TABLE IF NOT EXISTS `tutorlab_file` (
   `uuid` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`file_id`),
   UNIQUE KEY `UK_harlw6kblbh2lw1tcb6uvp6x6` (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
@@ -357,7 +357,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `UK_n4swgcf30j6bmtb4l4cjryuym` (`nickname`),
   UNIQUE KEY `UK_sb8bbouer5wak8vyiiy4pf2bx` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 내보낼 데이터가 선택되어 있지 않습니다.
 
